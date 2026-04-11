@@ -36,16 +36,16 @@ interface NavItem {
 const navItems: NavItem[] = [
     { id: 'nav-dashboard', label: 'Operations Dashboard', href: '/operations-dashboard', icon: LayoutDashboard, group: 'core', allowedRoles: ['ALL'] },
     { id: 'nav-requisitions', label: 'Requisition Management', href: '/requisition-management', icon: FileText, badge: 7, group: 'core', allowedRoles: ['ALL'] },
-    { id: 'nav-candidates', label: 'Candidates', href: '/candidates', icon: Users, badge: 23, group: 'core', allowedRoles: ['HR', 'INTERVIEWER', 'ADMIN'] },
-    { id: 'nav-vendors', label: 'Vendor Management', href: '/vendor-management', icon: Building2, group: 'core', allowedRoles: ['PROCUREMENT', 'ADMIN'] },
-    { id: 'nav-onboarding', label: 'Onboarding Tracker', href: '/onboarding-tracker', icon: UserCheck, badge: 4, group: 'operations', allowedRoles: ['LINE_MANAGER', 'ADMIN'] },
-    { id: 'nav-budget', label: 'Budget & Finance', href: '/budget-finance', icon: Wallet, group: 'operations', allowedRoles: ['FINANCE', 'ADMIN'] },
-    { id: 'nav-contracts', label: 'Contracts & LPOs', href: '/contracts-lpos', icon: ClipboardList, group: 'operations', allowedRoles: ['PROCUREMENT', 'ADMIN'] },
-    { id: 'nav-reports', label: 'Reports & Analytics', href: '/reports-analytics', icon: BarChart3, group: 'reporting', allowedRoles: ['HR', 'HOD', 'ADMIN'] },
-    { id: 'nav-forecasting', label: 'Financial Forecasting', href: '/financial-forecasting', icon: TrendingUp, group: 'reporting', allowedRoles: ['FINANCE', 'ADMIN'] },
-    { id: 'nav-compliance', label: 'Compliance & Audit', href: '/compliance-audit', icon: ShieldCheck, group: 'admin', allowedRoles: ['HR', 'ADMIN'] },
+    { id: 'nav-candidates', label: 'Candidates', href: '/candidates', icon: Users, badge: 23, group: 'core', allowedRoles: ['HR_ADMIN', 'DEPT_REQUESTOR', 'SYSTEM_ADMIN'] },
+    { id: 'nav-vendors', label: 'Vendor Management', href: '/vendor-management', icon: Building2, group: 'core', allowedRoles: ['PROCUREMENT_OFFICER', 'SYSTEM_ADMIN'] },
+    { id: 'nav-onboarding', label: 'Onboarding Tracker', href: '/onboarding-tracker', icon: UserCheck, badge: 4, group: 'operations', allowedRoles: ['FINANCE_OFFICER', 'HR_ADMIN', 'SYSTEM_ADMIN'] },
+    { id: 'nav-budget', label: 'Budget & Finance', href: '/budget-finance', icon: Wallet, group: 'operations', allowedRoles: ['FINANCE_OFFICER', 'SYSTEM_ADMIN'] },
+    { id: 'nav-contracts', label: 'Contracts & LPOs', href: '/contracts-lpos', icon: ClipboardList, group: 'operations', allowedRoles: ['PROCUREMENT_OFFICER', 'SYSTEM_ADMIN'] },
+    { id: 'nav-reports', label: 'Reports & Analytics', href: '/reports-analytics', icon: BarChart3, group: 'reporting', allowedRoles: ['HR_ADMIN', 'HOD', 'SYSTEM_ADMIN'] },
+    { id: 'nav-forecasting', label: 'Financial Forecasting', href: '/financial-forecasting', icon: TrendingUp, group: 'reporting', allowedRoles: ['FINANCE_OFFICER', 'SYSTEM_ADMIN'] },
+    { id: 'nav-compliance', label: 'Compliance & Audit', href: '/compliance-audit', icon: ShieldCheck, group: 'admin', allowedRoles: ['HR_ADMIN', 'SYSTEM_ADMIN'] },
     { id: 'nav-notifications', label: 'Notifications', href: '/notifications', icon: Bell, badge: 12, group: 'admin', allowedRoles: ['ALL'] },
-    { id: 'nav-settings', label: 'System Settings', href: '/settings', icon: Settings, group: 'admin', allowedRoles: ['ADMIN'] },
+    { id: 'nav-settings', label: 'System Settings', href: '/settings', icon: Settings, group: 'admin', allowedRoles: ['SYSTEM_ADMIN'] },
 ];
 
 const groupLabels: Record<string, string> = {

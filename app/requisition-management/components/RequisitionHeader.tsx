@@ -55,7 +55,7 @@ export default function RequisitionHeader() {
                         <BarChart3 size={14} />
                         Analytics
                     </button>
-                    {['REQUESTOR', 'HR', 'ADMIN'].includes(roleForView) && (
+                    {['DEPT_REQUESTOR', 'HR_ADMIN', 'SYSTEM_ADMIN'].includes(roleForView) && (
                         <button
                             className="btn-primary text-xs px-4 py-2"
                             onClick={() => setShowNewModal(true)}

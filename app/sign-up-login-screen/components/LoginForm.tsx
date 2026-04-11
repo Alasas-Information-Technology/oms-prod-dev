@@ -31,7 +31,7 @@ interface LoginFormValues {
 
 type PortalType = 'internal' | 'vendor';
 
-export type RoleType = 'HR' | 'HOD' | 'REQUESTOR' | 'LINE_MANAGER' | 'PROCUREMENT' | 'FINANCE' | 'INTERVIEWER' | 'ADMIN' | 'VENDOR';
+export type RoleType = 'SYSTEM_ADMIN' | 'DEPT_REQUESTOR' | 'HOD' | 'HR_ADMIN' | 'PROCUREMENT_OFFICER' | 'FINANCE_OFFICER' | 'VENDOR_USER';
 
 interface DemoCredential {
     rbacRole: RoleType;
@@ -42,20 +42,20 @@ interface DemoCredential {
 }
 
 const internalCredentials: DemoCredential[] = [
-    { rbacRole: 'HR', role: 'HR Manager', email: 'hr.manager@deiz.ae', password: 'DEIZ@HR2026!', department: 'Human Resources' },
+    { rbacRole: 'HR_ADMIN', role: 'HR Manager', email: 'hr.manager@deiz.ae', password: 'DEIZ@HR2026!', department: 'Human Resources' },
     { rbacRole: 'HOD', role: 'HOD – Operations', email: 'hod.operations@deiz.ae', password: 'DEIZ@HOD2026!', department: 'Operations' },
-    { rbacRole: 'REQUESTOR', role: 'Department Requestor', email: 'requestor.it@deiz.ae', password: 'DEIZ@REQ2026!', department: 'Information Technology' },
-    { rbacRole: 'LINE_MANAGER', role: 'Line Manager', email: 'lm.finance@deiz.ae', password: 'DEIZ@LM2026!', department: 'Finance' },
-    { rbacRole: 'PROCUREMENT', role: 'Procurement Officer', email: 'procurement@deiz.ae', password: 'DEIZ@PRO2026!', department: 'Procurement' },
-    { rbacRole: 'FINANCE', role: 'Finance Analyst', email: 'finance.analyst@deiz.ae', password: 'DEIZ@FIN2026!', department: 'Finance' },
-    { rbacRole: 'INTERVIEWER', role: 'Main Interviewer', email: 'interviewer.hr@deiz.ae', password: 'DEIZ@INT2026!', department: 'Human Resources' },
-    { rbacRole: 'ADMIN', role: 'System Administrator', email: 'sysadmin@deiz.ae', password: 'DEIZ@ADM2026!', department: 'IT Administration' },
+    { rbacRole: 'DEPT_REQUESTOR', role: 'Department Requestor', email: 'requestor.it@deiz.ae', password: 'DEIZ@REQ2026!', department: 'Information Technology' },
+    { rbacRole: 'FINANCE_OFFICER', role: 'Line Manager', email: 'lm.finance@deiz.ae', password: 'DEIZ@LM2026!', department: 'Finance' },
+    { rbacRole: 'PROCUREMENT_OFFICER', role: 'Procurement Officer', email: 'procurement@deiz.ae', password: 'DEIZ@PRO2026!', department: 'Procurement' },
+    { rbacRole: 'FINANCE_OFFICER', role: 'Finance Analyst', email: 'finance.analyst@deiz.ae', password: 'DEIZ@FIN2026!', department: 'Finance' },
+    { rbacRole: 'DEPT_REQUESTOR', role: 'Main Interviewer', email: 'interviewer.hr@deiz.ae', password: 'DEIZ@INT2026!', department: 'Human Resources' },
+    { rbacRole: 'SYSTEM_ADMIN', role: 'System Administrator', email: 'sysadmin@deiz.ae', password: 'DEIZ@ADM2026!', department: 'IT Administration' },
 ];
 
 const vendorCredentials: DemoCredential[] = [
-    { rbacRole: 'VENDOR', role: 'Vendor – TechBridge Solutions', email: 'portal@techbridge.ae', password: 'VND@TB2026!', department: 'IT Staffing' },
-    { rbacRole: 'VENDOR', role: 'Vendor – Gulf Manpower Co.', email: 'portal@gulfmanpower.ae', password: 'VND@GM2026!', department: 'General Staffing' },
-    { rbacRole: 'VENDOR', role: 'Vendor – Emirates Talent Hub', email: 'portal@emiratestalent.ae', password: 'VND@ET2026!', department: 'Executive Search' },
+    { rbacRole: 'VENDOR_USER', role: 'Vendor – TechBridge Solutions', email: 'portal@techbridge.ae', password: 'VND@TB2026!', department: 'IT Staffing' },
+    { rbacRole: 'VENDOR_USER', role: 'Vendor – Gulf Manpower Co.', email: 'portal@gulfmanpower.ae', password: 'VND@GM2026!', department: 'General Staffing' },
+    { rbacRole: 'VENDOR_USER', role: 'Vendor – Emirates Talent Hub', email: 'portal@emiratestalent.ae', password: 'VND@ET2026!', department: 'Executive Search' },
 ];
 
 export default function LoginForm() {
