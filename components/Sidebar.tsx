@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import AppLogo from '@/components/ui/AppLogo';
 import {
     LayoutDashboard,
@@ -29,21 +30,22 @@ interface NavItem {
     icon: React.ElementType;
     badge?: number;
     group: string;
+    allowedRoles: string[];
 }
 
 const navItems: NavItem[] = [
-    { id: 'nav-dashboard', label: 'Operations Dashboard', href: '/operations-dashboard', icon: LayoutDashboard, group: 'core' },
-    { id: 'nav-requisitions', label: 'Requisition Management', href: '/requisition-management', icon: FileText, badge: 7, group: 'core' },
-    { id: 'nav-candidates', label: 'Candidates', href: '/candidates', icon: Users, badge: 23, group: 'core' },
-    { id: 'nav-vendors', label: 'Vendor Management', href: '/vendor-management', icon: Building2, group: 'core' },
-    { id: 'nav-onboarding', label: 'Onboarding Tracker', href: '/onboarding-tracker', icon: UserCheck, badge: 4, group: 'operations' },
-    { id: 'nav-budget', label: 'Budget & Finance', href: '/budget-finance', icon: Wallet, group: 'operations' },
-    { id: 'nav-contracts', label: 'Contracts & LPOs', href: '/contracts-lpos', icon: ClipboardList, group: 'operations' },
-    { id: 'nav-reports', label: 'Reports & Analytics', href: '/reports-analytics', icon: BarChart3, group: 'reporting' },
-    { id: 'nav-forecasting', label: 'Financial Forecasting', href: '/financial-forecasting', icon: TrendingUp, group: 'reporting' },
-    { id: 'nav-compliance', label: 'Compliance & Audit', href: '/compliance-audit', icon: ShieldCheck, group: 'admin' },
-    { id: 'nav-notifications', label: 'Notifications', href: '/notifications', icon: Bell, badge: 12, group: 'admin' },
-    { id: 'nav-settings', label: 'System Settings', href: '/settings', icon: Settings, group: 'admin' },
+    { id: 'nav-dashboard', label: 'Operations Dashboard', href: '/operations-dashboard', icon: LayoutDashboard, group: 'core', allowedRoles: ['ALL'] },
+    { id: 'nav-requisitions', label: 'Requisition Management', href: '/requisition-management', icon: FileText, badge: 7, group: 'core', allowedRoles: ['ALL'] },
+    { id: 'nav-candidates', label: 'Candidates', href: '/candidates', icon: Users, badge: 23, group: 'core', allowedRoles: ['HR', 'INTERVIEWER', 'ADMIN'] },
+    { id: 'nav-vendors', label: 'Vendor Management', href: '/vendor-management', icon: Building2, group: 'core', allowedRoles: ['PROCUREMENT', 'ADMIN'] },
+    { id: 'nav-onboarding', label: 'Onboarding Tracker', href: '/onboarding-tracker', icon: UserCheck, badge: 4, group: 'operations', allowedRoles: ['LINE_MANAGER', 'ADMIN'] },
+    { id: 'nav-budget', label: 'Budget & Finance', href: '/budget-finance', icon: Wallet, group: 'operations', allowedRoles: ['FINANCE', 'ADMIN'] },
+    { id: 'nav-contracts', label: 'Contracts & LPOs', href: '/contracts-lpos', icon: ClipboardList, group: 'operations', allowedRoles: ['PROCUREMENT', 'ADMIN'] },
+    { id: 'nav-reports', label: 'Reports & Analytics', href: '/reports-analytics', icon: BarChart3, group: 'reporting', allowedRoles: ['HR', 'HOD', 'ADMIN'] },
+    { id: 'nav-forecasting', label: 'Financial Forecasting', href: '/financial-forecasting', icon: TrendingUp, group: 'reporting', allowedRoles: ['FINANCE', 'ADMIN'] },
+    { id: 'nav-compliance', label: 'Compliance & Audit', href: '/compliance-audit', icon: ShieldCheck, group: 'admin', allowedRoles: ['HR', 'ADMIN'] },
+    { id: 'nav-notifications', label: 'Notifications', href: '/notifications', icon: Bell, badge: 12, group: 'admin', allowedRoles: ['ALL'] },
+    { id: 'nav-settings', label: 'System Settings', href: '/settings', icon: Settings, group: 'admin', allowedRoles: ['ADMIN'] },
 ];
 
 const groupLabels: Record<string, string> = {
@@ -56,6 +58,10 @@ const groupLabels: Record<string, string> = {
 export default function Sidebar() {
     const [collapsed, setCollapsed] = useState(false);
     const pathname = usePathname();
+    const { currentUser } = useAuth();
+    
+    // Default to 'Guest' if currentUser isn't perfectly loaded yet
+    const currentRole = currentUser?.role || 'Guest';
 
     useEffect(() => {
         const width = collapsed ? '68px' : '256px';
@@ -86,7 +92,13 @@ export default function Sidebar() {
             {/* Navigation */}
             <nav className="flex-1 overflow-y-auto scrollbar-thin py-3 px-2">
                 {groups.map((group) => {
-                    const items = navItems.filter((n) => n.group === group);
+                    const items = navItems.filter((n) => 
+                        n.group === group && 
+                        (n.allowedRoles.includes('ALL') || n.allowedRoles.includes(currentRole))
+                    );
+
+                    if (items.length === 0) return null;
+
                     return (
                         <div key={`group-${group}`} className="mb-4">
                             {!collapsed && (
