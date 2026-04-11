@@ -20,6 +20,7 @@ import {
     ChevronRight,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import Link from 'next/link';
 
 
 type WorkflowStage =
@@ -163,8 +164,8 @@ const mockRequisitions: Requisition[] = [
         title: 'Business Intelligence Analyst',
         department: 'Finance',
         requestor: 'Noura Al-Ketbi',
-        stage: 'HR Review',
-        stageNum: 5,
+        stage: 'Blind Selection',
+        stageNum: 8,
         location: 'UAE Remote (WFH)',
         budgetAED: 158000,
         budgetType: 'Unallocated',
@@ -594,9 +595,19 @@ export default function RequisitionTable() {
                                                                 <AlertTriangle size={11} className="text-red-500 shrink-0" />
                                                             </span>
                                                         )}
-                                                        <span className="font-mono text-xs font-semibold text-[hsl(214,67%,32%)]">
-                                                            {req.reqId}
-                                                        </span>
+                                                        {req.stage === 'Blind Selection' ? (
+                                                            <Link
+                                                                href={`/requisition-management/blind-selection/${req.reqId}`}
+                                                                className="font-mono text-xs font-semibold text-[hsl(214,67%,32%)] hover:underline flex items-center gap-1 cursor-pointer hover:bg-[hsl(214,67%,32%)]/10 rounded px-1 -ml-1 transition-colors"
+                                                                title="Go to Blind Candidate Selection"
+                                                            >
+                                                                {req.reqId}
+                                                            </Link>
+                                                        ) : (
+                                                            <span className="font-mono text-xs font-semibold text-[hsl(214,67%,32%)]">
+                                                                {req.reqId}
+                                                            </span>
+                                                        )}
                                                         {req.emiratisationFlag && (
                                                             <span className="text-[9px] font-bold px-1 py-0.5 rounded bg-orange-100 text-orange-700" title="Emiratisation compliance flag">
                                                                 EMRT
