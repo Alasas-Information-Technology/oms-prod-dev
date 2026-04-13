@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshCw, Download, Calendar, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 
 export default function DashboardHeader() {
     const [lastUpdated, setLastUpdated] = useState('');
@@ -55,22 +56,23 @@ export default function DashboardHeader() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <button className="btn-secondary gap-2 text-xs px-3 py-2">
+                    <Button variant="secondary" size="sm" className="gap-2">
                         <Calendar size={14} />
                         Q2 FY2026
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={handleRefresh}
-                        className="btn-ghost px-3 py-2 text-xs"
                         disabled={refreshing}
                     >
                         <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} />
                         Refresh
-                    </button>
-                    <button className="btn-secondary text-xs px-3 py-2">
+                    </Button>
+                    <Button variant="secondary" size="sm" className="gap-2">
                         <Download size={14} />
                         Export
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

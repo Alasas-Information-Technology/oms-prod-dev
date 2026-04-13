@@ -2,6 +2,9 @@
 
 import React, { useState } from 'react';
 import { ChevronDown, X, Filter } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Card } from '@/components/ui/card';
 
 interface FilterState {
     stages: string[];
@@ -72,13 +75,14 @@ function FilterSection({ title, children, defaultOpen = true }: FilterSectionPro
     const [open, setOpen] = useState(defaultOpen);
     return (
         <div className="border-b border-slate-100 last:border-0 pb-3 mb-3 last:pb-0 last:mb-0">
-            <button
+            <Button
+                variant="ghost"
                 onClick={() => setOpen(!open)}
-                className="flex items-center justify-between w-full py-1 text-xs font-semibold text-slate-500 uppercase tracking-widest hover:text-slate-700 transition-colors"
+                className="flex h-auto px-0 w-full justify-between py-1 text-xs font-semibold text-slate-500 uppercase hover:bg-transparent tracking-widest hover:text-slate-700 transition-colors"
             >
                 {title}
                 <ChevronDown size={12} className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
-            </button>
+            </Button>
             {open && <div className="mt-2">{children}</div>}
         </div>
     );
@@ -118,7 +122,7 @@ export default function RequisitionFilters() {
         setFilters({ stages: [], departments: [], locations: [], budgetType: [], dateRange: '' });
 
     return (
-        <div className="w-56 xl:w-64 shrink-0 card p-4 sticky top-24 self-start">
+        <Card className="w-56 xl:w-64 shrink-0 p-4 sticky top-24 self-start border-none shadow-card">
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                     <Filter size={14} className="text-slate-500" />
@@ -130,10 +134,10 @@ export default function RequisitionFilters() {
                     )}
                 </div>
                 {totalActive > 0 && (
-                    <button onClick={clearAll} className="flex items-center gap-1 text-xs text-red-500 hover:text-red-700 font-medium">
+                    <Button variant="ghost" size="sm" onClick={clearAll} className="flex h-auto p-0 px-2 items-center gap-1 text-xs text-destructive hover:text-destructive hover:bg-transparent font-medium">
                         <X size={11} />
                         Clear
-                    </button>
+                    </Button>
                 )}
             </div>
 
@@ -141,16 +145,17 @@ export default function RequisitionFilters() {
             <FilterSection title="Date Range">
                 <div className="space-y-1">
                     {dateRangeOptions.map((opt) => (
-                        <button
+                        <Button
+                            variant="ghost"
                             key={opt.id}
                             onClick={() => toggleFilter('dateRange', opt.value)}
-                            className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition-colors ${filters.dateRange === opt.value
-                                    ? 'bg-[hsl(214,67%,32%)] text-white font-semibold'
+                            className={`w-full justify-start text-left px-2.5 py-1.5 h-auto rounded-lg text-xs transition-colors ${filters.dateRange === opt.value
+                                    ? 'bg-[hsl(214,67%,32%)] text-white hover:bg-[hsl(214,67%,32%)] hover:text-white font-semibold'
                                     : 'text-slate-600 hover:bg-slate-50'
                                 }`}
                         >
                             {opt.label}
-                        </button>
+                        </Button>
                     ))}
                 </div>
             </FilterSection>
@@ -159,68 +164,64 @@ export default function RequisitionFilters() {
             <FilterSection title="Workflow Stage">
                 <div className="space-y-1 max-h-52 overflow-y-auto scrollbar-thin pr-1">
                     {stageOptions.map((opt) => (
-                        <label key={opt.id} className="flex items-center gap-2 cursor-pointer group">
-                            <input
-                                type="checkbox"
+                        <div key={opt.id} className="flex items-center gap-2 group py-0.5">
+                            <Checkbox
+                                id={opt.id}
                                 checked={filters.stages.includes(opt.value)}
-                                onChange={() => toggleFilter('stages', opt.value)}
-                                className="w-3.5 h-3.5 rounded border-slate-300 text-[hsl(214,67%,32%)]"
+                                onCheckedChange={() => toggleFilter('stages', opt.value)}
                             />
-                            <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-full ${opt.color}`}>
+                            <label htmlFor={opt.id} className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-full cursor-pointer ${opt.color}`}>
                                 {opt.value}
-                            </span>
-                        </label>
+                            </label>
+                        </div>
                     ))}
                 </div>
             </FilterSection>
 
             {/* Department */}
             <FilterSection title="Department" defaultOpen={false}>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                     {departmentOptions.map((opt) => (
-                        <label key={opt.id} className="flex items-center gap-2 cursor-pointer">
-                            <input
-                                type="checkbox"
+                        <div key={opt.id} className="flex items-center gap-2">
+                            <Checkbox
+                                id={opt.id}
                                 checked={filters.departments.includes(opt.value)}
-                                onChange={() => toggleFilter('departments', opt.value)}
-                                className="w-3.5 h-3.5 rounded border-slate-300 text-[hsl(214,67%,32%)]"
+                                onCheckedChange={() => toggleFilter('departments', opt.value)}
                             />
-                            <span className="text-xs text-slate-600">{opt.value}</span>
-                        </label>
+                            <label htmlFor={opt.id} className="text-xs text-slate-600 cursor-pointer">{opt.value}</label>
+                        </div>
                     ))}
                 </div>
             </FilterSection>
 
             {/* Work Location */}
             <FilterSection title="Work Location" defaultOpen={false}>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                     {locationOptions.map((opt) => (
-                        <label key={opt.id} className="flex items-center gap-2 cursor-pointer">
-                            <input
-                                type="checkbox"
+                        <div key={opt.id} className="flex items-center gap-2">
+                            <Checkbox
+                                id={opt.id}
                                 checked={filters.locations.includes(opt.value)}
-                                onChange={() => toggleFilter('locations', opt.value)}
-                                className="w-3.5 h-3.5 rounded border-slate-300 text-[hsl(214,67%,32%)]"
+                                onCheckedChange={() => toggleFilter('locations', opt.value)}
                             />
-                            <span className="text-xs text-slate-600">{opt.value}</span>
-                        </label>
+                            <label htmlFor={opt.id} className="text-xs text-slate-600 cursor-pointer">{opt.value}</label>
+                        </div>
                     ))}
                 </div>
             </FilterSection>
 
             {/* Budget Type */}
             <FilterSection title="Budget Type" defaultOpen={false}>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                     {budgetTypeOptions.map((opt) => (
-                        <label key={opt.id} className="flex items-center gap-2 cursor-pointer">
-                            <input
-                                type="checkbox"
+                        <div key={opt.id} className="flex items-center gap-2">
+                            <Checkbox
+                                id={opt.id}
                                 checked={filters.budgetType.includes(opt.value)}
-                                onChange={() => toggleFilter('budgetType', opt.value)}
-                                className="w-3.5 h-3.5 rounded border-slate-300 text-[hsl(214,67%,32%)]"
+                                onCheckedChange={() => toggleFilter('budgetType', opt.value)}
                             />
-                            <span className="text-xs text-slate-600">{opt.value}</span>
-                        </label>
+                            <label htmlFor={opt.id} className="text-xs text-slate-600 cursor-pointer">{opt.value}</label>
+                        </div>
                     ))}
                 </div>
             </FilterSection>
@@ -233,22 +234,22 @@ export default function RequisitionFilters() {
                         {filters.stages.map((s) => (
                             <span key={`active-stage-${s}`} className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-purple-50 text-purple-700 text-[10px] font-semibold">
                                 {s}
-                                <button onClick={() => toggleFilter('stages', s)}>
+                                <Button variant="ghost" className="h-auto p-0 hover:bg-transparent hover:text-purple-900" onClick={() => toggleFilter('stages', s)}>
                                     <X size={8} />
-                                </button>
+                                </Button>
                             </span>
                         ))}
                         {filters.departments.map((d) => (
                             <span key={`active-dept-${d}`} className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-semibold">
                                 {d.split(' ')[0]}
-                                <button onClick={() => toggleFilter('departments', d)}>
+                                <Button variant="ghost" className="h-auto p-0 hover:bg-transparent hover:text-blue-900" onClick={() => toggleFilter('departments', d)}>
                                     <X size={8} />
-                                </button>
+                                </Button>
                             </span>
                         ))}
                     </div>
                 </div>
             )}
-        </div>
+        </Card>
     );
 }

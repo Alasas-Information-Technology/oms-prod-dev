@@ -11,6 +11,7 @@ import {
     ResponsiveContainer,
     Cell,
 } from 'recharts';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 
 // Backend integration point: GET /api/dashboard/pipeline-distribution
 const pipelineData = [
@@ -66,17 +67,18 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
 
 export default function PipelineChart() {
     return (
-        <div className="card p-5 h-full">
-            <div className="flex items-start justify-between mb-5">
+        <Card className="h-full flex flex-col">
+            <CardHeader className="flex flex-row items-start justify-between mb-0 pb-2">
                 <div>
-                    <h2 className="text-base font-semibold text-slate-900">Requisition Pipeline Distribution</h2>
-                    <p className="text-xs text-slate-400 mt-0.5">Count by 14-step OMS workflow stage · Live</p>
+                    <CardTitle className="text-base font-semibold text-slate-900 border-none">Requisition Pipeline Distribution</CardTitle>
+                    <CardDescription className="text-xs text-slate-400 mt-0.5">Count by 14-step OMS workflow stage · Live</CardDescription>
                 </div>
                 <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
                     87 total
                 </span>
-            </div>
-            <div style={{ height: 240 }}>
+            </CardHeader>
+            <CardContent className="pt-0">
+                <div style={{ height: 240 }}>
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={pipelineData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }} barSize={16}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
@@ -103,7 +105,8 @@ export default function PipelineChart() {
                         </Bar>
                     </BarChart>
                 </ResponsiveContainer>
-            </div>
-        </div>
+                </div>
+            </CardContent>
+        </Card>
     );
 }

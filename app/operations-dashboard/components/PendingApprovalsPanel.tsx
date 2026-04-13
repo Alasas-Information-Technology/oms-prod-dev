@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { ChevronRight, AlertTriangle, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 
 // Backend integration point: GET /api/dashboard/pending-approvals?role=HR_MANAGER
 const pendingItems = [
@@ -99,19 +101,20 @@ export default function PendingApprovalsPanel() {
     };
 
     return (
-        <div className="card p-5 h-full flex flex-col">
-            <div className="flex items-start justify-between mb-4">
+        <Card className="h-full flex flex-col">
+            <CardHeader className="flex flex-row items-start justify-between mb-0 pb-2">
                 <div>
-                    <h2 className="text-base font-semibold text-slate-900">Pending My Approvals</h2>
-                    <p className="text-xs text-slate-400 mt-0.5">HR Review stage · Role-filtered</p>
+                    <CardTitle className="text-base font-semibold text-slate-900 border-none">Pending My Approvals</CardTitle>
+                    <CardDescription className="text-xs text-slate-400 mt-0.5">HR Review stage · Role-filtered</CardDescription>
                 </div>
                 <div className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
                     <span className="text-xs font-bold text-red-600">{visibleItems.length} pending</span>
                 </div>
-            </div>
+            </CardHeader>
 
-            <div className="flex-1 space-y-2 overflow-y-auto scrollbar-thin">
+            <CardContent className="flex-1 flex flex-col pt-0">
+                <div className="flex-1 space-y-2 overflow-y-auto scrollbar-thin">
                 {visibleItems.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-10 text-center">
                         <CheckCircle2 size={32} className="text-green-400 mb-2" />
@@ -147,10 +150,10 @@ export default function PendingApprovalsPanel() {
                             </div>
 
                             <div className="flex items-center gap-2">
-                                <button
+                                <Button
                                     onClick={() => handleApprove(item.id, item.reqId)}
                                     disabled={processingId === item.id}
-                                    className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg bg-[hsl(214,67%,32%)] text-white text-xs font-semibold hover:bg-[hsl(214,67%,38%)] transition-all active:scale-95 disabled:opacity-50"
+                                    className="flex-1 px-2 py-1.5 h-auto text-xs gap-1 bg-[hsl(214,67%,32%)] hover:bg-[hsl(214,67%,38%)]"
                                 >
                                     {processingId === item.id ? (
                                         <Loader2 size={11} className="animate-spin" />
@@ -158,15 +161,16 @@ export default function PendingApprovalsPanel() {
                                         <CheckCircle2 size={11} />
                                     )}
                                     Approve
-                                </button>
-                                <button
+                                </Button>
+                                <Button
+                                    variant="outline"
                                     onClick={() => handleReject(item.id, item.reqId)}
                                     disabled={processingId === item.id}
-                                    className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50 transition-all active:scale-95 disabled:opacity-50"
+                                    className="flex-1 px-2 py-1.5 h-auto text-xs gap-1"
                                 >
                                     <XCircle size={11} />
                                     Return
-                                </button>
+                                </Button>
                                 <Link
                                     href="/requisition-management"
                                     className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-all"
@@ -178,16 +182,16 @@ export default function PendingApprovalsPanel() {
                     ))
                 )}
             </div>
-
             <div className="mt-3 pt-3 border-t border-slate-100">
-                <Link
-                    href="/requisition-management"
-                    className="text-xs text-[hsl(214,67%,32%)] font-semibold hover:underline flex items-center gap-1"
-                >
-                    View all requisitions
-                    <ChevronRight size={12} />
-                </Link>
-            </div>
-        </div>
+                    <Link
+                        href="/requisition-management"
+                        className="text-xs text-[hsl(214,67%,32%)] font-semibold hover:underline flex items-center gap-1"
+                    >
+                        View all requisitions
+                        <ChevronRight size={12} />
+                    </Link>
+                </div>
+            </CardContent>
+        </Card>
     );
 }

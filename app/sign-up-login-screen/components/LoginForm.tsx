@@ -22,7 +22,8 @@ import {
     KeyRound,
 } from 'lucide-react';
 import AppLogo from '@/components/ui/AppLogo';
-
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 interface LoginFormValues {
     email: string;
     password: string;
@@ -249,19 +250,21 @@ export default function LoginForm() {
                     {/* Portal Toggle */}
                     <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100 mb-8 self-start">
                         {(['internal', 'vendor'] as PortalType[]).map((type) => (
-                            <button
+                            <Button
+                                type="button"
+                                variant="ghost"
                                 key={`portal-${type}`}
                                 onClick={() => {
                                     setPortalType(type);
                                     setAuthError(null);
                                 }}
                                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${portalType === type
-                                        ? 'bg-white text-[hsl(214,67%,32%)] shadow-sm'
-                                        : 'text-slate-500 hover:text-slate-700'
+                                        ? 'bg-white text-[hsl(214,67%,32%)] shadow-sm hover:text-[hsl(214,67%,32%)] hover:bg-white'
+                                        : 'text-slate-500 hover:text-slate-700 hover:bg-transparent'
                                     }`}
                             >
                                 {type === 'internal' ? '🏢 Internal Portal' : '🏭 Vendor Portal'}
-                            </button>
+                            </Button>
                         ))}
                     </div>
 
@@ -273,8 +276,9 @@ export default function LoginForm() {
                     </div>
 
                     {/* AD SSO Button */}
-                    <button
+                    <Button
                         type="button"
+                        variant="outline"
                         onClick={() => {
                             login({
                                 role: 'HR',
@@ -286,12 +290,12 @@ export default function LoginForm() {
                             });
                             router.push('/operations-dashboard');
                         }}
-                        className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border-2 border-[hsl(214,67%,32%)] text-[hsl(214,67%,32%)] font-semibold text-sm hover:bg-[hsl(214,67%,32%)]/5 transition-all duration-150 mb-6 group"
+                        className="w-full flex h-auto items-center justify-center gap-3 px-4 py-3 rounded-xl border-2 border-[hsl(214,67%,32%)] text-[hsl(214,67%,32%)] font-semibold text-sm hover:bg-[hsl(214,67%,32%)]/5 transition-all duration-150 mb-6 group"
                     >
                         <Shield size={18} />
                         <span>Continue with Active Directory (SSO)</span>
                         <ExternalLink size={13} className="ml-auto text-slate-400 group-hover:text-[hsl(214,67%,32%)] transition-colors" />
-                    </button>
+                    </Button>
 
                     <div className="flex items-center gap-3 mb-6">
                         <div className="flex-1 h-px bg-slate-200" />
@@ -315,12 +319,12 @@ export default function LoginForm() {
                             </label>
                             <div className="relative">
                                 <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                                <input
+                                <Input
                                     id="email"
                                     type="email"
                                     autoComplete="email"
                                     placeholder="your.name@deiz.ae"
-                                    className={`input-field pl-9 ${errors.email ? 'input-error' : ''}`}
+                                    className={`pl-9 h-10 ${errors.email ? 'border-destructive focus-visible:ring-destructive/20' : ''}`}
                                     {...register('email', {
                                         required: 'Email address is required',
                                         pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Enter a valid email address' },
@@ -341,25 +345,27 @@ export default function LoginForm() {
                             </label>
                             <div className="relative">
                                 <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                                <input
+                                <Input
                                     id="password"
                                     type={showPassword ? 'text' : 'password'}
                                     autoComplete="current-password"
                                     placeholder="Enter your password"
-                                    className={`input-field pl-9 pr-10 ${errors.password ? 'input-error' : ''}`}
+                                    className={`pl-9 pr-10 h-10 ${errors.password ? 'border-destructive focus-visible:ring-destructive/20' : ''}`}
                                     {...register('password', {
                                         required: 'Password is required',
                                         minLength: { value: 6, message: 'Password must be at least 6 characters' },
                                     })}
                                 />
-                                <button
+                                <Button
                                     type="button"
+                                    variant="ghost"
+                                    size="icon"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                    className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-slate-400 hover:text-slate-600 hover:bg-transparent transition-colors"
                                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                                 >
                                     {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
-                                </button>
+                                </Button>
                             </div>
                             {errors.password && (
                                 <p className="text-red-600 text-xs mt-1.5 flex items-center gap-1">
@@ -378,28 +384,28 @@ export default function LoginForm() {
                                 />
                                 <span className="text-sm text-slate-600">Remember me</span>
                             </label>
-                            <button type="button" className="text-sm text-[hsl(214,67%,32%)] font-medium hover:underline">
+                            <Button variant="link" type="button" className="px-0 h-auto text-sm text-[hsl(214,67%,32%)] font-medium hover:underline">
                                 Forgot password?
-                            </button>
+                            </Button>
                         </div>
 
-                        <button
+                        <Button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full btn-primary py-3 text-base font-semibold"
+                            className="w-full h-11 text-base font-semibold"
                         >
                             {isLoading ? (
                                 <>
-                                    <Loader2 size={18} className="animate-spin" />
+                                    <Loader2 size={18} className="animate-spin mr-2" />
                                     Authenticating…
                                 </>
                             ) : (
                                 <>
                                     Sign In
-                                    <ArrowRight size={16} />
+                                    <ArrowRight size={16} className="ml-2" />
                                 </>
                             )}
-                        </button>
+                        </Button>
                     </form>
 
                     {/* Demo Credentials Table */}
@@ -434,37 +440,42 @@ export default function LoginForm() {
                                                 <td className="px-3 py-2.5">
                                                     <div className="flex items-center gap-1">
                                                         <span className="font-mono text-slate-600 whitespace-nowrap">{cred.email}</span>
-                                                        <button
+                                                        <Button
                                                             type="button"
+                                                            variant="ghost"
+                                                            size="icon"
                                                             onClick={() => copyToClipboard(cred.email, 'Email')}
-                                                            className="text-slate-400 hover:text-slate-600 transition-colors p-0.5 rounded"
+                                                            className="h-6 w-6 text-slate-400 hover:text-slate-600 p-0 rounded hover:bg-slate-100 transition-colors"
                                                             aria-label="Copy email"
                                                         >
                                                             <Copy size={10} />
-                                                        </button>
+                                                        </Button>
                                                     </div>
                                                 </td>
                                                 <td className="px-3 py-2.5">
                                                     <div className="flex items-center gap-1">
                                                         <span className="font-mono text-slate-500 whitespace-nowrap">{cred.password}</span>
-                                                        <button
+                                                        <Button
                                                             type="button"
+                                                            variant="ghost"
+                                                            size="icon"
                                                             onClick={() => copyToClipboard(cred.password, 'Password')}
-                                                            className="text-slate-400 hover:text-slate-600 transition-colors p-0.5 rounded"
+                                                            className="h-6 w-6 text-slate-400 hover:text-slate-600 p-0 rounded hover:bg-slate-100 transition-colors"
                                                             aria-label="Copy password"
                                                         >
                                                             <Copy size={10} />
-                                                        </button>
+                                                        </Button>
                                                     </div>
                                                 </td>
                                                 <td className="px-3 py-2.5 text-right">
-                                                    <button
+                                                    <Button
                                                         type="button"
+                                                        size="sm"
                                                         onClick={() => autofill(cred)}
-                                                        className="px-2.5 py-1 rounded-md bg-[hsl(214,67%,32%)] text-white text-[10px] font-bold hover:bg-[hsl(214,67%,38%)] transition-colors whitespace-nowrap"
+                                                        className="h-6 px-2.5 py-1 rounded-md bg-[hsl(214,67%,32%)] text-white text-[10px] font-bold hover:bg-[hsl(214,67%,38%)] whitespace-nowrap"
                                                     >
                                                         Use
-                                                    </button>
+                                                    </Button>
                                                 </td>
                                             </tr>
                                         ))}

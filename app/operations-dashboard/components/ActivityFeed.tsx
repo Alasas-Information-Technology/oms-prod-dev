@@ -12,6 +12,8 @@ import {
     RefreshCw,
 } from 'lucide-react';
 import Icon from '@/components/ui/AppIcon';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 
 
 // Backend integration point: GET /api/dashboard/activity-feed?limit=12
@@ -116,15 +118,16 @@ const activities = [
 
 export default function ActivityFeed() {
     return (
-        <div className="card p-5 h-full flex flex-col">
-            <div className="flex items-start justify-between mb-4">
+        <Card className="h-full flex flex-col">
+            <CardHeader className="flex flex-row items-start justify-between mb-0 pb-2">
                 <div>
-                    <h2 className="text-base font-semibold text-slate-900">Activity Feed</h2>
-                    <p className="text-xs text-slate-400 mt-0.5">System-wide · Immutable audit log</p>
+                    <CardTitle className="text-base font-semibold text-slate-900 border-none">Activity Feed</CardTitle>
+                    <CardDescription className="text-xs text-slate-400 mt-0.5">System-wide · Immutable audit log</CardDescription>
                 </div>
                 <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse mt-1.5" />
-            </div>
-            <div className="flex-1 space-y-3 overflow-y-auto scrollbar-thin">
+            </CardHeader>
+            <CardContent className="flex-1 flex flex-col pt-0">
+                <div className="flex-1 space-y-3 overflow-y-auto scrollbar-thin">
                 {activities?.map((act) => {
                     const Icon = act?.icon;
                     return (
@@ -142,14 +145,15 @@ export default function ActivityFeed() {
                                 <p className="text-[10px] text-slate-400 mt-0.5">{act?.time}</p>
                             </div>
                         </div>
-                    );
-                })}
+                )
+            })}
             </div>
             <div className="mt-3 pt-3 border-t border-slate-100">
-                <button className="text-xs text-[hsl(214,67%,32%)] font-semibold hover:underline">
-                    View full audit log →
-                </button>
-            </div>
-        </div>
+                    <Button variant="link" className="text-xs text-[hsl(214,67%,32%)] font-semibold p-0 h-auto">
+                        View full audit log →
+                    </Button>
+                </div>
+            </CardContent>
+        </Card>
     );
 }

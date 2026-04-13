@@ -21,7 +21,19 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
-
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+    Card,
+    CardContent,
+} from '@/components/ui/card';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 
 type WorkflowStage =
     | 'Draft' | 'Submitted' | 'Line Manager Review' | 'HOD Approval' | 'HR Review' | 'Procurement' | 'Vendor Submission' | 'Blind Selection' | 'Interview' | 'Qualified' | 'Onboarding' | 'Active' | 'Renewal' | 'Terminated' | 'Closed';
@@ -427,20 +439,22 @@ export default function RequisitionTable() {
             <div className="flex items-center gap-3">
                 <div className="relative flex-1 max-w-sm">
                     <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input
+                    <Input
                         type="text"
                         placeholder="Search by ID, title, department, requestor…"
                         value={search}
                         onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
-                        className="w-full pl-9 pr-4 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[hsl(214,67%,32%)]/20 focus:border-[hsl(214,67%,32%)] transition-all"
+                        className="w-full pl-9 pr-8 h-10 bg-white"
                     />
                     {search && (
-                        <button
+                        <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={() => setSearch('')}
-                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                            className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-slate-400 hover:text-slate-600 hover:bg-transparent"
                         >
                             <X size={13} />
-                        </button>
+                        </Button>
                     )}
                 </div>
 
@@ -451,13 +465,14 @@ export default function RequisitionTable() {
 
                     {/* Column Visibility */}
                     <div className="relative">
-                        <button
+                        <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={() => setShowColMenu(!showColMenu)}
-                            className="btn-ghost text-xs px-3 py-2"
                         >
                             <Columns size={14} />
                             Columns
-                        </button>
+                        </Button>
                         {showColMenu && (
                             <div className="absolute right-0 top-full mt-1 w-52 bg-white rounded-xl border border-slate-200 shadow-modal z-50 p-3 animate-fade-in">
                                 <p className="text-xs font-semibold text-slate-500 mb-2">Toggle Columns</p>
@@ -485,48 +500,56 @@ export default function RequisitionTable() {
                 <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[hsl(214,67%,32%)] text-white animate-slide-up">
                     <span className="text-sm font-semibold">{selected.length} selected</span>
                     <div className="flex items-center gap-2 ml-auto">
-                        <button
+                        <Button
+                            variant="secondary"
+                            size="sm"
                             onClick={handleBulkApprove}
-                            className="px-3 py-1.5 rounded-lg bg-white/15 text-white text-xs font-semibold hover:bg-white/25 transition-colors"
+                            className="bg-white/15 text-white hover:bg-white/25 hover:text-white border-none"
                         >
                             Approve Selected
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            size="sm"
                             onClick={handleBulkExport}
-                            className="px-3 py-1.5 rounded-lg bg-white/15 text-white text-xs font-semibold hover:bg-white/25 transition-colors"
+                            className="bg-white/15 text-white hover:bg-white/25 hover:text-white border-none"
                         >
                             Export
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            size="sm"
                             onClick={handleBulkDelete}
-                            className="px-3 py-1.5 rounded-lg bg-red-500/80 text-white text-xs font-semibold hover:bg-red-500 transition-colors"
                         >
                             Cancel Requisitions
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={() => setSelected([])}
-                            className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+                            className="h-8 w-8 text-white hover:bg-white/20 hover:text-white transition-colors"
                         >
                             <X size={13} />
-                        </button>
+                        </Button>
                     </div>
                 </div>
             )}
 
             {/* Table */}
-            <div className="card overflow-hidden">
-                <div className="overflow-x-auto scrollbar-thin">
+            <Card className="overflow-hidden border-none shadow-card">
+                <CardContent className="p-0">
+                    <div className="overflow-x-auto scrollbar-thin">
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="bg-slate-50 border-b border-slate-200">
                                 <th className="w-10 px-3 py-3 text-left">
-                                    <button onClick={toggleSelectAll} className="text-slate-400 hover:text-slate-600 transition-colors">
+                                    <Button variant="ghost" size="icon" onClick={toggleSelectAll} className="h-6 w-6 p-0 text-slate-400 hover:text-slate-600 transition-colors">
                                         {selected.length === paginated.length && paginated.length > 0 ? (
                                             <CheckSquare size={15} className="text-[hsl(214,67%,32%)]" />
                                         ) : (
                                             <Square size={15} />
                                         )}
-                                    </button>
+                                    </Button>
                                 </th>
                                 {visibleColumns.map((col) => (
                                     <th
@@ -577,13 +600,13 @@ export default function RequisitionTable() {
                                         >
                                             {/* Checkbox */}
                                             <td className="px-3 py-3">
-                                                <button onClick={() => toggleSelect(req.id)} className="text-slate-400 hover:text-slate-600 transition-colors">
+                                                <Button variant="ghost" size="icon" onClick={() => toggleSelect(req.id)} className="h-6 w-6 p-0 text-slate-400 hover:text-slate-600 transition-colors">
                                                     {isSelected ? (
                                                         <CheckSquare size={15} className="text-[hsl(214,67%,32%)]" />
                                                     ) : (
                                                         <Square size={15} />
                                                     )}
-                                                </button>
+                                                </Button>
                                             </td>
 
                                             {/* Req ID */}
@@ -650,29 +673,31 @@ export default function RequisitionTable() {
                                             {/* Stage — clickable dropdown */}
                                             {visibleCols.includes('col-stage') && (
                                                 <td className="px-3 py-3 whitespace-nowrap relative">
-                                                    <button
+                                                    <Button
+                                                        variant="ghost"
                                                         onClick={() => setStageDropdownId(stageDropdownId === req.id ? null : req.id)}
-                                                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${stageSty.bg} ${stageSty.text} hover:opacity-80 transition-opacity`}
+                                                        className={`inline-flex items-center gap-1 h-auto px-2 py-1 rounded-full text-xs font-semibold ${stageSty.bg} hover:bg-transparent ${stageSty.text} hover:opacity-80 transition-opacity`}
                                                     >
                                                         <span className={`w-1.5 h-1.5 rounded-full ${stageSty.dot}`} />
                                                         {req.stage}
                                                         <ChevronDown size={10} />
-                                                    </button>
+                                                    </Button>
 
                                                     {stageDropdownId === req.id && (
                                                         <div className="absolute left-0 top-full mt-1 w-52 bg-white rounded-xl border border-slate-200 shadow-modal z-50 py-1 animate-fade-in max-h-64 overflow-y-auto scrollbar-thin">
                                                             {stageOptions.map((s) => {
                                                                 const sty = stageStyles[s];
                                                                 return (
-                                                                    <button
+                                                                    <Button
+                                                                        variant="ghost"
                                                                         key={`stage-opt-${req.id}-${s}`}
                                                                         onClick={() => handleStageChange(req.reqId, s)}
-                                                                        className={`w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-slate-50 transition-colors ${s === req.stage ? 'font-bold' : ''}`}
+                                                                        className={`w-full justify-start h-auto flex items-center gap-2 px-3 py-2 text-xs hover:bg-slate-50 transition-colors ${s === req.stage ? 'font-bold' : ''}`}
                                                                     >
                                                                         <span className={`w-2 h-2 rounded-full ${sty.dot}`} />
                                                                         <span className={sty.text}>{s}</span>
                                                                         {s === req.stage && <span className="ml-auto text-[10px] text-slate-400">Current</span>}
-                                                                    </button>
+                                                                    </Button>
                                                                 );
                                                             })}
                                                         </div>
@@ -735,61 +760,75 @@ export default function RequisitionTable() {
                                             {/* Actions */}
                                             <td className="px-3 py-3">
                                                 <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity relative">
-                                                    <button
-                                                        className="p-1.5 rounded-lg text-slate-400 hover:text-[hsl(214,67%,32%)] hover:bg-blue-50 transition-all"
-                                                        title="View requisition details"
-                                                    >
-                                                        <Eye size={14} />
-                                                    </button>
-                                                    <button
-                                                        className="p-1.5 rounded-lg text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-all"
+                                                    <Link href={`/requisition-management/${req.reqId}`}>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="h-8 w-8 text-slate-400 hover:text-[hsl(214,67%,32%)] hover:bg-blue-50 transition-all"
+                                                            title="View requisition details"
+                                                        >
+                                                            <Eye size={14} />
+                                                        </Button>
+                                                    </Link>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-all"
                                                         title="Edit requisition"
                                                     >
                                                         <Edit3 size={14} />
-                                                    </button>
-                                                    <button
-                                                        className="p-1.5 rounded-lg text-slate-400 hover:text-green-600 hover:bg-green-50 transition-all"
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-slate-400 hover:text-green-600 hover:bg-green-50 transition-all"
                                                         title="Advance to next stage"
                                                         onClick={() => toast.success(`${req.reqId} advanced to next stage`)}
                                                     >
                                                         <ArrowRight size={14} />
-                                                    </button>
+                                                    </Button>
                                                     <div className="relative">
-                                                        <button
-                                                            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all"
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="h-8 w-8 text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all"
                                                             title="More actions"
                                                             onClick={() => setActionMenuId(actionMenuId === req.id ? null : req.id)}
                                                         >
                                                             <MoreHorizontal size={14} />
-                                                        </button>
+                                                        </Button>
                                                         {actionMenuId === req.id && (
                                                             <div className="absolute right-0 top-full mt-1 w-44 bg-white rounded-xl border border-slate-200 shadow-modal z-50 py-1 animate-fade-in">
-                                                                <button
-                                                                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors"
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    className="w-full h-auto justify-start flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors"
                                                                     onClick={() => { toast.info(`Cloning ${req.reqId}…`); setActionMenuId(null); }}
                                                                 >
                                                                     Clone Requisition
-                                                                </button>
-                                                                <button
-                                                                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors"
+                                                                </Button>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    className="w-full h-auto justify-start flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors"
                                                                     onClick={() => { toast.info(`Generating audit log for ${req.reqId}…`); setActionMenuId(null); }}
                                                                 >
                                                                     View Audit Log
-                                                                </button>
-                                                                <button
-                                                                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors"
+                                                                </Button>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    className="w-full h-auto justify-start flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors"
                                                                     onClick={() => { toast.info(`Sending SLA reminder for ${req.reqId}…`); setActionMenuId(null); }}
                                                                 >
                                                                     Send SLA Reminder
-                                                                </button>
+                                                                </Button>
                                                                 <div className="border-t border-slate-100 my-1" />
-                                                                <button
-                                                                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-600 hover:bg-red-50 transition-colors"
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    className="w-full h-auto justify-start flex items-center gap-2 px-3 py-2 text-xs text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
                                                                     onClick={() => { toast.error(`Termination request initiated for ${req.reqId} — HOD approval required`); setActionMenuId(null); }}
                                                                 >
                                                                     <Trash2 size={12} />
                                                                     Terminate / Cancel
-                                                                </button>
+                                                                </Button>
                                                             </div>
                                                         )}
                                                     </div>
@@ -805,57 +844,60 @@ export default function RequisitionTable() {
 
                 {/* Pagination */}
                 <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 bg-slate-50/50">
-                    <div className="flex items-center gap-3">
-                        <span className="text-xs text-slate-500">Rows per page:</span>
-                        <select
-                            value={itemsPerPage}
-                            onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                            className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-[hsl(214,67%,32%)]/20"
-                        >
-                            {ITEMS_PER_PAGE_OPTIONS.map((opt) => (
-                                <option key={`page-opt-${opt}`} value={opt}>{opt}</option>
-                            ))}
-                        </select>
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs text-slate-500">Show</span>
+                            <Select
+                                value={itemsPerPage.toString()}
+                                onValueChange={(val) => { setItemsPerPage(Number(val)); setCurrentPage(1); }}
+                            >
+                                <SelectTrigger className="h-8 w-[70px]">
+                                    <SelectValue placeholder={itemsPerPage.toString()} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {ITEMS_PER_PAGE_OPTIONS.map((opt) => (
+                                        <SelectItem key={`page-opt-${opt}`} value={opt.toString()}>
+                                            {opt}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
                         <span className="text-xs text-slate-400">
                             {(currentPage - 1) * itemsPerPage + 1}–{Math.min(currentPage * itemsPerPage, sorted.length)} of {sorted.length}
                         </span>
                     </div>
 
                     <div className="flex items-center gap-1">
-                        <button
+                        <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                             disabled={currentPage === 1}
-                            className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                            className="h-8 w-8 text-slate-500 hover:bg-slate-100 disabled:opacity-40 transition-colors"
                         >
-                            <ChevronLeft size={14} />
-                        </button>
+                            <ChevronLeft size={16} />
+                        </Button>
+                        
+                        <div className="flex items-center px-2">
+                            <span className="text-xs font-semibold text-slate-700">{currentPage}</span>
+                            <span className="text-xs text-slate-400 mx-1">/</span>
+                            <span className="text-xs text-slate-400">{totalPages}</span>
+                        </div>
 
-                        {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
-                            const page = i + 1;
-                            return (
-                                <button
-                                    key={`page-btn-${page}`}
-                                    onClick={() => setCurrentPage(page)}
-                                    className={`w-7 h-7 rounded-lg text-xs font-semibold transition-colors ${currentPage === page
-                                        ? 'bg-[hsl(214,67%,32%)] text-white'
-                                        : 'text-slate-500 hover:bg-slate-200'
-                                        }`}
-                                >
-                                    {page}
-                                </button>
-                            );
-                        })}
-
-                        <button
+                        <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                             disabled={currentPage === totalPages}
-                            className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                            className="h-8 w-8 text-slate-500 hover:bg-slate-100 disabled:opacity-40 transition-colors"
                         >
-                            <ChevronRight size={14} />
-                        </button>
+                            <ChevronRight size={16} />
+                        </Button>
                     </div>
                 </div>
-            </div>
+                </CardContent>
+            </Card>
         </div>
     );
 }

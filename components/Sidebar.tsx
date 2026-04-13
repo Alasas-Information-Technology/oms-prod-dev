@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import AppLogo from '@/components/ui/AppLogo';
+import { Button } from '@/components/ui/button';
 import {
     LayoutDashboard,
     FileText,
@@ -175,7 +176,9 @@ export default function Sidebar() {
             </div>
 
             {/* Collapse Toggle */}
-            <button
+            <Button
+                variant="outline"
+                size="icon"
                 onClick={() => setCollapsed(!collapsed)}
                 className="absolute -right-3 top-20 w-6 h-6 rounded-full bg-white border border-slate-200 shadow-md flex items-center justify-center hover:bg-slate-50 transition-colors z-40"
                 aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
@@ -185,7 +188,7 @@ export default function Sidebar() {
                 ) : (
                     <ChevronLeft size={12} className="text-slate-600" />
                 )}
-            </button>
+            </Button>
         </aside>
     );
 }

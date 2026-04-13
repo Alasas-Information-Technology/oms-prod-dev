@@ -3,6 +3,7 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Shield, AlertTriangle, TrendingUp } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 
 // Backend integration point: GET /api/dashboard/emiratisation-compliance
 const complianceData = [
@@ -35,16 +36,21 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
 
 export default function EmiratesCompliancePanel() {
     return (
-        <div className="card p-5 h-full flex flex-col">
-            <div className="flex items-start justify-between mb-4">
+        <Card className="h-full flex flex-col bg-gradient-to-br from-white to-slate-50 relative overflow-hidden">
+            {/* Background Pattern */}
+            <div className="absolute right-0 top-0 w-32 h-32 bg-[url('/grid-pattern.svg')] opacity-[0.03] pointer-events-none" />
+            
+            <CardHeader className="flex flex-row items-start justify-between mb-0 pb-4 relative z-10">
                 <div>
-                    <h2 className="text-base font-semibold text-slate-900">Emiratisation Compliance</h2>
-                    <p className="text-xs text-slate-400 mt-0.5">Dubai Law No. 5 of 2026 · 1:1 mandate (50% target)</p>
+                    <CardTitle className="text-base font-semibold text-slate-900 flex items-center gap-2 border-none">
+                        <Shield size={16} className="text-[hsl(214,67%,32%)]" />
+                        Emiratisation Compliance
+                    </CardTitle>
+                    <CardDescription className="text-xs text-slate-400 mt-0.5">Dubai Law No. 5 of 2026 · 1:1 mandate (50% target)</CardDescription>
                 </div>
-                <Shield size={18} className="text-[hsl(214,67%,32%)] mt-0.5" />
-            </div>
+            </CardHeader>
 
-            {/* Donut Chart */}
+            <CardContent className="flex-1 flex flex-col justify-between relative z-10 pt-0 pb-0">
             <div className="flex items-center gap-4 mb-4">
                 <div style={{ width: 100, height: 100 }}>
                     <ResponsiveContainer width="100%" height="100%">
@@ -119,10 +125,12 @@ export default function EmiratesCompliancePanel() {
                 </div>
             </div>
 
-            <div className="mt-3 pt-3 border-t border-slate-100 flex items-center gap-1.5 text-xs text-slate-400">
+            </CardContent>
+
+            <CardFooter className="mt-0 pt-3 border-t border-slate-100 flex items-center gap-1.5 text-xs text-slate-400 relative z-10">
                 <TrendingUp size={12} />
                 <span>Target 50% by Q4 FY2026 per Dubai Law No. 5</span>
-            </div>
-        </div>
+            </CardFooter>
+        </Card>
     );
 }

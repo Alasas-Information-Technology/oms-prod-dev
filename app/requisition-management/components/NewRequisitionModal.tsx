@@ -1,9 +1,29 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { toast } from 'sonner';
 import { X, Loader2, Info } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 
 interface NewRequisitionFormValues {
     positionTitle: string;
@@ -43,6 +63,7 @@ export default function NewRequisitionModal({ onClose }: NewRequisitionModalProp
         register,
         handleSubmit,
         watch,
+        control,
         formState: { errors },
     } = useForm<NewRequisitionFormValues>({
         defaultValues: {
@@ -68,31 +89,15 @@ export default function NewRequisitionModal({ onClose }: NewRequisitionModalProp
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} />
+        <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
+            <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col p-0 overflow-hidden border-none shadow-modal">
+                <DialogHeader className="px-6 py-4 border-b border-slate-200 shrink-0">
+                    <DialogTitle className="text-xl font-bold text-slate-900 border-none">New Requisition</DialogTitle>
+                    <DialogDescription className="text-sm text-slate-500 mt-1">Complete the enterprise resourcing form</DialogDescription>
+                </DialogHeader>
 
-            {/* Modal Container */}
-            <div className="relative w-full max-w-3xl bg-white rounded-2xl shadow-modal flex flex-col max-h-[90vh] animate-slide-up">
-                
-                {/* Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 shrink-0">
-                    <div>
-                        <h2 className="text-xl font-bold text-slate-900">New Requisition</h2>
-                        <p className="text-sm text-slate-500 mt-1">Complete the enterprise resourcing form</p>
-                    </div>
-                    <button
-                        onClick={onClose}
-                        className="p-2 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
-                    >
-                        <X size={20} />
-                    </button>
-                </div>
-
-                {/* Body / Scrollable Form */}
                 <div className="flex-1 overflow-y-auto p-6 scrollbar-thin">
                     <form id="new-req-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-                        
                         {/* Section 1: Job Specification */}
                         <section className="space-y-5">
                             <h3 className="text-sm font-bold tracking-wider text-[hsl(214,67%,32%)] uppercase border-b border-slate-100 pb-2">
@@ -101,61 +106,69 @@ export default function NewRequisitionModal({ onClose }: NewRequisitionModalProp
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div className="md:col-span-2">
                                     <label className="label">Position Title <span className="text-red-500">*</span></label>
-                                    <input
+                                    <Input
                                         type="text"
                                         placeholder="e.g. Cloud Architect"
-                                        className={`input-field ${errors.positionTitle ? 'input-error' : ''}`}
+                                        className={`${errors.positionTitle ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                                         {...register('positionTitle', { required: 'Position Title is required' })}
                                     />
                                     {errors.positionTitle && <p className="text-red-600 text-xs mt-1">{errors.positionTitle.message}</p>}
                                 </div>
 
                                 <div>
-                                    <label className="label">Department <span className="text-red-500">*</span></label>
-                                    <select
-                                        className={`input-field ${errors.department ? 'input-error' : ''}`}
-                                        {...register('department', { required: 'Department is required' })}
-                                    >
-                                        <option value="">Select a department...</option>
-                                        {departments.map(dept => (
-                                            <option key={dept} value={dept}>{dept}</option>
-                                        ))}
-                                    </select>
+                                    <Label className="label">Department <span className="text-red-500">*</span></Label>
+                                    <Controller
+                                        name="department"
+                                        control={control}
+                                        rules={{ required: 'Department is required' }}
+                                        render={({ field }) => (
+                                            <Select onValueChange={field.onChange} value={field.value}>
+                                                <SelectTrigger className={`w-full ${errors.department ? 'border-red-500' : ''}`}>
+                                                    <SelectValue placeholder="Select a department..." />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {departments.map(dept => (
+                                                        <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        )}
+                                    />
                                     {errors.department && <p className="text-red-600 text-xs mt-1">{errors.department.message}</p>}
                                 </div>
 
                                 <div>
-                                    <label className="label">Target Start Date <span className="text-red-500">*</span></label>
-                                    <input
+                                    <Label className="label">Target Start Date <span className="text-red-500">*</span></Label>
+                                    <Input
                                         type="date"
-                                        className={`input-field ${errors.targetStartDate ? 'input-error' : ''}`}
+                                        className={`${errors.targetStartDate ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                                         {...register('targetStartDate', { required: 'Target Start Date is required' })}
                                     />
                                     {errors.targetStartDate && <p className="text-red-600 text-xs mt-1">{errors.targetStartDate.message}</p>}
                                 </div>
 
                                 <div className="md:col-span-2">
-                                    <label className="label mb-3">Work Location <span className="text-red-500">*</span></label>
-                                    <div className="flex gap-4">
-                                        <label className="flex items-center gap-2 cursor-pointer">
-                                            <input
-                                                type="radio"
-                                                value="Onshore (UAE)"
-                                                className="w-4 h-4 text-[hsl(214,67%,32%)]"
-                                                {...register('workLocation')}
-                                            />
-                                            <span className="text-sm font-medium text-slate-700">Onshore (UAE)</span>
-                                        </label>
-                                        <label className="flex items-center gap-2 cursor-pointer">
-                                            <input
-                                                type="radio"
-                                                value="Offshore (Remote)"
-                                                className="w-4 h-4 text-[hsl(214,67%,32%)]"
-                                                {...register('workLocation')}
-                                            />
-                                            <span className="text-sm font-medium text-slate-700">Offshore (Remote)</span>
-                                        </label>
-                                    </div>
+                                    <Label className="label mb-3">Work Location <span className="text-red-500">*</span></Label>
+                                    <Controller
+                                        name="workLocation"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <RadioGroup
+                                                onValueChange={field.onChange}
+                                                value={field.value}
+                                                className="flex gap-6 mt-1"
+                                            >
+                                                <div className="flex items-center space-x-2">
+                                                    <RadioGroupItem value="Onshore (UAE)" id="onshore" />
+                                                    <Label htmlFor="onshore" className="cursor-pointer">Onshore (UAE)</Label>
+                                                </div>
+                                                <div className="flex items-center space-x-2">
+                                                    <RadioGroupItem value="Offshore (Remote)" id="offshore" />
+                                                    <Label htmlFor="offshore" className="cursor-pointer">Offshore (Remote)</Label>
+                                                </div>
+                                            </RadioGroup>
+                                        )}
+                                    />
                                 </div>
                             </div>
                         </section>
@@ -167,47 +180,83 @@ export default function NewRequisitionModal({ onClose }: NewRequisitionModalProp
                             </h3>
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <label className="flex items-start gap-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors">
-                                    <input type="checkbox" className="mt-1 w-4 h-4 text-[hsl(214,67%,32%)] rounded" {...register('reqLaptop')} />
-                                    <div>
-                                        <p className="text-sm font-semibold text-slate-800">Corporate Laptop</p>
-                                        <p className="text-xs text-slate-500">Standard IT provisioned device</p>
-                                    </div>
-                                </label>
+                                <Controller
+                                    name="reqLaptop"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <div 
+                                            className="flex items-start gap-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors"
+                                            onClick={() => field.onChange(!field.value)}
+                                        >
+                                            <Checkbox checked={field.value} onCheckedChange={field.onChange} className="mt-1" />
+                                            <div>
+                                                <p className="text-sm font-semibold text-slate-800">Corporate Laptop</p>
+                                                <p className="text-xs text-slate-500">Standard IT provisioned device</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                />
                                 
-                                <label className="flex items-start gap-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors">
-                                    <input type="checkbox" className="mt-1 w-4 h-4 text-[hsl(214,67%,32%)] rounded" {...register('reqMobilePhone')} />
-                                    <div>
-                                        <p className="text-sm font-semibold text-slate-800">Mobile Phone</p>
-                                        <p className="text-xs text-slate-500">Requires line manager approval</p>
-                                    </div>
-                                </label>
+                                <Controller
+                                    name="reqMobilePhone"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <div 
+                                            className="flex items-start gap-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors"
+                                            onClick={() => field.onChange(!field.value)}
+                                        >
+                                            <Checkbox checked={field.value} onCheckedChange={field.onChange} className="mt-1" />
+                                            <div>
+                                                <p className="text-sm font-semibold text-slate-800">Mobile Phone</p>
+                                                <p className="text-xs text-slate-500">Requires line manager approval</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                />
                                 
-                                <label className="flex items-start gap-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors">
-                                    <input type="checkbox" className="mt-1 w-4 h-4 text-[hsl(214,67%,32%)] rounded" {...register('reqEmailAccess')} />
-                                    <div>
-                                        <p className="text-sm font-semibold text-slate-800">Enterprise Email Access</p>
-                                        <p className="text-xs text-slate-500">Provided via Active Directory</p>
-                                    </div>
-                                </label>
+                                <Controller
+                                    name="reqEmailAccess"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <div 
+                                            className="flex items-start gap-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors"
+                                            onClick={() => field.onChange(!field.value)}
+                                        >
+                                            <Checkbox checked={field.value} onCheckedChange={field.onChange} className="mt-1" />
+                                            <div>
+                                                <p className="text-sm font-semibold text-slate-800">Enterprise Email Access</p>
+                                                <p className="text-xs text-slate-500">Provided via Active Directory</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                />
 
-                                <label className="flex items-start gap-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors">
-                                    <input type="checkbox" className="mt-1 w-4 h-4 text-[hsl(214,67%,32%)] rounded" {...register('reqSoftwareLicenses')} />
-                                    <div>
-                                        <p className="text-sm font-semibold text-slate-800">Specialized Software Licenses</p>
-                                        <p className="text-xs text-slate-500">e.g. Adobe CC, GitHub, Oracle</p>
-                                    </div>
-                                </label>
+                                <Controller
+                                    name="reqSoftwareLicenses"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <div 
+                                            className="flex items-start gap-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors"
+                                            onClick={() => field.onChange(!field.value)}
+                                        >
+                                            <Checkbox checked={field.value} onCheckedChange={field.onChange} className="mt-1" />
+                                            <div>
+                                                <p className="text-sm font-semibold text-slate-800">Specialized Software Licenses</p>
+                                                <p className="text-xs text-slate-500">e.g. Adobe CC, GitHub, Oracle</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                />
                             </div>
 
                             {workLocation === 'Onshore (UAE)' && (
                                 <div className="mt-4 animate-fade-in">
-                                    <label className="label">Office Seating Accommodations <span className="text-red-500">*</span></label>
+                                    <Label className="label">Office Seating Accommodations <span className="text-red-500">*</span></Label>
                                     <p className="text-xs text-slate-500 mb-2">Required since location is Onshore. Describe desk placement or facility needs.</p>
                                     <textarea
                                         rows={3}
                                         placeholder="e.g. Requires a dual-monitor setup on the 3rd floor..."
-                                        className={`input-field resize-none ${errors.officeSeating ? 'input-error' : ''}`}
+                                        className={`input-field resize-none block w-full border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(214,67%,32%)]/20 ${errors.officeSeating ? 'border-red-500' : ''}`}
                                         {...register('officeSeating', { required: 'Seating Accommodations required for Onshore personnel' })}
                                     />
                                     {errors.officeSeating && <p className="text-red-600 text-xs mt-1">{errors.officeSeating.message}</p>}
@@ -223,27 +272,35 @@ export default function NewRequisitionModal({ onClose }: NewRequisitionModalProp
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
-                                    <label className="label">Funding Type <span className="text-red-500">*</span></label>
-                                    <select
-                                        className={`input-field ${errors.fundingType ? 'input-error' : ''}`}
-                                        {...register('fundingType', { required: 'Funding Type is required' })}
-                                    >
-                                        <option value="">Select funding classification...</option>
-                                        {fundingTypes.map(type => (
-                                            <option key={type} value={type}>{type}</option>
-                                        ))}
-                                    </select>
+                                    <Label className="label">Funding Type <span className="text-red-500">*</span></Label>
+                                    <Controller
+                                        name="fundingType"
+                                        control={control}
+                                        rules={{ required: 'Funding Type is required' }}
+                                        render={({ field }) => (
+                                            <Select onValueChange={field.onChange} value={field.value}>
+                                                <SelectTrigger className={`w-full ${errors.fundingType ? 'border-red-500' : ''}`}>
+                                                    <SelectValue placeholder="Select funding classification..." />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {fundingTypes.map(type => (
+                                                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        )}
+                                    />
                                     {errors.fundingType && <p className="text-red-600 text-xs mt-1">{errors.fundingType.message}</p>}
                                 </div>
 
                                 <div>
-                                    <label className="label">Reserved Budget (AED) <span className="text-red-500">*</span></label>
+                                    <Label className="label">Reserved Budget (AED) <span className="text-red-500">*</span></Label>
                                     <div className="relative">
                                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-400">AED</span>
-                                        <input
+                                        <Input
                                             type="number"
                                             placeholder="0"
-                                            className={`input-field pl-12 ${errors.reservedBudget ? 'input-error' : ''}`}
+                                            className={`pl-12 ${errors.reservedBudget ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                                             {...register('reservedBudget', { 
                                                 required: 'Budget amount is required',
                                                 min: { value: 1, message: 'Must be greater than 0' } 
@@ -257,20 +314,19 @@ export default function NewRequisitionModal({ onClose }: NewRequisitionModalProp
                     </form>
                 </div>
 
-                {/* Footer Actions */}
-                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-200 bg-slate-50 shrink-0 rounded-b-2xl">
-                    <button
+                <DialogFooter className="px-6 py-4 border-t border-slate-200 bg-slate-50 shrink-0">
+                    <Button
+                        variant="outline"
                         type="button"
                         onClick={onClose}
-                        className="btn-ghost font-medium text-slate-600 hover:bg-slate-200"
                         disabled={submitting}
                     >
                         Cancel
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="submit"
                         form="new-req-form"
-                        className="btn-primary min-w-[200px]"
+                        className="bg-[hsl(214,67%,32%)] hover:bg-[hsl(214,67%,28%)] text-white min-w-[200px]"
                         disabled={submitting}
                     >
                         {submitting ? (
@@ -281,10 +337,9 @@ export default function NewRequisitionModal({ onClose }: NewRequisitionModalProp
                         ) : (
                             'Submit for HR Approval'
                         )}
-                    </button>
-                </div>
-
-            </div>
-        </div>
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }

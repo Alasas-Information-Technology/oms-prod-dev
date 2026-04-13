@@ -11,6 +11,7 @@ import {
     ResponsiveContainer,
     Cell,
 } from 'recharts';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 
 // Backend integration point: GET /api/dashboard/budget-utilization-by-department
 const budgetData = [
@@ -48,11 +49,11 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
 
 export default function BudgetUtilizationChart() {
     return (
-        <div className="card p-5 h-full">
-            <div className="flex items-start justify-between mb-5">
+        <Card className="h-full flex flex-col">
+            <CardHeader className="flex flex-row items-start justify-between mb-0 pb-2">
                 <div>
-                    <h2 className="text-base font-semibold text-slate-900">Budget vs. Consumed</h2>
-                    <p className="text-xs text-slate-400 mt-0.5">By department · AED · FY2026</p>
+                    <CardTitle className="text-base font-semibold text-slate-900 border-none">Budget vs. Consumed</CardTitle>
+                    <CardDescription className="text-xs text-slate-400 mt-0.5">By department · AED · FY2026</CardDescription>
                 </div>
                 <div className="flex items-center gap-3 text-xs">
                     <span className="flex items-center gap-1.5 text-slate-500">
@@ -62,8 +63,9 @@ export default function BudgetUtilizationChart() {
                         <span className="w-2.5 h-2.5 rounded-sm bg-[hsl(214,67%,32%)] inline-block" />Consumed
                     </span>
                 </div>
-            </div>
-            <div style={{ height: 240 }}>
+            </CardHeader>
+            <CardContent className="pt-0">
+                <div style={{ height: 240 }}>
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={budgetData} margin={{ top: 0, right: 0, left: -18, bottom: 0 }} barSize={10} barGap={2}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
@@ -98,12 +100,13 @@ export default function BudgetUtilizationChart() {
                         </Bar>
                     </BarChart>
                 </ResponsiveContainer>
-            </div>
-            <div className="mt-3 flex items-center gap-2 p-2 rounded-lg bg-red-50 border border-red-100">
-                <span className="text-[10px] font-semibold text-red-700">
-                    ⚠ Finance &amp; Logistics at &lt;6% budget remaining — amendment required
-                </span>
-            </div>
-        </div>
+                </div>
+                <div className="mt-3 flex items-center gap-2 p-2 rounded-lg bg-red-50 border border-red-100">
+                    <span className="text-[10px] font-semibold text-red-700">
+                        ⚠ Finance &amp; Logistics at &lt;6% budget remaining — amendment required
+                    </span>
+                </div>
+            </CardContent>
+        </Card>
     );
 }

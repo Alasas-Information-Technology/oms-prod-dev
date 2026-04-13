@@ -14,6 +14,7 @@ import {
     XCircle
 } from 'lucide-react';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 interface Candidate {
     id: string;
@@ -158,14 +159,16 @@ export default function BlindSelectionView() {
                                             {isRejected && <XCircle size={16} className="text-red-400" />}
                                         </h3>
                                     </div>
-                                    <button 
+                                    <Button 
+                                        variant="ghost"
+                                        size="sm"
                                         onClick={() => handleViewCV(candidate.alias)}
-                                        className="btn-ghost text-xs px-3 py-1.5 shrink-0"
+                                        className="text-xs px-3 py-1.5 shrink-0"
                                         disabled={isRejected}
                                     >
                                         <Eye size={14} />
                                         View Redacted CV
-                                    </button>
+                                    </Button>
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
@@ -205,33 +208,29 @@ export default function BlindSelectionView() {
                                             if (!rankOption) return null;
                                             
                                             const isActive = currentRank === rankOption;
-                                            const isRejectBtn = rankOption === 'Rejected';
-                                            
-                                            // Dynamic pill styling based on active state and variant
-                                            let pillClass = "px-4 py-2 border rounded-full text-xs font-bold transition-all ";
-                                            
-                                            if (isActive) {
-                                                if (isRejectBtn) pillClass += "bg-red-500 border-red-500 text-white shadow-sm ring-2 ring-red-500/20";
-                                                else pillClass += "bg-[hsl(214,67%,32%)] border-[hsl(214,67%,32%)] text-white shadow-sm ring-2 ring-[hsl(214,67%,32%)]/20";
-                                            } else {
-                                                if (isRejectBtn) pillClass += "bg-white border-slate-200 text-slate-600 hover:border-red-400 hover:text-red-500";
-                                                else pillClass += "bg-white border-slate-200 text-slate-600 hover:border-[hsl(214,67%,32%)] hover:text-[hsl(214,67%,32%)]";
-                                            }
-
                                             // Extended labels
-                                            let label = rankOption;
+                                            let label: string = rankOption;
                                             if (rankOption === 'P1') label = 'P1 (High)';
                                             if (rankOption === 'P2') label = 'P2 (Med)';
                                             if (rankOption === 'P3') label = 'P3 (Low)';
 
+                                            const isRejectBtn = rankOption === 'Rejected';
+
+                                            // Determine variant based on state
+                                            let btnVariant: 'default' | 'destructive' | 'outline' = 'outline';
+                                            if (isActive) {
+                                                btnVariant = isRejectBtn ? 'destructive' : 'default';
+                                            }
+
                                             return (
-                                                <button
+                                                <Button
                                                     key={rankOption}
+                                                    variant={btnVariant}
                                                     onClick={() => handleSetPriority(candidate.id, isActive ? null : rankOption)}
-                                                    className={pillClass}
+                                                    className={`rounded-full text-xs font-bold transition-all shadow-sm ${isActive ? 'ring-2' : ''} ${isActive && isRejectBtn ? 'ring-red-500/20' : isActive ? 'ring-[hsl(214,67%,32%)]/20' : ''}`}
                                                 >
                                                     {label}
-                                                </button>
+                                                </Button>
                                             )
                                         })}
                                     </div>
@@ -254,20 +253,21 @@ export default function BlindSelectionView() {
                         </p>
                     </div>
                     <div className="flex items-center gap-3 w-full sm:w-auto">
-                        <button 
-                            className="btn-secondary w-full sm:w-auto"
+                        <Button 
+                            variant="secondary"
+                            className="w-full sm:w-auto"
                             onClick={() => toast.success("Draft rankings saved securely to OMS.")}
                             disabled={submitting}
                         >
                             Save Draft Rankings
-                        </button>
-                        <button 
-                            className="btn-primary w-full sm:w-auto"
+                        </Button>
+                        <Button 
+                            className="w-full sm:w-auto bg-[hsl(214,67%,32%)] hover:bg-[hsl(214,67%,28%)] text-white"
                             onClick={handleFinalize}
                             disabled={submitting}
                         >
                             {submitting ? 'Finalizing...' : 'Finalize Selection & Proceed to Interviews'}
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>

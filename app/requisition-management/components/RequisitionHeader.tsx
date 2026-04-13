@@ -5,6 +5,7 @@ import { Plus, Download, Upload, BarChart3, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import NewRequisitionModal from './NewRequisitionModal';
+import { Button } from '@/components/ui/button';
 
 export default function RequisitionHeader() {
     const [showNewModal, setShowNewModal] = useState(false);
@@ -27,42 +28,46 @@ export default function RequisitionHeader() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <button
-                        className="btn-ghost text-xs px-3 py-2"
+                    <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => toast?.info('Refreshing requisition data…')}
                     >
                         <RefreshCw size={14} />
                         Refresh
-                    </button>
-                    <button
-                        className="btn-secondary text-xs px-3 py-2"
+                    </Button>
+                    <Button
+                        variant="secondary"
+                        size="sm"
                         onClick={() => toast?.info('Generating Excel export…')}
                     >
                         <Download size={14} />
                         Export
-                    </button>
-                    <button
-                        className="btn-secondary text-xs px-3 py-2"
+                    </Button>
+                    <Button
+                        variant="secondary"
+                        size="sm"
                         onClick={() => toast?.info('Opening bulk import…')}
                     >
                         <Upload size={14} />
                         Import
-                    </button>
-                    <button
-                        className="btn-secondary text-xs px-3 py-2"
+                    </Button>
+                    <Button
+                        variant="secondary"
+                        size="sm"
                         onClick={() => toast?.info('Opening analytics view…')}
                     >
                         <BarChart3 size={14} />
                         Analytics
-                    </button>
+                    </Button>
                     {['DEPT_REQUESTOR', 'HR_ADMIN', 'SYSTEM_ADMIN'].includes(roleForView) && (
-                        <button
-                            className="btn-primary text-xs px-4 py-2"
+                        <Button
+                            size="sm"
                             onClick={() => setShowNewModal(true)}
                         >
                             <Plus size={14} />
                             New Requisition
-                        </button>
+                        </Button>
                     )}
                 </div>
             </div>
