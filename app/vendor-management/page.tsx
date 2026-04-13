@@ -1,18 +1,61 @@
-import React from 'react';
-import AppLayout from '@/components/AppLayout';
+"use client";
+
+import React, { useState } from "react";
+import AppLayout from "@/components/AppLayout";
+import { Plus, Download, RefreshCw, Building2 } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import VendorTable from "./components/VendorTable";
+import VendorModal from "./components/VendorModal";
 
 export default function VendorManagementPage() {
-    return (
-        <AppLayout>
-            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-                <div className="w-16 h-16 rounded-full bg-[hsl(214,67%,32%)]/10 flex items-center justify-center mb-6">
-                    <span className="text-[hsl(214,67%,32%)] text-2xl font-bold">✨</span>
-                </div>
-                <h1 className="text-3xl font-bold text-slate-800 mb-2">Vendor Management Module Coming Soon</h1>
-                <p className="text-slate-500 max-w-md">
-                    This module is currently under development. Check back in a future update.
-                </p>
-            </div>
-        </AppLayout>
-    );
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [showNewModal, setShowNewModal] = useState(false);
+
+  const handleRefresh = () => setRefreshKey((prev) => prev + 1);
+
+  return (
+    <AppLayout>
+      <div className="max-w-screen-2xl mx-auto space-y-5">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-3">
+              <Building2 size={24} className="text-[hsl(214,67%,32%)]" />
+              Vendor Management
+            </h1>
+            <p className="text-slate-500 text-sm mt-0.5">
+              Manage all registered vendors · CRUD operations
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={handleRefresh}>
+              <RefreshCw size={14} /> Refresh
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => toast.info("Generating Excel export…")}
+            >
+              <Download size={14} /> Export
+            </Button>
+            <Button size="sm" onClick={() => setShowNewModal(true)}>
+              <Plus size={14} /> New Vendor
+            </Button>
+          </div>
+        </div>
+
+        {/* Table */}
+        <VendorTable refreshTrigger={refreshKey} />
+      </div>
+
+      {showNewModal && (
+        <VendorModal
+          mode="create"
+          onClose={() => setShowNewModal(false)}
+          onSuccess={handleRefresh}
+        />
+      )}
+    </AppLayout>
+  );
 }
