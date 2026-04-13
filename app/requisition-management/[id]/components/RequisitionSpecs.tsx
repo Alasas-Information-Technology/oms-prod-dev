@@ -4,7 +4,11 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, MapPin, Laptop, Armchair, Wallet, Landmark } from 'lucide-react';
 
-export default function RequisitionSpecs() {
+interface RequisitionSpecsProps {
+    data: any;
+}
+
+export default function RequisitionSpecs({ data }: RequisitionSpecsProps) {
     return (
         <div className="space-y-6">
             <Card className="border-none shadow-card overflow-hidden">
@@ -69,7 +73,9 @@ export default function RequisitionSpecs() {
                         </div>
                         <div className="text-right space-y-1">
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Reserved Amount</p>
-                            <p className="text-lg font-mono font-bold text-slate-800">150,000 <span className="text-xs text-slate-400">AED</span></p>
+                            <p className="text-lg font-mono font-bold text-slate-800">
+                                {data?.budget_aed?.toLocaleString() || '0'} <span className="text-xs text-slate-400">AED</span>
+                            </p>
                         </div>
                     </div>
                     

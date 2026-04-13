@@ -23,6 +23,7 @@ import { toast } from 'sonner';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
     Card,
     CardContent,
@@ -34,6 +35,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { requisitionService } from '@/lib/services/requisitionService';
+import { useEffect } from 'react';
 
 type WorkflowStage =
     | 'Draft' | 'Submitted' | 'Line Manager Review' | 'HOD Approval' | 'HR Review' | 'Procurement' | 'Vendor Submission' | 'Blind Selection' | 'Interview' | 'Qualified' | 'Onboarding' | 'Active' | 'Renewal' | 'Terminated' | 'Closed';
@@ -47,8 +50,8 @@ interface Requisition {
     title: string;
     department: string;
     requestor: string;
-    stage: WorkflowStage;
-    stageNum: number;
+    stage: string;
+    stageId: number;
     location: LocationType;
     budgetAED: number;
     budgetType: BudgetType;
@@ -60,227 +63,7 @@ interface Requisition {
     lpoGenerated: boolean;
 }
 
-// Backend integration point: GET /api/requisitions?page=1&limit=12&sort=createdDate&order=desc
-const mockRequisitions: Requisition[] = [
-    {
-        id: 'req-001',
-        reqId: 'OMS-2026-0852',
-        title: 'Legal Counsel – Contract Review',
-        department: 'Legal Affairs',
-        requestor: 'Sara Al-Mazrouei',
-        stage: 'HR Review',
-        stageNum: 5,
-        location: 'Onshore – DIEZA Premises',
-        budgetAED: 220000,
-        budgetType: 'Budgeted',
-        vendorCount: 0,
-        candidateCount: 0,
-        createdDate: '09/04/2026',
-        slaRisk: false,
-        emiratisationFlag: false,
-        lpoGenerated: false,
-    },
-    {
-        id: 'req-002',
-        reqId: 'OMS-2026-0847',
-        title: 'Senior IT Security Analyst',
-        department: 'Information Technology',
-        requestor: 'Khalid Al-Mansoori',
-        stage: 'HR Review',
-        stageNum: 5,
-        location: 'Onshore – DIEZA Premises',
-        budgetAED: 185000,
-        budgetType: 'Budgeted',
-        vendorCount: 0,
-        candidateCount: 0,
-        createdDate: '07/04/2026',
-        slaRisk: false,
-        emiratisationFlag: false,
-        lpoGenerated: false,
-    },
-    {
-        id: 'req-003',
-        reqId: 'OMS-2026-0843',
-        title: 'Data Governance Specialist',
-        department: 'Information Technology',
-        requestor: 'Khalid Al-Mansoori',
-        stage: 'Procurement',
-        stageNum: 6,
-        location: 'UAE Remote (WFH)',
-        budgetAED: 165000,
-        budgetType: 'Budgeted',
-        vendorCount: 3,
-        candidateCount: 0,
-        createdDate: '04/04/2026',
-        slaRisk: false,
-        emiratisationFlag: false,
-        lpoGenerated: false,
-    },
-    {
-        id: 'req-004',
-        reqId: 'OMS-2026-0841',
-        title: 'Administrative Support Officer',
-        department: 'Administration',
-        requestor: 'Mohammed Al-Suwaidi',
-        stage: 'HOD Approval',
-        stageNum: 4,
-        location: 'Onshore – DIEZA Premises',
-        budgetAED: 72000,
-        budgetType: 'Budgeted',
-        vendorCount: 0,
-        candidateCount: 0,
-        createdDate: '01/04/2026',
-        slaRisk: false,
-        emiratisationFlag: false,
-        lpoGenerated: false,
-    },
-    {
-        id: 'req-005',
-        reqId: 'OMS-2026-0839',
-        title: 'Logistics Coordinator (x2)',
-        department: 'Operations',
-        requestor: 'Ahmed Al-Dhaheri',
-        stage: 'Vendor Submission',
-        stageNum: 7,
-        location: 'Onshore – DIEZA Premises',
-        budgetAED: 98000,
-        budgetType: 'Budgeted',
-        vendorCount: 4,
-        candidateCount: 8,
-        createdDate: '10/03/2026',
-        slaRisk: true,
-        emiratisationFlag: true,
-        lpoGenerated: false,
-    },
-    {
-        id: 'req-006',
-        reqId: 'OMS-2026-0835',
-        title: 'Financial Reporting Analyst',
-        department: 'Finance',
-        requestor: 'Noura Al-Ketbi',
-        stage: 'Onboarding',
-        stageNum: 11,
-        location: 'Onshore – DIEZA Premises',
-        budgetAED: 142000,
-        budgetType: 'Budgeted',
-        vendorCount: 3,
-        candidateCount: 12,
-        createdDate: '18/02/2026',
-        slaRisk: false,
-        emiratisationFlag: false,
-        lpoGenerated: true,
-    },
-    {
-        id: 'req-007',
-        reqId: 'OMS-2026-0831',
-        title: 'Business Intelligence Analyst',
-        department: 'Finance',
-        requestor: 'Noura Al-Ketbi',
-        stage: 'Blind Selection',
-        stageNum: 8,
-        location: 'UAE Remote (WFH)',
-        budgetAED: 158000,
-        budgetType: 'Unallocated',
-        vendorCount: 0,
-        candidateCount: 0,
-        createdDate: '12/03/2026',
-        slaRisk: true,
-        emiratisationFlag: false,
-        lpoGenerated: false,
-    },
-    {
-        id: 'req-008',
-        reqId: 'OMS-2026-0828',
-        title: 'Cloud Infrastructure Engineer',
-        department: 'Information Technology',
-        requestor: 'Khalid Al-Mansoori',
-        stage: 'Interview',
-        stageNum: 9,
-        location: 'UAE Remote (Vendor Office)',
-        budgetAED: 210000,
-        budgetType: 'Budgeted',
-        vendorCount: 2,
-        candidateCount: 6,
-        createdDate: '05/03/2026',
-        slaRisk: false,
-        emiratisationFlag: false,
-        lpoGenerated: false,
-    },
-    {
-        id: 'req-009',
-        reqId: 'OMS-2026-0821',
-        title: 'Compliance & Risk Officer',
-        department: 'Legal Affairs',
-        requestor: 'Sara Al-Mazrouei',
-        stage: 'Active',
-        stageNum: 12,
-        location: 'Onshore – DIEZA Premises',
-        budgetAED: 195000,
-        budgetType: 'Budgeted',
-        vendorCount: 1,
-        candidateCount: 4,
-        createdDate: '14/01/2026',
-        slaRisk: false,
-        emiratisationFlag: false,
-        lpoGenerated: true,
-    },
-    {
-        id: 'req-010',
-        reqId: 'OMS-2026-0815',
-        title: 'Procurement Specialist (x3)',
-        department: 'Procurement',
-        requestor: 'Rashid Al-Bloushi',
-        stage: 'Renewal',
-        stageNum: 13,
-        location: 'Onshore – DIEZA Premises',
-        budgetAED: 267000,
-        budgetType: 'Budgeted',
-        vendorCount: 2,
-        candidateCount: 9,
-        createdDate: '02/01/2026',
-        slaRisk: false,
-        emiratisationFlag: true,
-        lpoGenerated: true,
-    },
-    {
-        id: 'req-011',
-        reqId: 'OMS-2026-0807',
-        title: 'HR Business Partner',
-        department: 'Human Resources',
-        requestor: 'Fatima Al-Rashidi',
-        stage: 'Active',
-        stageNum: 12,
-        location: 'Onshore – DIEZA Premises',
-        budgetAED: 148000,
-        budgetType: 'Budgeted',
-        vendorCount: 1,
-        candidateCount: 7,
-        createdDate: '10/12/2025',
-        slaRisk: false,
-        emiratisationFlag: false,
-        lpoGenerated: true,
-    },
-    {
-        id: 'req-012',
-        reqId: 'OMS-2026-0798',
-        title: 'Operations Analyst – Logistics',
-        department: 'Logistics',
-        requestor: 'Ahmed Al-Dhaheri',
-        stage: 'Terminated',
-        stageNum: 14,
-        location: 'Remote Abroad',
-        budgetAED: 88000,
-        budgetType: 'Budgeted',
-        vendorCount: 2,
-        candidateCount: 5,
-        createdDate: '18/11/2025',
-        slaRisk: false,
-        emiratisationFlag: false,
-        lpoGenerated: true,
-    },
-];
-
-const stageStyles: Record<WorkflowStage, { bg: string; dot: string; text: string }> = {
+const stageStyles: Record<string, { bg: string; dot: string; text: string }> = {
     'Draft': { bg: 'bg-slate-100', dot: 'bg-slate-400', text: 'text-slate-600' },
     'Submitted': { bg: 'bg-blue-50', dot: 'bg-blue-500', text: 'text-blue-700' },
     'Line Manager Review': { bg: 'bg-indigo-50', dot: 'bg-indigo-500', text: 'text-indigo-700' },
@@ -332,6 +115,8 @@ const columns = [
 const ITEMS_PER_PAGE_OPTIONS = [10, 25, 50];
 
 export default function RequisitionTable() {
+    const [requisitions, setRequisitions] = useState<Requisition[]>([]);
+    const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [sortKey, setSortKey] = useState<SortKey>('createdDate');
     const [sortDir, setSortDir] = useState<SortDir>('desc');
@@ -343,8 +128,42 @@ export default function RequisitionTable() {
     const [stageDropdownId, setStageDropdownId] = useState<string | null>(null);
     const [actionMenuId, setActionMenuId] = useState<string | null>(null);
 
+    useEffect(() => {
+        loadRequisitions();
+    }, []);
+
+    const loadRequisitions = async () => {
+        setLoading(true);
+        try {
+            const data = await requisitionService.getRequisitions();
+            const mapped: Requisition[] = data.map(item => ({
+                id: item.id,
+                reqId: item.req_id,
+                title: item.title,
+                department: item.department,
+                requestor: item.profiles?.full_name || 'System',
+                stage: item.workflow_stages?.stage_name || 'Draft',
+                stageId: item.stage_id,
+                location: 'Onshore – DIEZA Premises' as LocationType,
+                budgetAED: item.budget_aed,
+                budgetType: 'Budgeted' as BudgetType,
+                vendorCount: 0,
+                candidateCount: 0,
+                createdDate: new Date(item.created_at).toLocaleDateString(),
+                slaRisk: false,
+                emiratisationFlag: false,
+                lpoGenerated: false,
+            }));
+            setRequisitions(mapped);
+        } catch (error) {
+            toast.error('Failed to load requisitions');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     // Filter + sort
-    const filtered = mockRequisitions.filter((r) => {
+    const filtered = requisitions.filter((r) => {
         if (!search) return true;
         const s = search.toLowerCase();
         return (
@@ -460,7 +279,7 @@ export default function RequisitionTable() {
 
                 <div className="ml-auto flex items-center gap-2">
                     <span className="text-xs text-slate-400">
-                        {filtered.length} of {mockRequisitions.length} requisitions
+                        {loading ? '---' : `${filtered.length} of ${requisitions.length} requisitions`}
                     </span>
 
                     {/* Column Visibility */}
@@ -569,7 +388,19 @@ export default function RequisitionTable() {
                             </tr>
                         </thead>
                         <tbody>
-                            {paginated.length === 0 ? (
+                            {loading ? (
+                                Array.from({ length: 5 }).map((_, i) => (
+                                    <tr key={`skeleton-${i}`} className="border-b border-slate-100 last:border-0 h-16">
+                                        <td className="px-3 py-3"><Skeleton className="h-4 w-4" /></td>
+                                        {visibleColumns.map((col) => (
+                                            <td key={`skeleton-col-${i}-${col.id}`} className="px-3 py-3">
+                                                <Skeleton className="h-4 w-full max-w-[120px]" />
+                                            </td>
+                                        ))}
+                                        <td className="px-3 py-3 text-center"><Skeleton className="h-8 w-8 mx-auto rounded-full" /></td>
+                                    </tr>
+                                ))
+                            ) : paginated.length === 0 ? (
                                 <tr>
                                     <td colSpan={visibleColumns.length + 2} className="py-16 text-center">
                                         <div className="flex flex-col items-center gap-3">
@@ -637,7 +468,7 @@ export default function RequisitionTable() {
                                                             </span>
                                                         )}
                                                     </div>
-                                                    <p className="text-[10px] text-slate-400 mt-0.5">Stage {req.stageNum}/14</p>
+                                                    <p className="text-[10px] text-slate-400 mt-0.5">Stage {req.stageId}/14</p>
                                                 </td>
                                             )}
 

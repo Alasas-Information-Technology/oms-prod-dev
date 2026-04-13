@@ -45,7 +45,7 @@ CREATE TABLE public.requisitions (
   title text NOT NULL,
   department text NOT NULL,
   requestor_id uuid REFERENCES public.profiles(id) NOT NULL,
-  stage text NOT NULL,
+  stage_id integer REFERENCES public.workflow_stages(stage_id) DEFAULT 1,
   budget_aed numeric DEFAULT 0 NOT NULL,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
@@ -190,3 +190,69 @@ INSERT INTO public.workflow_stages (stage_id, stage_name, required_role_id) VALU
 (5, 'Blind Candidate Selection', (SELECT role_id FROM public.roles WHERE role_name = 'DEPT_REQUESTOR')),
 (7, 'Budget Amendment Protocol', (SELECT role_id FROM public.roles WHERE role_name = 'FINANCE_OFFICER')),
 (8, 'Digital Onboarding', (SELECT role_id FROM public.roles WHERE role_name = 'VENDOR_USER'));
+
+-- ==============================================================================
+-- 8. Recruiting & Governance Extensions
+-- ==============================================================================
+
+-- 8.1 Candidates Table
+CREATE TABLE public.candidates (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  requisition_id uuid REFERENCES public.requisitions(id) ON DELETE CASCADE NOT NULL,
+  alias text NOT NULL,
+  total_years_experience integer DEFAULT 0,
+  top_skills text[] DEFAULT '{}',
+  education_level text,
+  priority_ranking text,
+  status text DEFAULT 'PENDING_REVIEW',
+  vendor_id uuid REFERENCES public.profiles(id),
+  financial_quote_aed numeric DEFAULT 0,
+  created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 8.2 Audit Logs Table (Existing)
+CREATE TABLE public.audit_logs (
+  id uuid NOT NULL DEFAULT extensions.uuid_generate_v4 (),
+  requisition_id uuid NULL,
+  actor_id uuid NULL,
+  action_type CHARACTER VARYING(100) NOT NULL,
+  old_stage_id INTEGER NULL,
+  new_stage_id INTEGER NULL,
+  comments TEXT NULL,
+  cryptographic_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  CONSTRAINT audit_logs_pkey PRIMARY KEY (id),
+  CONSTRAINT audit_logs_actor_id_fkey FOREIGN KEY (actor_id) REFERENCES auth.users (id),
+  CONSTRAINT audit_logs_requisition_id_fkey FOREIGN KEY (requisition_id) REFERENCES public.requisitions (id) ON DELETE CASCADE
+) TABLESPACE pg_default;
+
+-- 8.3 RLS Policies for New Tables
+ALTER TABLE public.candidates ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Internal users can view candidates" 
+ON public.candidates FOR SELECT USING (
+  (SELECT role FROM public.profiles WHERE id = auth.uid()) != 'VENDOR'
+);
+
+CREATE POLICY "Internal users can view audit logs" 
+ON public.audit_logs FOR SELECT USING (
+  (SELECT role FROM public.profiles WHERE id = auth.uid()) != 'VENDOR'
+);
+
+-- 8.4 RPC for Atomic Stage Advancement & Logging
+CREATE OR REPLACE FUNCTION public.advance_requisition_stage(
+  p_req_id uuid,
+  p_current_stage_id integer,
+  p_actor_id uuid
+) RETURNS void AS $$
+BEGIN
+  -- Update Requisition Stage
+  UPDATE public.requisitions
+  SET stage_id = p_current_stage_id + 1
+  WHERE id = p_req_id;
+
+  -- Insert Audit Log
+  INSERT INTO public.audit_logs (requisition_id, actor_id, action_type, old_stage_id, new_stage_id)
+  VALUES (p_req_id, p_actor_id, 'STAGE_ADVANCED', p_current_stage_id, p_current_stage_id + 1);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

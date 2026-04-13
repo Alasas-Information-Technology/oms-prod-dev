@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
     ShieldCheck, 
     Send, 
@@ -21,22 +22,36 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { requisitionService } from '@/lib/services/requisitionService';
+
 interface ActionPanelProps {
+    reqId: string;
+    currentStageId: number;
+    actorId: string;
+    requiredRoleId?: number;
     onApprove: () => void;
 }
 
-export default function ActionPanel({ onApprove }: ActionPanelProps) {
+export default function ActionPanel({ reqId, currentStageId, actorId, requiredRoleId, onApprove }: ActionPanelProps) {
+    const { currentUser } = useAuth();
     const [isProcessing, setIsProcessing] = useState(false);
+    
+    // RBAC check: Only the required role can approve this stage
+    const canApprove = currentUser && (currentUser.role_id === requiredRoleId || currentUser.roles.role_name === 'SYSTEM_ADMIN');
 
     const handleApprove = async () => {
         setIsProcessing(true);
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 800));
-        toast.success('HR Approval logged', {
-            description: 'Stage 3 Post-Approval Documentation initiated in Oracle ERP'
-        });
-        onApprove();
-        setIsProcessing(false);
+        try {
+            await requisitionService.advanceRequisitionStage(reqId, currentStageId, actorId);
+            toast.success('HR Approval logged', {
+                description: 'Stage advanced and audit log recorded via secure RPC.'
+            });
+            onApprove();
+        } catch (error) {
+            toast.error('Failed to advance stage');
+        } finally {
+            setIsProcessing(false);
+        }
     };
 
     const handleActionPlaceholder = (action: string) => {
@@ -58,23 +73,34 @@ export default function ActionPanel({ onApprove }: ActionPanelProps) {
                     <div className="flex gap-2">
                         <Info size={14} className="text-[hsl(214,67%,32%)] shrink-0 mt-0.5" />
                         <p className="text-xs text-slate-600 leading-relaxed font-medium">
-                            Logged in as <strong>Senior HR Manager</strong>. Your approval will advance this to <strong>ERP Generation</strong>.
+                            Logged in as <strong>{currentUser?.roles?.role_name || 'Guest'}</strong>. 
+                            {canApprove 
+                                ? " Your approval will advance this requisition." 
+                                : " You do not have the required permissions to approve this stage."}
                         </p>
                     </div>
                 </div>
 
                 <div className="space-y-2">
-                    <Button 
-                        onClick={handleApprove}
-                        disabled={isProcessing}
-                        className="w-full bg-[hsl(214,67%,32%)] hover:bg-[hsl(214,67%,40%)] text-white font-bold h-11 flex items-center justify-between px-4 transition-all"
-                    >
-                        <div className="flex items-center gap-2">
-                            <Send size={16} />
-                            <span>Approve & Proceed to ERP</span>
+                    {canApprove && (
+                        <Button 
+                            onClick={handleApprove}
+                            disabled={isProcessing}
+                            className="w-full bg-[hsl(214,67%,32%)] hover:bg-[hsl(214,67%,40%)] text-white font-bold h-11 flex items-center justify-between px-4 transition-all"
+                        >
+                            <div className="flex items-center gap-2">
+                                <Send size={16} />
+                                <span>Approve & Proceed</span>
+                            </div>
+                            <ChevronDown size={14} className="opacity-50" />
+                        </Button>
+                    )}
+
+                    {!canApprove && (
+                        <div className="flex items-center justify-center p-4 border border-dashed border-slate-200 rounded-xl bg-slate-50/50 text-slate-400 text-xs font-medium italic">
+                            Governance Action Restricted
                         </div>
-                        <ChevronDown size={14} className="opacity-50" />
-                    </Button>
+                    )}
 
                     <Button 
                         variant="outline"

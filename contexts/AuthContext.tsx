@@ -2,51 +2,96 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabaseClient';
 
 export interface User {
-    role: string;
+    id: string;
+    role_id: number;
+    roles: {
+        role_name: string;
+    };
     email: string;
     department: string;
+    full_name?: string;
 }
 
 interface AuthContextType {
     isAuthenticated: boolean;
     currentUser: User | null;
-    login: (user: User) => void;
+    isLoading: boolean;
     logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const router = useRouter();
 
     useEffect(() => {
-        const storedAuth = localStorage.getItem('oms_demo_auth');
-        if (storedAuth) {
-            const parsed = JSON.parse(storedAuth);
-            setIsAuthenticated(parsed.isAuthenticated);
-            setCurrentUser(parsed.currentUser);
-        }
+        // Initial session check
+        const initAuth = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                await fetchProfile(session.user.id, session.user.email!);
+            }
+            setIsLoading(false);
+        };
+
+        initAuth();
+
+        // Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (session) {
+                await fetchProfile(session.user.id, session.user.email!);
+            } else {
+                setCurrentUser(null);
+            }
+            setIsLoading(false);
+        });
+
+        return () => {
+            subscription.unsubscribe();
+        };
     }, []);
 
-    const login = (user: User) => {
-        setIsAuthenticated(true);
-        setCurrentUser(user);
-        localStorage.setItem('oms_demo_auth', JSON.stringify({ isAuthenticated: true, currentUser: user }));
+    const fetchProfile = async (uid: string, email: string) => {
+        try {
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*, roles(role_name)')
+                .eq('id', uid)
+                .single();
+
+            if (data) {
+                setCurrentUser({
+                    id: uid,
+                    email: email,
+                    role_id: data.role_id,
+                    roles: data.roles,
+                    department: data.department || 'N/A',
+                    full_name: data.full_name
+                });
+            }
+        } catch (err) {
+            console.error('Error fetching user profile:', err);
+        }
     };
 
-    const logout = () => {
-        setIsAuthenticated(false);
+    const logout = async () => {
+        await supabase.auth.signOut();
         setCurrentUser(null);
-        localStorage.removeItem('oms_demo_auth');
         router.push('/sign-up-login-screen');
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, currentUser, login, logout }}>
+        <AuthContext.Provider value={{ 
+            isAuthenticated: !!currentUser, 
+            currentUser, 
+            isLoading,
+            logout 
+        }}>
             {children}
         </AuthContext.Provider>
     );

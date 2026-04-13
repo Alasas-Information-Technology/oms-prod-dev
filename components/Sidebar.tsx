@@ -62,7 +62,7 @@ export default function Sidebar() {
     const { currentUser } = useAuth();
     
     // Default to 'Guest' if currentUser isn't perfectly loaded yet
-    const currentRole = currentUser?.role || 'Guest';
+    const currentRole = currentUser?.roles?.role_name || 'Guest';
 
     useEffect(() => {
         const width = collapsed ? '68px' : '256px';

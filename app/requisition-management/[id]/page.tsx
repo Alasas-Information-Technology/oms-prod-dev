@@ -4,30 +4,55 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import AppLayout from '@/components/AppLayout';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
 import { ChevronLeft, ArrowRight, User, Building2, Briefcase, Info } from 'lucide-react';
 import WorkflowStepper from './components/WorkflowStepper';
 import RequisitionSpecs from './components/RequisitionSpecs';
 import ActionPanel from './components/ActionPanel';
 import Link from 'next/link';
+import { toast } from 'sonner';
+
+import { requisitionService } from '@/lib/services/requisitionService';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function RequisitionDetailPage() {
     const params = useParams();
     const router = useRouter();
-    const [currentStep, setCurrentStep] = useState(2); // Hardcoded Step 2 for demo
-    const [status, setStatus] = useState('Awaiting HR Approval');
+    const id = params.id as string;
     
-    // Mock data for the header - in real app would fetch based on id
-    const requisitionData = {
-        id: params.id as string,
-        title: 'Senior Financial Analyst',
-        department: 'Operations & Strategy',
-        requestor: 'Sara Al-Mazrouei',
-        creationDate: 'April 09, 2026'
+    const [requisition, setRequisition] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [currentStep, setCurrentStep] = useState(1);
+    const [status, setStatus] = useState('');
+    
+    const { currentUser } = useAuth();
+    
+    // In real app, this is the logged-in user's ID
+    const actorId = currentUser?.id || '00000000-0000-0000-0000-000000000000';
+
+    useEffect(() => {
+        if (id) {
+            loadRequisition();
+        }
+    }, [id]);
+
+    const loadRequisition = async () => {
+        setLoading(true);
+        try {
+            const data = await requisitionService.getRequisitionById(id);
+            setRequisition(data);
+            setCurrentStep(data.stage_id);
+            setStatus(data.workflow_stages?.stage_name || 'Draft');
+        } catch (error) {
+            toast.error('Failed to load requisition details');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleApprove = () => {
-        setCurrentStep(3);
-        setStatus('Pending ERP PR Generation');
+        // Refresh data after approval callback
+        loadRequisition();
     };
 
     return (
@@ -49,29 +74,38 @@ export default function RequisitionDetailPage() {
                     
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="space-y-1">
-                            <div className="flex items-center gap-3">
-                                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-                                    Requisition <span className="text-[hsl(214,67%,32%)]">{requisitionData.id}</span>
-                                </h1>
-                                <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider
-                                    ${currentStep === 2 ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-blue-100 text-blue-700 border border-blue-200'}`}>
-                                    {status}
-                                </span>
-                            </div>
-                            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-slate-500 text-sm font-medium">
-                                <div className="flex items-center gap-2">
-                                    <Briefcase size={14} className="text-slate-400" />
-                                    {requisitionData.title}
+                            {loading ? (
+                                <div className="space-y-4">
+                                    <Skeleton className="h-8 w-64" />
+                                    <Skeleton className="h-4 w-96" />
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <Building2 size={14} className="text-slate-400" />
-                                    {requisitionData.department}
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <User size={14} className="text-slate-400" />
-                                    Requested by {requisitionData.requestor}
-                                </div>
-                            </div>
+                            ) : (
+                                <>
+                                    <div className="flex items-center gap-3">
+                                        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+                                            Requisition <span className="text-[hsl(214,67%,32%)]">{requisition?.req_id}</span>
+                                        </h1>
+                                        <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider
+                                            ${currentStep === 2 ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-blue-100 text-blue-700 border border-blue-200'}`}>
+                                            {status}
+                                        </span>
+                                    </div>
+                                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-slate-500 text-sm font-medium">
+                                        <div className="flex items-center gap-2">
+                                            <Briefcase size={14} className="text-slate-400" />
+                                            {requisition?.title}
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Building2 size={14} className="text-slate-400" />
+                                            {requisition?.department}
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <User size={14} className="text-slate-400" />
+                                            Requested by {requisition?.profiles?.full_name || 'System'}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
 
                         <div className="flex gap-2">
@@ -94,7 +128,11 @@ export default function RequisitionDetailPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Left Column - Specifications */}
                     <div className="lg:col-span-2 space-y-6">
-                        <RequisitionSpecs />
+                        {loading ? (
+                            <Skeleton className="h-96 w-full rounded-2xl" />
+                        ) : (
+                            <RequisitionSpecs data={requisition} />
+                        )}
                         
                         {/* Additional Info / Comments Section for premium feel */}
                         <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
@@ -120,7 +158,17 @@ export default function RequisitionDetailPage() {
 
                     {/* Right Column - Actions */}
                     <div className="space-y-6">
-                        <ActionPanel onApprove={handleApprove} />
+                        {loading ? (
+                            <Skeleton className="h-64 w-full rounded-2xl" />
+                        ) : (
+                            <ActionPanel 
+                                reqId={requisition?.id}
+                                currentStageId={currentStep}
+                                actorId={actorId}
+                                requiredRoleId={requisition?.workflow_stages?.required_role_id}
+                                onApprove={handleApprove} 
+                            />
+                        )}
                         
                         {/* Summary Info Card */}
                         <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 text-white shadow-lg space-y-4">

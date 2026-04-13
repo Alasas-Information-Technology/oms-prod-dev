@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 export default function RequisitionHeader() {
     const [showNewModal, setShowNewModal] = useState(false);
     const { currentUser } = useAuth();
-    const roleForView = currentUser?.role || 'Guest';
+    const roleForView = currentUser?.roles?.role_name || 'Guest';
 
     return (
         <>

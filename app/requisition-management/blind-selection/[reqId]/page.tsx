@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import {
@@ -15,62 +15,38 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-
-interface Candidate {
-    id: string;
-    alias: string;
-    experience: number;
-    skills: string[];
-    education: string;
-}
-
-const mockCandidates: Candidate[] = [
-    {
-        id: 'c-alpha',
-        alias: 'Candidate Alpha',
-        experience: 6,
-        skills: ['Power BI', 'SQL Server', 'Python (Pandas)'],
-        education: 'BSc Computer Science',
-    },
-    {
-        id: 'c-bravo',
-        alias: 'Candidate Bravo',
-        experience: 8,
-        skills: ['Tableau', 'Snowflake', 'dbt'],
-        education: 'Master of Data Analytics',
-    },
-    {
-        id: 'c-charlie',
-        alias: 'Candidate Charlie',
-        experience: 4,
-        skills: ['Looker', 'PostgreSQL', 'ETL pipelines'],
-        education: 'BEng Information Technology',
-    },
-    {
-        id: 'c-delta',
-        alias: 'Candidate Delta',
-        experience: 10,
-        skills: ['Power BI (Advanced)', 'DAX', 'Azure Synapse'],
-        education: 'BSc Software Engineering',
-    },
-    {
-        id: 'c-echo',
-        alias: 'Candidate Echo',
-        experience: 5,
-        skills: ['Qlik Sense', 'Python', 'Machine Learning'],
-        education: 'BSc Data Science',
-    },
-];
+import { candidateService } from '@/lib/services/candidateService';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type PriorityRank = 'P1' | 'P2' | 'P3' | 'Rejected' | null;
 
 export default function BlindSelectionView() {
     const params = useParams();
     const router = useRouter();
-    const reqId = params?.reqId as string || 'OMS-2026-0831';
+    const reqId = params?.reqId as string;
 
+    const [candidates, setCandidates] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
     const [rankings, setRankings] = useState<Record<string, PriorityRank>>({});
     const [submitting, setSubmitting] = useState(false);
+
+    useEffect(() => {
+        if (reqId) {
+            loadCandidates();
+        }
+    }, [reqId]);
+
+    const loadCandidates = async () => {
+        setLoading(true);
+        try {
+            const data = await candidateService.getCandidatesForRequisition(reqId);
+            setCandidates(data);
+        } catch (error) {
+            toast.error('Failed to load candidates');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleSetPriority = (candId: string, rank: PriorityRank) => {
         setRankings(prev => ({
@@ -86,14 +62,12 @@ export default function BlindSelectionView() {
     };
 
     const handleFinalize = async () => {
-        // Ensure at least one ranking is done to mock validation
         if (Object.keys(rankings).length === 0) {
             toast.error("Please rank at least one candidate before proceeding.");
             return;
         }
 
         setSubmitting(true);
-        // Simulate API
         await new Promise(res => setTimeout(res, 1200));
         setSubmitting(false);
 
@@ -132,112 +106,120 @@ export default function BlindSelectionView() {
 
                 {/* Candidate Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                    {mockCandidates.map(candidate => {
-                        const currentRank = rankings[candidate.id];
-                        const isRejected = currentRank === 'Rejected';
-                        const isRanked = currentRank && currentRank !== 'Rejected';
+                    {loading ? (
+                        Array.from({ length: 4 }).map((_, i) => (
+                            <Skeleton key={`skeleton-${i}`} className="h-64 w-full rounded-2xl" />
+                        ))
+                    ) : candidates.length === 0 ? (
+                        <div className="lg:col-span-2 py-20 text-center bg-white rounded-2xl border border-slate-100 italic text-slate-400">
+                            No candidates found for this requisition.
+                        </div>
+                    ) : (
+                        candidates.map(candidate => {
+                            const currentRank = rankings[candidate.id];
+                            const isRejected = currentRank === 'Rejected';
+                            const isRanked = currentRank && currentRank !== 'Rejected';
 
-                        return (
-                            <div 
-                                key={candidate.id} 
-                                className={`card flex flex-col gap-4 border-2 transition-all p-5 ${
-                                    isRejected 
-                                        ? 'opacity-60 grayscale border-slate-200 bg-slate-50/50' 
-                                        : isRanked 
-                                            ? 'border-[hsl(214,67%,32%)] shadow-md bg-white' 
-                                            : 'border-slate-100 hover:border-slate-200 bg-white'
-                                }`}
-                            >
-                                <div className="flex justify-between items-start gap-4">
-                                    <div>
-                                        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-semibold mb-2">
-                                            Alias Card
+                            return (
+                                <div 
+                                    key={candidate.id} 
+                                    className={`card flex flex-col gap-4 border-2 transition-all p-5 ${
+                                        isRejected 
+                                            ? 'opacity-60 grayscale border-slate-200 bg-slate-50/50' 
+                                            : isRanked 
+                                                ? 'border-[hsl(214,67%,32%)] shadow-md bg-white' 
+                                                : 'border-slate-100 hover:border-slate-200 bg-white'
+                                    }`}
+                                >
+                                    <div className="flex justify-between items-start gap-4">
+                                        <div>
+                                            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-semibold mb-2">
+                                                Alias Card
+                                            </div>
+                                            <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                                {candidate.alias}
+                                                {isRanked && <CheckCircle2 size={16} className="text-green-500" />}
+                                                {isRejected && <XCircle size={16} className="text-red-400" />}
+                                            </h3>
                                         </div>
-                                        <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                                            {candidate.alias}
-                                            {isRanked && <CheckCircle2 size={16} className="text-green-500" />}
-                                            {isRejected && <XCircle size={16} className="text-red-400" />}
-                                        </h3>
+                                        <Button 
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => handleViewCV(candidate.alias)}
+                                            className="text-xs px-3 py-1.5 shrink-0"
+                                            disabled={isRejected}
+                                        >
+                                            <Eye size={14} />
+                                            View Redacted CV
+                                        </Button>
                                     </div>
-                                    <Button 
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => handleViewCV(candidate.alias)}
-                                        className="text-xs px-3 py-1.5 shrink-0"
-                                        disabled={isRejected}
-                                    >
-                                        <Eye size={14} />
-                                        View Redacted CV
-                                    </Button>
-                                </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
-                                    <div className="flex items-start gap-2.5">
-                                        <Briefcase size={16} className="text-slate-400 mt-0.5 shrink-0" />
-                                        <div>
-                                            <p className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Experience</p>
-                                            <p className="text-sm font-semibold text-slate-700">{candidate.experience} Years</p>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+                                        <div className="flex items-start gap-2.5">
+                                            <Briefcase size={16} className="text-slate-400 mt-0.5 shrink-0" />
+                                            <div>
+                                                <p className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Experience</p>
+                                                <p className="text-sm font-semibold text-slate-700">{candidate.years_of_experience} Years</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="flex items-start gap-2.5">
-                                        <GraduationCap size={16} className="text-slate-400 mt-0.5 shrink-0" />
-                                        <div>
-                                            <p className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Education</p>
-                                            <p className="text-sm font-medium text-slate-700 leading-snug">{candidate.education}</p>
+                                        <div className="flex items-start gap-2.5">
+                                            <GraduationCap size={16} className="text-slate-400 mt-0.5 shrink-0" />
+                                            <div>
+                                                <p className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Education</p>
+                                                <p className="text-sm font-medium text-slate-700 leading-snug">{candidate.education || 'N/A'}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="flex items-start gap-2.5 sm:col-span-2">
-                                        <Code size={16} className="text-slate-400 mt-0.5 shrink-0" />
-                                        <div>
-                                            <p className="text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1">Top Skills</p>
-                                            <div className="flex flex-wrap gap-1.5">
-                                                {candidate.skills.map(skill => (
-                                                    <span key={skill} className="px-2 py-0.5 rounded-md bg-[hsl(214,67%,32%)]/10 text-[hsl(214,67%,32%)] text-xs font-semibold">
-                                                        {skill}
-                                                    </span>
-                                                ))}
+                                        <div className="flex items-start gap-2.5 sm:col-span-2">
+                                            <Code size={16} className="text-slate-400 mt-0.5 shrink-0" />
+                                            <div>
+                                                <p className="text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1">Top Skills</p>
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {(candidate.skills || []).map((skill: string) => (
+                                                        <span key={skill} className="px-2 py-0.5 rounded-md bg-[hsl(214,67%,32%)]/10 text-[hsl(214,67%,32%)] text-xs font-semibold">
+                                                            {skill}
+                                                        </span>
+                                                    ))}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className="mt-auto pt-4 border-t border-slate-100">
-                                    <p className="text-xs font-semibold text-slate-500 mb-2">Priority Ranking</p>
-                                    <div className="flex flex-wrap items-center gap-2">
-                                        {(['P1', 'P2', 'P3', 'Rejected'] as PriorityRank[]).map((rankOption) => {
-                                            if (!rankOption) return null;
-                                            
-                                            const isActive = currentRank === rankOption;
-                                            // Extended labels
-                                            let label: string = rankOption;
-                                            if (rankOption === 'P1') label = 'P1 (High)';
-                                            if (rankOption === 'P2') label = 'P2 (Med)';
-                                            if (rankOption === 'P3') label = 'P3 (Low)';
+                                    <div className="mt-auto pt-4 border-t border-slate-100">
+                                        <p className="text-xs font-semibold text-slate-500 mb-2">Priority Ranking</p>
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            {(['P1', 'P2', 'P3', 'Rejected'] as PriorityRank[]).map((rankOption) => {
+                                                if (!rankOption) return null;
+                                                
+                                                const isActive = currentRank === rankOption;
+                                                let label: string = rankOption;
+                                                if (rankOption === 'P1') label = 'P1 (High)';
+                                                if (rankOption === 'P2') label = 'P2 (Med)';
+                                                if (rankOption === 'P3') label = 'P3 (Low)';
 
-                                            const isRejectBtn = rankOption === 'Rejected';
+                                                const isRejectBtn = rankOption === 'Rejected';
 
-                                            // Determine variant based on state
-                                            let btnVariant: 'default' | 'destructive' | 'outline' = 'outline';
-                                            if (isActive) {
-                                                btnVariant = isRejectBtn ? 'destructive' : 'default';
-                                            }
+                                                let btnVariant: 'default' | 'destructive' | 'outline' = 'outline';
+                                                if (isActive) {
+                                                    btnVariant = isRejectBtn ? 'destructive' : 'default';
+                                                }
 
-                                            return (
-                                                <Button
-                                                    key={rankOption}
-                                                    variant={btnVariant}
-                                                    onClick={() => handleSetPriority(candidate.id, isActive ? null : rankOption)}
-                                                    className={`rounded-full text-xs font-bold transition-all shadow-sm ${isActive ? 'ring-2' : ''} ${isActive && isRejectBtn ? 'ring-red-500/20' : isActive ? 'ring-[hsl(214,67%,32%)]/20' : ''}`}
-                                                >
-                                                    {label}
-                                                </Button>
-                                            )
-                                        })}
+                                                return (
+                                                    <Button
+                                                        key={rankOption}
+                                                        variant={btnVariant}
+                                                        onClick={() => handleSetPriority(candidate.id, isActive ? null : rankOption)}
+                                                        className={`rounded-full text-xs font-bold transition-all shadow-sm ${isActive ? 'ring-2' : ''} ${isActive && isRejectBtn ? 'ring-red-500/20' : isActive ? 'ring-[hsl(214,67%,32%)]/20' : ''}`}
+                                                    >
+                                                        {label}
+                                                    </Button>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })
+                    )}
                 </div>
             </div>
 
