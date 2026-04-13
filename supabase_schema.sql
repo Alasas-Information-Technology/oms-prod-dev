@@ -15,7 +15,7 @@ CREATE TYPE public.app_role AS ENUM (
 -- 2. Profiles Table: Extends auth.users
 CREATE TABLE public.profiles (
   id uuid REFERENCES auth.users ON DELETE CASCADE NOT NULL PRIMARY KEY,
-  role public.app_role DEFAULT 'REQUESTOR'::public.app_role NOT NULL,
+  role_id integer REFERENCES public.roles(role_id),
   email text NOT NULL,
   full_name text,
   department text,
@@ -32,10 +32,22 @@ ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view own profile" 
 ON public.profiles FOR SELECT USING (auth.uid() = id);
 
+-- Helper function to check admin status without recursion
+CREATE OR REPLACE FUNCTION public.check_is_admin() 
+RETURNS boolean AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles 
+    WHERE id = auth.uid() 
+    AND role_id = (SELECT role_id FROM public.roles WHERE role_name = 'SYSTEM_ADMIN')
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- Admins can read all profiles
 CREATE POLICY "Admins can view all profiles" 
 ON public.profiles FOR SELECT USING (
-  (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'ADMIN'
+  public.check_is_admin()
 );
 
 -- 4. Requisitions Table (Example)
@@ -47,6 +59,14 @@ CREATE TABLE public.requisitions (
   requestor_id uuid REFERENCES public.profiles(id) NOT NULL,
   stage_id integer REFERENCES public.workflow_stages(stage_id) DEFAULT 1,
   budget_aed numeric DEFAULT 0 NOT NULL,
+  target_start_date DATE,
+  work_location TEXT,
+  req_laptop BOOLEAN DEFAULT false,
+  req_mobile_phone BOOLEAN DEFAULT false,
+  req_email_access BOOLEAN DEFAULT false,
+  req_software_licenses BOOLEAN DEFAULT false,
+  office_seating TEXT,
+  funding_type TEXT,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -56,13 +76,24 @@ ALTER TABLE public.requisitions ENABLE ROW LEVEL SECURITY;
 -- Everyone can view Requisitions generally (if they have an internal role)
 CREATE POLICY "Internal Users can view requisitions"
 ON public.requisitions FOR SELECT USING (
-  (SELECT role FROM public.profiles WHERE id = auth.uid()) != 'VENDOR'
+  EXISTS (
+    SELECT 1 FROM public.profiles p
+    WHERE p.id = auth.uid() 
+    AND p.role_id != (SELECT role_id FROM public.roles WHERE role_name = 'VENDOR_USER')
+  )
 );
 
 -- Only HR, ADMIN, and REQUESTOR can insert Requisitions
 CREATE POLICY "Authorized roles can create requisitions"
 ON public.requisitions FOR INSERT WITH CHECK (
-  (SELECT role FROM public.profiles WHERE id = auth.uid()) IN ('REQUESTOR', 'HR', 'ADMIN')
+  EXISTS (
+    SELECT 1 FROM public.profiles p
+    WHERE p.id = auth.uid() 
+    AND p.role_id IN (
+      SELECT role_id FROM public.roles 
+      WHERE role_name IN ('DEPT_REQUESTOR', 'HR_ADMIN', 'SYSTEM_ADMIN')
+    )
+  )
 );
 
 -- 5. Trigger Functions
@@ -70,12 +101,12 @@ ON public.requisitions FOR INSERT WITH CHECK (
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
-  INSERT INTO public.profiles (id, email, full_name, role)
+  INSERT INTO public.profiles (id, email, full_name, role_id)
   VALUES (
     new.id, 
     new.email, 
     new.raw_user_meta_data->>'full_name',
-    COALESCE((new.raw_user_meta_data->>'role')::public.app_role, 'REQUESTOR'::public.app_role)
+    (SELECT role_id FROM public.roles WHERE role_name = COALESCE(new.raw_user_meta_data->>'role', 'DEPT_REQUESTOR'))
   );
   RETURN new;
 END;
@@ -106,16 +137,16 @@ VALUES
   ('88888888-8888-8888-8888-888888888888', '00000000-0000-0000-0000-000000000000', 'sysadmin@deiz.ae', 'dummy_hash', now(), '{"provider":"email","providers":["email"]}', '{"full_name":"System Admin","role":"SYSTEM_ADMIN"}', now(), now());
 
 -- (Optional) If the Trigger didn't fire, manually seed the public.profiles table:
-INSERT INTO public.profiles (id, email, full_name, department, role)
+INSERT INTO public.profiles (id, email, full_name, department, role_id)
 VALUES 
-  ('11111111-1111-1111-1111-111111111111', 'hr.manager@deiz.ae', 'HR Manager', 'Human Resources', 'HR_ADMIN'),
-  ('22222222-2222-2222-2222-222222222222', 'hod.operations@deiz.ae', 'HOD Operations', 'Operations', 'HOD'),
-  ('33333333-3333-3333-3333-333333333333', 'requestor.it@deiz.ae', 'IT Requestor', 'Information Technology', 'DEPT_REQUESTOR'),
-  ('44444444-4444-4444-4444-444444444444', 'lm.finance@deiz.ae', 'Finance Manager', 'Finance', 'FINANCE_OFFICER'),
-  ('55555555-5555-5555-5555-555555555555', 'procurement@deiz.ae', 'Procurement Officer', 'Procurement', 'PROCUREMENT_OFFICER'),
-  ('66666666-6666-6666-6666-666666666666', 'finance.analyst@deiz.ae', 'Finance Analyst', 'Finance', 'FINANCE_OFFICER'),
-  ('77777777-7777-7777-7777-777777777777', 'interviewer.hr@deiz.ae', 'Main Interviewer', 'Human Resources', 'DEPT_REQUESTOR'),
-  ('88888888-8888-8888-8888-888888888888', 'sysadmin@deiz.ae', 'System Administrator', 'IT Administration', 'SYSTEM_ADMIN')
+  ('11111111-1111-1111-1111-111111111111', 'hr.manager@deiz.ae', 'HR Manager', 'Human Resources', (SELECT role_id FROM public.roles WHERE role_name = 'HR_ADMIN')),
+  ('22222222-2222-2222-2222-222222222222', 'hod.operations@deiz.ae', 'HOD Operations', 'Operations', (SELECT role_id FROM public.roles WHERE role_name = 'HOD')),
+  ('33333333-3333-3333-3333-333333333333', 'requestor.it@deiz.ae', 'IT Requestor', 'Information Technology', (SELECT role_id FROM public.roles WHERE role_name = 'DEPT_REQUESTOR')),
+  ('44444444-4444-4444-4444-444444444444', 'lm.finance@deiz.ae', 'Finance Manager', 'Finance', (SELECT role_id FROM public.roles WHERE role_name = 'FINANCE_OFFICER')),
+  ('55555555-5555-5555-5555-555555555555', 'procurement@deiz.ae', 'Procurement Officer', 'Procurement', (SELECT role_id FROM public.roles WHERE role_name = 'PROCUREMENT_OFFICER')),
+  ('66666666-6666-6666-6666-666666666666', 'finance.analyst@deiz.ae', 'Finance Analyst', 'Finance', (SELECT role_id FROM public.roles WHERE role_name = 'FINANCE_OFFICER')),
+  ('77777777-7777-7777-7777-777777777777', 'interviewer.hr@deiz.ae', 'Main Interviewer', 'Human Resources', (SELECT role_id FROM public.roles WHERE role_name = 'DEPT_REQUESTOR')),
+  ('88888888-8888-8888-8888-888888888888', 'sysadmin@deiz.ae', 'System Administrator', 'IT Administration', (SELECT role_id FROM public.roles WHERE role_name = 'SYSTEM_ADMIN'))
 ON CONFLICT (id) DO NOTHING;
 
 -- ==============================================================================
@@ -231,12 +262,20 @@ ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Internal users can view candidates" 
 ON public.candidates FOR SELECT USING (
-  (SELECT role FROM public.profiles WHERE id = auth.uid()) != 'VENDOR'
+  EXISTS (
+    SELECT 1 FROM public.profiles p
+    WHERE p.id = auth.uid() 
+    AND p.role_id != (SELECT role_id FROM public.roles WHERE role_name = 'VENDOR_USER')
+  )
 );
 
 CREATE POLICY "Internal users can view audit logs" 
 ON public.audit_logs FOR SELECT USING (
-  (SELECT role FROM public.profiles WHERE id = auth.uid()) != 'VENDOR'
+  EXISTS (
+    SELECT 1 FROM public.profiles p
+    WHERE p.id = auth.uid() 
+    AND p.role_id != (SELECT role_id FROM public.roles WHERE role_name = 'VENDOR_USER')
+  )
 );
 
 -- 8.4 RPC for Atomic Stage Advancement & Logging

@@ -7,7 +7,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import NewRequisitionModal from './NewRequisitionModal';
 import { Button } from '@/components/ui/button';
 
-export default function RequisitionHeader() {
+interface RequisitionHeaderProps {
+    onSuccess?: () => void;
+}
+
+export default function RequisitionHeader({ onSuccess }: RequisitionHeaderProps) {
     const [showNewModal, setShowNewModal] = useState(false);
     const { currentUser } = useAuth();
     const roleForView = currentUser?.roles?.role_name || 'Guest';
@@ -71,7 +75,12 @@ export default function RequisitionHeader() {
                     )}
                 </div>
             </div>
-            {showNewModal && <NewRequisitionModal onClose={() => setShowNewModal(false)} />}
+            {showNewModal && (
+                <NewRequisitionModal 
+                    onClose={() => setShowNewModal(false)} 
+                    onSuccess={onSuccess}
+                />
+            )}
         </>
     );
 }

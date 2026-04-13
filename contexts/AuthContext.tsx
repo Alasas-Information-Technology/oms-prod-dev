@@ -57,25 +57,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     const fetchProfile = async (uid: string, email: string) => {
+        setIsLoading(true); // Ensure loading state is active during fetch
         try {
+            console.log("AuthContext: Fetching profile for UID:", uid);
             const { data, error } = await supabase
                 .from('profiles')
                 .select('*, roles(role_name)')
                 .eq('id', uid)
                 .single();
 
+            if (error) {
+                console.error("AuthContext: Supabase Error fetching profile:", error.message, error.details);
+                throw error;
+            }
+
             if (data) {
+                console.log("AuthContext: Profile Data Raw:", data);
+                
+                // Inspecting the roles join specifically
+                if (!data.roles) {
+                    console.warn("AuthContext: 'roles' join returned null. Check RLS on 'roles' table or Foreign Key name.");
+                    if (data.role_id) {
+                        console.log("AuthContext: 'role_id' found but 'roles' join failed. ID:", data.role_id);
+                    }
+                }
+
+                const roleData = Array.isArray(data.roles) ? data.roles[0] : data.roles;
+
                 setCurrentUser({
                     id: uid,
                     email: email,
                     role_id: data.role_id,
-                    roles: data.roles,
+                    roles: roleData || { role_name: 'Guest' },
                     department: data.department || 'N/A',
                     full_name: data.full_name
                 });
+            } else {
+                console.warn("AuthContext: Single query returned no data but no error.");
+                setCurrentUser(null);
             }
-        } catch (err) {
-            console.error('Error fetching user profile:', err);
+        } catch (err: any) {
+            console.error('AuthContext: Fatal catch error in fetchProfile:', err);
+            setCurrentUser(null);
+        } finally {
+            setIsLoading(false);
         }
     };
 

@@ -59,7 +59,7 @@ const groupLabels: Record<string, string> = {
 export default function Sidebar() {
     const [collapsed, setCollapsed] = useState(false);
     const pathname = usePathname();
-    const { currentUser } = useAuth();
+    const { currentUser, isLoading } = useAuth();
     
     // Default to 'Guest' if currentUser isn't perfectly loaded yet
     const currentRole = currentUser?.roles?.role_name || 'Guest';
@@ -155,13 +155,31 @@ export default function Sidebar() {
             {/* User Profile */}
             <div className="border-t border-slate-200 p-2 shrink-0">
                 <div className={`flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors group relative ${collapsed ? 'justify-center' : ''}`}>
-                    <div className="w-8 h-8 rounded-full bg-[hsl(214,67%,32%)] flex items-center justify-center text-white text-xs font-bold shrink-0">
-                        FA
-                    </div>
+                    {isLoading ? (
+                        <div className="w-8 h-8 rounded-full bg-slate-100 animate-pulse shrink-0" />
+                    ) : (
+                        <div className="w-8 h-8 rounded-full bg-[hsl(214,67%,32%)] flex items-center justify-center text-white text-xs font-bold shrink-0">
+                            {currentUser?.roles?.role_name?.substring(0, 2) || 'GU'}
+                        </div>
+                    )}
+                    
                     {!collapsed && (
                         <div className="min-w-0 flex-1">
-                            <p className="text-sm font-semibold text-slate-800 truncate leading-tight">Fatima Al-Rashidi</p>
-                            <p className="text-xs text-slate-400 truncate leading-tight">HR Manager</p>
+                            {isLoading ? (
+                                <>
+                                    <div className="h-4 w-24 bg-slate-100 animate-pulse rounded mb-1" />
+                                    <div className="h-3 w-16 bg-slate-50 animate-pulse rounded" />
+                                </>
+                            ) : (
+                                <>
+                                    <p className="text-sm font-semibold text-slate-800 truncate leading-tight">
+                                        {currentUser?.full_name || 'Guest User'}
+                                    </p>
+                                    <p className="text-xs text-slate-400 truncate leading-tight">
+                                        {currentUser?.roles?.role_name || (currentUser ? 'User' : 'Sign in')}
+                                    </p>
+                                </>
+                            )}
                         </div>
                     )}
                     {!collapsed && (

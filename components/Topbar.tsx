@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 export default function Topbar() {
     const [notifOpen, setNotifOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
-    const { currentUser, logout } = useAuth();
+    const { currentUser, logout, isLoading } = useAuth();
 
     const notifications = [
         { id: 'notif-001', type: 'approval', message: 'Req #OMS-2026-0847 awaiting your HR approval', time: '8m ago', urgent: true },
@@ -97,11 +97,24 @@ export default function Topbar() {
                         className="flex items-center gap-2.5 pl-1 pr-2 py-1 rounded-lg hover:bg-slate-50 transition-colors group"
                     >
                         <div className="w-8 h-8 rounded-full bg-[hsl(214,67%,32%)] flex items-center justify-center text-white text-xs font-bold uppercase shrink-0">
-                            {currentUser?.roles?.role_name ? currentUser.roles.role_name.substring(0, 2) : 'GU'}
+                            {isLoading ? (
+                                <div className="w-full h-full rounded-full bg-white/20 animate-pulse" />
+                            ) : (
+                                currentUser?.roles?.role_name ? currentUser.roles.role_name.substring(0, 2) : 'GU'
+                            )}
                         </div>
                         <div className="text-left hidden sm:block">
-                            <p className="text-sm font-semibold text-slate-800 leading-tight max-w-[140px] truncate">{currentUser?.roles?.role_name || 'Guest User'}</p>
-                            <p className="text-[10px] text-slate-400 leading-tight max-w-[140px] truncate">{currentUser?.department || 'Session Expired'}</p>
+                            {isLoading ? (
+                                <>
+                                    <div className="h-3 w-24 bg-slate-100 animate-pulse rounded mb-1" />
+                                    <div className="h-2 w-16 bg-slate-50 animate-pulse rounded" />
+                                </>
+                            ) : (
+                                <>
+                                    <p className="text-sm font-semibold text-slate-800 leading-tight max-w-[140px] truncate">{currentUser?.full_name || 'Guest User'}</p>
+                                    <p className="text-[10px] text-slate-400 leading-tight max-w-[140px] truncate">{currentUser?.department || (currentUser ? 'No Department' : 'Session Expired')}</p>
+                                </>
+                            )}
                         </div>
                         <ChevronDown size={14} className="text-slate-400 group-hover:text-slate-600 transition-colors shrink-0" />
                     </button>

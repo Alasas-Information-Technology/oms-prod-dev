@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useAuth } from '@/contexts/AuthContext';
+import { requisitionService } from '@/lib/services/requisitionService';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
     Select,
@@ -41,6 +43,7 @@ interface NewRequisitionFormValues {
 
 interface NewRequisitionModalProps {
     onClose: () => void;
+    onSuccess?: () => void;
 }
 
 const departments = [
@@ -56,8 +59,9 @@ const departments = [
 
 const fundingTypes = ['Budgeted', 'Unallocated', 'Unbudgeted'];
 
-export default function NewRequisitionModal({ onClose }: NewRequisitionModalProps) {
+export default function NewRequisitionModal({ onClose, onSuccess }: NewRequisitionModalProps) {
     const [submitting, setSubmitting] = useState(false);
+    const { currentUser } = useAuth();
 
     const {
         register,
@@ -79,13 +83,30 @@ export default function NewRequisitionModal({ onClose }: NewRequisitionModalProp
     const workLocation = watch('workLocation');
 
     const onSubmit = async (data: NewRequisitionFormValues) => {
-        setSubmitting(true);
-        // Simulate API interaction
-        await new Promise((res) => setTimeout(res, 1200));
-        setSubmitting(false);
+        if (!currentUser) {
+            toast.error('You must be logged in to create a requisition');
+            return;
+        }
 
-        toast.success('Requisition generated and funds conditionally reserved');
-        onClose();
+        setSubmitting(true);
+        try {
+            await requisitionService.createRequisition({
+                ...data,
+                requestorId: currentUser.id
+            });
+            
+            toast.success('Requisition generated and workflow initiated');
+            
+            if (onSuccess) {
+                onSuccess();
+            }
+            
+            onClose();
+        } catch (error) {
+            toast.error('Failed to create requisition. Please check your permissions.');
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -184,16 +205,15 @@ export default function NewRequisitionModal({ onClose }: NewRequisitionModalProp
                                     name="reqLaptop"
                                     control={control}
                                     render={({ field }) => (
-                                        <div 
+                                        <label 
                                             className="flex items-start gap-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors"
-                                            onClick={() => field.onChange(!field.value)}
                                         >
                                             <Checkbox checked={field.value} onCheckedChange={field.onChange} className="mt-1" />
                                             <div>
                                                 <p className="text-sm font-semibold text-slate-800">Corporate Laptop</p>
                                                 <p className="text-xs text-slate-500">Standard IT provisioned device</p>
                                             </div>
-                                        </div>
+                                        </label>
                                     )}
                                 />
                                 
@@ -201,16 +221,15 @@ export default function NewRequisitionModal({ onClose }: NewRequisitionModalProp
                                     name="reqMobilePhone"
                                     control={control}
                                     render={({ field }) => (
-                                        <div 
+                                        <label 
                                             className="flex items-start gap-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors"
-                                            onClick={() => field.onChange(!field.value)}
                                         >
                                             <Checkbox checked={field.value} onCheckedChange={field.onChange} className="mt-1" />
                                             <div>
                                                 <p className="text-sm font-semibold text-slate-800">Mobile Phone</p>
                                                 <p className="text-xs text-slate-500">Requires line manager approval</p>
                                             </div>
-                                        </div>
+                                        </label>
                                     )}
                                 />
                                 
@@ -218,16 +237,15 @@ export default function NewRequisitionModal({ onClose }: NewRequisitionModalProp
                                     name="reqEmailAccess"
                                     control={control}
                                     render={({ field }) => (
-                                        <div 
+                                        <label 
                                             className="flex items-start gap-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors"
-                                            onClick={() => field.onChange(!field.value)}
                                         >
                                             <Checkbox checked={field.value} onCheckedChange={field.onChange} className="mt-1" />
                                             <div>
                                                 <p className="text-sm font-semibold text-slate-800">Enterprise Email Access</p>
                                                 <p className="text-xs text-slate-500">Provided via Active Directory</p>
                                             </div>
-                                        </div>
+                                        </label>
                                     )}
                                 />
 
@@ -235,16 +253,15 @@ export default function NewRequisitionModal({ onClose }: NewRequisitionModalProp
                                     name="reqSoftwareLicenses"
                                     control={control}
                                     render={({ field }) => (
-                                        <div 
+                                        <label 
                                             className="flex items-start gap-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors"
-                                            onClick={() => field.onChange(!field.value)}
                                         >
                                             <Checkbox checked={field.value} onCheckedChange={field.onChange} className="mt-1" />
                                             <div>
                                                 <p className="text-sm font-semibold text-slate-800">Specialized Software Licenses</p>
                                                 <p className="text-xs text-slate-500">e.g. Adobe CC, GitHub, Oracle</p>
                                             </div>
-                                        </div>
+                                        </label>
                                     )}
                                 />
                             </div>

@@ -114,7 +114,11 @@ const columns = [
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 25, 50];
 
-export default function RequisitionTable() {
+interface RequisitionTableProps {
+    refreshTrigger?: number;
+}
+
+export default function RequisitionTable({ refreshTrigger = 0 }: RequisitionTableProps) {
     const [requisitions, setRequisitions] = useState<Requisition[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
@@ -130,7 +134,7 @@ export default function RequisitionTable() {
 
     useEffect(() => {
         loadRequisitions();
-    }, []);
+    }, [refreshTrigger]);
 
     const loadRequisitions = async () => {
         setLoading(true);
