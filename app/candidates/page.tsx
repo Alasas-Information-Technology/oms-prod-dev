@@ -1,18 +1,60 @@
-import React from 'react';
-import AppLayout from '@/components/AppLayout';
+"use client";
+
+import React, { useState } from "react";
+import AppLayout from "@/components/AppLayout";
+import { Plus, Download, RefreshCw, Users } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import CandidateTable from "./components/CandidateTable";
+import CandidateModal from "./components/CandidateModal";
 
 export default function CandidatesPage() {
-    return (
-        <AppLayout>
-            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-                <div className="w-16 h-16 rounded-full bg-[hsl(214,67%,32%)]/10 flex items-center justify-center mb-6">
-                    <span className="text-[hsl(214,67%,32%)] text-2xl font-bold">✨</span>
-                </div>
-                <h1 className="text-3xl font-bold text-slate-800 mb-2">Candidates Module Coming Soon</h1>
-                <p className="text-slate-500 max-w-md">
-                    The Candidates module is currently under development. Check back in a future update.
-                </p>
-            </div>
-        </AppLayout>
-    );
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [showNewModal, setShowNewModal] = useState(false);
+
+  const handleRefresh = () => setRefreshKey((prev) => prev + 1);
+
+  return (
+    <AppLayout>
+      <div className="max-w-screen-2xl mx-auto space-y-5">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-3">
+              <Users size={24} className="text-[hsl(214,67%,32%)]" />
+              Candidates
+            </h1>
+            <p className="text-slate-500 text-sm mt-0.5">
+              Blind candidate pool · Vendor submissions across all requisitions
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={handleRefresh}>
+              <RefreshCw size={14} /> Refresh
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => toast.info("Generating export…")}
+            >
+              <Download size={14} /> Export
+            </Button>
+            <Button size="sm" onClick={() => setShowNewModal(true)}>
+              <Plus size={14} /> Add Candidate
+            </Button>
+          </div>
+        </div>
+
+        <CandidateTable refreshTrigger={refreshKey} />
+      </div>
+
+      {showNewModal && (
+        <CandidateModal
+          mode="create"
+          onClose={() => setShowNewModal(false)}
+          onSuccess={handleRefresh}
+        />
+      )}
+    </AppLayout>
+  );
 }
