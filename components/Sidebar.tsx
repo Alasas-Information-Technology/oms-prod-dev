@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import AppLogo from '@/components/ui/AppLogo';
+import { dashboardService } from '@/lib/services/dashboardService';
 import { Button } from '@/components/ui/button';
 import {
     LayoutDashboard,
@@ -60,9 +61,33 @@ export default function Sidebar() {
     const [collapsed, setCollapsed] = useState(false);
     const pathname = usePathname();
     const { currentUser, isLoading } = useAuth();
+    const [counts, setCounts] = useState<Record<string, number>>({
+        requisitions: 0,
+        candidates: 0,
+        onboarding: 0,
+        notifications: 0
+    });
     
     // Default to 'Guest' if currentUser isn't perfectly loaded yet
     const currentRole = currentUser?.roles?.role_name || 'Guest';
+
+    useEffect(() => {
+        const fetchCounts = async () => {
+            if (currentUser) {
+                try {
+                    const data = await dashboardService.getSidebarCounts(currentUser);
+                    setCounts(data);
+                } catch (error) {
+                    console.error('Sidebar: Error fetching counts', error);
+                }
+            }
+        };
+
+        fetchCounts();
+        // Refresh every 2 minutes for soft-real-time updates
+        const interval = setInterval(fetchCounts, 120000);
+        return () => clearInterval(interval);
+    }, [currentUser]);
 
     useEffect(() => {
         const width = collapsed ? '68px' : '256px';
@@ -107,6 +132,13 @@ export default function Sidebar() {
                             )}
                             {items.map((item) => {
                                 const active = pathname?.startsWith(item.href);
+                                
+                                // Map IDs to dynamic counts
+                                let badgeCount = item.badge;
+                                if (item.id === 'nav-requisitions') badgeCount = counts.requisitions;
+                                if (item.id === 'nav-candidates') badgeCount = counts.candidates;
+                                if (item.id === 'nav-onboarding') badgeCount = counts.onboarding;
+                                if (item.id === 'nav-notifications') badgeCount = counts.notifications;
 
                                 return (
                                     <Link
@@ -124,20 +156,20 @@ export default function Sidebar() {
                                         {!collapsed && (
                                             <span className="truncate text-sm">{item.label}</span>
                                         )}
-                                        {!collapsed && item.badge !== undefined && item.badge > 0 && (
+                                        {!collapsed && badgeCount !== undefined && badgeCount > 0 && (
                                             <span className="ml-auto shrink-0 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[hsl(214,67%,32%)] text-white min-w-[18px] text-center">
-                                                {item.badge}
+                                                {badgeCount}
                                             </span>
                                         )}
-                                        {collapsed && item.badge !== undefined && item.badge > 0 && (
+                                        {collapsed && badgeCount !== undefined && badgeCount > 0 && (
                                             <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500" />
                                         )}
                                         {/* Tooltip for collapsed */}
                                         {collapsed && (
                                             <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-900 text-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none z-50 shadow-lg">
                                                 {item.label}
-                                                {item.badge !== undefined && item.badge > 0 && (
-                                                    <span className="ml-1.5 px-1 py-0.5 bg-white/20 rounded text-[10px]">{item.badge}</span>
+                                                {badgeCount !== undefined && badgeCount > 0 && (
+                                                    <span className="ml-1.5 px-1 py-0.5 bg-white/20 rounded text-[10px]">{badgeCount}</span>
                                                 )}
                                             </div>
                                         )}

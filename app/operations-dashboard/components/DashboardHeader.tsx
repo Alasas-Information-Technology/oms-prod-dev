@@ -5,9 +5,13 @@ import { RefreshCw, Download, Calendar, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
-export default function DashboardHeader() {
+interface DashboardHeaderProps {
+    onRefresh: () => void;
+    refreshing: boolean;
+}
+
+export default function DashboardHeader({ onRefresh, refreshing }: DashboardHeaderProps) {
     const [lastUpdated, setLastUpdated] = useState('');
-    const [refreshing, setRefreshing] = useState(false);
 
     useEffect(() => {
         const now = new Date();
@@ -18,16 +22,12 @@ export default function DashboardHeader() {
     }, []);
 
     const handleRefresh = async () => {
-        setRefreshing(true);
-        // Backend integration point: GET /api/dashboard/refresh
-        await new Promise((res) => setTimeout(res, 1200));
+        onRefresh();
         const now = new Date();
         setLastUpdated(
             now?.toLocaleTimeString('en-AE', { hour: '2-digit', minute: '2-digit', hour12: true }) +
             ' · ' + now?.toLocaleDateString('en-AE', { day: '2-digit', month: 'short', year: 'numeric' })
         );
-        setRefreshing(false);
-        toast?.success('Dashboard data refreshed');
     };
 
     return (

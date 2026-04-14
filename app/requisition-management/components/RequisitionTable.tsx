@@ -24,6 +24,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import {
     Card,
     CardContent,
@@ -119,6 +121,9 @@ interface RequisitionTableProps {
 }
 
 export default function RequisitionTable({ refreshTrigger = 0 }: RequisitionTableProps) {
+    const { currentUser } = useAuth();
+    const router = useRouter();
+
     const [requisitions, setRequisitions] = useState<Requisition[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
@@ -131,25 +136,41 @@ export default function RequisitionTable({ refreshTrigger = 0 }: RequisitionTabl
     const [showColMenu, setShowColMenu] = useState(false);
     const [stageDropdownId, setStageDropdownId] = useState<string | null>(null);
     const [actionMenuId, setActionMenuId] = useState<string | null>(null);
+    const [workflowStages, setWorkflowStages] = useState<any[]>([]);
 
     useEffect(() => {
+        // Vendor Lockout Protection logic
+        if (currentUser?.roles?.role_name === 'VENDOR_USER') {
+            router.push('/vendor-portal');
+            return;
+        }
+
+        const loadMeta = async () => {
+            try {
+                const stages = await requisitionService.getWorkflowStages();
+                setWorkflowStages(stages);
+            } catch (e) {}
+        };
+        loadMeta();
         loadRequisitions();
-    }, [refreshTrigger]);
+    }, [refreshTrigger, currentUser]);
 
     const loadRequisitions = async () => {
+        if (!currentUser) return;
+        
         setLoading(true);
         try {
-            const data = await requisitionService.getRequisitions();
+            const data = await requisitionService.getRequisitions(currentUser);
             const mapped: Requisition[] = data.map(item => ({
                 id: item.id,
-                reqId: item.req_id,
-                title: item.title,
+                reqId: item.req_number, // Sync with SQL
+                title: item.position_title, // Sync with SQL
                 department: item.department,
                 requestor: item.profiles?.full_name || 'System',
                 stage: item.workflow_stages?.stage_name || 'Draft',
                 stageId: item.stage_id,
                 location: 'Onshore – DIEZA Premises' as LocationType,
-                budgetAED: item.budget_aed,
+                budgetAED: item.reserved_budget_aed, // Sync with SQL
                 budgetType: 'Budgeted' as BudgetType,
                 vendorCount: 0,
                 candidateCount: 0,
@@ -423,7 +444,7 @@ export default function RequisitionTable({ refreshTrigger = 0 }: RequisitionTabl
                             ) : (
                                 paginated.map((req, rowIdx) => {
                                     const isSelected = selected.includes(req.id);
-                                    const stageSty = stageStyles[req.stage];
+                                    const stageSty = stageStyles[req.stage] || stageStyles['Draft'];
                                     const locBadge = locationBadge[req.location];
                                     const budBadge = budgetBadge[req.budgetType];
 
@@ -472,7 +493,7 @@ export default function RequisitionTable({ refreshTrigger = 0 }: RequisitionTabl
                                                             </span>
                                                         )}
                                                     </div>
-                                                    <p className="text-[10px] text-slate-400 mt-0.5">Stage {req.stageId}/14</p>
+                                                    <p className="text-[10px] text-slate-400 mt-0.5">Stage {req.stageId}/{workflowStages.length || 5}</p>
                                                 </td>
                                             )}
 

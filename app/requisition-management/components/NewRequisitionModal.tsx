@@ -29,7 +29,6 @@ import {
 
 interface NewRequisitionFormValues {
     positionTitle: string;
-    department: string;
     targetStartDate: string;
     workLocation: 'Onshore (UAE)' | 'Offshore (Remote)';
     reqLaptop: boolean;
@@ -37,7 +36,7 @@ interface NewRequisitionFormValues {
     reqEmailAccess: boolean;
     reqSoftwareLicenses: boolean;
     officeSeating: string;
-    fundingType: 'Budgeted' | 'Unallocated' | 'Unbudgeted' | '';
+    fundingType: 'BUDGETED' | 'UNALLOCATED' | 'UNBUDGETED' | '';
     reservedBudget: number | '';
 }
 
@@ -57,7 +56,7 @@ const departments = [
     'Procurement',
 ];
 
-const fundingTypes = ['Budgeted', 'Unallocated', 'Unbudgeted'];
+const fundingTypes = ['BUDGETED', 'UNALLOCATED', 'UNBUDGETED'];
 
 export default function NewRequisitionModal({ onClose, onSuccess }: NewRequisitionModalProps) {
     const [submitting, setSubmitting] = useState(false);
@@ -90,10 +89,7 @@ export default function NewRequisitionModal({ onClose, onSuccess }: NewRequisiti
 
         setSubmitting(true);
         try {
-            await requisitionService.createRequisition({
-                ...data,
-                requestorId: currentUser.id
-            });
+            await requisitionService.createRequisition(data, currentUser);
             
             toast.success('Requisition generated and workflow initiated');
             
@@ -137,25 +133,10 @@ export default function NewRequisitionModal({ onClose, onSuccess }: NewRequisiti
                                 </div>
 
                                 <div>
-                                    <Label className="label">Department <span className="text-red-500">*</span></Label>
-                                    <Controller
-                                        name="department"
-                                        control={control}
-                                        rules={{ required: 'Department is required' }}
-                                        render={({ field }) => (
-                                            <Select onValueChange={field.onChange} value={field.value}>
-                                                <SelectTrigger className={`w-full ${errors.department ? 'border-red-500' : ''}`}>
-                                                    <SelectValue placeholder="Select a department..." />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {departments.map(dept => (
-                                                        <SelectItem key={dept} value={dept}>{dept}</SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        )}
-                                    />
-                                    {errors.department && <p className="text-red-600 text-xs mt-1">{errors.department.message}</p>}
+                                    <Label className="label">Department <span className="text-slate-400 font-normal ml-1">(Auto-detected)</span></Label>
+                                    <div className="flex h-10 w-full rounded-md border border-slate-200 bg-slate-50/50 px-3 py-2 text-sm text-slate-500 font-medium">
+                                        {currentUser?.department || 'N/A'}
+                                    </div>
                                 </div>
 
                                 <div>

@@ -20,14 +20,14 @@ export default function RequisitionHeader({ onSuccess }: RequisitionHeaderProps)
         <>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-3">
-                        Requisition Management
-                        <span className="text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200 shadow-sm">
-                            ROLE VIEW: {roleForView}
+                    <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-3 tracking-tight">
+                        Manpower Requisitions
+                        <span className="text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100 shadow-sm">
+                            ROLE: {roleForView}
                         </span>
                     </h1>
-                    <p className="text-slate-500 text-sm mt-0.5">
-                        14-step OMS workflow · All active and historical outsource requisitions
+                    <p className="text-slate-500 text-sm mt-0.5 font-medium">
+                        Agile Lifecycle Management · 5-stage real-time governance for outsourced talent
                     </p>
                 </div>
 
