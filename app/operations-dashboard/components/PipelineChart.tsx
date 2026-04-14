@@ -1,110 +1,80 @@
 'use client';
 
 import React from 'react';
-import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-    Cell,
-} from 'recharts';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
 
-// Backend integration point: GET /api/dashboard/pipeline-distribution
-const pipelineData = [
-    { stage: 'Draft', count: 4, stageNum: 1 },
-    { stage: 'Submitted', count: 6, stageNum: 2 },
-    { stage: 'Line Mgr', count: 8, stageNum: 3 },
-    { stage: 'HOD Apvl', count: 5, stageNum: 4 },
-    { stage: 'HR Review', count: 7, stageNum: 5 },
-    { stage: 'Procure', count: 4, stageNum: 6 },
-    { stage: 'Vendor Sub', count: 5, stageNum: 7 },
-    { stage: 'Blind Sel', count: 3, stageNum: 8 },
-    { stage: 'Interview', count: 4, stageNum: 9 },
-    { stage: 'Qualified', count: 3, stageNum: 10 },
-    { stage: 'Onboarding', count: 5, stageNum: 11 },
-    { stage: 'Active', count: 18, stageNum: 12 },
-    { stage: 'Renewal', count: 6, stageNum: 13 },
-    { stage: 'Closed', count: 9, stageNum: 14 },
-];
-
-const stageColors: Record<number, string> = {
-    1: '#94a3b8',
-    2: '#60a5fa',
-    3: '#818cf8',
-    4: '#a78bfa',
-    5: '#c084fc',
-    6: '#22d3ee',
-    7: '#2dd4bf',
-    8: '#fb923c',
-    9: '#fbbf24',
-    10: '#a3e635',
-    11: '#34d399',
-    12: '#22c55e',
-    13: '#38bdf8',
-    14: '#94a3b8',
-};
-
-interface CustomTooltipProps {
-    active?: boolean;
-    payload?: Array<{ value: number; payload: typeof pipelineData[0] }>;
-    label?: string;
+interface PipelineChartProps {
+    data: {
+        name: string;
+        count: number;
+    }[];
 }
 
-function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
+const colors = [
+    'hsl(214, 67%, 32%)', // Initiation
+    'hsl(214, 67%, 45%)', // Approval
+    'hsl(214, 67%, 55%)', // Vendor
+    'hsl(214, 67%, 65%)', // Selection
+    'hsl(214, 67%, 75%)', // Onboarding
+];
+
+function CustomTooltip({ active, payload, label }: any) {
     if (!active || !payload || payload.length === 0) return null;
     const data = payload[0];
     return (
         <div className="bg-white border border-slate-200 rounded-lg shadow-card px-3 py-2.5">
-            <p className="text-xs font-semibold text-slate-700">Stage {data.payload.stageNum}: {label}</p>
+            <p className="text-xs font-semibold text-slate-700">{label}</p>
             <p className="text-base font-bold text-slate-900 tabular-nums">{data.value} requisitions</p>
         </div>
     );
 }
 
-export default function PipelineChart() {
+export default function PipelineChart({ data }: PipelineChartProps) {
+    const totalCount = data.reduce((acc, curr) => acc + curr.count, 0);
+
     return (
         <Card className="h-full flex flex-col">
             <CardHeader className="flex flex-row items-start justify-between mb-0 pb-2">
                 <div>
-                    <CardTitle className="text-base font-semibold text-slate-900 border-none">Requisition Pipeline Distribution</CardTitle>
-                    <CardDescription className="text-xs text-slate-400 mt-0.5">Count by 14-step OMS workflow stage · Live</CardDescription>
+                    <CardTitle className="text-base font-semibold text-slate-900 border-none">Workflow Pipeline Distribution</CardTitle>
+                    <CardDescription className="text-xs text-slate-400 mt-0.5">Active requisitions by current lifecycle stage</CardDescription>
                 </div>
                 <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
-                    87 total
+                    {totalCount} total
                 </span>
             </CardHeader>
             <CardContent className="pt-0">
                 <div style={{ height: 240 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={pipelineData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }} barSize={16}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                        <XAxis
-                            dataKey="stage"
-                            tick={{ fontSize: 10, fill: '#94a3b8', fontFamily: 'DM Sans' }}
-                            axisLine={false}
-                            tickLine={false}
-                            interval={0}
-                            angle={-35}
-                            textAnchor="end"
-                            height={52}
-                        />
-                        <YAxis
-                            tick={{ fontSize: 11, fill: '#94a3b8', fontFamily: 'DM Sans' }}
-                            axisLine={false}
-                            tickLine={false}
-                        />
-                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(100,116,139,0.06)' }} />
-                        <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                            {pipelineData.map((entry) => (
-                                <Cell key={`cell-stage-${entry.stageNum}`} fill={stageColors[entry.stageNum]} />
-                            ))}
-                        </Bar>
-                    </BarChart>
-                </ResponsiveContainer>
+                    {data.length === 0 ? (
+                        <div className="h-full flex items-center justify-center italic text-slate-400 text-sm">
+                            No active requisitions in pipeline
+                        </div>
+                    ) : (
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={data} margin={{ top: 20, right: 0, left: -20, bottom: 0 }} barSize={32}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                                <XAxis
+                                    dataKey="name"
+                                    tick={{ fontSize: 10, fill: '#94a3b8' }}
+                                    axisLine={false}
+                                    tickLine={false}
+                                    interval={0}
+                                />
+                                <YAxis
+                                    tick={{ fontSize: 11, fill: '#94a3b8' }}
+                                    axisLine={false}
+                                    tickLine={false}
+                                />
+                                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(100,116,139,0.06)' }} />
+                                <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                                    {data.map((entry, index) => (
+                                        <Cell key={`cell-pipeline-${index}`} fill={colors[index % colors.length]} />
+                                    ))}
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
+                    )}
                 </div>
             </CardContent>
         </Card>

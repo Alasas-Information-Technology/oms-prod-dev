@@ -24,14 +24,16 @@ export default function RequisitionSpecs({ data }: RequisitionSpecsProps) {
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Target Start Date</p>
                             <div className="flex items-center gap-2 text-slate-700">
                                 <Calendar size={14} className="text-slate-400" />
-                                <span className="text-sm font-semibold">May 01, 2026</span>
+                                <span className="text-sm font-semibold">
+                                    {data?.target_start_date ? new Date(data.target_start_date).toLocaleDateString() : 'N/A'}
+                                </span>
                             </div>
                         </div>
                         <div className="space-y-1">
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Work Location</p>
                             <div className="flex items-center gap-2 text-slate-700">
                                 <MapPin size={14} className="text-slate-400" />
-                                <span className="text-sm font-semibold">Onshore (DIEZA)</span>
+                                <span className="text-sm font-semibold">{data?.work_location || 'N/A'}</span>
                             </div>
                         </div>
                     </div>
@@ -39,9 +41,12 @@ export default function RequisitionSpecs({ data }: RequisitionSpecsProps) {
                     <div className="space-y-1">
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hardware & Tools</p>
                         <div className="flex flex-wrap gap-2 pt-1">
-                            <span className="px-2 py-1 rounded bg-blue-50 text-blue-700 text-[11px] font-bold">DIEZA Standard Laptop</span>
-                            <span className="px-2 py-1 rounded bg-blue-50 text-blue-700 text-[11px] font-bold">Enterprise Email</span>
-                            <span className="px-2 py-1 rounded bg-blue-50 text-blue-700 text-[11px] font-bold">VPN Access</span>
+                            {data?.req_laptop && <span className="px-2 py-1 rounded bg-blue-50 text-blue-700 text-[11px] font-bold">Standard Laptop</span>}
+                            {data?.req_email && <span className="px-2 py-1 rounded bg-blue-50 text-blue-700 text-[11px] font-bold">Enterprise Email</span>}
+                            {data?.req_mobile && <span className="px-2 py-1 rounded bg-blue-50 text-blue-700 text-[11px] font-bold">Mobile Device</span>}
+                            <span className="px-2 py-1 rounded bg-slate-50 text-slate-500 text-[11px] font-medium">
+                                Software: {data?.req_software || 'None Special'}
+                            </span>
                         </div>
                     </div>
 
@@ -49,7 +54,7 @@ export default function RequisitionSpecs({ data }: RequisitionSpecsProps) {
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Seating & Accommodations</p>
                         <div className="flex items-center gap-2 text-slate-700">
                             <Armchair size={14} className="text-slate-400" />
-                            <span className="text-sm font-semibold">Standard Workstation (Level 4, Zone B)</span>
+                            <span className="text-sm font-semibold">{data?.seating_accommodations || 'Unspecified'}</span>
                         </div>
                     </div>
                 </CardContent>
@@ -68,13 +73,13 @@ export default function RequisitionSpecs({ data }: RequisitionSpecsProps) {
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Funding Category</p>
                             <div className="flex items-center gap-2">
                                 <Landmark size={14} className="text-emerald-500" />
-                                <span className="text-sm font-bold text-emerald-700">Approved Budgeted</span>
+                                <span className="text-sm font-bold text-emerald-700">{data?.funding_category || 'N/A'}</span>
                             </div>
                         </div>
                         <div className="text-right space-y-1">
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Reserved Amount</p>
                             <p className="text-lg font-mono font-bold text-slate-800">
-                                {data?.budget_aed?.toLocaleString() || '0'} <span className="text-xs text-slate-400">AED</span>
+                                {data?.reserved_budget_aed?.toLocaleString() || '0'} <span className="text-xs text-slate-400">AED</span>
                             </p>
                         </div>
                     </div>

@@ -51,9 +51,9 @@ const locationOptions = [
 ];
 
 const budgetTypeOptions = [
-    { id: 'budget-budgeted', value: 'Budgeted' },
-    { id: 'budget-unallocated', value: 'Unallocated' },
-    { id: 'budget-unbudgeted', value: 'Unbudgeted' },
+    { id: 'budget-budgeted', value: 'BUDGETED' },
+    { id: 'budget-unallocated', value: 'UNALLOCATED' },
+    { id: 'budget-unbudgeted', value: 'UNBUDGETED' },
 ];
 
 const dateRangeOptions = [

@@ -13,7 +13,7 @@ interface AppLogoProps {
 }
 
 const AppLogo = memo(function AppLogo({
-    src = '/assets/images/app_logo.png',
+    src, // Default removed to check for existence
     iconName = 'SparklesIcon',
     size = 64,
     className = '',
@@ -29,8 +29,8 @@ const AppLogo = memo(function AppLogo({
 
     return (
         <div className={containerClassName} onClick={onClick}>
-            {/* Show image if src provided, otherwise show icon */}
-            {src ? (
+            {/* Show image if src provided and not the missing default, otherwise show icon */}
+            {src && src !== '/assets/images/app_logo.png' ? (
                 <AppImage
                     src={src}
                     alt="Logo"

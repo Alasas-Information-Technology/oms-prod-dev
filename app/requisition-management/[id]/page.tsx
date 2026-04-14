@@ -21,9 +21,12 @@ export default function RequisitionDetailPage() {
     const id = params.id as string;
     
     const [requisition, setRequisition] = useState<any>(null);
+    const [auditLogs, setAuditLogs] = useState<any[]>([]);
+    const [workflowStages, setWorkflowStages] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentStep, setCurrentStep] = useState(1);
     const [status, setStatus] = useState('');
+    const [candidateStatus, setCandidateStatus] = useState({ totalSubmitted: 0, hasQualified: false });
     
     const { currentUser } = useAuth();
     
@@ -39,11 +42,24 @@ export default function RequisitionDetailPage() {
     const loadRequisition = async () => {
         setLoading(true);
         try {
-            const data = await requisitionService.getRequisitionById(id);
+            // Parallel fetch for details, logs, stages, and candidate status
+            const [data, stages, candStatus] = await Promise.all([
+                requisitionService.getRequisitionById(id),
+                requisitionService.getWorkflowStages(),
+                requisitionService.getCandidateReviewStatus(id)
+            ]);
+
             setRequisition(data);
+            setWorkflowStages(stages);
+            setCandidateStatus(candStatus);
             setCurrentStep(data.stage_id);
             setStatus(data.workflow_stages?.stage_name || 'Draft');
+
+            // Now fetch logs using the verified UUID
+            const logs = await requisitionService.getAuditLogs(data.id);
+            setAuditLogs(logs);
         } catch (error) {
+            console.error('Error in loadRequisition:', error);
             toast.error('Failed to load requisition details');
         } finally {
             setLoading(false);
@@ -83,7 +99,7 @@ export default function RequisitionDetailPage() {
                                 <>
                                     <div className="flex items-center gap-3">
                                         <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-                                            Requisition <span className="text-[hsl(214,67%,32%)]">{requisition?.req_id}</span>
+                                            Requisition <span className="text-[hsl(214,67%,32%)]">{requisition?.req_number}</span>
                                         </h1>
                                         <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider
                                             ${currentStep === 2 ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-blue-100 text-blue-700 border border-blue-200'}`}>
@@ -93,7 +109,7 @@ export default function RequisitionDetailPage() {
                                     <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-slate-500 text-sm font-medium">
                                         <div className="flex items-center gap-2">
                                             <Briefcase size={14} className="text-slate-400" />
-                                            {requisition?.title}
+                                            {requisition?.position_title}
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <Building2 size={14} className="text-slate-400" />
@@ -121,7 +137,7 @@ export default function RequisitionDetailPage() {
 
                 {/* Stepper Banner */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-                    <WorkflowStepper currentStep={currentStep} />
+                    <WorkflowStepper currentStep={currentStep} stages={workflowStages} />
                 </div>
 
                 {/* Content Grid */}
@@ -131,27 +147,74 @@ export default function RequisitionDetailPage() {
                         {loading ? (
                             <Skeleton className="h-96 w-full rounded-2xl" />
                         ) : (
-                            <RequisitionSpecs data={requisition} />
+                            <>
+                                <RequisitionSpecs data={requisition} />
+                                
+                                {/* Dynamic Candidate Summary Section specifically for Stage 4+ */}
+                                {currentStep >= 4 && (
+                                    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                                                <User size={16} className="text-orange-500" />
+                                                Candidate Submissions
+                                            </h3>
+                                            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-orange-50 text-orange-600 border border-orange-100">
+                                                Interviewer Review Required
+                                            </span>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center">
+                                                <span className="text-2xl font-bold text-slate-900">{candidateStatus.totalSubmitted}</span>
+                                                <span className="text-[10px] text-slate-500 uppercase font-semibold tracking-tight">Pending Review</span>
+                                            </div>
+                                            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center">
+                                                <span className={`text-sm font-bold ${candidateStatus.hasQualified ? 'text-emerald-600' : 'text-slate-400'}`}>
+                                                    {candidateStatus.hasQualified ? '✓ QUALIFIED' : '✖ NONE YET'}
+                                                </span>
+                                                <span className="text-[10px] text-slate-500 uppercase font-semibold tracking-tight">Stage Gating Status</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </>
                         )}
                         
                         {/* Additional Info / Comments Section for premium feel */}
                         <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
                             <h3 className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-4">
                                 <Info size={16} className="text-blue-500" />
-                                Governance Notes
+                                Governance & Activity History
                             </h3>
                             <div className="space-y-4">
-                                <div className="flex gap-4 p-4 rounded-xl bg-slate-50/80 border border-slate-100">
-                                    <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center shrink-0">
-                                        <User size={14} className="text-slate-500" />
+                                {auditLogs.length > 0 ? (
+                                    auditLogs.map((log) => (
+                                        <div key={log.id} className="flex gap-4 p-4 rounded-xl bg-slate-50/80 border border-slate-100">
+                                            <div className="w-8 h-8 rounded-full bg-[hsl(214,67%,32%)]/10 flex items-center justify-center shrink-0">
+                                                <User size={14} className="text-[hsl(214,67%,32%)]" />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <p className="text-xs font-bold text-slate-800">
+                                                    {log.profiles?.full_name || 'System Actor'} 
+                                                    <span className="text-[10px] font-normal text-slate-400 ml-2">
+                                                        {new Date(log.cryptographic_timestamp).toLocaleString()}
+                                                    </span>
+                                                </p>
+                                                <div className="flex items-center gap-2 text-[10px] text-blue-600 font-bold uppercase tracking-tight">
+                                                    {log.action_type}
+                                                </div>
+                                                {log.comments && (
+                                                    <p className="text-xs text-slate-600 leading-relaxed italic mt-1">
+                                                        "{log.comments}"
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="text-center py-8 text-slate-400 italic text-sm">
+                                        No activity logs recorded for this requisition yet.
                                     </div>
-                                    <div className="space-y-1">
-                                        <p className="text-xs font-bold text-slate-800">Sara Al-Mazrouei <span className="text-[10px] font-normal text-slate-400 ml-2">2 days ago</span></p>
-                                        <p className="text-xs text-slate-600 leading-relaxed italic">
-                                            "This role is critical for the Q3 fiscal audit. Budget has been provisionally reserved under the Corporate Strategy fund."
-                                        </p>
-                                    </div>
-                                </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -167,23 +230,42 @@ export default function RequisitionDetailPage() {
                                 actorId={actorId}
                                 requiredRoleId={requisition?.workflow_stages?.required_role_id}
                                 onApprove={handleApprove} 
+                                hasQualifiedCandidate={candidateStatus.hasQualified}
                             />
                         )}
                         
-                        {/* Summary Info Card */}
+                        {/* Summary Info Card - Dynamic SLA */}
                         <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 text-white shadow-lg space-y-4">
                             <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 opacity-80">SLA Tracking</h3>
                             <div className="space-y-3">
-                                <div className="flex justify-between items-end">
-                                    <span className="text-2xl font-bold">4.2 Days</span>
-                                    <span className="text-[10px] font-bold text-emerald-400 uppercase">Within SLA</span>
-                                </div>
-                                <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
-                                    <div className="bg-emerald-400 h-full w-[40%]" />
-                                </div>
-                                <p className="text-[10px] text-slate-400 leading-tight">
-                                    Target SLA for HR Approval is 7 working days. Current performance is optimized.
-                                </p>
+                                {(() => {
+                                    const created = new Date(requisition?.created_at || Date.now());
+                                    const diff = Math.floor((Date.now() - created.getTime()) / (1000 * 60 * 60 * 24));
+                                    const slaTarget = 7;
+                                    const percent = Math.min(100, (diff / slaTarget) * 100);
+                                    const isAtRisk = diff >= slaTarget;
+
+                                    return (
+                                        <>
+                                            <div className="flex justify-between items-end">
+                                                <span className="text-2xl font-bold">{diff} Days</span>
+                                                <span className={`text-[10px] font-bold uppercase ${isAtRisk ? 'text-red-400' : 'text-emerald-400'}`}>
+                                                    {isAtRisk ? 'SLA BREACH' : 'Within SLA'}
+                                                </span>
+                                            </div>
+                                            <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+                                                <div 
+                                                    className={`h-full transition-all duration-500 ${isAtRisk ? 'bg-red-400 border-none' : 'bg-emerald-400 border-none'}`} 
+                                                    style={{ width: `${percent}%` }} 
+                                                />
+                                            </div>
+                                            <p className="text-[10px] text-slate-400 leading-tight">
+                                                Target SLA for full approval cycle is {slaTarget} working days. 
+                                                Current tenure for <span className="text-white font-bold">{requisition?.req_number}</span> is {diff} days.
+                                            </p>
+                                        </>
+                                    );
+                                })()}
                             </div>
                         </div>
                     </div>

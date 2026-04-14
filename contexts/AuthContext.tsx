@@ -30,34 +30,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const router = useRouter();
 
     useEffect(() => {
-        // Initial session check
-        const initAuth = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                await fetchProfile(session.user.id, session.user.email!);
-            }
-            setIsLoading(false);
-        };
+        let isMounted = true;
 
-        initAuth();
-
-        // Listen for auth changes
+        // Use onAuthStateChange as the single source of truth for session
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            console.log(`AuthContext: Auth State Change Event: ${event}`);
+            
             if (session) {
-                await fetchProfile(session.user.id, session.user.email!);
+                // Only fetch profile if we don't have a user or if the UID changed
+                // This prevents redundant reloads when tab switches trigger session verification
+                setCurrentUser(prevUser => {
+                    if (!prevUser || prevUser.id !== session.user.id) {
+                        fetchProfile(session.user.id, session.user.email!);
+                    }
+                    return prevUser;
+                });
             } else {
-                setCurrentUser(null);
+                if (isMounted) {
+                    setCurrentUser(null);
+                    setIsLoading(false);
+                }
             }
-            setIsLoading(false);
         });
 
+        // Initial check if we are already loaded (to catch state before listener)
+        const checkInitialSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session && isMounted) {
+                await fetchProfile(session.user.id, session.user.email!);
+            } else if (!session && isMounted) {
+                setIsLoading(false);
+            }
+        };
+        checkInitialSession();
+
         return () => {
+            isMounted = false;
             subscription.unsubscribe();
         };
     }, []);
 
     const fetchProfile = async (uid: string, email: string) => {
-        setIsLoading(true); // Ensure loading state is active during fetch
+        // Only set loading true if we don't already have a valid user (Silent Refresh)
+        if (!currentUser) {
+            setIsLoading(true);
+        }
         try {
             console.log("AuthContext: Fetching profile for UID:", uid);
             const { data, error } = await supabase
