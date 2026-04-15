@@ -34,9 +34,10 @@ interface ActionPanelProps {
     requiredRoleId?: number;
     onApprove: () => void;
     hasQualifiedCandidate?: boolean;
+    isActive?: boolean;
 }
 
-export default function ActionPanel({ reqId, currentStageId, actorId, requiredRoleId, onApprove, hasQualifiedCandidate = false }: ActionPanelProps) {
+export default function ActionPanel({ reqId, currentStageId, actorId, requiredRoleId, onApprove, hasQualifiedCandidate = false, isActive = true }: ActionPanelProps) {
     const { currentUser } = useAuth();
     const router = useRouter();
     const [isProcessing, setIsProcessing] = useState(false);
@@ -104,76 +105,92 @@ export default function ActionPanel({ reqId, currentStageId, actorId, requiredRo
                 </div>
 
                 <div className="space-y-2">
-                    {canApprove && currentStageId !== 4 && (
-                        <Button
-                            onClick={handleApprove}
-                            disabled={isProcessing}
-                            className="w-full bg-[hsl(214,67%,32%)] hover:bg-[hsl(214,67%,40%)] text-white font-bold h-11 flex items-center justify-between px-4 transition-all"
-                        >
-                            <div className="flex items-center gap-2">
-                                <Send size={16} />
-                                <span>{actionLabel}</span>
+                    {!isActive ? (
+                        <div className="p-6 rounded-2xl bg-emerald-50 border-2 border-emerald-100 flex flex-col items-center justify-center text-center gap-4 animate-in zoom-in-95 duration-500">
+                            <div className="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-200">
+                                <CheckCircle size={24} className="text-white" />
                             </div>
-                            <ChevronDown size={14} className="opacity-50" />
-                        </Button>
-                    )}
-
-                    {/* Specialized Stage 4 Interface for Interviewers */}
-                    {canApprove && currentStageId === 4 && (
-                        <div className="space-y-3">
-                            <Button
-                                onClick={() => router.push(`/requisition-management/blind-selection/${reqId}`)}
-                                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold h-12 flex items-center justify-center gap-2 transition-all shadow-md"
-                            >
-                                <Users size={18} />
-                                <span>Review Submitted Candidates</span>
-                            </Button>
-
-                            <Button
-                                onClick={handleApprove}
-                                disabled={isProcessing || !hasQualifiedCandidate}
-                                variant="outline"
-                                className={`w-full h-11 font-bold border-2 transition-all ${
-                                    hasQualifiedCandidate 
-                                    ? 'border-emerald-500 text-emerald-700 hover:bg-emerald-50' 
-                                    : 'border-slate-200 text-slate-400 opacity-60'
-                                }`}
-                            >
-                                <CheckCircle size={16} className={hasQualifiedCandidate ? 'text-emerald-500' : 'text-slate-300'} />
-                                <span>Complete Stage 4 (Advance)</span>
-                            </Button>
-                            
-                            {!hasQualifiedCandidate && (
-                                <p className="text-[10px] text-center text-amber-600 font-medium">
-                                    Requires at least one 'Qualified' candidate to proceed.
+                            <div className="space-y-1">
+                                <h4 className="text-sm font-black text-emerald-900 uppercase tracking-tight">Process Finalized</h4>
+                                <p className="text-[11px] text-emerald-600 font-bold leading-relaxed px-2">
+                                    This requisition has been successfully fulfilled and the candidate is onboarded.
                                 </p>
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            {canApprove && currentStageId !== 4 && (
+                                <Button
+                                    onClick={handleApprove}
+                                    disabled={isProcessing}
+                                    className="w-full bg-[hsl(214,67%,32%)] hover:bg-[hsl(214,67%,40%)] text-white font-bold h-11 flex items-center justify-between px-4 transition-all"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <Send size={16} />
+                                        <span>{actionLabel}</span>
+                                    </div>
+                                    <ChevronDown size={14} className="opacity-50" />
+                                </Button>
                             )}
-                        </div>
+
+                            {/* Specialized Stage 4 Interface for Interviewers */}
+                            {canApprove && currentStageId === 4 && (
+                                <div className="space-y-3">
+                                    <Button
+                                        onClick={() => router.push(`/requisition-management/blind-selection/${reqId}`)}
+                                        className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold h-12 flex items-center justify-center gap-2 transition-all shadow-md"
+                                    >
+                                        <Users size={18} />
+                                        <span>Review Submitted Candidates</span>
+                                    </Button>
+
+                                    <Button
+                                        onClick={handleApprove}
+                                        disabled={isProcessing || !hasQualifiedCandidate}
+                                        variant="outline"
+                                        className={`w-full h-11 font-bold border-2 transition-all ${
+                                            hasQualifiedCandidate 
+                                            ? 'border-emerald-500 text-emerald-700 hover:bg-emerald-50' 
+                                            : 'border-slate-200 text-slate-400 opacity-60'
+                                        }`}
+                                    >
+                                        <CheckCircle size={16} className={hasQualifiedCandidate ? 'text-emerald-500' : 'text-slate-300'} />
+                                        <span>Complete Stage 4 (Advance)</span>
+                                    </Button>
+                                    
+                                    {!hasQualifiedCandidate && (
+                                        <p className="text-[10px] text-center text-amber-600 font-medium">
+                                            Requires at least one 'Qualified' candidate to proceed.
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+
+                            {!canApprove && (
+                                <div className="flex items-center justify-center p-4 border border-dashed border-slate-200 rounded-xl bg-slate-50/50 text-slate-400 text-xs font-medium italic">
+                                    Governance Action Restricted
+                                </div>
+                            )}
+
+                            <Button
+                                variant="outline"
+                                onClick={() => handleActionPlaceholder('Internal Hire Conversion')}
+                                className="w-full border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold h-11 flex items-center justify-start gap-2"
+                            >
+                                <UserPlus size={16} className="text-slate-400" />
+                                Convert to Internal Hire
+                            </Button>
+
+                            <Button
+                                variant="ghost"
+                                onClick={() => handleActionPlaceholder('Rejection')}
+                                className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 font-semibold h-11 flex items-center justify-start gap-2"
+                            >
+                                <XCircle size={16} className="text-red-400" />
+                                Reject Requisition
+                            </Button>
+                        </>
                     )}
-
-                    {!canApprove && (
-                        <div className="flex items-center justify-center p-4 border border-dashed border-slate-200 rounded-xl bg-slate-50/50 text-slate-400 text-xs font-medium italic">
-                            Governance Action Restricted
-                        </div>
-                    )}
-
-                    <Button
-                        variant="outline"
-                        onClick={() => handleActionPlaceholder('Internal Hire Conversion')}
-                        className="w-full border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold h-11 flex items-center justify-start gap-2"
-                    >
-                        <UserPlus size={16} className="text-slate-400" />
-                        Convert to Internal Hire
-                    </Button>
-
-                    <Button
-                        variant="ghost"
-                        onClick={() => handleActionPlaceholder('Rejection')}
-                        className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 font-semibold h-11 flex items-center justify-start gap-2"
-                    >
-                        <XCircle size={16} className="text-red-400" />
-                        Reject Requisition
-                    </Button>
                 </div>
                 {/* 
                 <div className="pt-4 border-t border-slate-100 mt-2">

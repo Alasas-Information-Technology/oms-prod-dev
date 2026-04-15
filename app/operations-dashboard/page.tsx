@@ -14,7 +14,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function OperationsDashboardPage() {
-    const { user } = useAuth();
+    const { currentUser } = useAuth();
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState<any>(null);
     const [pipeline, setPipeline] = useState<any[]>([]);
@@ -23,18 +23,21 @@ export default function OperationsDashboardPage() {
     const [approvals, setApprovals] = useState<any[]>([]);
 
     useEffect(() => {
-        loadDashboardData();
-    }, [user]);
+        if (currentUser) {
+            loadDashboardData();
+        }
+    }, [currentUser]);
 
     const loadDashboardData = async () => {
+        if (!currentUser) return;
         setLoading(true);
         try {
             const [s, p, b, a, app] = await Promise.all([
-                dashboardService.getDashboardStats(),
-                dashboardService.getPipelineData(),
-                dashboardService.getBudgetByDepartment(),
-                dashboardService.getRecentActivity(10),
-                dashboardService.getPendingApprovals(user?.role_id)
+                dashboardService.getDashboardStats(currentUser),
+                dashboardService.getPipelineData(currentUser),
+                dashboardService.getBudgetByDepartment(currentUser),
+                dashboardService.getRecentActivity(currentUser, 10),
+                dashboardService.getPendingApprovals(currentUser)
             ]);
 
             setStats(s);

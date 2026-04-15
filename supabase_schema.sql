@@ -295,3 +295,38 @@ BEGIN
   VALUES (p_req_id, p_actor_id, 'STAGE_ADVANCED', p_current_stage_id, p_current_stage_id + 1);
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+
+
+
+-- ____________________________________
+
+-- 1. Create the Departments Table
+CREATE TABLE departments (
+    id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
+    dept_name VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 2. Create the Budgets Table (Tracked by Financial Year)
+CREATE TABLE budgets (
+    id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
+    department_id UUID REFERENCES departments(id) ON DELETE CASCADE,
+    financial_year INTEGER NOT NULL,
+    total_allocated_aed NUMERIC(15, 2) NOT NULL DEFAULT 0,
+    consumed_aed NUMERIC(15, 2) NOT NULL DEFAULT 0,
+    reserved_aed NUMERIC(15, 2) NOT NULL DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(department_id, financial_year)
+);
+
+-- 3. Upgrade your existing tables to link to the new departments table
+ALTER TABLE profiles ADD COLUMN department_id UUID REFERENCES departments(id);
+ALTER TABLE requisitions ADD COLUMN department_id UUID REFERENCES departments(id);
+
+-- Optional Demo Seed Data (Run this to give yourself instant demo data)
+INSERT INTO departments (dept_name) VALUES ('Information Technology'), ('Human Resources'), ('Finance'), ('Operations'), ('Legal Affairs');
+
+-- Let's give IT a budget of 1,000,000 AED for 2026
+INSERT INTO budgets (department_id, financial_year, total_allocated_aed, consumed_aed, reserved_aed)
+SELECT id, 2026, 1000000.00, 250000.00, 50000.00 FROM departments WHERE dept_name = 'Information Technology';

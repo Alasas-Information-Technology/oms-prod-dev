@@ -11,9 +11,10 @@ interface Step {
 interface WorkflowStepperProps {
     currentStep: number;
     stages?: Step[];
+    workflowFinished?: boolean;
 }
 
-export default function WorkflowStepper({ currentStep, stages = [] }: WorkflowStepperProps) {
+export default function WorkflowStepper({ currentStep, stages = [], workflowFinished = false }: WorkflowStepperProps) {
     // If no stages provided, show nothing or skeleton
     if (stages.length === 0) return null;
 
@@ -30,8 +31,8 @@ export default function WorkflowStepper({ currentStep, stages = [] }: WorkflowSt
                 />
 
                 {stages.map((stage, idx) => {
-                    const isCompleted = stage.stage_id < currentStep;
-                    const isActive = stage.stage_id === currentStep;
+                    const isCompleted = workflowFinished || stage.stage_id < currentStep;
+                    const isActive = !workflowFinished && stage.stage_id === currentStep;
 
                     return (
                         <div key={stage.stage_id} className="flex flex-col items-center flex-1">

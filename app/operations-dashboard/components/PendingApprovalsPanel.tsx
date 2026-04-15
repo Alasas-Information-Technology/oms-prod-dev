@@ -27,17 +27,17 @@ interface PendingApprovalsPanelProps {
 }
 
 export default function PendingApprovalsPanel({ items }: PendingApprovalsPanelProps) {
-    const { user } = useAuth();
+    const { currentUser } = useAuth();
     const [processingId, setProcessingId] = useState<string | null>(null);
     const [dismissed, setDismissed] = useState<string[]>([]);
 
     const visibleItems = items.filter((i) => !dismissed.includes(i.id));
 
     const handleApprove = async (id: string, reqId: string, currentStage: number) => {
-        if (!user) return;
+        if (!currentUser) return;
         setProcessingId(id);
         try {
-            await requisitionService.advanceRequisitionStage(id, currentStage, user.id);
+            await requisitionService.advanceRequisitionStage(id, currentStage, currentUser.id);
             setDismissed((prev) => [...prev, id]);
             toast.success(`${reqId} approved — advancing to next stage`);
         } catch (error) {

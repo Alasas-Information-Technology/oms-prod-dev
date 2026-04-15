@@ -101,10 +101,16 @@ export default function RequisitionDetailPage() {
                                         <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
                                             Requisition <span className="text-[hsl(214,67%,32%)]">{requisition?.req_number}</span>
                                         </h1>
-                                        <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider
-                                            ${currentStep === 2 ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-blue-100 text-blue-700 border border-blue-200'}`}>
-                                            {status}
-                                        </span>
+                                        {requisition?.is_active === false ? (
+                                            <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-600 text-white shadow-sm border border-emerald-700">
+                                                Completed - Active Engagement
+                                            </span>
+                                        ) : (
+                                            <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider
+                                                ${currentStep === 2 ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-blue-100 text-blue-700 border border-blue-200'}`}>
+                                                {status}
+                                            </span>
+                                        )}
                                     </div>
                                     <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-slate-500 text-sm font-medium">
                                         <div className="flex items-center gap-2">
@@ -137,7 +143,11 @@ export default function RequisitionDetailPage() {
 
                 {/* Stepper Banner */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-                    <WorkflowStepper currentStep={currentStep} stages={workflowStages} />
+                    <WorkflowStepper 
+                        currentStep={currentStep} 
+                        stages={workflowStages} 
+                        workflowFinished={requisition?.is_active === false}
+                    />
                 </div>
 
                 {/* Content Grid */}
@@ -194,7 +204,7 @@ export default function RequisitionDetailPage() {
                                             </div>
                                             <div className="space-y-1">
                                                 <p className="text-xs font-bold text-slate-800">
-                                                    {log.profiles?.full_name || 'System Actor'} 
+                                                    {log.profiles?.full_name || 'System / Unknown Actor'} 
                                                     <span className="text-[10px] font-normal text-slate-400 ml-2">
                                                         {new Date(log.cryptographic_timestamp).toLocaleString()}
                                                     </span>
@@ -231,6 +241,7 @@ export default function RequisitionDetailPage() {
                                 requiredRoleId={requisition?.workflow_stages?.required_role_id}
                                 onApprove={handleApprove} 
                                 hasQualifiedCandidate={candidateStatus.hasQualified}
+                                isActive={requisition?.is_active}
                             />
                         )}
                         

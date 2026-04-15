@@ -17,6 +17,7 @@ import {
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { candidateService } from '@/lib/services/candidateService';
+import { requisitionService } from '@/lib/services/requisitionService';
 import { Skeleton } from '@/components/ui/skeleton';
 
 type PriorityRank = 'P1' | 'P2' | 'P3' | 'Rejected' | null;
@@ -27,25 +28,31 @@ export default function BlindSelectionView() {
     const reqId = params?.reqId as string;
 
     const [candidates, setCandidates] = useState<any[]>([]);
+    const [requisition, setRequisition] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [rankings, setRankings] = useState<Record<string, PriorityRank>>({});
     const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         if (reqId) {
-            loadCandidates();
+            loadInitialData();
         }
     }, [reqId]);
 
-    const loadCandidates = async () => {
+    const loadInitialData = async () => {
         setLoading(true);
         try {
-            const data = await candidateService.getCandidatesForRequisition(reqId);
-            setCandidates(data);
+            const [candData, reqData] = await Promise.all([
+                candidateService.getCandidatesForRequisition(reqId),
+                requisitionService.getRequisitionById(reqId)
+            ]);
+            
+            setCandidates(candData);
+            setRequisition(reqData);
             
             // Map initial rankings from database
             const initialRankings: Record<string, PriorityRank> = {};
-            data.forEach((cand: any) => {
+            candData.forEach((cand: any) => {
                 if (cand.status === 'REJECTED') {
                     initialRankings[cand.id] = 'Rejected';
                 } else if (cand.priority_ranking) {
@@ -54,7 +61,7 @@ export default function BlindSelectionView() {
             });
             setRankings(initialRankings);
         } catch (error) {
-            toast.error('Failed to load candidates');
+            toast.error('Failed to load matrix data');
         } finally {
             setLoading(false);
         }
@@ -123,15 +130,19 @@ export default function BlindSelectionView() {
                         </Link>
                         <div>
                             <div className="flex items-center gap-3 mb-1">
-                                <span className="px-2 py-0.5 rounded bg-[hsl(214,67%,32%)]/10 text-[hsl(214,67%,32%)] text-[10px] font-black uppercase tracking-tighter">Secure Selection Layer</span>
-                                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">REF: {reqId}</span>
+                                <span className="px-2 py-0.5 rounded bg-[hsl(214,67%,32%)]/10 text-[hsl(214,67%,32%)] text-[10px] font-black uppercase tracking-tighter shadow-sm">Secure Selection Layer</span>
+                                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                                    REF: {requisition?.req_number || 'TRK-XXXX'}
+                                </span>
                             </div>
                             <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-none">
                                 Candidate Selection Matrix
                             </h1>
                             <p className="text-slate-500 mt-3 font-medium flex items-center gap-2">
                                 <Briefcase size={16} className="text-slate-300" />
-                                Analyzing Candidates for <span className="text-slate-900 font-bold italic underline decoration-blue-500/30">Business Intelligence Analyst</span>
+                                Analyzing Candidates for <span className="text-[hsl(214,67%,32%)] font-bold italic underline decoration-blue-500/30">
+                                    {requisition?.position_title || 'Manpower Requisition'}
+                                </span>
                             </p>
                         </div>
                     </div>
@@ -230,14 +241,14 @@ export default function BlindSelectionView() {
                                                 <GraduationCap size={14} />
                                                 <span className="text-[10px] font-black uppercase tracking-widest">Credentials</span>
                                             </div>
-                                            <p className="text-xs font-bold text-slate-700 leading-snug min-h-[32px]">{candidate.education || 'Verification Pending'}</p>
+                                            <p className="text-xs font-bold text-slate-700 leading-snug min-h-[32px]">{candidate.education_level || 'Verification Pending'}</p>
                                         </div>
                                         <div className="p-4 rounded-2xl bg-slate-50/50 border border-slate-100/50 group-hover:bg-white transition-colors duration-500">
                                             <div className="flex items-center gap-2 mb-2 text-slate-400">
                                                 <Briefcase size={14} />
                                                 <span className="text-[10px] font-black uppercase tracking-widest">Exposure</span>
                                             </div>
-                                            <p className="text-xl font-black text-slate-900">{candidate.years_of_experience}<span className="text-xs text-slate-400 ml-1">Years</span></p>
+                                            <p className="text-xl font-black text-slate-900">{candidate.total_years_experience}<span className="text-xs text-slate-400 ml-1">Years</span></p>
                                         </div>
                                     </div>
 
@@ -247,7 +258,7 @@ export default function BlindSelectionView() {
                                             <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Core Competencies</span>
                                         </div>
                                         <div className="flex flex-wrap gap-2">
-                                            {(candidate.skills || []).map((skill: string) => (
+                                            {(candidate.top_skills || []).map((skill: string) => (
                                                 <span 
                                                     key={skill} 
                                                     className="px-3 py-1.5 rounded-xl bg-white border border-slate-100 text-[hsl(214,67%,32%)] text-[11px] font-bold shadow-sm shadow-slate-200/50 group-hover:border-blue-200 transition-colors"

@@ -12,6 +12,7 @@ export interface User {
     };
     email: string;
     department: string;
+    department_id?: string;  // UUID — links profile to departments table
     full_name?: string;
 }
 
@@ -107,6 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     role_id: data.role_id,
                     roles: roleData || { role_name: 'Guest' },
                     department: data.department || 'N/A',
+                    department_id: data.department_id ?? undefined,
                     full_name: data.full_name
                 });
             } else {
