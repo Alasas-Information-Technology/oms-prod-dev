@@ -16,7 +16,7 @@ const AppLogo = memo(function AppLogo({
     src, // Default removed to check for existence
     iconName = 'SparklesIcon',
     size = 64,
-    className = '',
+    className = 'text-primary',
     onClick,
 }: AppLogoProps) {
     // Memoize className calculation

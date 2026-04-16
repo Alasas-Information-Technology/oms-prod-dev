@@ -91,7 +91,7 @@ function formatAED(value: number): string {
 // ─────────────────────────────────────────────────────────────────────────────
 export default function NewRequisitionModal({ requisition, onClose, onSuccess }: NewRequisitionModalProps) {
     const isEditMode = !!requisition;
-    const corporateNavy = 'hsl(214,67%,32%)';
+    const corporateBlue = '#0C66E4';
 
     // ── State ────────────────────────────────────────────────────────────────
     const [activeStep, setActiveStep] = useState(1);
@@ -243,9 +243,9 @@ export default function NewRequisitionModal({ requisition, onClose, onSuccess }:
         const isDanger = utilization > 85;
 
         return (
-            <div className={`flex items-center justify-between p-4 rounded-xl border-l-4 ${isDanger ? 'bg-amber-50 border-amber-200 border-l-amber-500 text-amber-900' : 'bg-blue-50/50 border-blue-100 border-l-[hsl(214,67%,32%)] text-slate-900'}`}>
+            <div className={`flex items-center justify-between p-4 rounded-xl border-l-4 ${isDanger ? 'bg-amber-50 border-amber-200 border-l-amber-500 text-amber-900' : 'bg-blue-50/50 border-blue-100 border-l-[#0C66E4] text-[#172B4D]'}`}>
                 <div className="flex items-center gap-3">
-                    <Wallet size={18} className={isDanger ? 'text-amber-600' : 'text-[hsl(214,67%,32%)]'} />
+                    <Wallet size={18} className={isDanger ? 'text-amber-600' : 'text-[#0C66E4]'} />
                     <div>
                         <p className="text-[10px] uppercase font-bold tracking-wider opacity-60">Available Liquidity</p>
                         <p className="text-lg font-black tabular-nums">{formatAED(deptBudget.available)}</p>
@@ -268,8 +268,8 @@ export default function NewRequisitionModal({ requisition, onClose, onSuccess }:
                     <div className="flex items-center justify-between mb-8">
                         <div className="space-y-1">
                             <div className="flex items-center gap-2">
-                                <span className="bg-[hsl(214,67%,32%)] text-white text-[10px] font-black px-2 py-0.5 rounded tracking-tighter">OMS PRO</span>
-                                <DialogTitle className="text-2xl font-black tracking-tight text-slate-900">
+                                <span className="bg-[#0C66E4] text-white text-[10px] font-black px-2 py-0.5 rounded tracking-tighter">OMS PRO</span>
+                                <DialogTitle className="text-2xl font-black tracking-tight text-[#0C66E4]">
                                     {isEditMode ? 'Modify Requisition' : 'Enterprise Resourcing'}
                                 </DialogTitle>
                             </div>
@@ -290,8 +290,8 @@ export default function NewRequisitionModal({ requisition, onClose, onSuccess }:
                                 <div key={step.id} className="relative group">
                                     <div className={`
                                         h-1.5 rounded-full mb-3 transition-all duration-500 ease-in-out
-                                        ${isCompleted ? 'bg-[hsl(214,67%,32%)]' :
-                                            isActive ? 'bg-[hsl(214,67%,32%)] shadow-[0_0_8px_rgba(10,54,103,0.3)]' : 'bg-slate-100'}
+                                        ${isCompleted ? 'bg-[#0C66E4]' :
+                                            isActive ? 'bg-[#0C66E4] shadow-[0_0_8px_rgba(12,102,228,0.3)]' : 'bg-slate-100'}
                                     `} />
                                     <div className={`
                                         flex items-center gap-3 transition-all duration-300
@@ -299,12 +299,12 @@ export default function NewRequisitionModal({ requisition, onClose, onSuccess }:
                                     `}>
                                         <div className={`
                                             w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors
-                                            ${isActive ? 'bg-[hsl(214,67%,32%)] text-white' : 'bg-slate-100 text-slate-500'}
+                                            ${isActive ? 'bg-[#0C66E4] text-white' : 'bg-slate-100 text-slate-500'}
                                         `}>
                                             {isCompleted ? <Check size={14} strokeWidth={3} /> : <Icon size={14} />}
                                         </div>
                                         <div className="hidden sm:block min-w-0">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-900 truncate">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-[#172B4D] truncate">
                                                 {step.name}
                                             </p>
                                             <p className="text-[9px] font-bold text-slate-400 truncate tracking-tight">
@@ -326,7 +326,7 @@ export default function NewRequisitionModal({ requisition, onClose, onSuccess }:
                         {activeStep === 1 && (
                             <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                 <div className="space-y-1">
-                                    <h3 className="text-lg font-black text-slate-900 tracking-tight">Job Specification</h3>
+                                    <h3 className="text-lg font-black text-[#0C66E4] tracking-tight">Job Specification</h3>
                                     <p className="text-sm text-slate-500">Define the core parameters and organizational alignment for this hire.</p>
                                 </div>
 
@@ -335,7 +335,7 @@ export default function NewRequisitionModal({ requisition, onClose, onSuccess }:
                                         <Label className="text-xs font-black text-slate-400 uppercase tracking-widest">Position Title</Label>
                                         <Input
                                             placeholder="e.g. Lead DevSecOps Engineer"
-                                            className={`h-14 text-lg font-bold border-transparent bg-white shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-[hsl(214,67%,32%)] transition-all ${errors.positionTitle ? 'ring-red-500' : ''}`}
+                                            className={`h-14 text-lg font-bold border-transparent bg-white shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-[#0C66E4] transition-all ${errors.positionTitle ? 'ring-red-500' : ''}`}
                                             {...register('positionTitle', { required: true })}
                                         />
                                     </div>
@@ -379,7 +379,7 @@ export default function NewRequisitionModal({ requisition, onClose, onSuccess }:
                                                 <RadioGroup onValueChange={field.onChange} value={field.value} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                     <Label htmlFor="onshore" className={`
                                                         flex items-center gap-4 p-5 rounded-2xl border-2 transition-all cursor-pointer bg-white
-                                                        ${field.value === 'Onshore (UAE)' ? 'border-[hsl(214,67%,32%)] ring-1 ring-[hsl(214,67%,32%)] shadow-md text-slate-900' : 'border-slate-100 hover:border-slate-200'}
+                                                        ${field.value === 'Onshore (UAE)' ? 'border-[#0C66E4] ring-1 ring-[#0C66E4] shadow-md text-[#0C66E4]' : 'border-slate-100 hover:border-slate-200'}
                                                     `}>
                                                         <RadioGroupItem value="Onshore (UAE)" id="onshore" className="border-slate-300" />
                                                         <div>
@@ -389,7 +389,7 @@ export default function NewRequisitionModal({ requisition, onClose, onSuccess }:
                                                     </Label>
                                                     <Label htmlFor="offshore" className={`
                                                         flex items-center gap-4 p-5 rounded-2xl border-2 transition-all cursor-pointer bg-white
-                                                        ${field.value === 'Offshore (Remote)' ? 'border-[hsl(214,67%,32%)] ring-1 ring-[hsl(214,67%,32%)] shadow-md text-slate-900' : 'border-slate-100 hover:border-slate-200'}
+                                                        ${field.value === 'Offshore (Remote)' ? 'border-[#0C66E4] ring-1 ring-[#0C66E4] shadow-md text-[#0C66E4]' : 'border-slate-100 hover:border-slate-200'}
                                                     `}>
                                                         <RadioGroupItem value="Offshore (Remote)" id="offshore" className="border-slate-300" />
                                                         <div>
@@ -409,7 +409,7 @@ export default function NewRequisitionModal({ requisition, onClose, onSuccess }:
                         {activeStep === 2 && (
                             <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                 <div className="space-y-1">
-                                    <h3 className="text-lg font-black text-slate-900 tracking-tight">Hardware & Digital Access</h3>
+                                    <h3 className="text-lg font-black text-[#0C66E4] tracking-tight">Hardware & Digital Access</h3>
                                     <p className="text-sm text-slate-500">Specify the essential infrastructure required for the role's professional kit.</p>
                                 </div>
 
@@ -429,17 +429,17 @@ export default function NewRequisitionModal({ requisition, onClose, onSuccess }:
                                                     htmlFor={item.id}
                                                     className={`
                                                         flex items-start gap-5 p-6 rounded-2xl border-2 transition-all cursor-pointer bg-white
-                                                        ${field.value ? 'border-[hsl(214,67%,32%)] ring-1 ring-[hsl(214,67%,32%)] shadow-sm' : 'border-slate-100 hover:border-slate-200'}
+                                                        ${field.value ? 'border-[#0C66E4] ring-1 ring-[#0C66E4] shadow-sm' : 'border-slate-100 hover:border-slate-200'}
                                                     `}
                                                 >
                                                     <Checkbox
                                                         id={item.id}
                                                         checked={field.value}
                                                         onCheckedChange={field.onChange}
-                                                        className="mt-1 border-slate-300 data-[state=checked]:bg-[hsl(214,67%,32%)] data-[state=checked]:border-none"
+                                                        className="mt-1 border-slate-300 data-[state=checked]:bg-[#0C66E4] data-[state=checked]:border-none"
                                                     />
                                                     <div>
-                                                        <p className="font-black text-slate-900">{item.label}</p>
+                                                        <p className="font-black text-[#172B4D]">{item.label}</p>
                                                         <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black mt-1 leading-tight">{item.sub}</p>
                                                     </div>
                                                 </Label>
@@ -454,7 +454,7 @@ export default function NewRequisitionModal({ requisition, onClose, onSuccess }:
                                         <textarea
                                             rows={5}
                                             placeholder="Detail specific seating requirements or local facility access cards needed..."
-                                            className="w-full rounded-2xl border-2 border-slate-100 p-5 text-sm font-medium focus:outline-none focus:border-[hsl(214,67%,32%)] transition-all bg-white shadow-sm"
+                                            className="w-full rounded-2xl border-2 border-slate-100 p-5 text-sm font-medium focus:outline-none focus:border-[#0C66E4] transition-all bg-white shadow-sm"
                                             {...register('officeSeating', { required: workLocation === 'Onshore (UAE)' })}
                                         />
                                     </div>
@@ -466,7 +466,7 @@ export default function NewRequisitionModal({ requisition, onClose, onSuccess }:
                         {activeStep === 3 && (
                             <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                 <div className="space-y-1">
-                                    <h3 className="text-lg font-black text-slate-900 tracking-tight">Financial Governance</h3>
+                                    <h3 className="text-lg font-black text-[#0C66E4] tracking-tight">Financial Governance</h3>
                                     <p className="text-sm text-slate-500">Final budget reservation and funding categorization for enterprise audit.</p>
                                 </div>
 
@@ -520,7 +520,7 @@ export default function NewRequisitionModal({ requisition, onClose, onSuccess }:
 
                                 <div className="p-8 rounded-3xl border-2 border-dashed border-slate-200 bg-slate-50/50 flex flex-col items-center text-center gap-3">
                                     <CheckCircle2 size={32} className="text-emerald-500 mb-2" />
-                                    <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Ready for Authorization</h4>
+                                    <h4 className="text-sm font-black text-[#0C66E4] uppercase tracking-widest">Ready for Authorization</h4>
                                     <p className="text-xs text-slate-500 font-bold max-w-md leading-relaxed">
                                         Submitting this requisition will initiate the automated approval path.
                                         Ensure all data points are verified as per organizational policy.
@@ -537,7 +537,7 @@ export default function NewRequisitionModal({ requisition, onClose, onSuccess }:
                         variant="ghost"
                         onClick={activeStep === 1 ? onClose : prevStep}
                         disabled={submitting}
-                        className="font-black text-xs uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors"
+                        className="font-black text-xs uppercase tracking-widest text-slate-400 hover:text-[#0C66E4] transition-colors"
                     >
                         {activeStep === 1 ? 'Discard Entry' : 'Previous Step'}
                     </Button>
@@ -546,7 +546,7 @@ export default function NewRequisitionModal({ requisition, onClose, onSuccess }:
                         {activeStep < 3 ? (
                             <Button
                                 onClick={nextStep}
-                                className="bg-[hsl(214,67%,32%)] hover:bg-[hsl(214,67%,25%)] text-white font-black h-14 px-12 rounded-2xl gap-2 shadow-xl shadow-blue-900/10 transition-all active:scale-95 group"
+                                className="bg-[#0C66E4] hover:bg-[#0055CC] text-white font-black h-14 px-12 rounded-2xl gap-2 shadow-xl shadow-blue-900/10 transition-all active:scale-95 group"
                             >
                                 Continue Path <ChevronRight size={18} className="transition-transform group-hover:translate-x-1" />
                             </Button>
@@ -555,7 +555,7 @@ export default function NewRequisitionModal({ requisition, onClose, onSuccess }:
                                 type="submit"
                                 form="req-wizard-form"
                                 disabled={submitting || submitBlocked}
-                                className="bg-[hsl(214,67%,32%)] hover:bg-[hsl(214,67%,25%)] text-white font-black h-14 px-12 rounded-2xl gap-2 shadow-xl shadow-blue-900/10 transition-all active:scale-95 disabled:grayscale"
+                                className="bg-[#0C66E4] hover:bg-[#0055CC] text-white font-black h-14 px-12 rounded-2xl gap-2 shadow-xl shadow-blue-900/10 transition-all active:scale-95 disabled:grayscale"
                             >
                                 {submitting ? <Loader2 size={18} className="animate-spin" /> : <><Check size={18} /> {isEditMode ? 'Save Changes' : 'Initiate Workflow'}</>}
                             </Button>

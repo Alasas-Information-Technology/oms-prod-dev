@@ -98,18 +98,18 @@ export default function Sidebar() {
 
     return (
         <aside
-            className="fixed left-0 top-0 h-full z-30 flex flex-col bg-white border-r border-slate-200 transition-all duration-300 ease-in-out"
+            className="fixed left-0 top-0 h-full z-30 flex flex-col bg-[#F4F5F7] border-r border-[#DFE1E6] transition-all duration-300 ease-in-out"
             style={{ width: collapsed ? '68px' : '256px' }}
             aria-label="Main navigation"
         >
             {/* Logo */}
-            <div className="flex items-center h-16 px-3 border-b border-slate-200 shrink-0 overflow-hidden">
+            <div className="flex items-center h-16 px-4 border-b border-[#DFE1E6] shrink-0 overflow-hidden bg-white/50 backdrop-blur-sm">
                 <div className="flex items-center gap-2.5 min-w-0">
-                    <AppLogo size={36} />
+                    <AppLogo size={32} className="text-[#0C66E4]" />
                     {!collapsed && (
                         <div className="min-w-0 overflow-hidden">
-                            <span className="block text-sm font-bold text-slate-900 truncate leading-tight">Enterprise OMS</span>
-                            <span className="block text-[10px] font-medium text-slate-400 truncate leading-tight">Al Asas IT</span>
+                            <span className="block text-sm font-bold text-[#0C66E4] truncate leading-tight tracking-tight">Enterprise OMS</span>
+                            <span className="block text-[10px] font-semibold text-[#5E6C84] truncate uppercase tracking-wider">Internal Portal</span>
                         </div>
                     )}
                 </div>
@@ -145,19 +145,19 @@ export default function Sidebar() {
                                         key={item.id}
                                         href={item.href}
                                         title={collapsed ? item.label : undefined}
-                                        className={`sidebar-nav-item mb-0.5 relative group ${active
+                                        className={`sidebar-nav-item mb-1 relative group ${active
                                                 ? 'sidebar-nav-item-active' : 'sidebar-nav-item-inactive'
                                             }`}
                                     >
                                         <item.icon
                                             size={18}
-                                            className={`shrink-0 ${active ? 'text-[hsl(214,67%,32%)]' : 'text-slate-500'}`}
+                                            className={`shrink-0 ${active ? 'text-[hsl(215,90%,47%)]' : 'text-[#42526E]'}`}
                                         />
                                         {!collapsed && (
                                             <span className="truncate text-sm">{item.label}</span>
                                         )}
                                         {!collapsed && badgeCount !== undefined && badgeCount > 0 && (
-                                            <span className="ml-auto shrink-0 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[hsl(214,67%,32%)] text-white min-w-[18px] text-center">
+                                            <span className="ml-auto shrink-0 px-1.5 py-0.5 rounded-[3px] text-[10px] font-bold bg-[#DEEBFF] text-[#0747A6] border border-[#B3D4FF]">
                                                 {badgeCount}
                                             </span>
                                         )}
@@ -185,12 +185,12 @@ export default function Sidebar() {
             </nav>
 
             {/* User Profile */}
-            <div className="border-t border-slate-200 p-2 shrink-0">
-                <div className={`flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors group relative ${collapsed ? 'justify-center' : ''}`}>
+            <div className="border-t border-[#DFE1E6] p-2 shrink-0 bg-white/30">
+                <div className={`flex items-center gap-2.5 p-2 rounded-[3px] hover:bg-[#EBECF0] cursor-pointer transition-colors group relative ${collapsed ? 'justify-center' : ''}`}>
                     {isLoading ? (
-                        <div className="w-8 h-8 rounded-full bg-slate-100 animate-pulse shrink-0" />
+                        <div className="w-8 h-8 rounded-[3px] bg-gray-100 animate-pulse shrink-0" />
                     ) : (
-                        <div className="w-8 h-8 rounded-full bg-[hsl(214,67%,32%)] flex items-center justify-center text-white text-xs font-bold shrink-0">
+                        <div className="w-8 h-8 rounded-[3px] bg-[#0C66E4] flex items-center justify-center text-white text-[11px] font-bold shrink-0 tracking-tighter">
                             {currentUser?.roles?.role_name?.substring(0, 2) || 'GU'}
                         </div>
                     )}
@@ -230,7 +230,7 @@ export default function Sidebar() {
                 variant="outline"
                 size="icon"
                 onClick={() => setCollapsed(!collapsed)}
-                className="absolute -right-3 top-20 w-6 h-6 rounded-full bg-white border border-slate-200 shadow-md flex items-center justify-center hover:bg-slate-50 transition-colors z-40"
+                className="absolute -right-3 top-20 w-6 h-6 rounded-full bg-white border border-[#DFE1E6] shadow-sm flex items-center justify-center hover:bg-[#F4F5F7] transition-colors z-40"
                 aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
                 {collapsed ? (

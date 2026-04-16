@@ -66,13 +66,13 @@ export default function LoginForm() {
             });
 
             if (authError) {
-                throw authError; 
+                throw authError;
             }
 
             toast.success('Login Successful', {
                 description: 'Verifying credentials and synchronizing profile...',
             });
-            
+
             // The AuthContext will catch the session change and redirect.
             // But we can also push here for immediate feedback if needed.
             router.push('/operations-dashboard');
@@ -309,15 +309,6 @@ export default function LoginForm() {
                         </Button>
                     </form>
 
-
-                    {/* Terms */}
-                    <p className="text-xs text-slate-400 text-center mt-8 leading-relaxed">
-                        By signing in, you agree to the{' '}
-                        <span className="text-[hsl(214,67%,32%)] cursor-pointer hover:underline">Terms of Service</span>
-                        {' '}and{' '}
-                        <span className="text-[hsl(214,67%,32%)] cursor-pointer hover:underline">Privacy Policy</span>.
-                        All sessions are monitored and audited per Standard Regulatory Governance.
-                    </p>
                 </div>
             </div>
         </div>

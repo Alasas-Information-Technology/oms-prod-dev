@@ -20,8 +20,8 @@ export default function CandidatesPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-3">
-              <Users size={24} className="text-[hsl(214,67%,32%)]" />
+            <h1 className="text-2xl font-bold text-[#0C66E4] flex items-center gap-3">
+              <Users size={24} className="text-[#0C66E4]" />
               Candidates
             </h1>
             <p className="text-slate-500 text-sm mt-0.5">

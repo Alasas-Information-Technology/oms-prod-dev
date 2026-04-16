@@ -68,12 +68,12 @@ export default function MetricCard({ metric }: { metric: MetricData }) {
 
     if (metric.hero) {
         return (
-            <div className={`card ${colors.bg} ${colors.border} p-6 h-full flex flex-col hover:shadow-card-hover transition-shadow duration-200`}>
-                <div className="flex items-start justify-between mb-4">
-                    <div className={`w-10 h-10 rounded-xl ${colors.iconBg} flex items-center justify-center`}>
+            <div className={`card ${colors.bg} ${colors.border} p-5 h-full flex flex-col hover:shadow-modal transition-shadow duration-200 rounded-sm`}>
+                <div className="flex items-start justify-between mb-3">
+                    <div className={`w-10 h-10 rounded-sm ${colors.iconBg} flex items-center justify-center`}>
                         <MetricIcon size={20} className={colors.iconColor} />
                     </div>
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">{metric.title}</span>
+                    <span className="text-[11px] font-bold text-[#0C66E4] uppercase tracking-wider">{metric.title}</span>
                 </div>
 
                 <div className="flex items-end gap-3 mb-2">
@@ -93,9 +93,9 @@ export default function MetricCard({ metric }: { metric: MetricData }) {
                 {metric.breakdown.length > 0 && (
                     <div className="mt-auto grid grid-cols-4 gap-2">
                         {metric.breakdown.map((b) => (
-                            <div key={`breakdown-${b.label}`} className="bg-slate-50 rounded-lg p-2 text-center">
-                                <p className="text-lg font-bold text-slate-900 tabular-nums leading-tight">{b.value}</p>
-                                <p className="text-[10px] text-slate-400 leading-tight mt-0.5">{b.label}</p>
+                            <div key={`breakdown-${b.label}`} className="bg-[#F4F5F7] border border-[#DFE1E6] rounded-sm p-2 text-center">
+                                <p className="text-lg font-bold text-[#172B4D] tabular-nums leading-tight">{b.value}</p>
+                                <p className="text-[10px] font-bold text-[#5E6C84] uppercase tracking-wider mt-0.5">{b.label}</p>
                             </div>
                         ))}
                     </div>
@@ -105,24 +105,24 @@ export default function MetricCard({ metric }: { metric: MetricData }) {
     }
 
     return (
-        <div className={`card ${colors.bg} ${colors.border} p-5 h-full flex flex-col hover:shadow-card-hover transition-shadow duration-200`}>
+        <div className={`card ${colors.bg} ${colors.border} p-4 h-full flex flex-col hover:shadow-modal transition-shadow duration-200 rounded-sm`}>
             <div className="flex items-center justify-between mb-3">
-                <div className={`w-8 h-8 rounded-lg ${colors.iconBg} flex items-center justify-center`}>
+                <div className={`w-8 h-8 rounded-sm ${colors.iconBg} flex items-center justify-center`}>
                     <MetricIcon size={16} className={colors.iconColor} />
                 </div>
-                <DeltaIcon size={13} className={delta.color} />
+                <DeltaIcon size={12} className={delta.color} />
             </div>
 
             <div className="flex items-baseline gap-1.5 mb-1">
-                <span className="text-3xl font-bold text-slate-900 tabular-nums leading-none">{metric.value}</span>
-                {metric.unit && <span className="text-sm font-semibold text-slate-400">{metric.unit}</span>}
+                <span className="text-2xl font-bold text-[#172B4D] tabular-nums leading-none">{metric.value}</span>
+                {metric.unit && <span className="text-xs font-semibold text-[#5E6C84] uppercase">{metric.unit}</span>}
             </div>
 
-            <p className="text-xs font-semibold text-slate-500 mb-1">{metric.title}</p>
-            <p className={`text-xs font-semibold ${delta.color} mb-1`}
+            <p className="text-[11px] font-bold text-[#5E6C84] uppercase tracking-wider mb-1">{metric.title}</p>
+            <p className={`text-[11px] font-bold ${delta.color} mb-1`}
                 dangerouslySetInnerHTML={{ __html: metric.delta }}
             />
-            <p className="text-[11px] text-slate-400 leading-snug mt-auto">{metric.subtitle}</p>
+            <p className="text-[11px] text-[#42526E] leading-snug mt-auto">{metric.subtitle}</p>
         </div>
     );
 }

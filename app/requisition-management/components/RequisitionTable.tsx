@@ -390,17 +390,17 @@ const RequisitionTable = forwardRef(({ refreshTrigger = 0, filters }: Requisitio
     const visibleColumns = columns.filter((c) => visibleCols.includes(c.id));
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-0 border border-[#DFE1E6] rounded-sm bg-white shadow-atlassian overflow-hidden">
             {/* Search + Column Toggle */}
-            <div className="flex items-center gap-3">
+            <div className="px-5 py-3 flex items-center justify-between border-b border-[#DFE1E6] bg-[#F4F5F7]">
                 <div className="relative flex-1 max-w-sm">
                     <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <Input
                         type="text"
-                        placeholder="Search by ID, title, department, requestor…"
+                        placeholder="Search records…"
                         value={search}
                         onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
-                        className="w-full pl-9 pr-8 h-10 bg-white"
+                        className="w-full pl-9 h-8 bg-white border-[#DFE1E6] focus:ring-2 focus:ring-primary rounded-sm text-[13px]"
                     />
                     {search && (
                         <Button
@@ -430,8 +430,8 @@ const RequisitionTable = forwardRef(({ refreshTrigger = 0, filters }: Requisitio
                             Columns
                         </Button>
                         {showColMenu && (
-                            <div className="absolute right-0 top-full mt-1 w-52 bg-white rounded-xl border border-slate-200 shadow-modal z-50 p-3 animate-fade-in">
-                                <p className="text-xs font-semibold text-slate-500 mb-2">Toggle Columns</p>
+                            <div className="absolute right-0 top-full mt-1 w-52 bg-white rounded-sm border border-[#DFE1E6] shadow-modal z-50 p-3 animate-fade-in">
+                                <p className="text-[11px] font-bold text-[#5E6C84] uppercase tracking-wider mb-2">Toggle Columns</p>
                                 <div className="space-y-1.5">
                                     {columns.map((col) => (
                                         <label key={`col-toggle-${col.id}`} className="flex items-center gap-2 cursor-pointer">
@@ -453,8 +453,8 @@ const RequisitionTable = forwardRef(({ refreshTrigger = 0, filters }: Requisitio
 
             {/* Bulk Action Bar */}
             {selected.length > 0 && (
-                <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[hsl(214,67%,32%)] text-white animate-slide-up">
-                    <span className="text-sm font-semibold">{selected.length} selected</span>
+                <div className="flex items-center gap-3 px-4 py-2 bg-[#091E42] text-white">
+                    <span className="text-xs font-bold uppercase tracking-wider">{selected.length} selected</span>
                     <div className="flex items-center gap-2 ml-auto">
                         <Button
                             variant="secondary"
@@ -492,16 +492,16 @@ const RequisitionTable = forwardRef(({ refreshTrigger = 0, filters }: Requisitio
             )}
 
             {/* Table */}
-            <Card className="overflow-hidden border-none shadow-card">
+            <div className="overflow-hidden">
                 <CardContent className="p-0">
                     <div className="overflow-x-auto scrollbar-thin">
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="bg-slate-50 border-b border-slate-200">
+                    <table className="w-full text-[13px]">
+                        <thead className="bg-[#F4F5F7] border-b border-[#DFE1E6]">
+                            <tr>
                                 <th className="w-10 px-3 py-3 text-left">
                                     <Button variant="ghost" size="icon" onClick={toggleSelectAll} className="h-6 w-6 p-0 text-slate-400 hover:text-slate-600 transition-colors">
                                         {selected.length === paginated.length && paginated.length > 0 ? (
-                                            <CheckSquare size={15} className="text-[hsl(214,67%,32%)]" />
+                                            <CheckSquare size={15} className="text-[#0C66E4]" />
                                         ) : (
                                             <Square size={15} />
                                         )}
@@ -561,16 +561,15 @@ const RequisitionTable = forwardRef(({ refreshTrigger = 0, filters }: Requisitio
                                     const budBadge = (req.budgetType && budgetBadge[req.budgetType]) || budgetBadge['BUDGETED'] || DEFAULT_BUDGET_STYLE;
 
                                     return (
-                                        <tr
-                                            key={req.id}
-                                            className={`border-b border-slate-100 last:border-0 transition-colors group ${isSelected ? 'bg-[hsl(214,67%,32%)]/5' : rowIdx % 2 === 0 ? 'bg-white hover:bg-slate-50/70' : 'bg-slate-50/40 hover:bg-slate-50'
-                                                } ${req.slaRisk ? 'border-l-2 border-l-red-400' : ''}`}
+                                        <tr 
+                                            key={req.id} 
+                                            className="group hover:bg-[#F4F5F7] transition-colors border-b border-[#DFE1E6] last:border-0"
                                         >
                                             {/* Checkbox */}
                                             <td className="px-3 py-3">
                                                 <Button variant="ghost" size="icon" onClick={() => toggleSelect(req.id)} className="h-6 w-6 p-0 text-slate-400 hover:text-slate-600 transition-colors">
                                                     {isSelected ? (
-                                                        <CheckSquare size={15} className="text-[hsl(214,67%,32%)]" />
+                                                        <CheckSquare size={15} className="text-[#0C66E4]" />
                                                     ) : (
                                                         <Square size={15} />
                                                     )}
@@ -589,7 +588,7 @@ const RequisitionTable = forwardRef(({ refreshTrigger = 0, filters }: Requisitio
                                                         {req.stage === 'Blind Selection' ? (
                                                             <Link
                                                                 href={`/requisition-management/blind-selection/${req.reqId}`}
-                                                                className="font-mono text-xs font-semibold text-[hsl(214,67%,32%)] hover:underline flex items-center gap-1 cursor-pointer hover:bg-[hsl(214,67%,32%)]/10 rounded px-1 -ml-1 transition-colors"
+                                                                className="font-mono text-xs font-bold text-[#0C66E4] hover:underline flex items-center gap-1 cursor-pointer hover:bg-[#DEEBFF] rounded-[3px] px-1 -ml-1 transition-colors"
                                                                 title="Go to Blind Candidate Selection"
                                                             >
                                                                 {req.reqId}
@@ -707,29 +706,8 @@ const RequisitionTable = forwardRef(({ refreshTrigger = 0, filters }: Requisitio
                                             )}
 
                                             {/* Actions */}
-                                            <td className="px-3 py-3">
-                                                <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity relative">
-                                                    <Link href={`/requisition-management/${req.reqId}`}>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            className="h-8 w-8 text-slate-400 hover:text-[hsl(214,67%,32%)] hover:bg-blue-50 transition-all"
-                                                            title="View requisition details"
-                                                        >
-                                                            <Eye size={14} />
-                                                        </Button>
-                                                    </Link>
-                                                    {currentUser?.id === req.requestor_id && req.stageId === 1 && (
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            className="h-8 w-8 text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-all"
-                                                            title="Edit requisition"
-                                                            onClick={() => setEditingReq(req)}
-                                                        >
-                                                            <Edit3 size={14} />
-                                                        </Button>
-                                                    )}
+                                            <td className="px-4 py-3 text-right pr-6">
+                                                <div className="flex justify-end relative">
                                                     <DropdownMenu>
                                                         <DropdownMenuTrigger asChild>
                                                             <Button
@@ -835,7 +813,7 @@ const RequisitionTable = forwardRef(({ refreshTrigger = 0, filters }: Requisitio
                     </div>
                 </div>
                 </CardContent>
-            </Card>
+            </div>
 
             {editingReq && (
                 <NewRequisitionModal 

@@ -23,7 +23,7 @@ export default function RequisitionHeader({ onSuccess, onExport }: RequisitionHe
         <>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-3 tracking-tight">
+                    <h1 className="text-2xl font-bold text-[#0C66E4] flex items-center gap-3 tracking-tight">
                         Manpower Requisitions
                         <span className="text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100 shadow-sm">
                             ROLE: {roleForView}

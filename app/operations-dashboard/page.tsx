@@ -94,7 +94,7 @@ export default function OperationsDashboardPage() {
                 {/* Bottom Row */}
                 <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
                     <div className="xl:col-span-2">
-                        <EmiratesCompliancePanel />
+                        <EmiratesCompliancePanel compliance={stats?.complianceMetric} />
                     </div>
                     <div className="xl:col-span-2">
                         <PendingApprovalsPanel items={approvals} />
