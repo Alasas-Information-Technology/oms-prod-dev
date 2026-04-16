@@ -128,8 +128,6 @@ const columns = [
     { id: 'col-location', key: 'location' as SortKey, label: 'Work Location', sortable: false, defaultVisible: true },
     { id: 'col-budget', key: 'budgetAED' as SortKey, label: 'Budget (AED)', sortable: true, defaultVisible: true },
     { id: 'col-budgetType', key: 'budgetType' as SortKey, label: 'Budget Type', sortable: false, defaultVisible: true },
-    { id: 'col-vendors', key: 'vendorCount' as SortKey, label: 'Vendors', sortable: true, defaultVisible: true },
-    { id: 'col-candidates', key: 'candidateCount' as SortKey, label: 'Candidates', sortable: true, defaultVisible: true },
     { id: 'col-created', key: 'createdDate' as SortKey, label: 'Created', sortable: true, defaultVisible: true },
 ];
 
@@ -186,7 +184,7 @@ const RequisitionTable = forwardRef(({ refreshTrigger = 0, filters }: Requisitio
                 id: item.id,
                 reqId: item.req_number, // Sync with SQL
                 title: item.position_title, // Sync with SQL
-                department: item.departments?.dept_name || 'System / External',
+                department: item.department || 'System / External',
                 requestor: item.profiles?.full_name || 'System',
                 requestor_id: item.requestor_id,
                 stage: item.is_active ? (item.workflow_stages?.stage_name || 'Initiation & Auto-Reserve') : 'Completed',
@@ -680,23 +678,6 @@ const RequisitionTable = forwardRef(({ refreshTrigger = 0, filters }: Requisitio
                                                 </td>
                                             )}
 
-                                            {/* Vendors */}
-                                            {visibleCols.includes('col-vendors') && (
-                                                <td className="px-3 py-3 text-center">
-                                                    <span className="text-xs font-semibold text-slate-700 tabular-nums">
-                                                        {req.vendorCount > 0 ? req.vendorCount : '—'}
-                                                    </span>
-                                                </td>
-                                            )}
-
-                                            {/* Candidates */}
-                                            {visibleCols.includes('col-candidates') && (
-                                                <td className="px-3 py-3 text-center">
-                                                    <span className={`text-xs font-semibold tabular-nums ${req.candidateCount > 0 ? 'text-[hsl(214,67%,32%)]' : 'text-slate-400'}`}>
-                                                        {req.candidateCount > 0 ? req.candidateCount : '—'}
-                                                    </span>
-                                                </td>
-                                            )}
 
                                             {/* Created */}
                                             {visibleCols.includes('col-created') && (
