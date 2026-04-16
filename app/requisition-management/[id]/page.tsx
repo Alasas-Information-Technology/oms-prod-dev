@@ -1,25 +1,25 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
 import AppLayout from '@/components/AppLayout';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { ChevronLeft, ArrowRight, User, Building2, Briefcase, Info } from 'lucide-react';
-import WorkflowStepper from './components/WorkflowStepper';
-import RequisitionSpecs from './components/RequisitionSpecs';
-import ActionPanel from './components/ActionPanel';
+import { Briefcase, Building2, ChevronLeft, Info, User } from 'lucide-react';
 import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import ActionPanel from './components/ActionPanel';
+import RequisitionSpecs from './components/RequisitionSpecs';
+import WorkflowStepper from './components/WorkflowStepper';
 
-import { requisitionService } from '@/lib/services/requisitionService';
 import { Skeleton } from '@/components/ui/skeleton';
+import { requisitionService } from '@/lib/services/requisitionService';
 
 export default function RequisitionDetailPage() {
     const params = useParams();
     const router = useRouter();
     const id = params.id as string;
-    
+
     const [requisition, setRequisition] = useState<any>(null);
     const [auditLogs, setAuditLogs] = useState<any[]>([]);
     const [workflowStages, setWorkflowStages] = useState<any[]>([]);
@@ -27,9 +27,9 @@ export default function RequisitionDetailPage() {
     const [currentStep, setCurrentStep] = useState(1);
     const [status, setStatus] = useState('');
     const [candidateStatus, setCandidateStatus] = useState({ totalSubmitted: 0, hasQualified: false });
-    
+
     const { currentUser } = useAuth();
-    
+
     // In real app, this is the logged-in user's ID
     const actorId = currentUser?.id || '00000000-0000-0000-0000-000000000000';
 
@@ -76,9 +76,9 @@ export default function RequisitionDetailPage() {
             <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
                 {/* Navigation & Title */}
                 <div className="flex flex-col gap-4">
-                    <Button 
-                        variant="ghost" 
-                        size="sm" 
+                    <Button
+                        variant="ghost"
+                        size="sm"
                         asChild
                         className="w-fit -ml-2 text-slate-500 hover:text-[hsl(214,67%,32%)]"
                     >
@@ -87,7 +87,7 @@ export default function RequisitionDetailPage() {
                             Back to Requisitions
                         </Link>
                     </Button>
-                    
+
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="space-y-1">
                             {loading ? (
@@ -143,9 +143,9 @@ export default function RequisitionDetailPage() {
 
                 {/* Stepper Banner */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-                    <WorkflowStepper 
-                        currentStep={currentStep} 
-                        stages={workflowStages} 
+                    <WorkflowStepper
+                        currentStep={currentStep}
+                        stages={workflowStages}
                         workflowFinished={requisition?.is_active === false}
                     />
                 </div>
@@ -159,7 +159,7 @@ export default function RequisitionDetailPage() {
                         ) : (
                             <>
                                 <RequisitionSpecs data={requisition} />
-                                
+
                                 {/* Dynamic Candidate Summary Section specifically for Stage 4+ */}
                                 {currentStep >= 4 && (
                                     <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
@@ -188,7 +188,7 @@ export default function RequisitionDetailPage() {
                                 )}
                             </>
                         )}
-                        
+
                         {/* Additional Info / Comments Section for premium feel */}
                         <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
                             <h3 className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-4">
@@ -204,7 +204,7 @@ export default function RequisitionDetailPage() {
                                             </div>
                                             <div className="space-y-1">
                                                 <p className="text-xs font-bold text-slate-800">
-                                                    {log.profiles?.full_name || 'System / Unknown Actor'} 
+                                                    {log.profiles?.full_name || 'System / Unknown Actor'}
                                                     <span className="text-[10px] font-normal text-slate-400 ml-2">
                                                         {new Date(log.cryptographic_timestamp).toLocaleString()}
                                                     </span>
@@ -234,17 +234,17 @@ export default function RequisitionDetailPage() {
                         {loading ? (
                             <Skeleton className="h-64 w-full rounded-2xl" />
                         ) : (
-                            <ActionPanel 
+                            <ActionPanel
                                 reqId={requisition?.id}
                                 currentStageId={currentStep}
                                 actorId={actorId}
                                 requiredRoleId={requisition?.workflow_stages?.required_role_id}
-                                onApprove={handleApprove} 
+                                onApprove={handleApprove}
                                 hasQualifiedCandidate={candidateStatus.hasQualified}
                                 isActive={requisition?.is_active}
                             />
                         )}
-                        
+
                         {/* Summary Info Card - Dynamic SLA */}
                         <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 text-white shadow-lg space-y-4">
                             <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 opacity-80">SLA Tracking</h3>
@@ -265,13 +265,13 @@ export default function RequisitionDetailPage() {
                                                 </span>
                                             </div>
                                             <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
-                                                <div 
-                                                    className={`h-full transition-all duration-500 ${isAtRisk ? 'bg-red-400 border-none' : 'bg-emerald-400 border-none'}`} 
-                                                    style={{ width: `${percent}%` }} 
+                                                <div
+                                                    className={`h-full transition-all duration-500 ${isAtRisk ? 'bg-red-400 border-none' : 'bg-emerald-400 border-none'}`}
+                                                    style={{ width: `${percent}%` }}
                                                 />
                                             </div>
                                             <p className="text-[10px] text-slate-400 leading-tight">
-                                                Target SLA for full approval cycle is {slaTarget} working days. 
+                                                Target SLA for full approval cycle is {slaTarget} working days.
                                                 Current tenure for <span className="text-white font-bold">{requisition?.req_number}</span> is {diff} days.
                                             </p>
                                         </>

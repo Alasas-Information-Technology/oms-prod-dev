@@ -1,24 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import {
-  Search,
-  Eye,
-  Edit3,
-  Trash2,
-  ChevronUp,
-  ChevronDown,
-  ChevronsUpDown,
-  ChevronLeft,
-  ChevronRight,
-  X,
-  Users,
-} from "lucide-react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -26,10 +10,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { candidateService } from "@/lib/services/candidateService";
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsUpDown,
+  ChevronUp,
+  Edit3,
+  Eye,
+  Search,
+  Trash2,
+  Users,
+  X,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import CandidateDetailDrawer from "./CandidateDetailDrawer";
 import CandidateModal from "./CandidateModal";
 import DeleteCandidateDialog from "./DeleteCandidateDialog";
-import CandidateDetailDrawer from "./CandidateDetailDrawer";
 
 type SortKey =
   | "alias"
@@ -218,8 +218,8 @@ export default function CandidateTable({
                   setCurrentPage(1);
                 }}
                 className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${statusFilter === s
-                    ? "bg-white text-[hsl(214,67%,32%)] shadow-sm"
-                    : "text-slate-500 hover:text-slate-700"
+                  ? "bg-white text-[hsl(214,67%,32%)] shadow-sm"
+                  : "text-slate-500 hover:text-slate-700"
                   }`}
               >
                 {s === "ALL" ? "All" : s.replace(/_/g, " ")}
@@ -325,8 +325,8 @@ export default function CandidateTable({
                         <tr
                           key={c.id}
                           className={`border-b border-slate-100 last:border-0 transition-colors group ${idx % 2 === 0
-                              ? "bg-white hover:bg-slate-50/70"
-                              : "bg-slate-50/40 hover:bg-slate-50"
+                            ? "bg-white hover:bg-slate-50/70"
+                            : "bg-slate-50/40 hover:bg-slate-50"
                             }`}
                         >
                           {/* Alias */}
