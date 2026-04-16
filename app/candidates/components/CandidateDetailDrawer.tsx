@@ -63,7 +63,7 @@ export default function CandidateDetailDrawer({
   onClose,
   onEdit,
 }: CandidateDetailDrawerProps) {
-  const status = statusColors[candidate.status] || statusColors["SUBMITTED"];
+  const status = (candidate.status && statusColors[candidate.status]) || statusColors["SUBMITTED"] || { bg: "bg-blue-50", dot: "bg-blue-500", text: "text-blue-700" };
 
   const Field = ({
     label,

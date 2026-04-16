@@ -8,7 +8,7 @@ const supabasePublishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 // Anon JWT key — works for Auth + all DB operations (select, insert, update, delete)
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
+if (!supabaseUrl || (!supabaseAnonKey && !supabasePublishableKey)) {
   console.error(
     "CRITICAL ERROR: Supabase environment variables are missing. Auth and DB will fail.",
   );

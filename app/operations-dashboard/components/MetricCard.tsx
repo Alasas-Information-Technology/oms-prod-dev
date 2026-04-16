@@ -61,8 +61,8 @@ const IconMap: Record<string, React.ElementType> = {
 };
 
 export default function MetricCard({ metric }: { metric: MetricData }) {
-    const colors = colorConfig[metric.color];
-    const delta = deltaConfig[metric.deltaType];
+    const colors = colorConfig[metric.color] || colorConfig.blue;
+    const delta = deltaConfig[metric.deltaType] || deltaConfig.neutral;
     const DeltaIcon = delta.icon;
     const MetricIcon = IconMap[metric.icon] ?? Layers;
 

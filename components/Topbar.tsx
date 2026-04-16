@@ -2,13 +2,15 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Bell, Search, ChevronDown, HelpCircle, Settings, LogOut, User } from 'lucide-react';
+import { Bell, Search, ChevronDown, HelpCircle, Settings, LogOut, User, Command } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCommand } from '@/contexts/CommandContext';
 
 export default function Topbar() {
     const [notifOpen, setNotifOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
     const { currentUser, logout, isLoading } = useAuth();
+    const { toggle } = useCommand();
 
     const notifications = [
         { id: 'notif-001', type: 'approval', message: 'Req #OMS-2026-0847 awaiting your HR approval', time: '8m ago', urgent: true },
@@ -25,14 +27,19 @@ export default function Topbar() {
         >
             {/* Search */}
             <div className="flex-1 max-w-md">
-                <div className="relative">
-                    <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input
-                        type="text"
-                        placeholder="Search requisitions, vendors, candidates… (⌘K)"
-                        className="w-full pl-9 pr-4 py-2 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[hsl(214,67%,32%)]/20 focus:border-[hsl(214,67%,32%)] transition-all"
-                    />
-                </div>
+                <button 
+                    onClick={toggle}
+                    className="w-full flex items-center justify-between pl-3 pr-2 py-2 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-400 hover:bg-slate-100 hover:border-slate-300 transition-all group"
+                >
+                    <div className="flex items-center gap-2.5">
+                        <Search size={15} className="text-slate-400 group-hover:text-slate-500 transition-colors" />
+                        <span>Search requisitions, candidates…</span>
+                    </div>
+                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded border border-slate-200 bg-white shadow-sm group-hover:border-slate-300 transition-colors">
+                        <Command size={10} className="text-slate-400" />
+                        <span className="text-[10px] uppercase font-bold text-slate-400 tracking-tighter">K</span>
+                    </div>
+                </button>
             </div>
             <div className="flex items-center gap-2 ml-auto">
                 {/* Help */}
@@ -122,7 +129,7 @@ export default function Topbar() {
                     {profileOpen && (
                         <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl border border-slate-200 shadow-modal animate-fade-in z-50 py-1">
                             <div className="px-4 py-2.5 border-b border-slate-100 mb-1">
-                                <p className="text-xs text-slate-500 font-medium truncate">{currentUser?.email || 'guest@deiz.ae'}</p>
+                                <p className="text-xs text-slate-500 font-medium truncate">{currentUser?.email || 'guest@example.com'}</p>
                             </div>
                             <button onClick={() => setProfileOpen(false)} className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-[hsl(214,67%,32%)] transition-colors text-left">
                                 <User size={15} />

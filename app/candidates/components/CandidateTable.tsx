@@ -51,35 +51,35 @@ const STATUS_OPTIONS = [
 ];
 
 const statusStyles: Record<string, { bg: string; dot: string; text: string }> =
-  {
-    SUBMITTED: { bg: "bg-blue-50", dot: "bg-blue-500", text: "text-blue-700" },
-    UNDER_REVIEW: {
-      bg: "bg-amber-50",
-      dot: "bg-amber-500",
-      text: "text-amber-700",
-    },
-    SHORTLISTED: {
-      bg: "bg-violet-50",
-      dot: "bg-violet-500",
-      text: "text-violet-700",
-    },
-    INTERVIEW_SCHEDULED: {
-      bg: "bg-cyan-50",
-      dot: "bg-cyan-500",
-      text: "text-cyan-700",
-    },
-    SELECTED: {
-      bg: "bg-green-50",
-      dot: "bg-green-500",
-      text: "text-green-700",
-    },
-    REJECTED: { bg: "bg-red-50", dot: "bg-red-500", text: "text-red-700" },
-    WITHDRAWN: {
-      bg: "bg-slate-100",
-      dot: "bg-slate-400",
-      text: "text-slate-500",
-    },
-  };
+{
+  SUBMITTED: { bg: "bg-blue-50", dot: "bg-blue-500", text: "text-blue-700" },
+  UNDER_REVIEW: {
+    bg: "bg-amber-50",
+    dot: "bg-amber-500",
+    text: "text-amber-700",
+  },
+  SHORTLISTED: {
+    bg: "bg-violet-50",
+    dot: "bg-violet-500",
+    text: "text-violet-700",
+  },
+  INTERVIEW_SCHEDULED: {
+    bg: "bg-cyan-50",
+    dot: "bg-cyan-500",
+    text: "text-cyan-700",
+  },
+  SELECTED: {
+    bg: "bg-green-50",
+    dot: "bg-green-500",
+    text: "text-green-700",
+  },
+  REJECTED: { bg: "bg-red-50", dot: "bg-red-500", text: "text-red-700" },
+  WITHDRAWN: {
+    bg: "bg-slate-100",
+    dot: "bg-slate-400",
+    text: "text-slate-500",
+  },
+};
 
 const priorityStyles: Record<string, string> = {
   P1: "bg-red-50 text-red-700",
@@ -217,11 +217,10 @@ export default function CandidateTable({
                   setStatusFilter(s);
                   setCurrentPage(1);
                 }}
-                className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
-                  statusFilter === s
+                className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${statusFilter === s
                     ? "bg-white text-[hsl(214,67%,32%)] shadow-sm"
                     : "text-slate-500 hover:text-slate-700"
-                }`}
+                  }`}
               >
                 {s === "ALL" ? "All" : s.replace(/_/g, " ")}
               </button>
@@ -321,16 +320,14 @@ export default function CandidateTable({
                     </tr>
                   ) : (
                     paginated.map((c, idx) => {
-                      const sty =
-                        statusStyles[c.status] || statusStyles["SUBMITTED"];
+                      const sty = (c.status && statusStyles[c.status]) || statusStyles["SUBMITTED"] || { bg: "bg-blue-50", dot: "bg-blue-500", text: "text-blue-700" };
                       return (
                         <tr
                           key={c.id}
-                          className={`border-b border-slate-100 last:border-0 transition-colors group ${
-                            idx % 2 === 0
+                          className={`border-b border-slate-100 last:border-0 transition-colors group ${idx % 2 === 0
                               ? "bg-white hover:bg-slate-50/70"
                               : "bg-slate-50/40 hover:bg-slate-50"
-                          }`}
+                            }`}
                         >
                           {/* Alias */}
                           <td className="px-3 py-3 whitespace-nowrap">

@@ -3,17 +3,20 @@
 import React, { useState } from 'react';
 import { Plus, Download, Upload, BarChart3, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import NewRequisitionModal from './NewRequisitionModal';
 import { Button } from '@/components/ui/button';
 
 interface RequisitionHeaderProps {
     onSuccess?: () => void;
+    onExport?: () => void;
 }
 
-export default function RequisitionHeader({ onSuccess }: RequisitionHeaderProps) {
+export default function RequisitionHeader({ onSuccess, onExport }: RequisitionHeaderProps) {
     const [showNewModal, setShowNewModal] = useState(false);
     const { currentUser } = useAuth();
+    const router = useRouter();
     const roleForView = currentUser?.roles?.role_name || 'Guest';
 
     return (
@@ -40,26 +43,23 @@ export default function RequisitionHeader({ onSuccess }: RequisitionHeaderProps)
                         <RefreshCw size={14} />
                         Refresh
                     </Button>
+                    <div className="flex bg-white rounded-lg border border-slate-200 p-1 shadow-sm">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={onExport}
+                            className="text-slate-600 hover:text-[hsl(214,67%,32%)] hover:bg-slate-50 gap-1.5"
+                        >
+                            <Download size={14} />
+                            Export
+                        </Button>
+                    </div>
+
+                    <div className="h-4 w-[1px] bg-slate-200 mx-1" />
                     <Button
                         variant="secondary"
                         size="sm"
-                        onClick={() => toast?.info('Generating Excel export…')}
-                    >
-                        <Download size={14} />
-                        Export
-                    </Button>
-                    <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => toast?.info('Opening bulk import…')}
-                    >
-                        <Upload size={14} />
-                        Import
-                    </Button>
-                    <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => toast?.info('Opening analytics view…')}
+                        onClick={() => router.push('/operations-dashboard')}
                     >
                         <BarChart3 size={14} />
                         Analytics

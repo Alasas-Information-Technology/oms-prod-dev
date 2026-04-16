@@ -108,7 +108,7 @@ export default function Sidebar() {
                     <AppLogo size={36} />
                     {!collapsed && (
                         <div className="min-w-0 overflow-hidden">
-                            <span className="block text-sm font-bold text-slate-900 truncate leading-tight">DEIZ OMS</span>
+                            <span className="block text-sm font-bold text-slate-900 truncate leading-tight">Enterprise OMS</span>
                             <span className="block text-[10px] font-medium text-slate-400 truncate leading-tight">Al Asas IT</span>
                         </div>
                     )}

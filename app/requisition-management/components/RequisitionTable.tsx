@@ -38,13 +38,27 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { requisitionService } from '@/lib/services/requisitionService';
-import { useEffect } from 'react';
+import { useEffect, useImperativeHandle, forwardRef } from 'react';
+import NewRequisitionModal from './NewRequisitionModal';
+import { FilterState } from '../page';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+    DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 
 type WorkflowStage =
-    | 'Draft' | 'Submitted' | 'Line Manager Review' | 'HOD Approval' | 'HR Review' | 'Procurement' | 'Vendor Submission' | 'Blind Selection' | 'Interview' | 'Qualified' | 'Onboarding' | 'Active' | 'Renewal' | 'Terminated' | 'Closed';
+    | 'Initiation & Auto-Reserve' 
+    | 'Executive Approval' 
+    | 'Vendor Submission' 
+    | 'Blind Selection & Interview' 
+    | 'Digital Onboarding' 
+    | 'Completed';
 
-type LocationType = 'Onshore – DIEZA Premises' | 'UAE Remote (WFH)' | 'UAE Remote (Vendor Office)' | 'Remote Abroad' | 'Pre-Agreed Rate';
-type BudgetType = 'Budgeted' | 'Unallocated' | 'Unbudgeted';
+type LocationType = 'Onshore – Corporate Headquarters' | 'UAE Remote (WFH)' | 'UAE Remote (Vendor Office)' | 'Remote Abroad' | 'Pre-Agreed Rate';
+type BudgetType = 'BUDGETED' | 'UNALLOCATED' | 'UNBUDGETED' | 'Budgeted' | 'Unallocated' | 'Unbudgeted';
 
 interface Requisition {
     id: string;
@@ -52,6 +66,7 @@ interface Requisition {
     title: string;
     department: string;
     requestor: string;
+    requestor_id: string;
     stage: string;
     stageId: number;
     location: LocationType;
@@ -63,39 +78,43 @@ interface Requisition {
     slaRisk: boolean;
     emiratisationFlag: boolean;
     lpoGenerated: boolean;
+    createdRaw: string;
+    isActive: boolean;
+    // Core data for cloning
+    raw_data: any;
 }
 
 const stageStyles: Record<string, { bg: string; dot: string; text: string }> = {
-    'Draft': { bg: 'bg-slate-100', dot: 'bg-slate-400', text: 'text-slate-600' },
-    'Submitted': { bg: 'bg-blue-50', dot: 'bg-blue-500', text: 'text-blue-700' },
-    'Line Manager Review': { bg: 'bg-indigo-50', dot: 'bg-indigo-500', text: 'text-indigo-700' },
-    'HOD Approval': { bg: 'bg-violet-50', dot: 'bg-violet-500', text: 'text-violet-700' },
-    'HR Review': { bg: 'bg-purple-50', dot: 'bg-purple-500', text: 'text-purple-700' },
-    'Procurement': { bg: 'bg-cyan-50', dot: 'bg-cyan-500', text: 'text-cyan-700' },
+    'Initiation & Auto-Reserve': { bg: 'bg-blue-50', dot: 'bg-blue-500', text: 'text-blue-700' },
+    'Executive Approval': { bg: 'bg-indigo-50', dot: 'bg-indigo-500', text: 'text-indigo-700' },
     'Vendor Submission': { bg: 'bg-teal-50', dot: 'bg-teal-500', text: 'text-teal-700' },
-    'Blind Selection': { bg: 'bg-orange-50', dot: 'bg-orange-500', text: 'text-orange-700' },
-    'Interview': { bg: 'bg-amber-50', dot: 'bg-amber-500', text: 'text-amber-700' },
-    'Qualified': { bg: 'bg-lime-50', dot: 'bg-lime-500', text: 'text-lime-700' },
-    'Onboarding': { bg: 'bg-emerald-50', dot: 'bg-emerald-500', text: 'text-emerald-700' },
-    'Active': { bg: 'bg-green-50', dot: 'bg-green-500', text: 'text-green-700' },
-    'Renewal': { bg: 'bg-sky-50', dot: 'bg-sky-500', text: 'text-sky-700' },
-    'Terminated': { bg: 'bg-red-50', dot: 'bg-red-500', text: 'text-red-700' },
-    'Closed': { bg: 'bg-slate-100', dot: 'bg-slate-400', text: 'text-slate-500' },
+    'Blind Selection & Interview': { bg: 'bg-amber-50', dot: 'bg-amber-500', text: 'text-amber-700' },
+    'Digital Onboarding': { bg: 'bg-emerald-50', dot: 'bg-emerald-500', text: 'text-emerald-700' },
+    'Completed': { bg: 'bg-green-50', dot: 'bg-green-500', text: 'text-green-700' },
+    'Draft': { bg: 'bg-slate-50', dot: 'bg-slate-400', text: 'text-slate-600' },
 };
 
 const locationBadge: Record<LocationType, { bg: string; text: string; short: string }> = {
-    'Onshore – DIEZA Premises': { bg: 'bg-blue-50', text: 'text-blue-700', short: 'Onshore' },
+    'Onshore – Corporate Headquarters': { bg: 'bg-blue-50', text: 'text-blue-700', short: 'Onshore' },
     'UAE Remote (WFH)': { bg: 'bg-teal-50', text: 'text-teal-700', short: 'WFH' },
     'UAE Remote (Vendor Office)': { bg: 'bg-cyan-50', text: 'text-cyan-700', short: 'Vendor Office' },
     'Remote Abroad': { bg: 'bg-purple-50', text: 'text-purple-700', short: 'Offshore' },
     'Pre-Agreed Rate': { bg: 'bg-slate-100', text: 'text-slate-600', short: 'Pre-Agreed' },
 };
 
-const budgetBadge: Record<BudgetType, { bg: string; text: string }> = {
+const budgetBadge: Record<string, { bg: string; text: string }> = {
+    'BUDGETED': { bg: 'bg-green-50', text: 'text-green-700' },
+    'UNALLOCATED': { bg: 'bg-amber-50', text: 'text-amber-700' },
+    'UNBUDGETED': { bg: 'bg-red-50', text: 'text-red-700' },
     'Budgeted': { bg: 'bg-green-50', text: 'text-green-700' },
     'Unallocated': { bg: 'bg-amber-50', text: 'text-amber-700' },
     'Unbudgeted': { bg: 'bg-red-50', text: 'text-red-700' },
 };
+
+const DEFAULT_STAGE_STYLE = { bg: 'bg-slate-50', dot: 'bg-slate-400', text: 'text-slate-600' };
+const DEFAULT_LOC_STYLE = { bg: 'bg-blue-50', text: 'text-blue-700', short: 'Onshore' };
+const DEFAULT_BUDGET_STYLE = { bg: 'bg-green-50', text: 'text-green-700' };
+
 
 type SortKey = keyof Requisition;
 type SortDir = 'asc' | 'desc' | null;
@@ -118,9 +137,10 @@ const ITEMS_PER_PAGE_OPTIONS = [10, 25, 50];
 
 interface RequisitionTableProps {
     refreshTrigger?: number;
+    filters?: FilterState;
 }
 
-export default function RequisitionTable({ refreshTrigger = 0 }: RequisitionTableProps) {
+const RequisitionTable = forwardRef(({ refreshTrigger = 0, filters }: RequisitionTableProps, ref) => {
     const { currentUser } = useAuth();
     const router = useRouter();
 
@@ -134,9 +154,10 @@ export default function RequisitionTable({ refreshTrigger = 0 }: RequisitionTabl
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [visibleCols, setVisibleCols] = useState<string[]>(columns.map((c) => c.id));
     const [showColMenu, setShowColMenu] = useState(false);
-    const [stageDropdownId, setStageDropdownId] = useState<string | null>(null);
     const [actionMenuId, setActionMenuId] = useState<string | null>(null);
     const [workflowStages, setWorkflowStages] = useState<any[]>([]);
+    const [isNewModalOpen, setIsNewModalOpen] = useState(false);
+    const [editingReq, setEditingReq] = useState<Requisition | null>(null);
 
     useEffect(() => {
         // Vendor Lockout Protection logic
@@ -165,19 +186,23 @@ export default function RequisitionTable({ refreshTrigger = 0 }: RequisitionTabl
                 id: item.id,
                 reqId: item.req_number, // Sync with SQL
                 title: item.position_title, // Sync with SQL
-                department: item.department,
+                department: item.departments?.dept_name || 'System / External',
                 requestor: item.profiles?.full_name || 'System',
-                stage: item.workflow_stages?.stage_name || 'Draft',
+                requestor_id: item.requestor_id,
+                stage: item.is_active ? (item.workflow_stages?.stage_name || 'Initiation & Auto-Reserve') : 'Completed',
                 stageId: item.stage_id,
-                location: 'Onshore – DIEZA Premises' as LocationType,
+                isActive: item.is_active,
+                location: item.work_location === 'Onshore' ? 'Onshore – Corporate Headquarters' : 'Remote Abroad',
                 budgetAED: item.reserved_budget_aed, // Sync with SQL
-                budgetType: 'Budgeted' as BudgetType,
+                budgetType: (item.funding_category || 'BUDGETED') as BudgetType,
                 vendorCount: 0,
                 candidateCount: 0,
                 createdDate: new Date(item.created_at).toLocaleDateString(),
+                createdRaw: item.created_at,
                 slaRisk: false,
                 emiratisationFlag: false,
                 lpoGenerated: false,
+                raw_data: item
             }));
             setRequisitions(mapped);
         } catch (error) {
@@ -187,17 +212,81 @@ export default function RequisitionTable({ refreshTrigger = 0 }: RequisitionTabl
         }
     };
 
+    useImperativeHandle(ref, () => ({
+        exportData: () => {
+            if (filtered.length === 0) {
+                toast.error('No data to export');
+                return;
+            }
+            
+            const headers = ['Req ID', 'Title', 'Department', 'Requestor', 'Stage', 'Location', 'Budget (AED)', 'Created'];
+            const rows = filtered.map(r => [
+                r.reqId,
+                r.title,
+                r.department,
+                r.requestor,
+                r.stage,
+                r.location,
+                r.budgetAED,
+                r.createdDate
+            ]);
+            
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + headers.join(",") + "\n"
+                + rows.map(e => e.join(",")).join("\n");
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `requisitions_export_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            toast.success('Exporting filtered data to CSV…');
+        }
+    }));
+
     // Filter + sort
     const filtered = requisitions.filter((r) => {
-        if (!search) return true;
+        // 1. Text Search
         const s = search.toLowerCase();
-        return (
+        const matchesSearch = !search || (
             r.reqId.toLowerCase().includes(s) ||
             r.title.toLowerCase().includes(s) ||
             r.department.toLowerCase().includes(s) ||
             r.requestor.toLowerCase().includes(s) ||
             r.stage.toLowerCase().includes(s)
         );
+
+        if (!matchesSearch) return false;
+
+        // 2. Multi-panel filters
+        if (filters) {
+            if (filters.stages.length > 0) {
+                const isSelected = filters.stages.includes(r.stage);
+                // Also handle virtual 'Completed' check if the badge logic didn't catch it
+                const isCompletedSelected = filters.stages.includes('Completed') && !r.isActive;
+                if (!isSelected && !isCompletedSelected) return false;
+            }
+            if (filters.departments.length > 0 && !filters.departments.includes(r.department)) return false;
+            if (filters.locations.length > 0 && !filters.locations.includes(r.location)) return false;
+            if (filters.budgetType.length > 0 && !filters.budgetType.includes(r.budgetType)) return false;
+            
+            // Date Filter Logic
+            if (filters.dateRange) {
+                const createdDate = new Date(r.createdRaw);
+                const now = new Date();
+                if (filters.dateRange === '7d') {
+                    const sevenDaysAgo = new Date(now.setDate(now.getDate() - 7));
+                    if (createdDate < sevenDaysAgo) return false;
+                } else if (filters.dateRange === '30d') {
+                    const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30));
+                    if (createdDate < thirtyDaysAgo) return false;
+                }
+            }
+        }
+
+        return true;
     });
 
     const sorted = [...filtered].sort((a, b) => {
@@ -249,17 +338,6 @@ export default function RequisitionTable({ refreshTrigger = 0 }: RequisitionTabl
         return <ChevronsUpDown size={12} className="text-slate-300" />;
     };
 
-    const stageOptions: WorkflowStage[] = [
-        'Draft', 'Submitted', 'Line Manager Review', 'HOD Approval', 'HR Review',
-        'Procurement', 'Vendor Submission', 'Blind Selection', 'Interview',
-        'Qualified', 'Onboarding', 'Active', 'Renewal', 'Terminated', 'Closed',
-    ];
-
-    const handleStageChange = (reqId: string, newStage: WorkflowStage) => {
-        setStageDropdownId(null);
-        toast.success(`${reqId} stage updated to "${newStage}"`);
-    };
-
     const handleBulkApprove = () => {
         toast.success(`${selected.length} requisitions approved and advanced`);
         setSelected([]);
@@ -271,8 +349,42 @@ export default function RequisitionTable({ refreshTrigger = 0 }: RequisitionTabl
     };
 
     const handleBulkDelete = () => {
-        toast.error(`${selected.length} requisitions cancelled — HOD notified`);
+        toast.error(`${selected.length} requisitions cancelled and archived`);
         setSelected([]);
+    };
+
+    const handleClone = async (req: Requisition) => {
+        if (!currentUser) return;
+        setActionMenuId(null);
+        setLoading(true);
+        try {
+            const cloneData = {
+                positionTitle: `Copy of ${req.title}`,
+                departmentId: req.raw_data.department_id,
+                departmentName: req.department,
+                targetStartDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // +14 days default
+                workLocation: req.raw_data.work_location === 'Onshore' ? 'Onshore (UAE)' : 'Offshore (Remote)',
+                reqLaptop: req.raw_data.req_laptop,
+                reqMobilePhone: req.raw_data.req_mobile,
+                reqEmailAccess: req.raw_data.req_email,
+                reqSoftwareLicenses: req.raw_data.req_software !== 'None',
+                officeSeating: req.raw_data.seating_accommodations,
+                fundingType: req.raw_data.funding_category,
+                reservedBudget: 0, // Reset budget for manual re-entry
+            };
+
+            await requisitionService.createRequisition(cloneData, currentUser);
+            toast.success(`Requisition ${req.reqId} cloned successfully`);
+            loadRequisitions();
+        } catch (e) {
+            toast.error('Cloning failed');
+            setLoading(false);
+        }
+    };
+
+    const handleViewAuditLogs = (reqId: string) => {
+        setActionMenuId(null);
+        router.push(`/requisition-management/${reqId}`);
     };
 
     const visibleColumns = columns.filter((c) => visibleCols.includes(c.id));
@@ -444,9 +556,9 @@ export default function RequisitionTable({ refreshTrigger = 0 }: RequisitionTabl
                             ) : (
                                 paginated.map((req, rowIdx) => {
                                     const isSelected = selected.includes(req.id);
-                                    const stageSty = stageStyles[req.stage] || stageStyles['Draft'];
-                                    const locBadge = locationBadge[req.location];
-                                    const budBadge = budgetBadge[req.budgetType];
+                                    const stageSty = stageStyles[req.stage] || stageStyles['Draft'] || DEFAULT_STAGE_STYLE;
+                                    const locBadge = (req.location && locationBadge[req.location]) || locationBadge['Onshore – Corporate Headquarters'] || DEFAULT_LOC_STYLE;
+                                    const budBadge = (req.budgetType && budgetBadge[req.budgetType]) || budgetBadge['BUDGETED'] || DEFAULT_BUDGET_STYLE;
 
                                     return (
                                         <tr
@@ -483,9 +595,13 @@ export default function RequisitionTable({ refreshTrigger = 0 }: RequisitionTabl
                                                                 {req.reqId}
                                                             </Link>
                                                         ) : (
-                                                            <span className="font-mono text-xs font-semibold text-[hsl(214,67%,32%)]">
-                                                                {req.reqId}
-                                                            </span>
+                                                        <Link
+                                                            href={`/requisition-management/${req.reqId}`}
+                                                            className="font-mono text-xs font-semibold text-[hsl(214,67%,32%)] hover:underline flex items-center gap-1 cursor-pointer hover:bg-[hsl(214,67%,32%)]/10 rounded px-1 -ml-1 transition-colors"
+                                                            title="View Requisition"
+                                                        >
+                                                            {req.reqId}
+                                                        </Link>
                                                         )}
                                                         {req.emiratisationFlag && (
                                                             <span className="text-[9px] font-bold px-1 py-0.5 rounded bg-orange-100 text-orange-700" title="Emiratisation compliance flag">
@@ -526,38 +642,15 @@ export default function RequisitionTable({ refreshTrigger = 0 }: RequisitionTabl
                                                 </td>
                                             )}
 
-                                            {/* Stage — clickable dropdown */}
+                                            {/* Stage Badge (Read-only) */}
                                             {visibleCols.includes('col-stage') && (
-                                                <td className="px-3 py-3 whitespace-nowrap relative">
-                                                    <Button
-                                                        variant="ghost"
-                                                        onClick={() => setStageDropdownId(stageDropdownId === req.id ? null : req.id)}
-                                                        className={`inline-flex items-center gap-1 h-auto px-2 py-1 rounded-full text-xs font-semibold ${stageSty.bg} hover:bg-transparent ${stageSty.text} hover:opacity-80 transition-opacity`}
+                                                <td className="px-3 py-3 whitespace-nowrap">
+                                                    <div
+                                                        className={`inline-flex items-center gap-1.5 h-auto px-2.5 py-1 rounded-full text-[11px] font-bold ${stageSty.bg} ${stageSty.text} border border-transparent shadow-sm`}
                                                     >
-                                                        <span className={`w-1.5 h-1.5 rounded-full ${stageSty.dot}`} />
+                                                        <span className={`w-1.5 h-1.5 rounded-full ${stageSty.dot} animate-pulse-subtle`} />
                                                         {req.stage}
-                                                        <ChevronDown size={10} />
-                                                    </Button>
-
-                                                    {stageDropdownId === req.id && (
-                                                        <div className="absolute left-0 top-full mt-1 w-52 bg-white rounded-xl border border-slate-200 shadow-modal z-50 py-1 animate-fade-in max-h-64 overflow-y-auto scrollbar-thin">
-                                                            {stageOptions.map((s) => {
-                                                                const sty = stageStyles[s];
-                                                                return (
-                                                                    <Button
-                                                                        variant="ghost"
-                                                                        key={`stage-opt-${req.id}-${s}`}
-                                                                        onClick={() => handleStageChange(req.reqId, s)}
-                                                                        className={`w-full justify-start h-auto flex items-center gap-2 px-3 py-2 text-xs hover:bg-slate-50 transition-colors ${s === req.stage ? 'font-bold' : ''}`}
-                                                                    >
-                                                                        <span className={`w-2 h-2 rounded-full ${sty.dot}`} />
-                                                                        <span className={sty.text}>{s}</span>
-                                                                        {s === req.stage && <span className="ml-auto text-[10px] text-slate-400">Current</span>}
-                                                                    </Button>
-                                                                );
-                                                            })}
-                                                        </div>
-                                                    )}
+                                                    </div>
                                                 </td>
                                             )}
 
@@ -626,68 +719,57 @@ export default function RequisitionTable({ refreshTrigger = 0 }: RequisitionTabl
                                                             <Eye size={14} />
                                                         </Button>
                                                     </Link>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-8 w-8 text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-all"
-                                                        title="Edit requisition"
-                                                    >
-                                                        <Edit3 size={14} />
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-8 w-8 text-slate-400 hover:text-green-600 hover:bg-green-50 transition-all"
-                                                        title="Advance to next stage"
-                                                        onClick={() => toast.success(`${req.reqId} advanced to next stage`)}
-                                                    >
-                                                        <ArrowRight size={14} />
-                                                    </Button>
-                                                    <div className="relative">
+                                                    {currentUser?.id === req.requestor_id && req.stageId === 1 && (
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            className="h-8 w-8 text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all"
-                                                            title="More actions"
-                                                            onClick={() => setActionMenuId(actionMenuId === req.id ? null : req.id)}
+                                                            className="h-8 w-8 text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-all"
+                                                            title="Edit requisition"
+                                                            onClick={() => setEditingReq(req)}
                                                         >
-                                                            <MoreHorizontal size={14} />
+                                                            <Edit3 size={14} />
                                                         </Button>
-                                                        {actionMenuId === req.id && (
-                                                            <div className="absolute right-0 top-full mt-1 w-44 bg-white rounded-xl border border-slate-200 shadow-modal z-50 py-1 animate-fade-in">
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    className="w-full h-auto justify-start flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors"
-                                                                    onClick={() => { toast.info(`Cloning ${req.reqId}…`); setActionMenuId(null); }}
-                                                                >
-                                                                    Clone Requisition
-                                                                </Button>
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    className="w-full h-auto justify-start flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors"
-                                                                    onClick={() => { toast.info(`Generating audit log for ${req.reqId}…`); setActionMenuId(null); }}
-                                                                >
-                                                                    View Audit Log
-                                                                </Button>
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    className="w-full h-auto justify-start flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 transition-colors"
-                                                                    onClick={() => { toast.info(`Sending SLA reminder for ${req.reqId}…`); setActionMenuId(null); }}
-                                                                >
-                                                                    Send SLA Reminder
-                                                                </Button>
-                                                                <div className="border-t border-slate-100 my-1" />
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    className="w-full h-auto justify-start flex items-center gap-2 px-3 py-2 text-xs text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
-                                                                    onClick={() => { toast.error(`Termination request initiated for ${req.reqId} — HOD approval required`); setActionMenuId(null); }}
-                                                                >
-                                                                    <Trash2 size={12} />
-                                                                    Terminate / Cancel
-                                                                </Button>
-                                                            </div>
-                                                        )}
-                                                    </div>
+                                                    )}
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-8 w-8 text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all focus:ring-0 focus:ring-offset-0"
+                                                                title="More actions"
+                                                            >
+                                                                <MoreHorizontal size={14} />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end" className="w-48 p-1 shadow-modal rounded-xl border-slate-200">
+                                                            <DropdownMenuItem 
+                                                                className="text-xs flex items-center gap-2 cursor-pointer py-2 px-3 focus:bg-slate-50 rounded-lg transition-colors"
+                                                                onClick={() => handleClone(req)}
+                                                            >
+                                                                Clone Requisition
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem 
+                                                                className="text-xs flex items-center gap-2 cursor-pointer py-2 px-3 focus:bg-slate-50 rounded-lg transition-colors"
+                                                                onClick={() => handleViewAuditLogs(req.reqId)}
+                                                            >
+                                                                View Audit Log
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem 
+                                                                className="text-xs flex items-center gap-2 cursor-pointer py-2 px-3 focus:bg-slate-50 rounded-lg transition-colors"
+                                                                onClick={() => toast.info(`Sending SLA reminder for ${req.reqId}…`)}
+                                                            >
+                                                                Send SLA Reminder
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuSeparator className="bg-slate-100 my-1" />
+                                                            <DropdownMenuItem 
+                                                                className="text-xs flex items-center gap-2 cursor-pointer py-2 px-3 text-red-600 focus:bg-red-50 focus:text-red-700 rounded-lg transition-colors"
+                                                                onClick={() => toast.error(`Termination initiated for ${req.reqId}`)}
+                                                            >
+                                                                <Trash2 size={12} />
+                                                                Terminate / Cancel
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
                                                 </div>
                                             </td>
                                         </tr>
@@ -754,6 +836,16 @@ export default function RequisitionTable({ refreshTrigger = 0 }: RequisitionTabl
                 </div>
                 </CardContent>
             </Card>
+
+            {editingReq && (
+                <NewRequisitionModal 
+                    requisition={editingReq}
+                    onClose={() => setEditingReq(null)} 
+                    onSuccess={loadRequisitions}
+                />
+            )}
         </div>
     );
-}
+});
+
+export default RequisitionTable;

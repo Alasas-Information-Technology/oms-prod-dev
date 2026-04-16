@@ -67,6 +67,7 @@ interface Department {
 }
 
 interface NewRequisitionModalProps {
+    requisition?: any; // Added for edit mode
     onClose: () => void;
     onSuccess?: () => void;
 }
@@ -88,8 +89,8 @@ function formatAED(value: number): string {
 // ─────────────────────────────────────────────────────────────────────────────
 // Component
 // ─────────────────────────────────────────────────────────────────────────────
-export default function NewRequisitionModal({ onClose, onSuccess }: NewRequisitionModalProps) {
-    // ── Corporate Theme Colors ───────────────────────────────────────────────
+export default function NewRequisitionModal({ requisition, onClose, onSuccess }: NewRequisitionModalProps) {
+    const isEditMode = !!requisition;
     const corporateNavy = 'hsl(214,67%,32%)';
 
     // ── State ────────────────────────────────────────────────────────────────
@@ -111,6 +112,7 @@ export default function NewRequisitionModal({ onClose, onSuccess }: NewRequisiti
         control,
         setValue,
         trigger,
+        reset,
         formState: { errors, isValid },
     } = useForm<NewRequisitionFormValues>({
         mode: 'onChange',
@@ -124,6 +126,25 @@ export default function NewRequisitionModal({ onClose, onSuccess }: NewRequisiti
             departmentId: currentUser?.department_id || '',
         },
     });
+
+    // ── Edit Mode Population ─────────────────────────────────────────────
+    useEffect(() => {
+        if (isEditMode && requisition) {
+            reset({
+                positionTitle: requisition.positionTitle,
+                departmentId: requisition.department_id,
+                targetStartDate: requisition.targetStartDate,
+                workLocation: requisition.workLocation === 'Onshore' ? 'Onshore (UAE)' : 'Offshore (Remote)',
+                reqLaptop: requisition.reqLaptop,
+                reqMobilePhone: requisition.reqMobilePhone,
+                reqEmailAccess: requisition.reqEmailAccess,
+                reqSoftwareLicenses: requisition.reqSoftwareLicenses,
+                officeSeating: requisition.officeSeating,
+                fundingType: requisition.fundingType as any,
+                reservedBudget: requisition.budget,
+            });
+        }
+    }, [isEditMode, requisition, reset]);
 
     // ── Form Sync & Fetching ─────────────────────────────────────────────────
     useEffect(() => {
@@ -183,16 +204,24 @@ export default function NewRequisitionModal({ onClose, onSuccess }: NewRequisiti
         setSubmitting(true);
         try {
             const selectedDept = departments.find(d => d.id === data.departmentId);
-            await requisitionService.createRequisition({
+            const payload = {
                 ...data,
                 departmentName: selectedDept?.dept_name || currentUser.department
-            }, currentUser);
+            };
 
-            toast.success('Requisition generated successfully');
+            if (isEditMode) {
+                await requisitionService.updateRequisition(requisition.id, payload);
+                toast.success('Requisition updated successfully');
+            } else {
+                await requisitionService.createRequisition(payload, currentUser);
+                toast.success('Requisition generated successfully');
+            }
+
             if (onSuccess) onSuccess();
             onClose();
-        } catch {
-            toast.error('Failed to create requisition');
+        } catch (err) {
+            console.error('Submission error:', err);
+            toast.error(isEditMode ? 'Failed to update requisition' : 'Failed to create requisition');
         } finally {
             setSubmitting(false);
         }
@@ -241,7 +270,7 @@ export default function NewRequisitionModal({ onClose, onSuccess }: NewRequisiti
                             <div className="flex items-center gap-2">
                                 <span className="bg-[hsl(214,67%,32%)] text-white text-[10px] font-black px-2 py-0.5 rounded tracking-tighter">OMS PRO</span>
                                 <DialogTitle className="text-2xl font-black tracking-tight text-slate-900">
-                                    Enterprise Resourcing
+                                    {isEditMode ? 'Modify Requisition' : 'Enterprise Resourcing'}
                                 </DialogTitle>
                             </div>
                             <DialogDescription className="text-slate-500 font-medium text-xs sm:text-sm">
@@ -528,7 +557,7 @@ export default function NewRequisitionModal({ onClose, onSuccess }: NewRequisiti
                                 disabled={submitting || submitBlocked}
                                 className="bg-[hsl(214,67%,32%)] hover:bg-[hsl(214,67%,25%)] text-white font-black h-14 px-12 rounded-2xl gap-2 shadow-xl shadow-blue-900/10 transition-all active:scale-95 disabled:grayscale"
                             >
-                                {submitting ? <Loader2 size={18} className="animate-spin" /> : <><Check size={18} /> Initiate Workflow</>}
+                                {submitting ? <Loader2 size={18} className="animate-spin" /> : <><Check size={18} /> {isEditMode ? 'Save Changes' : 'Initiate Workflow'}</>}
                             </Button>
                         )}
                     </div>

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
 
-interface FilterState {
+export interface FilterState {
     stages: string[];
     departments: string[];
     locations: string[];
@@ -14,21 +14,18 @@ interface FilterState {
     dateRange: string;
 }
 
+interface RequisitionFiltersProps {
+    filters: FilterState;
+    setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
+}
+
 const stageOptions = [
-    { id: 'filter-stage-draft', value: 'Draft', color: 'bg-slate-100 text-slate-600' },
-    { id: 'filter-stage-submitted', value: 'Submitted', color: 'bg-blue-50 text-blue-700' },
-    { id: 'filter-stage-line-manager', value: 'Line Manager Review', color: 'bg-indigo-50 text-indigo-700' },
-    { id: 'filter-stage-hod', value: 'HOD Approval', color: 'bg-violet-50 text-violet-700' },
-    { id: 'filter-stage-hr', value: 'HR Review', color: 'bg-purple-50 text-purple-700' },
-    { id: 'filter-stage-procurement', value: 'Procurement', color: 'bg-cyan-50 text-cyan-700' },
+    { id: 'filter-stage-initiation', value: 'Initiation', color: 'bg-blue-50 text-blue-700' },
+    { id: 'filter-stage-approval', value: 'Executive Approval', color: 'bg-indigo-50 text-indigo-700' },
     { id: 'filter-stage-vendor', value: 'Vendor Submission', color: 'bg-teal-50 text-teal-700' },
-    { id: 'filter-stage-blind', value: 'Blind Selection', color: 'bg-orange-50 text-orange-700' },
-    { id: 'filter-stage-interview', value: 'Interview', color: 'bg-amber-50 text-amber-700' },
-    { id: 'filter-stage-qualified', value: 'Qualified', color: 'bg-lime-50 text-lime-700' },
-    { id: 'filter-stage-onboarding', value: 'Onboarding', color: 'bg-emerald-50 text-emerald-700' },
-    { id: 'filter-stage-active', value: 'Active', color: 'bg-green-50 text-green-700' },
-    { id: 'filter-stage-renewal', value: 'Renewal', color: 'bg-sky-50 text-sky-700' },
-    { id: 'filter-stage-closed', value: 'Closed', color: 'bg-slate-100 text-slate-500' },
+    { id: 'filter-stage-selection', value: 'Selection & Interview', color: 'bg-amber-50 text-amber-700' },
+    { id: 'filter-stage-onboarding', value: 'Digital Onboarding', color: 'bg-emerald-50 text-emerald-700' },
+    { id: 'filter-stage-completed', value: 'Completed', color: 'bg-green-50 text-green-700' },
 ];
 
 const departmentOptions = [
@@ -43,7 +40,7 @@ const departmentOptions = [
 ];
 
 const locationOptions = [
-    { id: 'loc-onshore', value: 'Onshore – DIEZA Premises' },
+    { id: 'loc-onshore', value: 'Onshore – Corporate Headquarters' },
     { id: 'loc-wfh', value: 'UAE Remote (WFH)' },
     { id: 'loc-vendor-office', value: 'UAE Remote (Vendor Office)' },
     { id: 'loc-offshore', value: 'Remote Abroad' },
@@ -88,18 +85,10 @@ function FilterSection({ title, children, defaultOpen = true }: FilterSectionPro
     );
 }
 
-export default function RequisitionFilters() {
-    const [filters, setFilters] = useState<FilterState>({
-        stages: [],
-        departments: [],
-        locations: [],
-        budgetType: [],
-        dateRange: '',
-    });
-
+export default function RequisitionFilters({ filters, setFilters }: RequisitionFiltersProps) {
     const toggleFilter = (key: keyof FilterState, value: string) => {
         if (key === 'dateRange') {
-            setFilters((prev) => ({ ...prev, dateRange: value }));
+            setFilters((prev) => ({ ...prev, dateRange: prev.dateRange === value ? '' : value }));
             return;
         }
         setFilters((prev) => {
@@ -150,8 +139,8 @@ export default function RequisitionFilters() {
                             key={opt.id}
                             onClick={() => toggleFilter('dateRange', opt.value)}
                             className={`w-full justify-start text-left px-2.5 py-1.5 h-auto rounded-lg text-xs transition-colors ${filters.dateRange === opt.value
-                                    ? 'bg-[hsl(214,67%,32%)] text-white hover:bg-[hsl(214,67%,32%)] hover:text-white font-semibold'
-                                    : 'text-slate-600 hover:bg-slate-50'
+                                ? 'bg-[hsl(214,67%,32%)] text-white hover:bg-[hsl(214,67%,32%)] hover:text-white font-semibold'
+                                : 'text-slate-600 hover:bg-slate-50'
                                 }`}
                         >
                             {opt.label}

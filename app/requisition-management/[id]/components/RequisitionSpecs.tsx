@@ -86,7 +86,7 @@ export default function RequisitionSpecs({ data }: RequisitionSpecsProps) {
                     
                     <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-100">
                         <p className="text-[10px] text-emerald-800 leading-relaxed font-medium">
-                            Budget code: <strong>DIEZA-OPS-2026-F1</strong>. Variance within 5% threshold compared to initial request.
+                            Budget code: <strong>CORP-OPS-2026-F1</strong>. Variance within 5% threshold compared to initial request.
                         </p>
                     </div>
                 </CardContent>

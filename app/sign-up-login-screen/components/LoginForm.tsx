@@ -30,7 +30,6 @@ interface LoginFormValues {
     remember: boolean;
 }
 
-type PortalType = 'internal' | 'vendor';
 
 export type RoleType = 'SYSTEM_ADMIN' | 'DEPT_REQUESTOR' | 'HOD' | 'HR_ADMIN' | 'PROCUREMENT_OFFICER' | 'FINANCE_OFFICER' | 'VENDOR_USER';
 
@@ -38,7 +37,6 @@ export default function LoginForm() {
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [portalType, setPortalType] = useState<PortalType>('internal');
     const [authError, setAuthError] = useState<string | null>(null);
     const { isAuthenticated } = useAuth();
 
@@ -119,7 +117,7 @@ export default function LoginForm() {
                     <div className="flex items-center gap-3 mb-12">
                         <AppLogo size={44} />
                         <div>
-                            <span className="block text-xl font-bold text-white leading-tight">DEIZ OMS</span>
+                            <span className="block text-xl font-bold text-white leading-tight">Enterprise OMS</span>
                             <span className="block text-xs font-medium text-[#C8962A] leading-tight tracking-wide">
                                 Al Asas Information Technology
                             </span>
@@ -131,7 +129,7 @@ export default function LoginForm() {
                         <div className="mb-3">
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C8962A]/15 text-[#C8962A] text-xs font-semibold tracking-wide border border-[#C8962A]/30">
                                 <Building2 size={11} />
-                                Dubai Integrated Economic Zones
+                                Corporate Headquarters
                             </span>
                         </div>
 
@@ -147,7 +145,7 @@ export default function LoginForm() {
                         {/* Feature list */}
                         <div className="grid grid-cols-1 gap-3 mb-10">
                             {[
-                                { label: '14-Step Auditable Workflow', desc: 'Algorithmic approval routing with full RBAC' },
+                                { label: 'End-to-End Auditable Workflow', desc: 'Algorithmic approval routing with full RBAC' },
                                 { label: 'Real-Time Budget Control', desc: 'AED reservation and liquidity validation at requisition' },
                                 { label: 'Blind Candidate Selection', desc: 'Merit-based screening with vendor identity masking' },
                                 { label: 'Dubai Law No. 5 of 2026 Compliant', desc: 'Emiratisation quota monitoring and enforcement' },
@@ -168,7 +166,7 @@ export default function LoginForm() {
                             <div>
                                 <p className="text-white text-xs font-semibold">Regulatory Compliance Active</p>
                                 <p className="text-slate-400 text-[11px]">
-                                    Dubai Law No. 5 of 2026 · TLS 1.3 · Immutable Audit Logging · RBAC Enforced
+                                    Standard Regulatory Governance · TLS 1.3 · Immutable Audit Logging · RBAC Enforced
                                 </p>
                             </div>
                         </div>
@@ -193,36 +191,15 @@ export default function LoginForm() {
                     <div className="lg:hidden mb-8 flex items-center gap-3">
                         <AppLogo size={36} />
                         <div>
-                            <span className="block text-base font-bold text-slate-900">DEIZ OMS</span>
+                            <span className="block text-base font-bold text-slate-900">Enterprise OMS</span>
                             <span className="block text-xs text-slate-400">Al Asas Information Technology</span>
                         </div>
-                    </div>
-
-                    {/* Portal Toggle */}
-                    <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100 mb-8 self-start">
-                        {(['internal', 'vendor'] as PortalType[]).map((type) => (
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                key={`portal-${type}`}
-                                onClick={() => {
-                                    setPortalType(type);
-                                    setAuthError(null);
-                                }}
-                                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${portalType === type
-                                        ? 'bg-white text-[hsl(214,67%,32%)] shadow-sm hover:text-[hsl(214,67%,32%)] hover:bg-white'
-                                        : 'text-slate-500 hover:text-slate-700 hover:bg-transparent'
-                                    }`}
-                            >
-                                {type === 'internal' ? '🏢 Internal Portal' : '🏭 Vendor Portal'}
-                            </Button>
-                        ))}
                     </div>
 
                     <div className="mb-8">
                         <h2 className="text-2xl font-bold text-slate-900 mb-1">Sign in to your account</h2>
                         <p className="text-slate-500 text-sm">
-                            {portalType === 'internal' ? 'Use your DEIZ Active Directory credentials or demo accounts below.' : 'Access the DEIZ Vendor Portal to submit candidates and quotations.'}
+                            Use your Corporate Active Directory credentials or demo accounts below.
                         </p>
                     </div>
 
@@ -247,7 +224,7 @@ export default function LoginForm() {
                                     id="email"
                                     type="email"
                                     autoComplete="email"
-                                    placeholder="your.name@deiz.ae"
+                                    placeholder="your.name@oms-pro.com"
                                     className={`pl-9 h-10 ${errors.email ? 'border-destructive focus-visible:ring-destructive/20' : ''}`}
                                     {...register('email', {
                                         required: 'Email address is required',
@@ -335,11 +312,11 @@ export default function LoginForm() {
 
                     {/* Terms */}
                     <p className="text-xs text-slate-400 text-center mt-8 leading-relaxed">
-                        By signing in, you agree to DEIZ's{' '}
+                        By signing in, you agree to the{' '}
                         <span className="text-[hsl(214,67%,32%)] cursor-pointer hover:underline">Terms of Service</span>
                         {' '}and{' '}
                         <span className="text-[hsl(214,67%,32%)] cursor-pointer hover:underline">Privacy Policy</span>.
-                        All sessions are monitored and audited per Dubai Law No. 5 of 2026.
+                        All sessions are monitored and audited per Standard Regulatory Governance.
                     </p>
                 </div>
             </div>
