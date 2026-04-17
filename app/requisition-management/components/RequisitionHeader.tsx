@@ -30,7 +30,7 @@ export default function RequisitionHeader({ onSuccess, onExport }: RequisitionHe
                         </span>
                     </h1>
                     <p className="text-slate-500 text-sm mt-0.5 font-medium">
-                        Agile Lifecycle Management · 5-stage real-time governance for outsourced talent
+                        Agile Lifecycle Management
                     </p>
                 </div>
 
@@ -76,8 +76,8 @@ export default function RequisitionHeader({ onSuccess, onExport }: RequisitionHe
                 </div>
             </div>
             {showNewModal && (
-                <NewRequisitionModal 
-                    onClose={() => setShowNewModal(false)} 
+                <NewRequisitionModal
+                    onClose={() => setShowNewModal(false)}
                     onSuccess={onSuccess}
                 />
             )}

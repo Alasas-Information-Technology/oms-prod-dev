@@ -53,7 +53,7 @@ function PageSkeleton() {
 // ──────────────────────────────────────────────────────────────────────────────
 function AccessDenied() {
     const router = useRouter();
-    
+
     return (
         <AppLayout>
             <div className="flex flex-col items-center justify-center min-h-[70vh] text-center px-4 max-w-lg mx-auto">
@@ -62,19 +62,19 @@ function AccessDenied() {
                 </div>
                 <h1 className="text-3xl font-bold text-slate-800 mb-4">403 Unauthorized</h1>
                 <p className="text-slate-500 mb-8 leading-relaxed">
-                    You do not have clearance to view enterprise financial data. This area is restricted to 
-                    <span className="font-semibold text-slate-700"> Finance Officers</span> and 
+                    You do not have clearance to view enterprise financial data. This area is restricted to
+                    <span className="font-semibold text-slate-700"> Finance Officers</span> and
                     <span className="font-semibold text-slate-700"> System Administrators</span>.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 w-full">
-                    <Button 
+                    <Button
                         onClick={() => router.push('/operations-dashboard')}
                         className="flex-1 bg-slate-900 hover:bg-slate-800 text-white gap-2 h-11"
                     >
                         <ArrowLeft size={16} />
                         Return to Dashboard
                     </Button>
-                    <Button 
+                    <Button
                         variant="outline"
                         onClick={() => window.location.reload()}
                         className="flex-1 border-slate-200 text-slate-600 gap-2 h-11"
@@ -100,17 +100,17 @@ export default function BudgetFinancePage() {
         totalReserved: 0,
         totalAvailable: 0,
     });
-    const [loading, setLoading]       = useState(true);
-    const [refreshing, setRefreshing]  = useState(false);
-    const [error, setError]            = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     // ── Modal state ────────────────────────────────────────────────────────
-    const [editingRow, setEditingRow]   = useState<BudgetRow | null>(null);
-    const [allocating, setAllocating]   = useState(false);   // + Allocate New Budget modal
+    const [editingRow, setEditingRow] = useState<BudgetRow | null>(null);
+    const [allocating, setAllocating] = useState(false);   // + Allocate New Budget modal
 
     const allowedRoles = ['FINANCE_OFFICER', 'SYSTEM_ADMIN'];
-    const currentRole  = currentUser?.roles?.role_name ?? '';
-    const hasAccess    = allowedRoles.includes(currentRole);
+    const currentRole = currentUser?.roles?.role_name ?? '';
+    const hasAccess = allowedRoles.includes(currentRole);
 
     // ── Data loading ───────────────────────────────────────────────────────
     const loadData = useCallback(async (isRefresh = false) => {
@@ -122,8 +122,8 @@ export default function BudgetFinancePage() {
 
         try {
             // API PASS: Pass userRole for service-layer validation
-            const rows               = await financeService.getBudgetData(currentRole);
-            const enterpriseSummary  = financeService.getEnterpriseSummary(rows);
+            const rows = await financeService.getBudgetData(currentRole);
+            const enterpriseSummary = financeService.getEnterpriseSummary(rows);
             setBudgetRows(rows);
             setSummary(enterpriseSummary);
         } catch (err: unknown) {
@@ -252,10 +252,6 @@ export default function BudgetFinancePage() {
                     />
                 </div>
 
-                {/* ── Footer ── */}
-                <p className="text-center text-[11px] text-slate-300">
-                    All figures displayed in UAE Dirhams (AED) · Data sourced from Supabase budgets table · Financial Year 2026
-                </p>
             </div>
 
             {/* ── Edit Budget Modal ── */}

@@ -46,10 +46,10 @@ export default function BlindSelectionView() {
                 candidateService.getCandidatesForRequisition(reqId),
                 requisitionService.getRequisitionById(reqId)
             ]);
-            
+
             setCandidates(candData);
             setRequisition(reqData);
-            
+
             // Map initial rankings from database
             const initialRankings: Record<string, PriorityRank> = {};
             candData.forEach((cand: any) => {
@@ -120,7 +120,7 @@ export default function BlindSelectionView() {
             </div>
 
             <div className="max-w-7xl mx-auto w-full px-4 sm:px-8 space-y-10 relative z-10">
-                
+
                 {/* Header Sequence */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-4">
@@ -150,19 +150,6 @@ export default function BlindSelectionView() {
                     {/* Progress Circle Utility could go here but skipping for simplicity */}
                 </div>
 
-                {/* Blind Screening Notice Banner */}
-                <div className="relative group overflow-hidden p-6 rounded-2xl bg-white/80 backdrop-blur-md border border-amber-100 shadow-xl shadow-amber-900/5 items-center flex gap-6">
-                    <div className="absolute inset-0 bg-gradient-to-r from-amber-500/[0.03] to-transparent pointer-events-none" />
-                    <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                        <ShieldAlert size={28} className="text-amber-600" />
-                    </div>
-                    <div className="space-y-1">
-                        <h3 className="text-base font-black text-amber-900 tracking-tight">Merit-First Integrity Mode Active</h3>
-                        <p className="text-sm text-amber-800/80 leading-relaxed font-medium maw-w-3xl">
-                            OMS has intercepted and redacted all personal identifiers including vendor names, financial quotes, and regional telemetry. Requisitions are processed based on technical competence and professional experience to eliminate unconscious bias in the shortlisting phase.
-                        </p>
-                    </div>
-                </div>
 
                 {/* Candidate Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-8">
@@ -172,12 +159,12 @@ export default function BlindSelectionView() {
                         ))
                     ) : candidates.length === 0 ? (
                         <div className="lg:col-span-2 py-32 text-center bg-white/50 backdrop-blur-sm rounded-3xl border border-slate-100 border-dashed">
-                             <div className="max-w-xs mx-auto space-y-4">
+                            <div className="max-w-xs mx-auto space-y-4">
                                 <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-400">
                                     <Users size={32} />
                                 </div>
                                 <p className="text-slate-400 italic font-medium">No candidates are currently eligible for review in this requisition.</p>
-                             </div>
+                            </div>
                         </div>
                     ) : (
                         candidates.map(candidate => {
@@ -187,15 +174,14 @@ export default function BlindSelectionView() {
                             const rankColor = currentRank === 'P1' ? 'bg-blue-600' : currentRank === 'P2' ? 'bg-blue-500' : currentRank === 'P3' ? 'bg-blue-400' : 'bg-slate-200';
 
                             return (
-                                <div 
-                                    key={candidate.id} 
-                                    className={`relative group flex flex-col gap-6 rounded-3xl border-2 transition-all p-7 overflow-hidden ${
-                                        isRejected 
-                                            ? 'opacity-60 grayscale scale-[0.98] border-slate-200 bg-slate-50/50' 
-                                            : isRanked 
-                                                ? 'border-[hsl(214,67%,32%)] shadow-2xl shadow-[hsl(214,67%,32%)]/10 bg-white' 
-                                                : 'border-white bg-white/80 backdrop-blur-md shadow-lg shadow-slate-200/50 hover:shadow-xl hover:border-blue-100'
-                                    }`}
+                                <div
+                                    key={candidate.id}
+                                    className={`relative group flex flex-col gap-6 rounded-3xl border-2 transition-all p-7 overflow-hidden ${isRejected
+                                        ? 'opacity-60 grayscale scale-[0.98] border-slate-200 bg-slate-50/50'
+                                        : isRanked
+                                            ? 'border-[hsl(214,67%,32%)] shadow-2xl shadow-[hsl(214,67%,32%)]/10 bg-white'
+                                            : 'border-white bg-white/80 backdrop-blur-md shadow-lg shadow-slate-200/50 hover:shadow-xl hover:border-blue-100'
+                                        }`}
                                 >
                                     {/* Dynamic Rank Indicator Strip */}
                                     {isRanked && <div className={`absolute top-0 right-0 w-32 h-1 ${rankColor} rounded-bl-full`} />}
@@ -223,7 +209,7 @@ export default function BlindSelectionView() {
                                                 )}
                                             </h3>
                                         </div>
-                                        <Button 
+                                        <Button
                                             variant="secondary"
                                             size="sm"
                                             onClick={() => handleViewCV(candidate.alias)}
@@ -259,8 +245,8 @@ export default function BlindSelectionView() {
                                         </div>
                                         <div className="flex flex-wrap gap-2">
                                             {(candidate.top_skills || []).map((skill: string) => (
-                                                <span 
-                                                    key={skill} 
+                                                <span
+                                                    key={skill}
                                                     className="px-3 py-1.5 rounded-xl bg-white border border-slate-100 text-[hsl(214,67%,32%)] text-[11px] font-bold shadow-sm shadow-slate-200/50 group-hover:border-blue-200 transition-colors"
                                                 >
                                                     {skill}
@@ -274,7 +260,7 @@ export default function BlindSelectionView() {
                                         <div className="flex items-center gap-2">
                                             {(['P1', 'P2', 'P3', 'Rejected'] as PriorityRank[]).map((rankOption) => {
                                                 if (!rankOption) return null;
-                                                
+
                                                 const isActive = currentRank === rankOption;
                                                 let label: string = rankOption;
                                                 if (rankOption === 'P1') label = 'H-Prior';
@@ -289,11 +275,10 @@ export default function BlindSelectionView() {
                                                         variant={isActive ? (isRejectBtn ? 'destructive' : 'default') : 'outline'}
                                                         size="sm"
                                                         onClick={() => handleSetPriority(candidate.id, isActive ? null : rankOption)}
-                                                        className={`flex-1 rounded-xl text-[10px] font-black uppercase h-10 transition-all border-slate-200 ${
-                                                            isActive 
-                                                                ? 'shadow-lg scale-[1.05] z-10' 
-                                                                : 'text-slate-500 hover:border-slate-300 hover:bg-slate-50'
-                                                        } ${isActive && !isRejectBtn ? 'bg-[hsl(214,67%,32%)]' : ''}`}
+                                                        className={`flex-1 rounded-xl text-[10px] font-black uppercase h-10 transition-all border-slate-200 ${isActive
+                                                            ? 'shadow-lg scale-[1.05] z-10'
+                                                            : 'text-slate-500 hover:border-slate-300 hover:bg-slate-50'
+                                                            } ${isActive && !isRejectBtn ? 'bg-[hsl(214,67%,32%)]' : ''}`}
                                                     >
                                                         {label}
                                                     </Button>
@@ -309,11 +294,11 @@ export default function BlindSelectionView() {
             </div>
 
             {/* Selection Meta-Insights Sticky Footer */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-200 shadow-[0_-10px_40px_-20px_rgba(0,0,0,0.1)] z-50 lg:left-64 transition-all overflow-hidden animate-in slide-in-from-bottom duration-500">
+            <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-200 shadow-[0_-10px_40px_-20px_rgba(0,0,0,0.1)] z-50 lg:left-0 transition-all overflow-hidden animate-in slide-in-from-bottom duration-500">
                 {/* Visual Progress Bar */}
                 <div className="h-1 w-full bg-slate-100 flex">
-                    <div 
-                        className="h-full bg-blue-600 transition-all duration-1000 ease-out" 
+                    <div
+                        className="h-full bg-blue-600 transition-all duration-1000 ease-out"
                         style={{ width: `${(Object.values(rankings).filter(r => r && r !== 'Rejected').length / Math.max(candidates.length, 1)) * 100}%` }}
                     />
                 </div>
@@ -334,7 +319,7 @@ export default function BlindSelectionView() {
                     </div>
 
                     <div className="flex items-center gap-4 w-full sm:w-auto">
-                        <Button 
+                        <Button
                             variant="ghost"
                             className="flex-1 sm:flex-none h-14 px-8 rounded-2xl text-[hsl(214,67%,32%)] font-black uppercase text-xs tracking-widest hover:bg-slate-50"
                             onClick={handleSaveProgress}
@@ -342,7 +327,7 @@ export default function BlindSelectionView() {
                         >
                             Save Progress
                         </Button>
-                        <Button 
+                        <Button
                             className="flex-1 sm:flex-none h-14 px-10 rounded-2xl bg-[hsl(214,67%,32%)] hover:bg-slate-900 text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-blue-900/10 transition-all hover:scale-[1.02] active:scale-[0.98]"
                             onClick={handleFinalize}
                             disabled={submitting}
