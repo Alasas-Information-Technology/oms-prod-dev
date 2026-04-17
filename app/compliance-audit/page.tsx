@@ -69,10 +69,10 @@ export default function ComplianceAuditPage() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <div className="flex items-center gap-2.5 mb-1">
-                            <div className="w-8 h-8 rounded-lg bg-[hsl(214,67%,32%)]/10 flex items-center justify-center">
-                                <ShieldCheck size={18} className="text-[hsl(214,67%,32%)]" />
+                            <div className="w-8 h-8 rounded-lg bg-[#0C66E4]/10 flex items-center justify-center">
+                                <ShieldCheck size={18} className="text-[#0C66E4]" />
                             </div>
-                            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">System Directory & Compliance</h1>
+                            <h1 className="text-2xl font-bold text-[#0C66E4] tracking-tight">System Directory & Compliance</h1>
                         </div>
                         <p className="text-slate-500 text-sm font-medium">
                             {currentUser?.roles?.role_name === 'SYSTEM_ADMIN' || currentUser?.roles?.role_name === 'HR_ADMIN' 
@@ -159,11 +159,11 @@ export default function ComplianceAuditPage() {
                                             <tr key={profile.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors group">
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-[hsl(214,67%,32%)] font-bold text-xs ring-2 ring-white shadow-sm border border-slate-200/50">
+                                                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-[#0C66E4] font-bold text-xs ring-2 ring-white shadow-sm border border-slate-200/50">
                                                             {profile.full_name?.substring(0, 2).toUpperCase() || '??'}
                                                         </div>
                                                         <div className="min-w-0">
-                                                            <p className="text-sm font-bold text-slate-900 truncate leading-tight">{profile.full_name || 'Unset Profile Name'}</p>
+                                                            <p className="text-sm font-bold text-[#172B4D] truncate leading-tight">{profile.full_name || 'Unset Profile Name'}</p>
                                                             <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-medium">
                                                                 <Mail size={10} className="text-slate-300" />
                                                                 {profile.email || 'no-email@oms.ae'}
@@ -213,7 +213,7 @@ export default function ComplianceAuditPage() {
 
                 {/* Footer Insight Section */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card className="bg-[hsl(214,67%,32%)] text-white border-none shadow-lg">
+                    <Card className="bg-[#0C66E4] text-white border-none shadow-lg">
                         <CardHeader className="pb-2">
                             <CardTitle className="text-xs font-bold uppercase tracking-widest opacity-70">Compliance Logic</CardTitle>
                         </CardHeader>
@@ -228,7 +228,7 @@ export default function ComplianceAuditPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-slate-900 text-white border-none shadow-lg">
+                    <Card className="bg-[#172B4D] text-white border-none shadow-lg">
                         <CardHeader className="pb-2">
                             <CardTitle className="text-xs font-bold uppercase tracking-widest opacity-70">Audited Access</CardTitle>
                         </CardHeader>

@@ -34,7 +34,32 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
     );
 }
 
-export default function EmiratesCompliancePanel() {
+interface EmiratesCompliancePanelProps {
+    compliance?: {
+        globalRate: number;
+        expatriateRate: number;
+        vendorCompliance: Array<{
+            id: string;
+            vendor: string;
+            rate: number;
+            status: string;
+        }>;
+    };
+}
+
+export default function EmiratesCompliancePanel({ compliance }: EmiratesCompliancePanelProps) {
+    const data = compliance ? [
+        { name: 'UAE Nationals', value: compliance.globalRate, color: '#1B4F8A' },
+        { name: 'Expatriates', value: compliance.expatriateRate, color: '#e2e8f0' },
+    ] : [
+        { name: 'UAE Nationals', value: 38.4, color: '#1B4F8A' },
+        { name: 'Expatriates', value: 61.6, color: '#e2e8f0' },
+    ];
+
+    const vendors = compliance?.vendorCompliance || [];
+    const globalRate = compliance?.globalRate || 38.4;
+    const belowMandate = (50 - globalRate).toFixed(1);
+
     return (
         <Card className="h-full flex flex-col bg-gradient-to-br from-white to-slate-50 relative overflow-hidden">
             {/* Background Pattern */}
@@ -56,7 +81,7 @@ export default function EmiratesCompliancePanel() {
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <Pie
-                                data={complianceData}
+                                data={data}
                                 cx="50%"
                                 cy="50%"
                                 innerRadius={30}
@@ -64,7 +89,7 @@ export default function EmiratesCompliancePanel() {
                                 dataKey="value"
                                 strokeWidth={0}
                             >
-                                {complianceData.map((entry, i) => (
+                                {data.map((entry, i) => (
                                     <Cell key={`compliance-cell-${i}`} fill={entry.color} />
                                 ))}
                             </Pie>
@@ -74,14 +99,17 @@ export default function EmiratesCompliancePanel() {
                 </div>
                 <div className="flex-1">
                     <div className="flex items-baseline gap-1 mb-1">
-                        <span className="text-3xl font-bold text-slate-900 tabular-nums">38.4</span>
+                        <span className="text-3xl font-bold text-slate-900 tabular-nums">{globalRate}</span>
                         <span className="text-base font-semibold text-slate-400">%</span>
                     </div>
-                    <div className="flex items-center gap-1 text-red-600 text-xs font-semibold mb-2">
-                        <AlertTriangle size={11} />
-                        11.6% below 50% mandate
+                    <div className={`flex items-center gap-1 text-xs font-semibold mb-2 ${globalRate >= 50 ? 'text-green-600' : 'text-red-600'}`}>
+                        {globalRate >= 50 ? (
+                            <><TrendingUp size={11} /> Goal achieved</>
+                        ) : (
+                            <><AlertTriangle size={11} /> {belowMandate}% below 50% mandate</>
+                        )}
                     </div>
-                    {complianceData.map((d) => (
+                    {data.map((d) => (
                         <div key={`legend-${d.name}`} className="flex items-center gap-2 text-xs text-slate-500 mb-1">
                             <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: d.color }} />
                             <span>{d.name}</span>
@@ -94,10 +122,10 @@ export default function EmiratesCompliancePanel() {
             {/* Vendor Compliance Table */}
             <div className="flex-1">
                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">Vendor Compliance</p>
-                <div className="space-y-1.5">
-                    {vendorCompliance.map((v) => (
+                <div className="space-y-1.5 min-h-[160px]">
+                    {vendors.length > 0 ? vendors.map((v) => (
                         <div key={v.id} className="flex items-center gap-2">
-                            <div className="flex-1 min-w-0">
+                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between mb-0.5">
                                     <span className="text-xs text-slate-700 truncate font-medium">{v.vendor}</span>
                                     <span className={`text-[10px] font-bold tabular-nums ${v.status === 'compliant' ? 'text-green-600' :
@@ -115,13 +143,18 @@ export default function EmiratesCompliancePanel() {
                                     />
                                 </div>
                             </div>
-                            <span className={`badge-base text-[10px] shrink-0 ${v.status === 'compliant' ? 'bg-green-50 text-green-700' :
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${v.status === 'compliant' ? 'bg-green-50 text-green-700' :
                                     v.status === 'at-risk' ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-700'
                                 }`}>
                                 {v.status === 'compliant' ? 'Compliant' : v.status === 'at-risk' ? 'At Risk' : 'Breach'}
                             </span>
                         </div>
-                    ))}
+                    )) : (
+                        <div className="flex flex-col items-center justify-center h-full py-8 text-slate-300">
+                             <Shield size={24} className="opacity-20 mb-2" />
+                             <p className="text-[10px] font-bold uppercase tracking-widest">No vendor data available</p>
+                        </div>
+                    )}
                 </div>
             </div>
 

@@ -30,48 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const router = useRouter();
 
-    useEffect(() => {
-        let isMounted = true;
-
-        // Use onAuthStateChange as the single source of truth for session
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-            console.log(`AuthContext: Auth State Change Event: ${event}`);
-            
-            if (session) {
-                // Only fetch profile if we don't have a user or if the UID changed
-                // This prevents redundant reloads when tab switches trigger session verification
-                setCurrentUser(prevUser => {
-                    if (!prevUser || prevUser.id !== session.user.id) {
-                        fetchProfile(session.user.id, session.user.email!);
-                    }
-                    return prevUser;
-                });
-            } else {
-                if (isMounted) {
-                    setCurrentUser(null);
-                    setIsLoading(false);
-                }
-            }
-        });
-
-        // Initial check if we are already loaded (to catch state before listener)
-        const checkInitialSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session && isMounted) {
-                await fetchProfile(session.user.id, session.user.email!);
-            } else if (!session && isMounted) {
-                setIsLoading(false);
-            }
-        };
-        checkInitialSession();
-
-        return () => {
-            isMounted = false;
-            subscription.unsubscribe();
-        };
-    }, []);
-
-    const fetchProfile = async (uid: string, email: string) => {
+    const fetchProfile = React.useCallback(async (uid: string, email: string) => {
         // Only set loading true if we don't already have a valid user (Silent Refresh)
         if (!currentUser) {
             setIsLoading(true);
@@ -115,13 +74,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 console.warn("AuthContext: Single query returned no data but no error.");
                 setCurrentUser(null);
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('AuthContext: Fatal catch error in fetchProfile:', err);
             setCurrentUser(null);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [currentUser]);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        // Use onAuthStateChange as the single source of truth for session
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            console.log(`AuthContext: Auth State Change Event: ${event}`);
+            
+            if (session) {
+                // Only fetch profile if we don't have a user or if the UID changed
+                // This prevents redundant reloads when tab switches trigger session verification
+                setCurrentUser(prevUser => {
+                    if (!prevUser || prevUser.id !== session.user.id) {
+                        fetchProfile(session.user.id, session.user.email!);
+                    }
+                    return prevUser;
+                });
+            } else {
+                if (isMounted) {
+                    setCurrentUser(null);
+                    setIsLoading(false);
+                }
+            }
+        });
+
+        // Initial check if we are already loaded (to catch state before listener)
+        const checkInitialSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session && isMounted) {
+                await fetchProfile(session.user.id, session.user.email!);
+            } else if (!session && isMounted) {
+                setIsLoading(false);
+            }
+        };
+        checkInitialSession();
+
+        return () => {
+            isMounted = false;
+            subscription.unsubscribe();
+        };
+    }, [fetchProfile]);
+
+
 
     const logout = async () => {
         await supabase.auth.signOut();

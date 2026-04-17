@@ -34,7 +34,7 @@ export default function DashboardHeader({ onRefresh, refreshing }: DashboardHead
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
             <div>
                 <div className="flex items-center gap-2 mb-1">
-                    <h1 className="text-2xl font-bold text-slate-900">Operations Dashboard</h1>
+                    <h1 className="text-2xl font-bold text-[#0C66E4]">Operations Dashboard</h1>
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-50 text-green-700 text-[10px] font-bold border border-green-200">
                         <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                         LIVE

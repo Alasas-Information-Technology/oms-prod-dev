@@ -24,6 +24,7 @@ import {
 import AppLogo from '@/components/ui/AppLogo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import Image from 'next/image';
 interface LoginFormValues {
     email: string;
     password: string;
@@ -66,13 +67,13 @@ export default function LoginForm() {
             });
 
             if (authError) {
-                throw authError; 
+                throw authError;
             }
 
             toast.success('Login Successful', {
                 description: 'Verifying credentials and synchronizing profile...',
             });
-            
+
             // The AuthContext will catch the session change and redirect.
             // But we can also push here for immediate feedback if needed.
             router.push('/operations-dashboard');
@@ -115,7 +116,7 @@ export default function LoginForm() {
                 <div className="relative z-10 flex flex-col h-full p-10 xl:p-14">
                     {/* Logo */}
                     <div className="flex items-center gap-3 mb-12">
-                        <AppLogo size={44} />
+                        <AppLogo size={44} src='/assets/images/app_logo_red.png' />
                         <div>
                             <span className="block text-xl font-bold text-white leading-tight">Enterprise OMS</span>
                             <span className="block text-xs font-medium text-[#C8962A] leading-tight tracking-wide">
@@ -160,25 +161,12 @@ export default function LoginForm() {
                             ))}
                         </div>
 
-                        {/* Compliance badge */}
-                        <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
-                            <Shield size={20} className="text-[#C8962A] shrink-0" />
-                            <div>
-                                <p className="text-white text-xs font-semibold">Regulatory Compliance Active</p>
-                                <p className="text-slate-400 text-[11px]">
-                                    Standard Regulatory Governance · TLS 1.3 · Immutable Audit Logging · RBAC Enforced
-                                </p>
-                            </div>
-                        </div>
                     </div>
 
                     {/* Footer */}
                     <div className="mt-8 pt-6 border-t border-white/10">
                         <p className="text-slate-500 text-xs">
                             © 2026 Al Asas Information Technology · Sharjah, UAE
-                        </p>
-                        <p className="text-slate-600 text-[10px] mt-1">
-                            Proposal Date: 28 March 2026 · Version 1.0.0
                         </p>
                     </div>
                 </div>
@@ -309,15 +297,6 @@ export default function LoginForm() {
                         </Button>
                     </form>
 
-
-                    {/* Terms */}
-                    <p className="text-xs text-slate-400 text-center mt-8 leading-relaxed">
-                        By signing in, you agree to the{' '}
-                        <span className="text-[hsl(214,67%,32%)] cursor-pointer hover:underline">Terms of Service</span>
-                        {' '}and{' '}
-                        <span className="text-[hsl(214,67%,32%)] cursor-pointer hover:underline">Privacy Policy</span>.
-                        All sessions are monitored and audited per Standard Regulatory Governance.
-                    </p>
                 </div>
             </div>
         </div>

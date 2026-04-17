@@ -22,7 +22,8 @@ import {
     MessageSquare,
     ArrowRightLeft,
     Users,
-    CheckCircle
+    CheckCircle,
+    Edit3
 } from 'lucide-react';
 
 import { requisitionService } from '@/lib/services/requisitionService';
@@ -33,11 +34,13 @@ interface ActionPanelProps {
     actorId: string;
     requiredRoleId?: number;
     onApprove: () => void;
+    onEdit?: () => void;
+    requestorId?: string;
     hasQualifiedCandidate?: boolean;
     isActive?: boolean;
 }
 
-export default function ActionPanel({ reqId, currentStageId, actorId, requiredRoleId, onApprove, hasQualifiedCandidate = false, isActive = true }: ActionPanelProps) {
+export default function ActionPanel({ reqId, currentStageId, actorId, requiredRoleId, onApprove, onEdit, requestorId, hasQualifiedCandidate = false, isActive = true }: ActionPanelProps) {
     const { currentUser } = useAuth();
     const router = useRouter();
     const [isProcessing, setIsProcessing] = useState(false);
@@ -46,6 +49,12 @@ export default function ActionPanel({ reqId, currentStageId, actorId, requiredRo
     // ADDED: HR_ADMIN and SYSTEM_ADMIN can bypass for agility
     const canApprove = currentUser && (
         currentUser.role_id === requiredRoleId ||
+        currentUser.roles.role_name === 'SYSTEM_ADMIN' ||
+        currentUser.roles.role_name === 'HR_ADMIN'
+    );
+
+    const canEdit = currentUser && (
+        actorId === requestorId ||
         currentUser.roles.role_name === 'SYSTEM_ADMIN' ||
         currentUser.roles.role_name === 'HR_ADMIN'
     );
@@ -77,6 +86,23 @@ export default function ActionPanel({ reqId, currentStageId, actorId, requiredRo
         }
     };
 
+    const handleTerminate = async () => {
+        if (!window.confirm('Are you sure you want to terminate this requisition initiation? This action cannot be undone.')) return;
+        
+        setIsProcessing(true);
+        try {
+            await requisitionService.terminateRequisition(reqId, actorId, 'Requisition terminated by user during initiation stage.');
+            toast.success('Initiation Terminated', {
+                description: 'Requisition has been deactivated and reserved budget released.'
+            });
+            onApprove(); // Refresh data
+        } catch (error) {
+            toast.error('Failed to terminate requisition');
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
     const handleActionPlaceholder = (action: string) => {
         toast.info(`${action} initiated`, {
             description: 'Routing request to appropriate department'
@@ -84,18 +110,18 @@ export default function ActionPanel({ reqId, currentStageId, actorId, requiredRo
     };
 
     return (
-        <Card className="border-none shadow-card border-l-4 border-l-[hsl(214,67%,32%)] overflow-hidden">
-            <CardHeader className="bg-slate-50/50 pb-3">
-                <CardTitle className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                    <ShieldCheck size={16} className="text-[hsl(214,67%,32%)]" />
+        <Card className="border border-[#DFE1E6] shadow-atlassian overflow-hidden rounded-sm">
+            <CardHeader className="bg-[#F4F5F7] border-b border-[#DFE1E6] py-3">
+                <CardTitle className="text-xs font-bold text-[#42526E] uppercase tracking-wider flex items-center gap-2">
+                    <ShieldCheck size={14} className="text-[#0C66E4]" />
                     Workflow Governance
                 </CardTitle>
             </CardHeader>
-            <CardContent className="pt-6 space-y-4">
-                <div className="p-3 bg-blue-50/50 rounded-lg border border-blue-100 mb-2">
+            <CardContent className="pt-4 space-y-4">
+                <div className="p-3 bg-[#EAE6FF] rounded-sm border border-[#C0B6F2] mb-2">
                     <div className="flex gap-2">
-                        <Info size={14} className="text-[hsl(214,67%,32%)] shrink-0 mt-0.5" />
-                        <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                        <Info size={14} className="text-[#403294] shrink-0 mt-0.5" />
+                        <p className="text-[12px] text-[#403294] leading-relaxed font-semibold">
                             Logged in as <strong>{currentUser?.roles?.role_name || 'Guest'}</strong>.
                             {canApprove
                                 ? ` Ready for: ${actionLabel}`
@@ -106,14 +132,14 @@ export default function ActionPanel({ reqId, currentStageId, actorId, requiredRo
 
                 <div className="space-y-2">
                     {!isActive ? (
-                        <div className="p-6 rounded-2xl bg-emerald-50 border-2 border-emerald-100 flex flex-col items-center justify-center text-center gap-4 animate-in zoom-in-95 duration-500">
-                            <div className="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-200">
-                                <CheckCircle size={24} className="text-white" />
+                        <div className="p-6 rounded-sm bg-[#E3FCEF] border border-[#ABF5D1] flex flex-col items-center justify-center text-center gap-4 animate-in zoom-in-95 duration-500">
+                            <div className="w-10 h-10 rounded-full bg-[#36B37E] flex items-center justify-center shadow-lg shadow-[#36B37E]/20">
+                                <CheckCircle size={20} className="text-white" />
                             </div>
                             <div className="space-y-1">
-                                <h4 className="text-sm font-black text-emerald-900 uppercase tracking-tight">Process Finalized</h4>
-                                <p className="text-[11px] text-emerald-600 font-bold leading-relaxed px-2">
-                                    This requisition has been successfully fulfilled and the candidate is onboarded.
+                                <h4 className="text-xs font-bold text-[#006644] uppercase tracking-wider">Process Finalized</h4>
+                                <p className="text-[11px] text-[#006644] font-semibold leading-relaxed px-2">
+                                    Requisition fulfilled and candidate onboarded.
                                 </p>
                             </div>
                         </div>
@@ -167,12 +193,12 @@ export default function ActionPanel({ reqId, currentStageId, actorId, requiredRo
                             )}
 
                             {!canApprove && (
-                                <div className="flex items-center justify-center p-4 border border-dashed border-slate-200 rounded-xl bg-slate-50/50 text-slate-400 text-xs font-medium italic">
-                                    Governance Action Restricted
+                                <div className="flex items-center justify-center p-3 border border-dashed border-[#DFE1E6] rounded-sm bg-[#F4F5F7] text-[#5E6C84] text-[11px] font-bold uppercase tracking-wider">
+                                    Governance Restricted
                                 </div>
                             )}
 
-                            <Button
+                             <Button
                                 variant="outline"
                                 onClick={() => handleActionPlaceholder('Internal Hire Conversion')}
                                 className="w-full border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold h-11 flex items-center justify-start gap-2"
@@ -181,13 +207,26 @@ export default function ActionPanel({ reqId, currentStageId, actorId, requiredRo
                                 Convert to Internal Hire
                             </Button>
 
+                            {currentStageId === 1 && canEdit && onEdit && (
+                                <Button
+                                    variant="outline"
+                                    onClick={onEdit}
+                                    disabled={isProcessing}
+                                    className="w-full border-blue-200 text-blue-700 hover:bg-blue-50 font-semibold h-11 flex items-center justify-start gap-2"
+                                >
+                                    <Edit3 size={16} className="text-blue-500" />
+                                    Edit Specification
+                                </Button>
+                            )}
+
                             <Button
                                 variant="ghost"
-                                onClick={() => handleActionPlaceholder('Rejection')}
+                                onClick={currentStageId === 1 ? handleTerminate : () => handleActionPlaceholder('Rejection')}
+                                disabled={isProcessing}
                                 className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 font-semibold h-11 flex items-center justify-start gap-2"
                             >
                                 <XCircle size={16} className="text-red-400" />
-                                Reject Requisition
+                                {currentStageId === 1 ? 'Terminate Initiation' : 'Reject Requisition'}
                             </Button>
                         </>
                     )}

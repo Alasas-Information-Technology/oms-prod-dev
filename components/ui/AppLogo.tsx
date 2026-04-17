@@ -1,20 +1,17 @@
 'use client';
 
 import React, { memo, useMemo } from 'react';
-import AppIcon from './AppIcon';
 import AppImage from './AppImage';
 
 interface AppLogoProps {
     src?: string; // Image source (optional)
-    iconName?: string; // Icon name when no image
-    size?: number; // Size for icon/image
+    size?: number; // Size for image
     className?: string; // Additional classes
     onClick?: () => void; // Click handler
 }
 
 const AppLogo = memo(function AppLogo({
-    src, // Default removed to check for existence
-    iconName = 'SparklesIcon',
+    src = '/assets/images/app_logo_red.png', // Default to brand logo
     size = 64,
     className = '',
     onClick,
@@ -29,20 +26,15 @@ const AppLogo = memo(function AppLogo({
 
     return (
         <div className={containerClassName} onClick={onClick}>
-            {/* Show image if src provided and not the missing default, otherwise show icon */}
-            {src && src !== '/assets/images/app_logo.png' ? (
-                <AppImage
-                    src={src}
-                    alt="Logo"
-                    width={size}
-                    height={size}
-                    className="flex-shrink-0"
-                    priority={true}
-                    unoptimized={src.endsWith('.svg')}
-                />
-            ) : (
-                <AppIcon name={iconName} size={size} className="flex-shrink-0" />
-            )}
+            <AppImage
+                src={src}
+                alt="Logo"
+                width={size}
+                height={size}
+                className="flex-shrink-0"
+                priority={true}
+                unoptimized={src.endsWith('.svg')}
+            />
         </div>
     );
 });

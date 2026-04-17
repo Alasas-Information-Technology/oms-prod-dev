@@ -25,6 +25,7 @@ create table public.candidates (
   priority_ranking public.priority_rank null,
   status public.candidate_status null default 'SUBMITTED'::candidate_status,
   created_at timestamp with time zone null default now(),
+  nationality text,
   constraint candidates_pkey primary key (id),
   constraint candidates_requisition_id_fkey foreign KEY (requisition_id) references requisitions (id) on delete CASCADE,
   constraint candidates_vendor_id_fkey foreign KEY (vendor_id) references vendors (id)
@@ -61,6 +62,7 @@ create table public.profiles (
   created_at timestamp with time zone not null default timezone ('utc'::text, now()),
   updated_at timestamp with time zone not null default timezone ('utc'::text, now()),
   role_id integer null,
+  nationality text,
   constraint profiles_pkey primary key (id),
   constraint profiles_id_fkey foreign KEY (id) references auth.users (id) on delete CASCADE,
   constraint profiles_role_id_fkey foreign KEY (role_id) references roles (role_id)

@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import ActionPanel from './components/ActionPanel';
 import RequisitionSpecs from './components/RequisitionSpecs';
 import WorkflowStepper from './components/WorkflowStepper';
+import NewRequisitionModal from '../components/NewRequisitionModal';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { requisitionService } from '@/lib/services/requisitionService';
@@ -27,6 +28,7 @@ export default function RequisitionDetailPage() {
     const [currentStep, setCurrentStep] = useState(1);
     const [status, setStatus] = useState('');
     const [candidateStatus, setCandidateStatus] = useState({ totalSubmitted: 0, hasQualified: false });
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     const { currentUser } = useAuth();
 
@@ -238,8 +240,10 @@ export default function RequisitionDetailPage() {
                                 reqId={requisition?.id}
                                 currentStageId={currentStep}
                                 actorId={actorId}
+                                requestorId={requisition?.requestor_id}
                                 requiredRoleId={requisition?.workflow_stages?.required_role_id}
                                 onApprove={handleApprove}
+                                onEdit={() => setIsEditModalOpen(true)}
                                 hasQualifiedCandidate={candidateStatus.hasQualified}
                                 isActive={requisition?.is_active}
                             />
@@ -282,6 +286,30 @@ export default function RequisitionDetailPage() {
                     </div>
                 </div>
             </div>
+
+            {isEditModalOpen && (
+                <NewRequisitionModal
+                    requisition={{
+                        id: requisition.id,
+                        positionTitle: requisition.position_title,
+                        department_id: requisition.department_id,
+                        targetStartDate: requisition.target_start_date,
+                        workLocation: requisition.work_location,
+                        reqLaptop: requisition.req_laptop,
+                        reqMobilePhone: requisition.req_mobile,
+                        reqEmailAccess: requisition.req_email,
+                        reqSoftwareLicenses: requisition.req_software === 'Standard Suite',
+                        officeSeating: requisition.seating_accommodations,
+                        fundingType: requisition.funding_category,
+                        budget: requisition.reserved_budget_aed,
+                    }}
+                    onClose={() => setIsEditModalOpen(false)}
+                    onSuccess={() => {
+                        setIsEditModalOpen(false);
+                        loadRequisition();
+                    }}
+                />
+            )}
         </AppLayout>
     );
 }

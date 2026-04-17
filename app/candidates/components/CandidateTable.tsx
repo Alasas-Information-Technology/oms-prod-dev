@@ -169,12 +169,12 @@ export default function CandidateTable({
 
   const SortIcon = ({ col }: { col: SortKey }) => {
     if (sortKey !== col)
-      return <ChevronsUpDown size={12} className="text-slate-300" />;
+      return <ChevronsUpDown size={12} className="text-slate-300 opacity-50" />;
     if (sortDir === "asc")
-      return <ChevronUp size={12} className="text-[hsl(214,67%,32%)]" />;
+      return <ChevronUp size={12} className="text-[#0C66E4]" />;
     if (sortDir === "desc")
-      return <ChevronDown size={12} className="text-[hsl(214,67%,32%)]" />;
-    return <ChevronsUpDown size={12} className="text-slate-300" />;
+      return <ChevronDown size={12} className="text-[#0C66E4]" />;
+    return <ChevronsUpDown size={12} className="text-slate-300 opacity-50" />;
   };
 
   return (
@@ -185,23 +185,23 @@ export default function CandidateTable({
           <div className="relative flex-1 min-w-[220px] max-w-sm">
             <Search
               size={14}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#42526E]"
             />
             <Input
-              placeholder="Search alias, vendor, position, skills…"
+              placeholder="Search by alias, vendor, requisition…"
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-9 h-10 bg-white"
+              className="pl-9 h-8 bg-[#FAFBFC] border-[#DFE1E6] rounded-sm text-[13px]"
             />
             {search && (
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setSearch("")}
-                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-slate-400 hover:bg-transparent"
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-[#42526E] hover:bg-transparent"
               >
                 <X size={13} />
               </Button>
@@ -209,7 +209,7 @@ export default function CandidateTable({
           </div>
 
           {/* Status filter pills */}
-          <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-1 flex-wrap">
+          <div className="flex items-center gap-0.5 bg-[#F4F5F7] rounded-sm p-1 flex-wrap border border-[#DFE1E6]">
             {STATUS_OPTIONS.map((s) => (
               <button
                 key={s}
@@ -217,9 +217,9 @@ export default function CandidateTable({
                   setStatusFilter(s);
                   setCurrentPage(1);
                 }}
-                className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${statusFilter === s
-                  ? "bg-white text-[hsl(214,67%,32%)] shadow-sm"
-                  : "text-slate-500 hover:text-slate-700"
+                className={`px-3 py-1 rounded-sm text-[11px] font-bold transition-all ${statusFilter === s
+                  ? "bg-white text-[#0C66E4] shadow-sm border border-[#DFE1E6]"
+                  : "text-[#42526E] hover:bg-[#EBECF0]"
                   }`}
               >
                 {s === "ALL" ? "All" : s.replace(/_/g, " ")}
@@ -235,12 +235,11 @@ export default function CandidateTable({
         </div>
 
         {/* Table */}
-        <Card className="overflow-hidden border-none shadow-card">
-          <CardContent className="p-0">
+        <div className="overflow-hidden border border-[#DFE1E6] rounded-sm bg-white shadow-atlassian">
             <div className="overflow-x-auto scrollbar-thin">
-              <table className="w-full text-sm">
+              <table className="w-full text-[13px]">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200">
+                  <tr className="bg-[#F4F5F7] border-b border-[#DFE1E6]">
                     {[
                       { key: "alias" as SortKey, label: "Alias / ID" },
                       {
@@ -276,7 +275,7 @@ export default function CandidateTable({
                       <th
                         key={i}
                         onClick={() => !col.noSort && handleSort(col.key)}
-                        className={`px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap ${!col.noSort ? "cursor-pointer hover:text-slate-700 select-none" : ""}`}
+                        className={`px-4 py-2.5 text-left text-[11px] font-bold text-[#5E6C84] uppercase tracking-wider whitespace-nowrap ${!col.noSort ? "cursor-pointer hover:bg-[#EBECF0] transition-colors select-none" : ""}`}
                       >
                         <div className="flex items-center gap-1.5">
                           {col.label}
@@ -284,7 +283,7 @@ export default function CandidateTable({
                         </div>
                       </th>
                     ))}
-                    <th className="w-24 px-3 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                    <th className="w-24 px-4 py-2.5 text-center text-[11px] font-bold text-[#5E6C84] uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -324,18 +323,15 @@ export default function CandidateTable({
                       return (
                         <tr
                           key={c.id}
-                          className={`border-b border-slate-100 last:border-0 transition-colors group ${idx % 2 === 0
-                            ? "bg-white hover:bg-slate-50/70"
-                            : "bg-slate-50/40 hover:bg-slate-50"
-                            }`}
+                          className="group hover:bg-[#F4F5F7] transition-colors border-b border-[#DFE1E6] last:border-0"
                         >
                           {/* Alias */}
-                          <td className="px-3 py-3 whitespace-nowrap">
+                          <td className="px-4 py-3 whitespace-nowrap">
                             <div className="flex items-center gap-2">
-                              <div className="w-7 h-7 rounded-lg bg-[hsl(214,67%,32%)]/10 flex items-center justify-center text-[hsl(214,67%,32%)] text-[10px] font-bold shrink-0">
+                              <div className="w-7 h-7 rounded-sm bg-[#DEEBFF] flex items-center justify-center text-[#0747A6] text-[10px] font-bold shrink-0">
                                 {c.alias?.slice(0, 2).toUpperCase()}
                               </div>
-                              <span className="font-semibold text-slate-800 text-xs">
+                              <span className="font-bold text-[#172B4D] text-[13px] hover:text-[#0C66E4] hover:underline cursor-pointer">
                                 {c.alias}
                               </span>
                             </div>
@@ -379,7 +375,7 @@ export default function CandidateTable({
                               {c.top_skills?.slice(0, 3).map((sk: string) => (
                                 <span
                                   key={sk}
-                                  className="px-1.5 py-0.5 rounded bg-[hsl(214,67%,32%)]/8 text-[hsl(214,67%,32%)] text-[10px] font-semibold"
+                                  className="px-1.5 py-0.5 rounded-[3px] bg-[#DEEBFF] text-[#0747A6] text-[10px] font-bold border border-[#B3D4FF]"
                                 >
                                   {sk}
                                 </span>
@@ -418,9 +414,9 @@ export default function CandidateTable({
                           </td>
 
                           {/* Status */}
-                          <td className="px-3 py-3 whitespace-nowrap">
+                          <td className="px-4 py-3 whitespace-nowrap">
                             <span
-                              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${sty.bg} ${sty.text}`}
+                              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[3px] text-[11px] font-bold border ${sty.bg} ${sty.text}`}
                             >
                               <span
                                 className={`w-1.5 h-1.5 rounded-full ${sty.dot}`}
@@ -430,28 +426,28 @@ export default function CandidateTable({
                           </td>
 
                           {/* Actions */}
-                          <td className="px-3 py-3">
-                            <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <td className="px-4 py-3">
+                            <div className="flex items-center justify-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                               <Button
                                 variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-slate-400 hover:text-[hsl(214,67%,32%)] hover:bg-blue-50 transition-all"
+                                size="icon-xs"
+                                className="h-7 w-7 text-[#42526E] hover:text-[#0C66E4] hover:bg-[#DEEBFF] transition-all"
                                 onClick={() => setViewingCandidate(c)}
                               >
                                 <Eye size={14} />
                               </Button>
                               <Button
                                 variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-all"
+                                size="icon-xs"
+                                className="h-7 w-7 text-[#42526E] hover:text-amber-600 hover:bg-amber-50 transition-all"
                                 onClick={() => setEditingCandidate(c)}
                               >
                                 <Edit3 size={14} />
                               </Button>
                               <Button
                                 variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all"
+                                size="icon-xs"
+                                className="h-7 w-7 text-[#42526E] hover:text-red-700 hover:bg-red-50 transition-all"
                                 onClick={() => setDeletingCandidate(c)}
                               >
                                 <Trash2 size={14} />
@@ -526,9 +522,8 @@ export default function CandidateTable({
                   <ChevronRight size={16} />
                 </Button>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {editingCandidate && (
