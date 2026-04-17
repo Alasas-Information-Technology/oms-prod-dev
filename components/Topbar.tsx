@@ -9,10 +9,20 @@ import { useCommand } from '@/contexts/CommandContext';
 import { notificationService } from '@/lib/services/notificationService';
 import { formatDistanceToNow } from 'date-fns';
 
+interface Notification {
+    id: string;
+    recipient_id: string;
+    requisition_id?: string;
+    title: string;
+    message: string;
+    is_read: boolean;
+    created_at: string;
+}
+
 export default function Topbar() {
     const [notifOpen, setNotifOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
-    const [notifications, setNotifications] = useState([]);
+    const [notifications, setNotifications] = useState<Notification[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const { currentUser, logout, isLoading } = useAuth();
     const { toggle } = useCommand();
@@ -30,7 +40,7 @@ export default function Topbar() {
         } catch (error) {
             console.error('Topbar: Error fetching notifications', error);
         }
-    }, [currentUser?.id]);
+    }, [currentUser]);
 
     useEffect(() => {
         if (!currentUser?.id) return;
@@ -38,7 +48,7 @@ export default function Topbar() {
         fetchNotifications();
 
         // Subscribe to real-time updates
-        const subscription = notificationService.subscribeToNotifications(currentUser.id, (payload) => {
+        const subscription = notificationService.subscribeToNotifications(currentUser.id, (payload: any) => {
             if (payload.eventType === 'INSERT') {
                 setUnreadCount(prev => prev + 1);
                 fetchNotifications(); // Refresh list to get the new item
@@ -50,9 +60,9 @@ export default function Topbar() {
         return () => {
             subscription.unsubscribe();
         };
-    }, [currentUser?.id, fetchNotifications]);
+    }, [currentUser, fetchNotifications]);
 
-    const handleMarkAsRead = async (id, requisitionId) => {
+    const handleMarkAsRead = async (id: string, requisitionId?: string) => {
         try {
             await notificationService.markAsRead(id);
             setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
@@ -90,7 +100,7 @@ export default function Topbar() {
                 >
                     <div className="flex items-center gap-2.5">
                         <Search size={14} className="text-[#42526E] opacity-70 group-hover:opacity-100 transition-opacity" />
-                        <span>Search OMS…</span>
+                        <span>Search OMS&hellip;</span>
                     </div>
                     <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[3px] border border-[#DFE1E6] bg-white shadow-sm group-hover:border-[#C1C7D0] transition-colors">
                         <Command size={10} className="text-[#42526E]" />
@@ -147,7 +157,7 @@ export default function Topbar() {
                                                 <Bell size={20} className="text-slate-300" />
                                             </div>
                                             <p className="text-xs font-medium text-slate-500">No new notifications</p>
-                                            <p className="text-[10px] text-slate-400 mt-1">We'll let you know when something requires your attention.</p>
+                                            <p className="text-[10px] text-slate-400 mt-1">We&apos;ll let you know when something requires your attention.</p>
                                         </div>
                                     ) : (
                                         notifications.map((n) => (

@@ -11,8 +11,7 @@ import {
     ArrowRight, 
     Loader2,
     X,
-    LayoutDashboard,
-    History
+    LayoutDashboard
 } from 'lucide-react';
 import { useCommand } from '@/contexts/CommandContext';
 import { searchService } from '@/lib/services/searchService';
@@ -140,7 +139,7 @@ export default function CommandPalette() {
                             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 mb-3">
                                 <Search className="text-slate-400" size={24} />
                             </div>
-                            <p className="text-sm font-medium text-slate-600">No results found for "{query}"</p>
+                            <p className="text-sm font-medium text-slate-600">No results found for &ldquo;{query}&rdquo;</p>
                             <p className="text-xs text-slate-400 mt-1">Try a different search term or command</p>
                         </div>
                     ) : (

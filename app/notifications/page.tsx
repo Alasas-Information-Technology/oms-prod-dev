@@ -8,8 +8,18 @@ import { useAuth } from '@/contexts/AuthContext';
 import { notificationService } from '@/lib/services/notificationService';
 import { formatDistanceToNow } from 'date-fns';
 
+interface Notification {
+    id: string;
+    recipient_id: string;
+    requisition_id?: string;
+    title: string;
+    message: string;
+    is_read: boolean;
+    created_at: string;
+}
+
 export default function NotificationsPage() {
-    const [notifications, setNotifications] = useState([]);
+    const [notifications, setNotifications] = useState<Notification[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const { currentUser } = useAuth();
     const router = useRouter();
@@ -31,7 +41,7 @@ export default function NotificationsPage() {
         fetchNotifications();
     }, [fetchNotifications]);
 
-    const handleMarkAsRead = async (id, requisitionId) => {
+    const handleMarkAsRead = async (id: string, requisitionId?: string) => {
         try {
             await notificationService.markAsRead(id);
             setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
@@ -100,7 +110,7 @@ export default function NotificationsPage() {
                             </div>
                             <h3 className="text-lg font-bold text-[#172B4D]">All caught up!</h3>
                             <p className="text-[#5E6C84] text-sm mt-2 max-w-xs">
-                                You don't have any notifications at the moment. Notifications related to your requisitions will appear here.
+                                You don&apos;t have any notifications at the moment. Notifications related to your requisitions will appear here.
                             </p>
                         </div>
                     ) : (
