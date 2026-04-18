@@ -29,10 +29,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const router = useRouter();
+    const currentUserRef = React.useRef<User | null>(null);
+
+    // Sync ref with state
+    useEffect(() => {
+        currentUserRef.current = currentUser;
+    }, [currentUser]);
 
     const fetchProfile = React.useCallback(async (uid: string, email: string) => {
         // Only set loading true if we don't already have a valid user (Silent Refresh)
-        if (!currentUser) {
+        if (!currentUserRef.current) {
             setIsLoading(true);
         }
         try {
@@ -80,7 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } finally {
             setIsLoading(false);
         }
-    }, [currentUser]);
+    }, []);
 
     useEffect(() => {
         let isMounted = true;

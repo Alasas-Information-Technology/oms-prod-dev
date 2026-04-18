@@ -40,7 +40,7 @@ export default function Topbar() {
         } catch (error) {
             console.error('Topbar: Error fetching notifications', error);
         }
-    }, [currentUser]);
+    }, [currentUser?.id]);
 
     useEffect(() => {
         if (!currentUser?.id) return;
