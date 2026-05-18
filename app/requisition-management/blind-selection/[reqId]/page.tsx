@@ -209,7 +209,7 @@ export default function BlindSelectionView() {
                                                 )}
                                             </h3>
                                         </div>
-                                        <Button
+                                        {/* <Button
                                             variant="secondary"
                                             size="sm"
                                             onClick={() => handleViewCV(candidate.alias)}
@@ -218,7 +218,7 @@ export default function BlindSelectionView() {
                                         >
                                             <Eye size={14} className="group-hover:scale-110 transition-transform" />
                                             Redacted CV
-                                        </Button>
+                                        </Button> */}
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-6">
@@ -256,7 +256,7 @@ export default function BlindSelectionView() {
                                     </div>
 
                                     <div className="mt-auto pt-6 border-t border-slate-50">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Strategic Ranking</p>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Candidate Ranking</p>
                                         <div className="flex items-center gap-2">
                                             {(['P1', 'P2', 'P3', 'Rejected'] as PriorityRank[]).map((rankOption) => {
                                                 if (!rankOption) return null;

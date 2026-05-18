@@ -16,7 +16,7 @@ export default function VendorManagementPage() {
 
   return (
     <AppLayout>
-      <div className="max-w-screen-2xl mx-auto space-y-5">
+      <div className=" mx-auto space-y-5">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>

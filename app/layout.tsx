@@ -1,28 +1,22 @@
 import type { Metadata, Viewport } from 'next';
 import { Toaster } from 'sonner';
-import { Geist, Geist_Mono, JetBrains_Mono } from 'next/font/google';
+import { Manrope } from 'next/font/google';
 import { AuthProvider } from '@/contexts/AuthContext';
 import './globals.css';
 import { cn } from "@/lib/utils";
 import { CommandProvider } from '@/contexts/CommandContext';
 import CommandPalette from '@/components/ui/CommandPalette';
 
-const jetbrainsMono = JetBrains_Mono({subsets:['latin'],variable:'--font-mono'});
+const manrope = Manrope({
+  subsets: ['latin'],
+  variable: '--font-manrope',
+  display: 'swap',
+});
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
 };
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
 
 export const metadata: Metadata = {
   title: 'Enterprise OMS — Outsource Management System',
@@ -36,8 +30,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={cn("font-mono", jetbrainsMono.variable)}>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html lang="en" className={cn(manrope.variable)}>
+      <body className={cn(manrope.className, "antialiased")}>
         <AuthProvider>
           <CommandProvider>
             {children}
@@ -46,7 +40,7 @@ export default function RootLayout({
               position="bottom-right"
               toastOptions={{
                 style: {
-                  fontFamily: 'DM Sans, system-ui, sans-serif',
+                  fontFamily: 'var(--font-manrope), system-ui, sans-serif',
                   fontSize: '14px',
                 },
                 duration: 3500,

@@ -14,6 +14,8 @@ import {
     Lock,
     Mail,
     AlertCircle,
+    Users,
+    ChevronRight,
 } from 'lucide-react';
 import AppLogo from '@/components/ui/AppLogo';
 interface LoginFormValues {
@@ -24,6 +26,15 @@ interface LoginFormValues {
 
 
 export type RoleType = 'SYSTEM_ADMIN' | 'DEPT_REQUESTOR' | 'HOD' | 'HR_ADMIN' | 'PROCUREMENT_OFFICER' | 'FINANCE_OFFICER' | 'VENDOR_USER';
+
+const DEMO_PERSONAS = [
+    { name: 'HR Admin', email: 'hr.manager@oms-pro.com', role: 'HR_ADMIN', fullName: 'HR Manager' },
+    { name: 'HOD Operations', email: 'hod.operations@oms-pro.com', role: 'HOD', fullName: 'HOD Operations' },
+    { name: 'IT Requestor', email: 'requestor.it@oms-pro.com', role: 'DEPT_REQUESTOR', fullName: 'IT Requestor' },
+    { name: 'Procurement', email: 'procurement@oms-pro.com', role: 'PROCUREMENT_OFFICER', fullName: 'Procurement Officer' },
+];
+
+const DEMO_PASSWORD = 'DemoPassword123!';
 
 export default function LoginForm() {
     const router = useRouter();
@@ -46,6 +57,64 @@ export default function LoginForm() {
     } = useForm<LoginFormValues>({
         defaultValues: { email: '', password: '', remember: false },
     });
+
+    const handleQuickLogin = async (persona: typeof DEMO_PERSONAS[0]) => {
+        setIsLoading(true);
+        setAuthError(null);
+
+        try {
+            // 1. Try to Sign In
+            const { error: signInError } = await supabase.auth.signInWithPassword({
+                email: persona.email,
+                password: DEMO_PASSWORD,
+            });
+
+            if (signInError) {
+                // 2. If doesn't exist, Provision (Sign Up)
+                if (signInError.message.includes('Invalid login credentials')) {
+                    toast.info('Account not found. Provisioning demo persona...');
+
+                    const { error: signUpError } = await supabase.auth.signUp({
+                        email: persona.email,
+                        password: DEMO_PASSWORD,
+                        options: {
+                            data: {
+                                full_name: persona.fullName,
+                                role: persona.role,
+                            }
+                        }
+                    });
+
+                    if (signUpError) throw signUpError;
+
+                    toast.success('Persona Provisioned');
+
+                    // Final attempt to sign in after signup
+                    const { error: finalSignInError } = await supabase.auth.signInWithPassword({
+                        email: persona.email,
+                        password: DEMO_PASSWORD,
+                    });
+
+                    if (finalSignInError) throw finalSignInError;
+                } else {
+                    throw signInError;
+                }
+            }
+
+            toast.success('Demo Session Started', {
+                description: `Authenticated as ${persona.name}`,
+            });
+
+            router.push('/operations-dashboard');
+        } catch (error: any) {
+            console.error("Quick Login Error:", error);
+            const msg = error.message || 'Failed to provision demo persona.';
+            setAuthError(msg);
+            toast.error('Provisioning Failed', { description: msg });
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const onSubmit = async (data: LoginFormValues) => {
         setIsLoading(true);
@@ -204,6 +273,8 @@ export default function LoginForm() {
                         )}
                     </button>
                 </form>
+
+
             </div>
 
             {/* Absolute Footer */}

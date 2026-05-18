@@ -50,16 +50,10 @@ export default function DashboardHeader({ onRefresh, refreshing }: DashboardHead
 
             {/* SLA Alert Banner */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-semibold">
-                    <AlertTriangle size={13} />
-                    <span>3 requisitions at SLA breach risk — auto-close in &lt;3 days</span>
-                </div>
+
 
                 <div className="flex items-center gap-2">
-                    <Button variant="secondary" size="sm" className="gap-2">
-                        <Calendar size={14} />
-                        Q2 FY2026
-                    </Button>
+
                     <Button
                         variant="ghost"
                         size="sm"

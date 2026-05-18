@@ -23,10 +23,24 @@ import {
     ArrowRightLeft,
     Users,
     CheckCircle,
-    Edit3
+    Edit3,
+    Lock,
+    AlertTriangle,
+    Zap
 } from 'lucide-react';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 import { requisitionService } from '@/lib/services/requisitionService';
+import CandidateModal from '@/app/candidates/components/CandidateModal';
 
 interface ActionPanelProps {
     reqId: string;
@@ -37,26 +51,55 @@ interface ActionPanelProps {
     onEdit?: () => void;
     requestorId?: string;
     hasQualifiedCandidate?: boolean;
+    totalSubmitted?: number;
+    numResources?: number;
+    mainInterviewerId?: string;
     isActive?: boolean;
 }
 
-export default function ActionPanel({ reqId, currentStageId, actorId, requiredRoleId, onApprove, onEdit, requestorId, hasQualifiedCandidate = false, isActive = true }: ActionPanelProps) {
+export default function ActionPanel({ reqId, currentStageId, actorId, requiredRoleId, onApprove, onEdit, requestorId, hasQualifiedCandidate = false, totalSubmitted = 0, numResources = 1, mainInterviewerId, isActive = true }: ActionPanelProps) {
     const { currentUser } = useAuth();
     const router = useRouter();
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isClosureModalOpen, setIsClosureModalOpen] = useState(false);
+    const [isAddCandidateModalOpen, setIsAddCandidateModalOpen] = useState(false);
+    const [closureJustification, setClosureJustification] = useState('');
 
     // RBAC check: Only the required role for the CURRENT STAGE can approve
     // ADDED: HR_ADMIN and SYSTEM_ADMIN can bypass for agility
-    const canApprove = currentUser && (
-        currentUser.role_id === requiredRoleId ||
-        currentUser.roles.role_name === 'SYSTEM_ADMIN' ||
-        currentUser.roles.role_name === 'HR_ADMIN'
-    );
+    const isLeadInterviewer = currentUser?.id === mainInterviewerId;
+
+    const canApprove = currentUser && (() => {
+        // Stage 4: Special handling to allow panel visibility but strict lead advancement
+        // The Lead Interviewer ALWAYS gets access to the panel in Stage 4
+        if (currentStageId === 4) {
+            return isLeadInterviewer || 
+                   currentUser.roles.role_name === 'INTERVIEWER' || 
+                   currentUser.roles.role_name === 'SYSTEM_ADMIN' || 
+                   currentUser.roles.role_name === 'HR_ADMIN';
+        }
+
+        // Other Stages: Role-based + Admin/HR Bypass
+        return (
+            currentUser.role_id === requiredRoleId ||
+            currentUser.roles.role_name === 'SYSTEM_ADMIN' ||
+            currentUser.roles.role_name === 'HR_ADMIN' ||
+            (currentStageId === 3 && (currentUser.roles.role_name === 'DEPT_REQUESTOR' || currentUser.roles.role_name === 'INTERVIEWER'))
+        );
+    })();
 
     const canEdit = currentUser && (
         actorId === requestorId ||
         currentUser.roles.role_name === 'SYSTEM_ADMIN' ||
         currentUser.roles.role_name === 'HR_ADMIN'
+    );
+
+    const isHRGatekeeper = currentUser?.roles?.role_name === 'HR_ADMIN' && currentStageId === 2;
+    
+    const canRequestClosure = isActive && currentStageId >= 3 && (
+        actorId === requestorId || 
+        currentUser?.roles?.role_name === 'HOD' || 
+        currentUser?.roles?.role_name === 'SYSTEM_ADMIN'
     );
 
     // DEBUG: console.log('ActionPanel RBAC Detail:', { userRole: currentUser?.roles?.role_name, userRoleId: currentUser?.role_id, requiredRoleId, canApprove });
@@ -69,7 +112,10 @@ export default function ActionPanel({ reqId, currentStageId, actorId, requiredRo
         5: 'Confirm Onboarding'
     };
 
-    const actionLabel = stageActionMap[currentStageId] || 'Approve & Proceed';
+    const minRequired = numResources || 1;
+    const isSourcingGated = totalSubmitted < minRequired;
+
+    const actionLabel = currentStageId === 3 ? 'Complete Sourcing (Advance to Stage 4)' : (stageActionMap[currentStageId] || 'Approve & Proceed');
 
     const handleApprove = async () => {
         setIsProcessing(true);
@@ -88,7 +134,7 @@ export default function ActionPanel({ reqId, currentStageId, actorId, requiredRo
 
     const handleTerminate = async () => {
         if (!window.confirm('Are you sure you want to terminate this requisition initiation? This action cannot be undone.')) return;
-        
+
         setIsProcessing(true);
         try {
             await requisitionService.terminateRequisition(reqId, actorId, 'Requisition terminated by user during initiation stage.');
@@ -107,6 +153,54 @@ export default function ActionPanel({ reqId, currentStageId, actorId, requiredRo
         toast.info(`${action} initiated`, {
             description: 'Routing request to appropriate department'
         });
+    };
+
+    const handleReject = async () => {
+        const comments = window.prompt('Please provide a reason for rejection:');
+        if (comments === null) return;
+
+        setIsProcessing(true);
+        try {
+            await requisitionService.rejectRequisition(reqId, actorId, comments);
+            toast.success('Requisition Rejected', {
+                description: 'The requisition has been terminated and returned to the department.'
+            });
+            onApprove(); // Refresh
+        } catch (error: any) {
+            toast.error(error.message || 'Failed to reject requisition');
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    const handleClosureSubmit = async () => {
+        if (!closureJustification.trim()) {
+            toast.error('Justification required');
+            return;
+        }
+
+        setIsProcessing(true);
+        try {
+            const result = await requisitionService.requestRequisitionClosure(
+                reqId, 
+                actorId, 
+                currentUser?.roles?.role_name || '', 
+                closureJustification
+            );
+
+            if (result.status === 'CLOSED') {
+                toast.success('Requisition Closed', { description: 'Deactivated and budget released.' });
+            } else {
+                toast.success('Closure Requested', { description: 'Sent to HOD for final approval.' });
+            }
+            
+            setIsClosureModalOpen(false);
+            onApprove(); // Refresh
+        } catch (error: any) {
+            toast.error(error.message || 'Failed to process closure');
+        } finally {
+            setIsProcessing(false);
+        }
     };
 
     return (
@@ -145,7 +239,7 @@ export default function ActionPanel({ reqId, currentStageId, actorId, requiredRo
                         </div>
                     ) : (
                         <>
-                            {canApprove && currentStageId !== 4 && (
+                            {canApprove && currentStageId !== 4 && currentStageId !== 3 && (
                                 <Button
                                     onClick={handleApprove}
                                     disabled={isProcessing}
@@ -158,6 +252,39 @@ export default function ActionPanel({ reqId, currentStageId, actorId, requiredRo
                                     <ChevronDown size={14} className="opacity-50" />
                                 </Button>
                             )}
+
+                             {/* Specialized Stage 3 Interface for Demo Sourcing */}
+                             {canApprove && currentStageId === 3 && (
+                                 <div className="space-y-3">
+                                     <Button
+                                         onClick={() => setIsAddCandidateModalOpen(true)}
+                                         disabled={isProcessing}
+                                         className="w-full bg-[#0C66E4] hover:bg-[#0052CC] text-white font-bold h-12 flex items-center justify-center gap-2 transition-all shadow-md"
+                                     >
+                                         <UserPlus size={18} />
+                                         <span>+ Add Candidate (Demo)</span>
+                                     </Button>
+ 
+                                     <Button
+                                         onClick={handleApprove}
+                                         disabled={isProcessing || isSourcingGated}
+                                         variant="outline"
+                                         className={`w-full h-11 font-bold border-2 transition-all ${!isSourcingGated
+                                                 ? 'border-emerald-500 text-emerald-700 hover:bg-emerald-50'
+                                                 : 'border-slate-200 text-slate-400 opacity-60'
+                                             }`}
+                                     >
+                                         <CheckCircle size={16} className={!isSourcingGated ? 'text-emerald-500' : 'text-slate-300'} />
+                                         <span>{actionLabel}</span>
+                                     </Button>
+ 
+                                     {isSourcingGated && (
+                                         <p className="text-[10px] text-center text-amber-600 font-medium italic">
+                                             Requires at least {minRequired} candidate{minRequired !== 1 ? 's' : ''} for demo purposes.
+                                         </p>
+                                     )}
+                                 </div>
+                             )}
 
                             {/* Specialized Stage 4 Interface for Interviewers */}
                             {canApprove && currentStageId === 4 && (
@@ -172,22 +299,30 @@ export default function ActionPanel({ reqId, currentStageId, actorId, requiredRo
 
                                     <Button
                                         onClick={handleApprove}
-                                        disabled={isProcessing || !hasQualifiedCandidate}
+                                        disabled={isProcessing || !hasQualifiedCandidate || (currentStageId === 4 && !isLeadInterviewer)}
                                         variant="outline"
                                         className={`w-full h-11 font-bold border-2 transition-all ${
-                                            hasQualifiedCandidate 
-                                            ? 'border-emerald-500 text-emerald-700 hover:bg-emerald-50' 
-                                            : 'border-slate-200 text-slate-400 opacity-60'
-                                        }`}
+                                           (hasQualifiedCandidate && (currentStageId !== 4 || isLeadInterviewer))
+                                                ? 'border-emerald-500 text-emerald-700 hover:bg-emerald-50'
+                                                : 'border-slate-200 text-slate-400 opacity-60'
+                                            }`}
                                     >
-                                        <CheckCircle size={16} className={hasQualifiedCandidate ? 'text-emerald-500' : 'text-slate-300'} />
+                                        <CheckCircle size={16} className={(hasQualifiedCandidate && (currentStageId !== 4 || isLeadInterviewer)) ? 'text-emerald-500' : 'text-slate-300'} />
                                         <span>Complete Stage 4 (Advance)</span>
                                     </Button>
-                                    
+
                                     {!hasQualifiedCandidate && (
                                         <p className="text-[10px] text-center text-amber-600 font-medium">
                                             Requires at least one 'Qualified' candidate to proceed.
                                         </p>
+                                    )}
+
+                                    {currentStageId === 4 && !isLeadInterviewer && (
+                                        <div className="p-2 bg-red-50 border border-red-100 rounded-sm">
+                                            <p className="text-[10px] text-center text-red-600 font-bold uppercase">
+                                                Governance: Strictly Restricted to LEAD INTERVIEWER
+                                            </p>
+                                        </div>
                                     )}
                                 </div>
                             )}
@@ -198,14 +333,7 @@ export default function ActionPanel({ reqId, currentStageId, actorId, requiredRo
                                 </div>
                             )}
 
-                             <Button
-                                variant="outline"
-                                onClick={() => handleActionPlaceholder('Internal Hire Conversion')}
-                                className="w-full border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold h-11 flex items-center justify-start gap-2"
-                            >
-                                <UserPlus size={16} className="text-slate-400" />
-                                Convert to Internal Hire
-                            </Button>
+
 
                             {currentStageId === 1 && canEdit && onEdit && (
                                 <Button
@@ -219,43 +347,90 @@ export default function ActionPanel({ reqId, currentStageId, actorId, requiredRo
                                 </Button>
                             )}
 
-                            <Button
-                                variant="ghost"
-                                onClick={currentStageId === 1 ? handleTerminate : () => handleActionPlaceholder('Rejection')}
-                                disabled={isProcessing}
-                                className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 font-semibold h-11 flex items-center justify-start gap-2"
-                            >
-                                <XCircle size={16} className="text-red-400" />
-                                {currentStageId === 1 ? 'Terminate Initiation' : 'Reject Requisition'}
-                            </Button>
+                            {canRequestClosure && (
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setIsClosureModalOpen(true)}
+                                    disabled={isProcessing}
+                                    className="w-full border-amber-200 text-amber-700 hover:bg-amber-50 font-semibold h-11 flex items-center justify-start gap-2"
+                                >
+                                    <AlertTriangle size={16} className="text-amber-500" />
+                                    Request Closure / Abort
+                                </Button>
+                            )}
+
+                            {(currentStageId === 1 || isHRGatekeeper) && (
+                                <Button
+                                    variant="ghost"
+                                    onClick={currentStageId === 1 ? handleTerminate : handleReject}
+                                    disabled={isProcessing}
+                                    className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 font-semibold h-11 flex items-center justify-start gap-2"
+                                >
+                                    <XCircle size={16} className="text-red-400" />
+                                    {currentStageId === 1 ? 'Terminate Initiation' : 'Reject Requisition'}
+                                </Button>
+                            )}
+
+                            {!canApprove && !canEdit && !canRequestClosure && !isHRGatekeeper && (
+                                <p className="text-[10px] text-slate-400 italic text-center py-2">
+                                    No further actions available for your role at this stage.
+                                </p>
+                            )}
                         </>
                     )}
                 </div>
-                {/* 
-                <div className="pt-4 border-t border-slate-100 mt-2">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">Supportive Actions</p>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="secondary" className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <MessageSquare size={16} className="text-slate-500" />
-                                    Clarifications
-                                </div>
-                                <ChevronDown size={14} />
+
+                <Dialog open={isClosureModalOpen} onOpenChange={setIsClosureModalOpen}>
+                    <DialogContent className="sm:max-w-[425px] rounded-xl">
+                        <DialogHeader>
+                            <DialogTitle className="flex items-center gap-2 text-slate-900">
+                                <Zap size={18} className="text-amber-500" />
+                                Requisition Closure Request
+                            </DialogTitle>
+                            <DialogDescription className="text-xs">
+                                Are you sure you want to stop this search? This will release reserved budget back to the department pool.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="py-4 space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="justification" className="text-xs font-bold text-slate-700 uppercase">
+                                    Closure Justification *
+                                </Label>
+                                <Textarea 
+                                    id="justification"
+                                    placeholder="Explain why this position is being cancelled or closed (e.g., Internal Fill, Budget Review, Role Deprecated)..."
+                                    className="min-h-[120px] rounded-lg border-slate-200 text-sm focus:ring-amber-500"
+                                    value={closureJustification}
+                                    onChange={(e) => setClosureJustification(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <DialogFooter className="gap-2 sm:gap-0">
+                            <Button variant="ghost" onClick={() => setIsClosureModalOpen(false)} disabled={isProcessing}>
+                                Cancel
                             </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-[calc(var(--radix-dropdown-menu-trigger-width))]">
-                            <DropdownMenuItem className="text-xs gap-2 py-2.5 font-medium cursor-pointer" onClick={() => handleActionPlaceholder('Email Request')}>
-                                <Send size={14} className="text-slate-400" />
-                                Request More Info (Email)
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="text-xs gap-2 py-2.5 font-medium cursor-pointer" onClick={() => handleActionPlaceholder('Approval Request')}>
-                                <ArrowRightLeft size={14} className="text-slate-400" />
-                                Request Addl. Info with Approval
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div> */}
+                            <Button 
+                                onClick={handleClosureSubmit} 
+                                disabled={isProcessing}
+                                className="bg-amber-600 hover:bg-amber-700 text-white font-bold"
+                            >
+                                {isProcessing ? 'Processing...' : 'Confirm Closure Request'}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                {isAddCandidateModalOpen && (
+                    <CandidateModal
+                        mode="create"
+                        preselectedRequisitionId={reqId}
+                        onClose={() => setIsAddCandidateModalOpen(false)}
+                        onSuccess={() => {
+                            toast.success('Candidate added to demo pipeline');
+                            onApprove(); // Refresh counters
+                        }}
+                    />
+                )}
             </CardContent>
         </Card>
     );
