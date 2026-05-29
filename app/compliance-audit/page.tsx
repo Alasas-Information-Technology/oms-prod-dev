@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import AppLayout from '@/components/AppLayout';
-import { 
-    Users, 
-    Search, 
-    Building2, 
-    ShieldCheck, 
-    Mail, 
-    Filter, 
+import {
+    Users,
+    Search,
+    Building2,
+    ShieldCheck,
+    Mail,
+    Filter,
     Download,
     RefreshCw,
     BadgeCheck,
@@ -55,7 +55,7 @@ export default function ComplianceAuditPage() {
         loadUsers();
     };
 
-    const filtered = profiles.filter(p => 
+    const filtered = profiles.filter(p =>
         p.full_name?.toLowerCase().includes(search.toLowerCase()) ||
         p.email?.toLowerCase().includes(search.toLowerCase()) ||
         p.departments?.dept_name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -64,7 +64,7 @@ export default function ComplianceAuditPage() {
 
     return (
         <AppLayout>
-            <div className="max-w-screen-2xl mx-auto space-y-6 animate-fade-in">
+            <div className=" mx-auto space-y-6 animate-fade-in">
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
@@ -75,8 +75,8 @@ export default function ComplianceAuditPage() {
                             <h1 className="text-2xl font-bold text-[#0C66E4] tracking-tight">System Directory & Compliance</h1>
                         </div>
                         <p className="text-slate-500 text-sm font-medium">
-                            {currentUser?.roles?.role_name === 'SYSTEM_ADMIN' || currentUser?.roles?.role_name === 'HR_ADMIN' 
-                                ? 'Global workforce directory and role assignments' 
+                            {currentUser?.roles?.role_name === 'SYSTEM_ADMIN' || currentUser?.roles?.role_name === 'HR_ADMIN'
+                                ? 'Global workforce directory and role assignments'
                                 : `Departmental directory for ${currentUser?.department || 'your department'}`}
                         </p>
                     </div>
@@ -98,8 +98,8 @@ export default function ComplianceAuditPage() {
                         <div className="flex flex-col md:flex-row md:items-center gap-4 justify-between">
                             <div className="relative flex-1 max-w-md">
                                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                                <Input 
-                                    placeholder="Search by name, email, or department…" 
+                                <Input
+                                    placeholder="Search by name, email, or department…"
                                     className="pl-9 bg-white border-slate-200"
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
@@ -221,7 +221,7 @@ export default function ComplianceAuditPage() {
                             <div className="flex items-center gap-3">
                                 <ShieldCheck size={28} className="text-blue-300 shrink-0" />
                                 <p className="text-[11px] font-medium leading-relaxed">
-                                    This directory uses strict departmental filtering. 
+                                    This directory uses strict departmental filtering.
                                     Internal users are restricted to viewing colleagues within their own business unit.
                                 </p>
                             </div>
@@ -236,7 +236,7 @@ export default function ComplianceAuditPage() {
                             <div className="flex items-center gap-3">
                                 <UserCircle2 size={28} className="text-slate-400 shrink-0" />
                                 <p className="text-[11px] font-medium leading-relaxed">
-                                    All directory requests are logged. Your view is currently scoped to 
+                                    All directory requests are logged. Your view is currently scoped to
                                     <strong> {filtered.length} employees </strong> based on your assigned role.
                                 </p>
                             </div>
@@ -251,7 +251,7 @@ export default function ComplianceAuditPage() {
                             <div className="flex items-center gap-3">
                                 <Building2 size={28} className="text-emerald-200 shrink-0" />
                                 <p className="text-[11px] font-medium leading-relaxed">
-                                    Department IDs are validated against the corporate schema. 
+                                    Department IDs are validated against the corporate schema.
                                     Cross-department visibility requires Global View clearance.
                                 </p>
                             </div>

@@ -29,7 +29,7 @@ interface EnterpriseSummary {
 function PageSkeleton() {
     return (
         <AppLayout>
-            <div className="max-w-screen-2xl mx-auto space-y-7 pb-20">
+            <div className=" mx-auto space-y-7 pb-20">
                 <div className="flex items-center justify-between">
                     <div className="space-y-2">
                         <Skeleton className="h-7 w-64" />
@@ -151,7 +151,7 @@ export default function BudgetFinancePage() {
 
     return (
         <AppLayout>
-            <div className="max-w-screen-2xl mx-auto space-y-7 pb-20 animate-fade-in">
+            <div className=" mx-auto space-y-7 pb-20 animate-fade-in">
 
                 {/* ── Page Header ── */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

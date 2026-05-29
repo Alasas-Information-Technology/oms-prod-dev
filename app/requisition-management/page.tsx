@@ -35,17 +35,17 @@ export default function RequisitionManagementPage() {
 
     return (
         <AppLayout>
-            <div className="max-w-screen-2xl mx-auto space-y-5">
-                <RequisitionHeader 
-                    onSuccess={handleRefresh} 
+            <div className=" mx-auto space-y-5">
+                <RequisitionHeader
+                    onSuccess={handleRefresh}
                     onExport={handleExport}
                 />
                 <div className="flex gap-5 items-start">
                     <RequisitionFilters filters={filters} setFilters={setFilters} />
                     <div className="flex-1 min-w-0">
-                        <RequisitionTable 
+                        <RequisitionTable
                             ref={tableRef}
-                            refreshTrigger={refreshKey} 
+                            refreshTrigger={refreshKey}
                             filters={filters}
                         />
                     </div>

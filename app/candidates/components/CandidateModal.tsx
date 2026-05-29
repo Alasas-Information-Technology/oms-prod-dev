@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   X,
   User,
@@ -29,6 +30,7 @@ interface CandidateFormData {
   financial_quote_aed: string;
   priority_ranking: string;
   status: string;
+  cv_path: string;
 }
 
 const emptyForm: CandidateFormData = {
@@ -41,6 +43,7 @@ const emptyForm: CandidateFormData = {
   financial_quote_aed: "",
   priority_ranking: "",
   status: "SUBMITTED",
+  cv_path: "",
 };
 
 const EDUCATION_OPTIONS = [
@@ -70,6 +73,7 @@ interface CandidateModalProps {
   candidate?: any;
   onClose: () => void;
   onSuccess: () => void;
+  preselectedRequisitionId?: string;
 }
 
 export default function CandidateModal({
@@ -77,6 +81,7 @@ export default function CandidateModal({
   candidate,
   onClose,
   onSuccess,
+  preselectedRequisitionId,
 }: CandidateModalProps) {
   const [form, setForm] = useState<CandidateFormData>(emptyForm);
   const [saving, setSaving] = useState(false);
@@ -84,10 +89,17 @@ export default function CandidateModal({
   const [requisitions, setRequisitions] = useState<any[]>([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [skillInput, setSkillInput] = useState("");
+  const [cvFile, setCvFile] = useState<File | null>(null);
 
   useEffect(() => {
     loadOptions();
   }, []);
+
+  useEffect(() => {
+    if (preselectedRequisitionId) {
+      setForm(prev => ({ ...prev, requisition_id: preselectedRequisitionId }));
+    }
+  }, [preselectedRequisitionId]);
 
   useEffect(() => {
     if (mode === "edit" && candidate) {
@@ -102,6 +114,7 @@ export default function CandidateModal({
         financial_quote_aed: candidate.financial_quote_aed?.toString() || "",
         priority_ranking: candidate.priority_ranking || "",
         status: candidate.status || "SUBMITTED",
+        cv_path: candidate.cv_path || "",
       });
     }
   }, [mode, candidate]);
@@ -179,7 +192,17 @@ export default function CandidateModal({
         financial_quote_aed: parseFloat(form.financial_quote_aed),
         priority_ranking: form.priority_ranking || null,
         status: form.status,
+        cv_path: form.cv_path,
       };
+
+      if (cvFile) {
+        toast.loading("Uploading CV...", { id: "cv-upload" });
+        // Use requisitionService directly or we can add it to candidateService
+        const { requisitionService } = await import("@/lib/services/requisitionService");
+        const url = await requisitionService._uploadFile(cvFile, "candidate-cvs");
+        payload.cv_path = url || "";
+        toast.dismiss("cv-upload");
+      }
 
       if (mode === "create") {
         await candidateService.createCandidate(payload);
@@ -207,8 +230,16 @@ export default function CandidateModal({
     WITHDRAWN: "bg-slate-100 text-slate-500",
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
@@ -308,7 +339,7 @@ export default function CandidateModal({
             <div className="grid grid-cols-2 gap-3">
               <div className="col-span-2">
                 <label className="block text-xs font-medium text-slate-600 mb-1">
-                  Alias / Blind ID <span className="text-red-500">*</span>
+                  Candidate Name <span className="text-red-500">*</span>
                 </label>
                 <Input
                   value={form.alias}
@@ -408,9 +439,9 @@ export default function CandidateModal({
           {/* Financial + Ranking */}
           <section>
             <div className="flex items-center gap-2 mb-3">
-              <DollarSign size={13} className="text-[hsl(214,67%,32%)]" />
+              <Briefcase size={13} className="text-[hsl(214,67%,32%)]" />
               <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                Commercial & Ranking
+                Financial
               </span>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -430,44 +461,36 @@ export default function CandidateModal({
                   className="h-9 text-sm font-mono"
                 />
               </div>
-              <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
-                  Priority Ranking
-                </label>
-                <select
-                  value={form.priority_ranking}
-                  onChange={(e) =>
-                    handleChange("priority_ranking", e.target.value)
-                  }
-                  className="w-full h-9 px-3 text-sm border border-slate-200 rounded-md bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[hsl(214,67%,32%)]/30 focus:border-[hsl(214,67%,32%)]"
-                >
-                  <option value="">Select priority…</option>
-                  {PRIORITY_OPTIONS.map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-              </div>
+
               <div className="col-span-2">
                 <label className="block text-xs font-medium text-slate-600 mb-1">
-                  Status
+                  CV Attachment (Optional)
                 </label>
-                <div className="flex flex-wrap gap-2">
-                  {STATUS_OPTIONS.map((s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => handleChange("status", s)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
-                        form.status === s
-                          ? `${statusColors[s]} border-current`
-                          : "bg-slate-50 text-slate-400 border-slate-200 hover:border-slate-300"
-                      }`}
-                    >
-                      {s.replace(/_/g, " ")}
-                    </button>
-                  ))}
+                <div className="flex items-center gap-3 p-3 bg-slate-50 border border-dashed border-slate-200 rounded-lg">
+                  <Input
+                    type="file"
+                    className="hidden"
+                    id="cv-upload-input"
+                    accept=".pdf,.doc,.docx"
+                    onChange={(e) => setCvFile(e.target.files?.[0] || null)}
+                  />
+                  <label
+                    htmlFor="cv-upload-input"
+                    className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded text-xs font-semibold text-slate-600 hover:border-[hsl(214,67%,32%)] cursor-pointer transition-all"
+                  >
+                    <FileText size={14} className="text-slate-400" />
+                    {cvFile ? cvFile.name : "Choose File"}
+                  </label>
+                  {cvFile && (
+                    <span className="text-[10px] text-slate-400 italic truncate max-w-[200px]">
+                      Ready for upload
+                    </span>
+                  )}
+                  {form.cv_path && !cvFile && (
+                    <a href={form.cv_path} target="_blank" rel="noopener noreferrer" className="text-[10px] text-[hsl(214,67%,32%)] font-bold hover:underline">
+                      View Existing CV
+                    </a>
+                  )}
                 </div>
               </div>
             </div>
@@ -497,6 +520,7 @@ export default function CandidateModal({
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

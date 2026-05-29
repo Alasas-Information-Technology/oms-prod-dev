@@ -55,14 +55,14 @@ export default function OperationsDashboardPage() {
     if (loading) {
         return (
             <AppLayout>
-                <div className="max-w-screen-2xl mx-auto space-y-6">
+                <div className=" mx-auto space-y-6">
                     <Skeleton className="h-10 w-64" />
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
                         <Skeleton className="h-32 col-span-2" />
                         <Skeleton className="h-32" />
                         <Skeleton className="h-32" />
                     </div>
-                     <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
+                    <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
                         <Skeleton className="xl:col-span-3 h-[300px]" />
                         <Skeleton className="xl:col-span-2 h-[300px]" />
                     </div>
@@ -73,12 +73,12 @@ export default function OperationsDashboardPage() {
 
     return (
         <AppLayout>
-            <div className="max-w-screen-2xl mx-auto space-y-6 pb-20">
-                <DashboardHeader 
-                    onRefresh={loadDashboardData} 
-                    refreshing={loading} 
+            <div className=" mx-auto space-y-6 pb-20">
+                <DashboardHeader
+                    onRefresh={loadDashboardData}
+                    refreshing={loading}
                 />
-                
+
                 {stats && <MetricsBentoGrid stats={stats} />}
 
                 {/* Charts Row */}

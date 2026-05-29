@@ -57,8 +57,8 @@ type WorkflowStage =
     | 'Digital Onboarding' 
     | 'Completed';
 
-type LocationType = 'Onshore – Corporate Headquarters' | 'UAE Remote (WFH)' | 'UAE Remote (Vendor Office)' | 'Remote Abroad' | 'Pre-Agreed Rate';
-type BudgetType = 'BUDGETED' | 'UNALLOCATED' | 'UNBUDGETED' | 'Budgeted' | 'Unallocated' | 'Unbudgeted';
+type LocationType = 'Onshore' | 'Offshore';
+type BudgetType = 'BUDGETED' | 'UNALLOCATED' | 'UNBUDGETED';
 
 interface Requisition {
     id: string;
@@ -69,7 +69,7 @@ interface Requisition {
     requestor_id: string;
     stage: string;
     stageId: number;
-    location: LocationType;
+    location: string;
     budgetAED: number;
     budgetType: BudgetType;
     vendorCount: number;
@@ -80,6 +80,8 @@ interface Requisition {
     lpoGenerated: boolean;
     createdRaw: string;
     isActive: boolean;
+    numResources: number;
+    jobProfile: string;
     // Core data for cloning
     raw_data: any;
 }
@@ -94,21 +96,15 @@ const stageStyles: Record<string, { bg: string; dot: string; text: string }> = {
     'Draft': { bg: 'bg-slate-50', dot: 'bg-slate-400', text: 'text-slate-600' },
 };
 
-const locationBadge: Record<LocationType, { bg: string; text: string; short: string }> = {
-    'Onshore – Corporate Headquarters': { bg: 'bg-blue-50', text: 'text-blue-700', short: 'Onshore' },
-    'UAE Remote (WFH)': { bg: 'bg-teal-50', text: 'text-teal-700', short: 'WFH' },
-    'UAE Remote (Vendor Office)': { bg: 'bg-cyan-50', text: 'text-cyan-700', short: 'Vendor Office' },
-    'Remote Abroad': { bg: 'bg-purple-50', text: 'text-purple-700', short: 'Offshore' },
-    'Pre-Agreed Rate': { bg: 'bg-slate-100', text: 'text-slate-600', short: 'Pre-Agreed' },
+const locationBadge: Record<string, { bg: string; text: string; short: string }> = {
+    'Onshore': { bg: 'bg-blue-50', text: 'text-blue-700', short: 'Onshore' },
+    'Offshore': { bg: 'bg-purple-50', text: 'text-purple-700', short: 'Offshore' },
 };
 
 const budgetBadge: Record<string, { bg: string; text: string }> = {
     'BUDGETED': { bg: 'bg-green-50', text: 'text-green-700' },
     'UNALLOCATED': { bg: 'bg-amber-50', text: 'text-amber-700' },
     'UNBUDGETED': { bg: 'bg-red-50', text: 'text-red-700' },
-    'Budgeted': { bg: 'bg-green-50', text: 'text-green-700' },
-    'Unallocated': { bg: 'bg-amber-50', text: 'text-amber-700' },
-    'Unbudgeted': { bg: 'bg-red-50', text: 'text-red-700' },
 };
 
 const DEFAULT_STAGE_STYLE = { bg: 'bg-slate-50', dot: 'bg-slate-400', text: 'text-slate-600' };
@@ -182,17 +178,17 @@ const RequisitionTable = forwardRef(({ refreshTrigger = 0, filters }: Requisitio
             const data = await requisitionService.getRequisitions(currentUser);
             const mapped: Requisition[] = data.map(item => ({
                 id: item.id,
-                reqId: item.req_number, // Sync with SQL
-                title: item.position_title, // Sync with SQL
-                department: item.department || 'System / External',
+                reqId: item.req_number,
+                title: item.position_title,
+                department: item.departments?.dept_name || 'System / External',
                 requestor: item.profiles?.full_name || 'System',
                 requestor_id: item.requestor_id,
                 stage: item.is_active ? (item.workflow_stages?.stage_name || 'Initiation & Auto-Reserve') : 'Completed',
                 stageId: item.stage_id,
                 isActive: item.is_active,
-                location: item.work_location === 'Onshore' ? 'Onshore – Corporate Headquarters' : 'Remote Abroad',
-                budgetAED: item.reserved_budget_aed, // Sync with SQL
-                budgetType: (item.funding_category || 'BUDGETED') as BudgetType,
+                location: item.work_location,
+                budgetAED: item.reserved_budget_aed,
+                budgetType: item.funding_category as BudgetType,
                 vendorCount: 0,
                 candidateCount: 0,
                 createdDate: new Date(item.created_at).toLocaleDateString(),
@@ -200,6 +196,8 @@ const RequisitionTable = forwardRef(({ refreshTrigger = 0, filters }: Requisitio
                 slaRisk: false,
                 emiratisationFlag: false,
                 lpoGenerated: false,
+                numResources: item.num_resources,
+                jobProfile: item.job_profile,
                 raw_data: item
             }));
             setRequisitions(mapped);
@@ -358,17 +356,20 @@ const RequisitionTable = forwardRef(({ refreshTrigger = 0, filters }: Requisitio
         try {
             const cloneData = {
                 positionTitle: `Copy of ${req.title}`,
+                numResources: req.numResources || 1,
+                jobProfile: req.jobProfile || '',
+                justification: `Cloned from ${req.reqId}. ${req.raw_data.justification || ''}`,
                 departmentId: req.raw_data.department_id,
                 departmentName: req.department,
-                targetStartDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // +14 days default
-                workLocation: req.raw_data.work_location === 'Onshore' ? 'Onshore (UAE)' : 'Offshore (Remote)',
-                reqLaptop: req.raw_data.req_laptop,
-                reqMobilePhone: req.raw_data.req_mobile,
-                reqEmailAccess: req.raw_data.req_email,
-                reqSoftwareLicenses: req.raw_data.req_software !== 'None',
-                officeSeating: req.raw_data.seating_accommodations,
-                fundingType: req.raw_data.funding_category,
-                reservedBudget: 0, // Reset budget for manual re-entry
+                reportingLineManagerId: req.raw_data.reporting_line_manager_id,
+                engagementPeriod: req.raw_data.engagement_period || 12,
+                engagementUnit: req.raw_data.engagement_unit || 'Months',
+                expectedStartDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                workLocation: req.raw_data.work_location || 'Onshore',
+                fundingCategory: req.raw_data.funding_category || 'BUDGETED',
+                budgetAmount: 0,
+                salaryGrade: req.raw_data.salary_grade || '',
+                isDraft: true,
             };
 
             await requisitionService.createRequisition(cloneData, currentUser);
@@ -555,8 +556,8 @@ const RequisitionTable = forwardRef(({ refreshTrigger = 0, filters }: Requisitio
                                 paginated.map((req, rowIdx) => {
                                     const isSelected = selected.includes(req.id);
                                     const stageSty = stageStyles[req.stage] || stageStyles['Draft'] || DEFAULT_STAGE_STYLE;
-                                    const locBadge = (req.location && locationBadge[req.location]) || locationBadge['Onshore – Corporate Headquarters'] || DEFAULT_LOC_STYLE;
-                                    const budBadge = (req.budgetType && budgetBadge[req.budgetType]) || budgetBadge['BUDGETED'] || DEFAULT_BUDGET_STYLE;
+                                    const locBadge = locationBadge[req.location] || locationBadge['Onshore'] || DEFAULT_LOC_STYLE;
+                                    const budBadge = budgetBadge[req.budgetType] || budgetBadge['BUDGETED'] || DEFAULT_BUDGET_STYLE;
 
                                     return (
                                         <tr 
@@ -702,6 +703,13 @@ const RequisitionTable = forwardRef(({ refreshTrigger = 0, filters }: Requisitio
                                                         </DropdownMenuTrigger>
                                                         <DropdownMenuContent align="end" className="w-48 p-1 shadow-modal rounded-xl border-slate-200">
                                                             <DropdownMenuItem 
+                                                                className="text-xs flex items-center gap-2 cursor-pointer py-2 px-3 focus:bg-slate-50 rounded-lg transition-colors font-bold text-[#0C66E4]"
+                                                                onClick={() => setEditingReq(req)}
+                                                            >
+                                                                <Edit3 size={12} />
+                                                                Modify Requisition
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem 
                                                                 className="text-xs flex items-center gap-2 cursor-pointer py-2 px-3 focus:bg-slate-50 rounded-lg transition-colors"
                                                                 onClick={() => handleClone(req)}
                                                             >
@@ -798,7 +806,7 @@ const RequisitionTable = forwardRef(({ refreshTrigger = 0, filters }: Requisitio
 
             {editingReq && (
                 <NewRequisitionModal 
-                    requisition={editingReq}
+                    requisition={editingReq.raw_data}
                     onClose={() => setEditingReq(null)} 
                     onSuccess={loadRequisitions}
                 />

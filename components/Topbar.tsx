@@ -110,15 +110,6 @@ export default function Topbar() {
             </div>
             
             <div className="flex items-center gap-2 ml-auto">
-                {/* Help */}
-                <button className="btn-ghost p-2" aria-label="Help">
-                    <HelpCircle size={18} className="text-slate-500" />
-                </button>
-
-                {/* Settings */}
-                <Link href="/requisition-management" className="btn-ghost p-2" aria-label="Settings">
-                    <Settings size={18} className="text-slate-500" />
-                </Link>
 
                 {/* Notifications */}
                 <div className="relative">
@@ -238,14 +229,6 @@ export default function Topbar() {
                                     <p className="text-[10px] uppercase font-bold text-[#5E6C84] tracking-wider mb-0.5">Account</p>
                                     <p className="text-xs text-[#172B4D] font-medium truncate">{currentUser?.email || 'guest@example.com'}</p>
                                 </div>
-                                <button onClick={() => setProfileOpen(false)} className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-[#172B4D] hover:bg-[#F4F5F7] transition-colors text-left">
-                                    <User size={15} />
-                                    Profile Settings
-                                </button>
-                                <button onClick={() => setProfileOpen(false)} className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-[#172B4D] hover:bg-[#F4F5F7] transition-colors text-left">
-                                    <Settings size={15} />
-                                    Preferences
-                                </button>
                                 <div className="h-px bg-slate-100 my-1.5" />
                                 <button
                                     onClick={() => {

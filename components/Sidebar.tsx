@@ -40,20 +40,14 @@ const navItems: NavItem[] = [
     { id: 'nav-requisitions', label: 'Requisition Management', href: '/requisition-management', icon: FileText, badge: 7, group: 'core', allowedRoles: ['ALL'] },
     { id: 'nav-candidates', label: 'Candidates', href: '/candidates', icon: Users, badge: 23, group: 'core', allowedRoles: ['HR_ADMIN', 'DEPT_REQUESTOR', 'SYSTEM_ADMIN'] },
     { id: 'nav-vendors', label: 'Vendor Management', href: '/vendor-management', icon: Building2, group: 'core', allowedRoles: ['PROCUREMENT_OFFICER', 'SYSTEM_ADMIN'] },
-    { id: 'nav-onboarding', label: 'Onboarding Tracker', href: '/onboarding-tracker', icon: UserCheck, badge: 4, group: 'operations', allowedRoles: ['FINANCE_OFFICER', 'HR_ADMIN', 'SYSTEM_ADMIN'] },
     { id: 'nav-budget', label: 'Budget & Finance', href: '/budget-finance', icon: Wallet, group: 'operations', allowedRoles: ['FINANCE_OFFICER', 'SYSTEM_ADMIN'] },
-    { id: 'nav-contracts', label: 'Contracts & LPOs', href: '/contracts-lpos', icon: ClipboardList, group: 'operations', allowedRoles: ['PROCUREMENT_OFFICER', 'SYSTEM_ADMIN'] },
-    { id: 'nav-reports', label: 'Reports & Analytics', href: '/reports-analytics', icon: BarChart3, group: 'reporting', allowedRoles: ['HR_ADMIN', 'HOD', 'SYSTEM_ADMIN'] },
-    { id: 'nav-forecasting', label: 'Financial Forecasting', href: '/financial-forecasting', icon: TrendingUp, group: 'reporting', allowedRoles: ['FINANCE_OFFICER', 'SYSTEM_ADMIN'] },
     { id: 'nav-compliance', label: 'Compliance & Audit', href: '/compliance-audit', icon: ShieldCheck, group: 'admin', allowedRoles: ['HR_ADMIN', 'SYSTEM_ADMIN'] },
     { id: 'nav-notifications', label: 'Notifications', href: '/notifications', icon: Bell, badge: 12, group: 'admin', allowedRoles: ['ALL'] },
-    { id: 'nav-settings', label: 'System Settings', href: '/settings', icon: Settings, group: 'admin', allowedRoles: ['SYSTEM_ADMIN'] },
 ];
 
 const groupLabels: Record<string, string> = {
     core: 'Core Modules',
     operations: 'Operations',
-    reporting: 'Reporting',
     admin: 'Administration',
 };
 
@@ -94,7 +88,7 @@ export default function Sidebar() {
         document.documentElement.style.setProperty('--sidebar-width', width);
     }, [collapsed]);
 
-    const groups = ['core', 'operations', 'reporting', 'admin'];
+    const groups = ['core', 'operations', 'admin'];
 
     return (
         <aside
@@ -216,11 +210,6 @@ export default function Sidebar() {
                     )}
                     {!collapsed && (
                         <LogOut size={15} className="text-slate-400 shrink-0 group-hover:text-red-500 transition-colors" />
-                    )}
-                    {collapsed && (
-                        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-900 text-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none z-50">
-                            Fatima Al-Rashidi · HR Manager
-                        </div>
                     )}
                 </div>
             </div>

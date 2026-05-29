@@ -3,7 +3,7 @@
 import AppLayout from '@/components/AppLayout';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { Briefcase, Building2, ChevronLeft, Info, User } from 'lucide-react';
+import { Briefcase, Building2, ChevronLeft, Info, User, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -14,16 +14,20 @@ import WorkflowStepper from './components/WorkflowStepper';
 import NewRequisitionModal from '../components/NewRequisitionModal';
 
 import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { requisitionService } from '@/lib/services/requisitionService';
+import { profileService } from '@/lib/services/profileService';
+import { RequisitionRecord } from '../components/ComprehensiveRequisitionForm';
 
 export default function RequisitionDetailPage() {
     const params = useParams();
     const router = useRouter();
     const id = params.id as string;
 
-    const [requisition, setRequisition] = useState<any>(null);
+    const [requisition, setRequisition] = useState<RequisitionRecord | null>(null);
     const [auditLogs, setAuditLogs] = useState<any[]>([]);
     const [workflowStages, setWorkflowStages] = useState<any[]>([]);
+    const [interviewers, setInterviewers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentStep, setCurrentStep] = useState(1);
     const [status, setStatus] = useState('');
@@ -54,12 +58,24 @@ export default function RequisitionDetailPage() {
             setRequisition(data);
             setWorkflowStages(stages);
             setCandidateStatus(candStatus);
-            setCurrentStep(data.stage_id);
-            setStatus(data.workflow_stages?.stage_name || 'Draft');
 
-            // Now fetch logs using the verified UUID
-            const logs = await requisitionService.getAuditLogs(data.id);
-            setAuditLogs(logs);
+            if (data) {
+                setCurrentStep(data.stage_id);
+                setStatus(data.workflow_stages?.stage_name || 'Draft');
+                
+                // Fetch interviewer profiles
+                if (data.interviewer_ids?.length > 0) {
+                    const profiles = await profileService.getProfilesByIds(data.interviewer_ids);
+                    setInterviewers(profiles);
+                }
+
+                // Now fetch logs
+                const logs = await requisitionService.getAuditLogs(data.id);
+                setAuditLogs(logs);
+            } else {
+                toast.error('Requisition not found');
+                router.push('/requisition-management');
+            }
         } catch (error) {
             console.error('Error in loadRequisition:', error);
             toast.error('Failed to load requisition details');
@@ -113,6 +129,10 @@ export default function RequisitionDetailPage() {
                                                 {status}
                                             </span>
                                         )}
+                                        <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200 shadow-sm transition-all hover:bg-white hover:border-[hsl(214,67%,32%)]">
+                                            <Users size={12} className="text-slate-400" />
+                                            {candidateStatus.totalSubmitted} / {requisition?.num_resources || 1} Candidates
+                                        </span>
                                     </div>
                                     <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-slate-500 text-sm font-medium">
                                         <div className="flex items-center gap-2">
@@ -162,32 +182,78 @@ export default function RequisitionDetailPage() {
                             <>
                                 <RequisitionSpecs data={requisition} />
 
-                                {/* Dynamic Candidate Summary Section specifically for Stage 4+ */}
-                                {currentStep >= 4 && (
+                                {/* Interviewer Panel - Main Column (Left) */}
+                                {!loading && interviewers.length > 0 && (
                                     <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
-                                        <div className="flex items-center justify-between mb-4">
+                                        <div className="flex items-center justify-between mb-6">
                                             <h3 className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                                                <User size={16} className="text-orange-500" />
-                                                Candidate Submissions
+                                                <Users size={16} className="text-orange-500" />
+                                                Interviewers & Panel
                                             </h3>
                                             <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-orange-50 text-orange-600 border border-orange-100">
-                                                Interviewer Review Required
+                                                {interviewers.length} Members Assigned
                                             </span>
                                         </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center">
-                                                <span className="text-2xl font-bold text-slate-900">{candidateStatus.totalSubmitted}</span>
-                                                <span className="text-[10px] text-slate-500 uppercase font-semibold tracking-tight">Pending Review</span>
-                                            </div>
-                                            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center">
-                                                <span className={`text-sm font-bold ${candidateStatus.hasQualified ? 'text-emerald-600' : 'text-slate-400'}`}>
-                                                    {candidateStatus.hasQualified ? '✓ QUALIFIED' : '✖ NONE YET'}
-                                                </span>
-                                                <span className="text-[10px] text-slate-500 uppercase font-semibold tracking-tight">Stage Gating Status</span>
-                                            </div>
+                                        
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            {interviewers.map((intv) => {
+                                                const isLead = intv.id === requisition?.main_interviewer_id;
+                                                return (
+                                                    <div 
+                                                        key={intv.id} 
+                                                        className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
+                                                            isLead 
+                                                            ? 'bg-orange-50/50 border-orange-200 ring-1 ring-orange-200' 
+                                                            : 'bg-slate-50 border-slate-100'
+                                                        }`}
+                                                    >
+                                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
+                                                            isLead ? 'bg-orange-500 text-white' : 'bg-slate-200 text-slate-500'
+                                                        }`}>
+                                                            {intv.full_name?.split(' ').map(n => n[0]).join('')}
+                                                        </div>
+                                                        <div className="min-w-0">
+                                                            <div className="flex items-center gap-2">
+                                                                <p className="text-xs font-bold text-slate-800 truncate">{intv.full_name}</p>
+                                                                {isLead && (
+                                                                    <span className="text-[8px] font-black bg-orange-600 text-white px-1.5 py-0.5 rounded uppercase tracking-tighter">
+                                                                        Lead
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <p className="text-[10px] text-slate-400 font-medium truncate">{intv.roles?.role_name || 'Panelist'}</p>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 )}
+
+                                {/* Sourcing Overview Card */}
+                                <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                                            <Users size={16} className="text-blue-500" />
+                                            Sourcing Overview
+                                        </h3>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-100">
+                                            {candidateStatus.totalSubmitted} Total Submissions
+                                        </span>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Target Resources</p>
+                                            <p className="text-2xl font-bold text-slate-900">{requisition?.num_resources || 1}</p>
+                                        </div>
+                                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Qualified Status</p>
+                                            <p className={`text-sm font-bold mt-1 ${candidateStatus.hasQualified ? 'text-emerald-600' : 'text-slate-400'}`}>
+                                                {candidateStatus.hasQualified ? '✓ QUALIFIED CANDIDATES FOUND' : '✖ NO QUALIFIED CANDIDATES'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
                             </>
                         )}
 
@@ -233,6 +299,54 @@ export default function RequisitionDetailPage() {
 
                     {/* Right Column - Actions */}
                     <div className="space-y-6">
+                        {/* Sourcing Fulfillment Card */}
+                        {!loading && requisition && (
+                            <Card className="border border-[#DFE1E6] shadow-sm overflow-hidden rounded-sm animate-in slide-in-from-right-4 duration-500">
+                                <CardHeader className="bg-[#EBECF0] border-b border-[#DFE1E6] py-2.5">
+                                    <CardTitle className="text-[10px] font-bold text-[#42526E] uppercase tracking-widest flex items-center gap-2">
+                                        <Users size={12} className="text-[#0C66E4]" />
+                                        Sourcing Fulfillment
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="p-4 space-y-4">
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div className="bg-slate-50 p-3 rounded-md border border-slate-100">
+                                            <div className="text-xl font-bold text-slate-900">{candidateStatus.totalSubmitted}</div>
+                                            <div className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Candidates</div>
+                                        </div>
+                                        <div className="bg-slate-50 p-3 rounded-md border border-slate-100">
+                                            <div className="text-xl font-bold text-[hsl(214,67%,32%)]">{requisition?.num_resources || 1}</div>
+                                            <div className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Required</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="space-y-1.5">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-[9px] font-bold text-[#6B778C] uppercase tracking-widest">Progress</span>
+                                            <span className="text-[10px] font-bold text-[hsl(214,67%,32%)]">
+                                                {Math.round((candidateStatus.totalSubmitted / (requisition?.num_resources || 1)) * 100)}%
+                                            </span>
+                                        </div>
+                                        <div className="w-full h-1.5 bg-[#EBECF0] rounded-full overflow-hidden">
+                                            <div 
+                                                className="h-full bg-[hsl(214,67%,32%)] transition-all duration-700"
+                                                style={{ width: `${Math.min(100, (candidateStatus.totalSubmitted / (requisition?.num_resources || 1)) * 100)}%` }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {candidateStatus.totalSubmitted < (requisition?.num_resources || 1) && (
+                                        <div className="p-2 bg-amber-50 rounded border border-amber-100 flex gap-2">
+                                            <Info size={12} className="text-amber-500 shrink-0 mt-0.5" />
+                                            <p className="text-[9px] text-amber-700 font-medium leading-tight">
+                                                Insufficient candidates to fulfill requirements. Sourcing active.
+                                            </p>
+                                        </div>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        )}
+
                         {loading ? (
                             <Skeleton className="h-64 w-full rounded-2xl" />
                         ) : (
@@ -245,6 +359,9 @@ export default function RequisitionDetailPage() {
                                 onApprove={handleApprove}
                                 onEdit={() => setIsEditModalOpen(true)}
                                 hasQualifiedCandidate={candidateStatus.hasQualified}
+                                totalSubmitted={candidateStatus.totalSubmitted}
+                                numResources={requisition?.num_resources}
+                                mainInterviewerId={requisition?.main_interviewer_id}
                                 isActive={requisition?.is_active}
                             />
                         )}
