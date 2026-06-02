@@ -107,4 +107,58 @@ export class AuthService {
             loginSessionId: "",
         };
     }
+
+    async login(
+        username: string,
+        password: string
+    ) {
+
+        // TEMP
+        // replace later with AD
+
+        const user =
+            await this.authRepository
+                .getUserByUsername(
+                    username
+                );
+
+        if (!user) {
+            throw new Error(
+                "Invalid username"
+            );
+        }
+
+        const loginSessionId =
+            await this.sessionService
+                .createSession(
+                    user.UserID
+                );
+
+        const session =
+            await this.getUserSession(
+                user.UserID
+            );
+
+        session.loginSessionId =
+            loginSessionId;
+
+        const token =
+            jwt.sign(
+                {
+                    userId: session.userId,
+                    loginSessionId,
+                },
+                process.env.JWT_SECRET!,
+                {
+                    expiresIn: "1d",
+                    issuer: process.env.JWT_ISSUER,
+                    audience: process.env.JWT_AUDIENCE,
+                }
+            );
+
+        return {
+            accessToken: token,
+            session,
+        };
+    }
 }

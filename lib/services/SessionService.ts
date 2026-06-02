@@ -1,4 +1,5 @@
 import { getDb } from "@/lib/db";
+import { v4 as uuidv4 } from "uuid";
 
 export class SessionService {
     async validateSession(
@@ -38,4 +39,41 @@ export class SessionService {
         WHERE LoginSessionID = @LoginSessionID
       `);
     }
+
+    async createSession(
+        userId: string
+    ): Promise<string> {
+
+        const db = await getDb();
+
+        const loginSessionId = uuidv4();
+
+        await db
+            .request()
+            .input("LoginSessionID", loginSessionId)
+            .input("UserID", userId)
+            .query(`
+            INSERT INTO auth.LoginSessions
+            (
+                LoginSessionID,
+                UserID,
+                IsActive,
+                LoginAt,
+                ExpiresAt
+            )
+            VALUES
+            (
+                @LoginSessionID,
+                @UserID,
+                1,
+                SYSUTCDATETIME(),
+                DATEADD(DAY,1,SYSUTCDATETIME())
+            )
+        `);
+
+        return loginSessionId;
+    }
+
 }
+
+
