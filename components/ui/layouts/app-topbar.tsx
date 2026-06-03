@@ -3,7 +3,7 @@ import { Separator } from "../separator";
 import { SidebarTrigger } from "../sidebar";
 import Image from "next/image";
 import AccountDropdown from "./AccountDropdown";
-
+import DropdownMenu02 from "./notification-dropdown";
 export function AppTopbar() {
     return (
 
@@ -12,6 +12,7 @@ export function AppTopbar() {
             <Separator orientation="vertical" className="my-2 h-8 mx-3" />
             <SidebarTrigger className="-ml-1" />
             <div className="flex flex-1" />
+            <DropdownMenu02 />
             <AnimatedThemeToggler variant="rectangle" duration={500} />
             <AccountDropdown />
         </header>
