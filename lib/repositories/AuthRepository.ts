@@ -1,4 +1,7 @@
 import { getDb } from "@/lib/db";
+import {
+    verifyPassword
+} from "@/lib/utils/password";
 
 export interface AuthUserRecord {
     userId: string;
@@ -314,6 +317,279 @@ export class AuthRepository {
                 @IPAddress,
                 @UserAgent,
                 @LogoutReason
+            )
+        `);
+    }
+
+    // security 
+
+    async getUserSecurityInfo(
+        username: string
+    ): Promise<{
+        userId: string;
+        failedLoginCount: number;
+        lockedUntil: Date | null;
+    } | null> {
+
+        const db = await getDb();
+
+        const result = await db
+            .request()
+            .input("Username", username)
+            .query(`
+            SELECT
+                UserID,
+                FailedLoginCount,
+                LockedUntil
+            FROM auth.Users
+            WHERE Username = @Username
+              AND IsDeleted = 0
+        `);
+
+        if (result.recordset.length === 0) {
+            return null;
+        }
+
+        return {
+            userId:
+                result.recordset[0].UserID,
+
+            failedLoginCount:
+                result.recordset[0]
+                    .FailedLoginCount ?? 0,
+
+            lockedUntil:
+                result.recordset[0]
+                    .LockedUntil,
+        };
+    }
+    async recordFailedLogin(
+        userId: string
+    ): Promise<void> {
+
+        const db = await getDb();
+
+        await db
+            .request()
+            .input("UserID", userId)
+            .query(`
+            UPDATE auth.Users
+            SET
+                FailedLoginCount =
+                    ISNULL(
+                        FailedLoginCount,
+                        0
+                    ) + 1,
+
+                LastFailedLoginAt =
+                    SYSUTCDATETIME(),
+
+                UpdatedAt =
+                    SYSUTCDATETIME()
+
+            WHERE UserID = @UserID
+        `);
+    }
+    async lockUser(
+        userId: string,
+        lockMinutes: number = 15
+    ): Promise<void> {
+
+        const db = await getDb();
+
+        await db
+            .request()
+            .input("UserID", userId)
+            .input("LockMinutes", lockMinutes)
+            .query(`
+            UPDATE auth.Users
+            SET
+                LockedUntil =
+                    DATEADD(
+                        MINUTE,
+                        @LockMinutes,
+                        SYSUTCDATETIME()
+                    ),
+
+                UpdatedAt =
+                    SYSUTCDATETIME()
+
+            WHERE UserID = @UserID
+        `);
+    }
+    async resetFailedLogin(
+        userId: string
+    ): Promise<void> {
+
+        const db = await getDb();
+
+        await db
+            .request()
+            .input("UserID", userId)
+            .query(`
+            UPDATE auth.Users
+            SET
+                FailedLoginCount = 0,
+
+                LockedUntil = NULL,
+
+                LastFailedLoginAt = NULL,
+
+                UpdatedAt =
+                    SYSUTCDATETIME()
+
+            WHERE UserID = @UserID
+        `);
+    }
+    async getFailedLoginCount(
+        userId: string
+    ): Promise<number> {
+
+        const db = await getDb();
+
+        const result = await db
+            .request()
+            .input("UserID", userId)
+            .query(`
+            SELECT
+                FailedLoginCount
+            FROM auth.Users
+            WHERE UserID = @UserID
+        `);
+
+        if (
+            result.recordset.length === 0
+        ) {
+            return 0;
+        }
+
+        return (
+            result.recordset[0]
+                .FailedLoginCount ?? 0
+        );
+    }
+    async unlockUser(
+        userId: string
+    ): Promise<void> {
+
+        const db = await getDb();
+
+        await db
+            .request()
+            .input("UserID", userId)
+            .query(`
+            UPDATE auth.Users
+            SET
+                FailedLoginCount = 0,
+
+                LockedUntil = NULL,
+
+                UpdatedAt =
+                    SYSUTCDATETIME()
+
+            WHERE UserID = @UserID
+        `);
+    }
+    async getUserCredential(
+        userId: string
+    ): Promise<{
+        passwordHash: string;
+    } | null> {
+
+        const db = await getDb();
+
+        const result = await db
+            .request()
+            .input(
+                "UserID",
+                userId
+            )
+            .query(`
+            SELECT TOP 1
+                PasswordHash
+            FROM auth.LocalCredentials
+            WHERE UserID = @UserID
+            AND IsActive = 1
+        `);
+
+        if (
+            result.recordset.length === 0
+        ) {
+            return null;
+        }
+
+        return {
+            passwordHash:
+                result.recordset[0]
+                    .PasswordHash,
+        };
+    }
+    async validatePassword(
+        userId: string,
+        password: string
+    ): Promise<boolean> {
+
+        const credential =
+            await this.getUserCredential(
+                userId
+            );
+
+        if (!credential) {
+            return false;
+        }
+
+        return await verifyPassword(
+            password,
+            credential.passwordHash
+        );
+    }
+    async createFailedLoginAttempt(
+        data: {
+            userId?: string;
+            username: string;
+            ipAddress?: string;
+            userAgent?: string;
+            deviceType?: string;
+            browserName?: string;
+            isSSOLogin?: boolean;
+            failureReason?: string;
+        }
+    ): Promise<void> {
+
+        const db = await getDb();
+
+        await db
+            .request()
+            .input("UserID", data.userId ?? null)
+            .input("Username", data.username)
+            .input("IPAddress", data.ipAddress ?? null)
+            .input("UserAgent", data.userAgent ?? null)
+            .input("DeviceType", data.deviceType ?? null)
+            .input("BrowserName", data.browserName ?? null)
+            .input("IsSSOLogin", data.isSSOLogin ?? false)
+            .input("FailureReason", data.failureReason ?? null)
+            .query(`
+            INSERT INTO auth.FailedLoginAttempts
+            (
+                UserID,
+                Username,
+                IPAddress,
+                UserAgent,
+                DeviceType,
+                BrowserName,
+                IsSSOLogin,
+                FailureReason
+            )
+            VALUES
+            (
+                @UserID,
+                @Username,
+                @IPAddress,
+                @UserAgent,
+                @DeviceType,
+                @BrowserName,
+                @IsSSOLogin,
+                @FailureReason
             )
         `);
     }

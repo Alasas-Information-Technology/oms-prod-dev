@@ -14,6 +14,33 @@ export async function setAuthCookie(token: string) {
   });
 }
 
+export async function serverLogout() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("oms_access_token")?.value;
+  
+  if (token) {
+    const { headers } = await import("next/headers");
+    const headersList = await headers();
+    const host = headersList.get("host") || "localhost:3000";
+    const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+    
+    try {
+      await fetch(`${protocol}://${host}/api/auth/logout`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "x-forwarded-for": headersList.get("x-forwarded-for") || "",
+          "user-agent": headersList.get("user-agent") || ""
+        }
+      });
+    } catch (e) {
+      console.error("Failed to call logout API:", e);
+    }
+  }
+  
+  cookieStore.delete("oms_access_token");
+}
+
 export async function clearAuthCookie() {
   const cookieStore = await cookies();
   cookieStore.delete("oms_access_token");

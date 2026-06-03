@@ -1,6 +1,8 @@
 "use client";
 
 import type { ReactElement } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
     DropdownMenu,
@@ -52,6 +54,14 @@ const itemClass =
     "p-2 text-sm font-medium text-popover-foreground cursor-pointer gap-2";
 
 const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
+    const { logout } = useAuth();
+    const router = useRouter();
+
+    const handleLogout = async () => {
+        await logout();
+        router.push("/login");
+    };
+
     return (
         <div className="flex items-start justify-center p-4 sm:p-8">
             <DropdownMenu defaultOpen={defaultOpen}>
@@ -112,7 +122,11 @@ const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
                         <DropdownMenuSeparator />
 
                         {/* Logout */}
-                        <DropdownMenuItem variant="destructive" className={itemClass}>
+                        <DropdownMenuItem 
+                            variant="destructive" 
+                            className={itemClass}
+                            onClick={handleLogout}
+                        >
                             <LOGOUT_ITEM.icon size={20} />
                             <span>{LOGOUT_ITEM.label}</span>
                         </DropdownMenuItem>

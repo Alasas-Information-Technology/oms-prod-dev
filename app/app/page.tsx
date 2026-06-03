@@ -10,8 +10,6 @@ export default async function Page() {
   return (
 
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-
-
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">
         <p>Hello {user.username}, you are viewing this via SSR!</p>
 
@@ -26,6 +24,5 @@ export default async function Page() {
       </div>
       <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
     </div>
-
   )
 }

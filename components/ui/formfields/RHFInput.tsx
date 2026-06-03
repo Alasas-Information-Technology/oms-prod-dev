@@ -24,27 +24,27 @@ export default function RHFInput({
   } = useFormContext()
 
   return (
-  <Controller
-    name={name}
-    control={control}
-    render={({ field }) => (
-      <Field className={className}>
-        <FieldLabel htmlFor={name}>{label}</FieldLabel>
+    <Controller
+      name={name}
+      control={control}
+      render={({ field }) => (
+        <Field className={className}>
+          <FieldLabel htmlFor={name}>{label}</FieldLabel>
 
-        <Input
-          id={name}
-          type={type}
-          placeholder={placeholder}
-          {...field}
-        />
+          <Input
+            id={name}
+            type={type}
+            placeholder={placeholder}
+            {...field}
+          />
 
-        {errors[name] && (
-          <p className="text-red-500 text-sm">
-            {errors[name]?.message as string}
-          </p>
-        )}
-      </Field>
-    )}
-  />
-)
+          {errors[name] && (
+            <p className="text-red-500 text-sm">
+              {errors[name]?.message as string}
+            </p>
+          )}
+        </Field>
+      )}
+    />
+  )
 }

@@ -17,6 +17,10 @@ import {
     detectDeviceType
 } from "@/lib/utils/deviceDetector";
 
+import {
+    FailedLoginService
+} from "@/lib/services/FailedLoginService";
+
 export interface LoginResult {
     accessToken: string;
     session: any;
@@ -32,6 +36,9 @@ export class LoginUseCase {
 
     private sessionService =
         new SessionService();
+
+    private failedLoginService =
+        new FailedLoginService();
 
     async execute(
         username: string,
@@ -49,6 +56,46 @@ export class LoginUseCase {
             detectBrowser(
                 userAgent ?? ""
             );
+
+
+        const isLocked =
+            await this.failedLoginService
+                .isLocked(
+                    username
+                );
+
+        if (isLocked) {
+
+            await this.authRepository
+                .createFailedLoginAttempt({
+                    username,
+                    ipAddress,
+                    userAgent,
+                    deviceType,
+                    browserName,
+                    isSSOLogin: false,
+                    failureReason:
+                        "ACCOUNT_LOCKED",
+                });
+
+            await this.authRepository
+                .createLoginHistory({
+                    username,
+                    ipAddress,
+                    userAgent,
+                    deviceType,
+                    browserName,
+                    isSSOLogin: false,
+                    loginResult: "FAILED",
+                    failureReason:
+                        "ACCOUNT_LOCKED"
+                });
+
+            throw new Error(
+                "Invalid username or password"
+            );
+        }
+
 
         try {
 
@@ -78,7 +125,19 @@ export class LoginUseCase {
                         isSSOLogin: false,
                         loginResult: "FAILED",
                         failureReason:
-                            "User not found"
+                            "INVALID_CREDENTIALS"
+                    });
+
+                await this.authRepository
+                    .createFailedLoginAttempt({
+                        username,
+                        ipAddress,
+                        userAgent,
+                        deviceType,
+                        browserName,
+                        isSSOLogin: false,
+                        failureReason:
+                            "INVALID_USERNAME",
                     });
 
                 throw new Error(
@@ -99,19 +158,57 @@ export class LoginUseCase {
                         isSSOLogin: false,
                         loginResult: "FAILED",
                         failureReason:
-                            "Account inactive"
+                            "ACCOUNT_INACTIVE"
                     });
 
                 throw new Error(
-                    "Account inactive"
+                    "Invalid username or password"
                 );
             }
 
-            /**
-             * TODO:
-             * Sprint 2
-             * Validate Password / Azure AD
-             */
+            const passwordValid =
+                await this.authRepository
+                    .validatePassword(
+                        user.UserID,
+                        password
+                    );
+
+            if (!passwordValid) {
+
+                await this.failedLoginService
+                    .registerFailure(
+                        user.UserID,
+                        username,
+                        ipAddress,
+                        userAgent,
+                        deviceType,
+                        browserName,
+                        "INVALID_PASSWORD"
+                    );
+
+                await this.authRepository
+                    .createLoginHistory({
+                        userId: user.UserID,
+                        username,
+                        ipAddress,
+                        userAgent,
+                        deviceType,
+                        browserName,
+                        isSSOLogin: false,
+                        loginResult: "FAILED",
+                        failureReason:
+                            "INVALID_PASSWORD"
+                    });
+
+                throw new Error(
+                    "Invalid username or password"
+                );
+            }
+
+            await this.failedLoginService
+                .registerSuccess(
+                    user.UserID
+                );
 
             const loginSessionId =
                 await this.sessionService
@@ -173,22 +270,24 @@ export class LoginUseCase {
 
         } catch (error: any) {
 
-            /**
-             * Unexpected Error Logging
-             */
+            if (
+                error.message !==
+                "Invalid username or password"
+            ) {
 
-            await this.authRepository
-                .createLoginHistory({
-                    username,
-                    ipAddress,
-                    userAgent,
-                    deviceType,
-                    browserName,
-                    isSSOLogin: false,
-                    loginResult: "FAILED",
-                    failureReason:
-                        error.message
-                });
+                await this.authRepository
+                    .createLoginHistory({
+                        username,
+                        ipAddress,
+                        userAgent,
+                        deviceType,
+                        browserName,
+                        isSSOLogin: false,
+                        loginResult: "FAILED",
+                        failureReason:
+                            "SYSTEM_ERROR"
+                    });
+            }
 
             throw error;
         }

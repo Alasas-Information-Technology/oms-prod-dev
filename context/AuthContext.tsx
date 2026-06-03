@@ -41,7 +41,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    await clearAuthCookie();
+    try {
+      const { serverLogout } = await import("@/app/actions/auth");
+      await serverLogout();
+    } catch (e) {
+      console.error("Failed to call logout API:", e);
+    }
     setUser(null);
   };
 
