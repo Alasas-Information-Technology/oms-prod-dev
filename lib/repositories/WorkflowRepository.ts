@@ -1,6 +1,7 @@
 import { getDb } from "@/lib/db";
 
 export class WorkflowRepository {
+
     async canExecute(
         userId: string,
         workflowState: string,
@@ -38,4 +39,5 @@ export class WorkflowRepository {
 
         return result.recordset.length > 0;
     }
+
 }

@@ -208,7 +208,6 @@ export class AuthRepository {
         return result.recordset[0] ?? null;
     }
 
-
     async createLoginHistory(
         data: CreateLoginHistoryDto
     ): Promise<void> {

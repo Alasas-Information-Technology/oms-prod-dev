@@ -1,5 +1,8 @@
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/context/AuthContext"
 import {
   Card,
   CardContent,
@@ -21,7 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form"
 
 const schema = z.object({
-  Username: z.string().min(3,"Username is required"),
+  Username: z.string().min(3, "Username is required"),
   Password: z.string().min(8, "Password must be at least 8 characters")
 })
 
@@ -32,23 +35,44 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
 
+  const { login } = useAuth();
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+
   const form = useForm<FormFields>({
     resolver: zodResolver(schema as any),
     defaultValues: {
       Username: "",
       Password: "",
-  },
+    },
   })
 
-const {
-  handleSubmit,
-  formState: { isSubmitting },
-} = form
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = form
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
-  await new Promise((resolve) => setTimeout(resolve, 2000))
-  console.log(data)
-}
+    setError(null);
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: data.Username, password: data.Password }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.accessToken) {
+        throw new Error(result.message || "Login failed");
+      }
+
+      await login(result.accessToken, result.session);
+      router.push("/app"); // Redirect to dashboard
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred");
+    }
+  }
 
 
   return (
@@ -62,59 +86,64 @@ const {
         </CardHeader>
         <CardContent>
           <FormProvider {...form}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <FieldGroup>
-              <RHFInput
-                name="Username"
-                label="Username"
-                type="text"
-                placeholder="Enter username"
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <FieldGroup>
+                {error && (
+                  <div className="p-3 text-sm text-red-500 bg-red-100 rounded-md">
+                    {error}
+                  </div>
+                )}
+                <RHFInput
+                  name="Username"
+                  label="Username"
+                  type="text"
+                  placeholder="Enter username"
                 />
 
-              
-              <RHFInput
-                name="Password"
-                label="Password"
-                type="password"
-                placeholder="*********"
+
+                <RHFInput
+                  name="Password"
+                  label="Password"
+                  type="password"
+                  placeholder="*********"
                 />
-              <div className="flex justify-end mt-2">
-                <a
-                  href="#"
-                  className="text-sm underline-offset-4 hover:underline"
-                >
-                  Forgot your password?
-                </a>
-              </div>
-            
-
-              <Field>
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Logging in..." : "Login"}
-                </Button>
-              </Field>
-
-              <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
-                Or continue with
-              </FieldSeparator>
-
-              <Field>
-                <Button variant="outline" type="button" className="gap-2">
-                  <img
-                    src="/microft-logo.png"
-                    alt="Microsoft"
-                    className="h-5 w-5"
-                  />
-                  Login with Microsoft
-                </Button>
-
-              </Field>
+                <div className="flex justify-end mt-2">
+                  <a
+                    href="#"
+                    className="text-sm underline-offset-4 hover:underline"
+                  >
+                    Forgot your password?
+                  </a>
+                </div>
 
 
+                <Field>
+                  <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? "Logging in..." : "Login"}
+                  </Button>
+                </Field>
+
+                <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
+                  Or continue with
+                </FieldSeparator>
+
+                <Field>
+                  <Button variant="outline" type="button" className="gap-2">
+                    <img
+                      src="/microft-logo.png"
+                      alt="Microsoft"
+                      className="h-5 w-5"
+                    />
+                    Login with Microsoft
+                  </Button>
+
+                </Field>
 
 
-            </FieldGroup>
-          </form>
+
+
+              </FieldGroup>
+            </form>
           </FormProvider>
         </CardContent>
       </Card>

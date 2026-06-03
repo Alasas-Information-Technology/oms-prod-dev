@@ -1,7 +1,6 @@
 "use client"
 
 import { LoginForm } from "@/components/login-form"
-import { GalleryVerticalEndIcon } from "lucide-react"
 import Image from "next/image"
 
 export default function LoginPage() {
@@ -10,9 +9,9 @@ export default function LoginPage() {
       <div className="flex w-full max-w-sm flex-col gap-6">
 
         <a href="#" className="flex items-center gap-2 self-center font-medium">
-          
+
           <Image src={"/c-logo.png"} alt="DIEZ_logo" width={180} height={180} />
-        
+
         </a>
 
 

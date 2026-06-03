@@ -1,6 +1,7 @@
 import { getDb } from "@/lib/db";
 
 export class UserRepository {
+
     async findById(userId: string) {
         const db = await getDb();
 
