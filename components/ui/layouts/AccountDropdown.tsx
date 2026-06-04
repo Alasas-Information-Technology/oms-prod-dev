@@ -63,7 +63,7 @@ const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
     };
 
     return (
-        <div className="flex items-start justify-center p-4 sm:p-8">
+        <div className="flex items-start justify-center">
             <DropdownMenu defaultOpen={defaultOpen}>
                 <DropdownMenuTrigger className="cursor-pointer">
                     {trigger}
@@ -122,8 +122,8 @@ const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
                         <DropdownMenuSeparator />
 
                         {/* Logout */}
-                        <DropdownMenuItem 
-                            variant="destructive" 
+                        <DropdownMenuItem
+                            variant="destructive"
                             className={itemClass}
                             onClick={handleLogout}
                         >
@@ -143,7 +143,7 @@ const AccountDropdown = () => {
             align="end"
             trigger={
                 <div className="rounded-full">
-                    <Avatar className="size-10 cursor-pointer">
+                    <Avatar className="size-8 cursor-pointer">
                         <AvatarImage
                             src="https://images.shadcnspace.com/assets/profiles/user-11.jpg"
                             alt="David McMichael"

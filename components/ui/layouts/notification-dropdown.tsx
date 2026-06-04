@@ -82,7 +82,7 @@ const PROFILE_ITEMS: MenuItem[] = [
 
 const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
   return (
-    <div className="flex items-start justify-center p-4 sm:p-8">
+    <div className="flex items-start justify-center">
       <DropdownMenu defaultOpen={defaultOpen}>
         <DropdownMenuTrigger>{trigger}</DropdownMenuTrigger>
         <DropdownMenuContent
@@ -138,17 +138,21 @@ const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
   );
 };
 
-const DropdownMenu02 = () => {
+const NotificationsDrawer = () => {
   return (
     <Dropdown
-      align="center"
+      align="end"
       trigger={
-        <div className="rounded-full h-9 w-9 flex items-center justify-center bg-primary text-primary-foreground cursor-pointer">
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+        >
           <BellRing className="size-4" />
-        </div>
+        </Button>
       }
     />
   );
 };
 
-export default DropdownMenu02;
+export default NotificationsDrawer;

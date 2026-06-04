@@ -5,6 +5,7 @@ import { Moon, Sun } from "lucide-react"
 import { flushSync } from "react-dom"
 
 import { cn } from "@/lib/utils"
+import { Button } from "./button"
 
 export type TransitionVariant =
   | "circle"
@@ -241,8 +242,10 @@ export const AnimatedThemeToggler = ({
   }, [shape, fromCenter, duration, isDark])
 
   return (
-    <button
+    <Button
       type="button"
+      variant="outline"
+      size="icon"
       ref={buttonRef}
       onClick={toggleTheme}
       className={cn(className)}
@@ -250,6 +253,6 @@ export const AnimatedThemeToggler = ({
     >
       {isDark ? <Sun /> : <Moon />}
       <span className="sr-only z-30">Toggle theme</span>
-    </button>
+    </Button>
   )
 }
