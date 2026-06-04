@@ -1,14 +1,11 @@
-import jwt from "jsonwebtoken";
 import { UserSession } from "@/lib/types/auth.types";
+import jwt from "jsonwebtoken";
 
-import { AuthRepository }
-    from "@/lib/repositories/AuthRepository";
+import { AuthRepository } from "@/lib/repositories/AuthRepository";
 
-import { AuthService }
-    from "@/lib/services/AuthService";
+import { AuthService } from "@/lib/services/AuthService";
 
-import { SessionService }
-    from "@/lib/services/SessionService";
+import { SessionService } from "@/lib/services/SessionService";
 
 import {
     detectBrowser
@@ -21,11 +18,13 @@ import {
 import {
     FailedLoginService
 } from "@/lib/services/FailedLoginService";
+import { RateLimitService } from "../services/RateLimitService";
 
 export interface LoginResult {
     accessToken: string;
     session: UserSession;
 }
+
 
 export class LoginUseCase {
 
@@ -40,6 +39,9 @@ export class LoginUseCase {
 
     private failedLoginService =
         new FailedLoginService();
+
+    private rateLimitService =
+        new RateLimitService();
 
     async execute(
         username: string,
@@ -56,6 +58,18 @@ export class LoginUseCase {
         const browserName =
             detectBrowser(
                 userAgent ?? ""
+            );
+
+        await this.rateLimitService
+            .validate(
+                username,
+                ipAddress ?? ""
+            );
+
+        await this.rateLimitService
+            .track(
+                username,
+                ipAddress ?? ""
             );
 
 
@@ -271,6 +285,13 @@ export class LoginUseCase {
 
         } catch (error: unknown) {
             const err = error as Error;
+
+            if (
+                err.name ===
+                "RateLimitExceededError"
+            ) {
+                throw err;
+            }
 
             if (
                 err.message !==

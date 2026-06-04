@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { LoginUseCase } from "@/lib/use-cases/LoginUseCase";
 
 
@@ -39,6 +39,23 @@ export async function POST(
     } catch (error: any) {
 
         console.error(error);
+
+        if (
+            error.name ===
+            "RateLimitExceededError"
+        ) {
+
+            return NextResponse.json(
+                {
+                    success: false,
+                    message:
+                        error.message,
+                },
+                {
+                    status: 429,
+                }
+            );
+        }
 
         return Response.json(
             {
