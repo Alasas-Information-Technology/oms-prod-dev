@@ -32,6 +32,7 @@
     "zod": "link:@hookfrom/resolvers/zod"
   },
   "devDependencies": {
+    "@iconify/react": "^6.0.2",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^3.0.0",
     "@types/mssql": "^12.3.0",

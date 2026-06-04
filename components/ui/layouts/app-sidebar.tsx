@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { usePathname } from "next/navigation"
-
+import { Icon } from "@iconify/react";
 import {
   Sidebar,
   SidebarContent,
@@ -23,6 +23,7 @@ const data = {
     {
       title: "Dashboard",
       url: "#",
+      icon: "boxicons:dashboard-filled",
       items: [
         {
           title: "Home",
@@ -33,7 +34,12 @@ const data = {
           url: "/app/orders",
         },
       ],
-    }
+    },
+     {
+      title: "Settings",
+      url: "#",
+      icon: "boxicons:gear"
+     }
     // {
     //   title: "Build Your Application",
     //   url: "#",
@@ -190,8 +196,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SidebarMenuItem key={item.title}>
 
                 <SidebarMenuButton asChild>
-                  <a href={item.url} className="font-medium">
-                    {item.title}
+                  <a href={item.url} className="font-medium flex items-center gap-2">
+                    <Icon icon={item?.icon} width={24} height={24}/>
+                    <span>{item.title}</span>
                   </a>
                 </SidebarMenuButton>
 
