@@ -1,6 +1,8 @@
 "use client";
 
 import type { ReactElement } from "react";
+import NotificationSheet from "./notification-sheet";
+import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +23,7 @@ import {
   Star,
   Video,
 } from "lucide-react";
+import { title } from "process";
 
 type Props = {
   trigger: ReactElement;
@@ -37,7 +40,7 @@ type MenuItem = {
   time: string;
 };
 
-const PROFILE_ITEMS: MenuItem[] = [
+export const PROFILE_ITEMS: MenuItem[] = [
   {
     iconColor: "stroke-blue-500",
     bgColor: "bg-blue-500/10",
@@ -80,7 +83,41 @@ const PROFILE_ITEMS: MenuItem[] = [
   },
 ];
 
+
+export function NotificationItem({
+  bgColor,
+  iconColor,
+  icon: Icon,
+  title,
+  desc,
+  time,
+}: MenuItem) {
+  return (
+    <div className="mx-1.5 my-1 p-2 flex items-center justify-between cursor-pointer rounded-lg hover:bg-muted/50">
+      <div className="flex items-center gap-3">
+        <div className={cn("p-2.5 rounded-xl", bgColor)}>
+          <Icon size={20} className={cn("size-5", iconColor)} />
+        </div>
+
+        <div>
+          <p className="text-sm font-medium text-popover-foreground">
+            {title}
+          </p>
+          <p className="max-w-52 truncate text-sm text-muted-foreground">
+            {desc}
+          </p>
+        </div>
+      </div>
+
+      <p className="text-xs text-muted-foreground">{time}</p>
+    </div>
+  );
+}
+
+
+
 const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
+  const [sheetOpen, setSheetOpen] = useState(false);
   return (
     <div className="flex items-start justify-center">
       <DropdownMenu defaultOpen={defaultOpen}>
@@ -99,41 +136,26 @@ const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
             </DropdownMenuLabel>
 
             {/* Notifications */}
-            {PROFILE_ITEMS.map(
-              ({ bgColor, iconColor, icon: Icon, title, desc, time }) => (
-                <DropdownMenuItem
-                  key={title}
-                  className={
-                    "mx-1.5 my-1 p-2 flex items-center justify-between cursor-pointer"
-                  }
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={cn("p-2.5 rounded-xl", bgColor)}>
-                      <Icon size={20} className={cn("size-5", iconColor)} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-popover-foreground">
-                        {title}
-                      </p>
-                      <p className="max-w-52 truncate text-sm text-muted-foreground">
-                        {desc}
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-xs text-muted-foreground">{time}</p>
-                </DropdownMenuItem>
-              ),
-            )}
+            {PROFILE_ITEMS.map((item) => (
+              <NotificationItem
+                key={item.title}
+                {...item}
+              />
+            ))}
 
             {/* button */}
             <div className="mx-1.5 my-1 p-2">
-              <Button className="rounded-xl w-full cursor-pointer h-9 hover:bg-primary/80">
+              <Button onClick={() => setSheetOpen (true)} className="rounded-xl w-full cursor-pointer h-9 hover:bg-primary/80">
                 See All Notifications
               </Button>
             </div>
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
+      <NotificationSheet 
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+      />
     </div>
   );
 };
