@@ -41,7 +41,12 @@ export class SessionService {
     }
 
     async createSession(
-        userId: string
+        userId: string,
+        ipAddress?: string,
+        userAgent?: string,
+        browserName?: string,
+        deviceType?: string
+
     ): Promise<string> {
 
         const db = await getDb();
@@ -52,6 +57,10 @@ export class SessionService {
             .request()
             .input("LoginSessionID", loginSessionId)
             .input("UserID", userId)
+            .input("IPAddress", ipAddress)
+            .input("UserAgent", userAgent)
+            .input("BrowserName", browserName)
+            .input("DeviceType", deviceType)
             .query(`
             INSERT INTO auth.LoginSessions
             (
@@ -59,7 +68,13 @@ export class SessionService {
                 UserID,
                 IsActive,
                 LoginAt,
-                ExpiresAt
+                ExpiresAt,
+
+                IPAddress,
+                UserAgent,
+                BrowserName,
+                DeviceType,
+                LastActivityAt
             )
             VALUES
             (
@@ -67,11 +82,51 @@ export class SessionService {
                 @UserID,
                 1,
                 SYSUTCDATETIME(),
-                DATEADD(DAY,1,SYSUTCDATETIME())
+                DATEADD(DAY,1,SYSUTCDATETIME()),
+
+                @IPAddress,
+                @UserAgent,
+                @BrowserName,
+                @DeviceType,
+                SYSUTCDATETIME()
             )
         `);
 
         return loginSessionId;
+    }
+
+    async updateRefreshToken(
+        loginSessionId: string,
+        refreshTokenHash: string
+    ): Promise<void> {
+
+        const db = await getDb();
+
+        await db
+            .request()
+            .input(
+                "LoginSessionID",
+                loginSessionId
+            )
+            .input(
+                "RefreshTokenHash",
+                refreshTokenHash
+            )
+            .query(`
+            UPDATE auth.LoginSessions
+            SET
+                RefreshTokenHash =
+                    @RefreshTokenHash,
+
+                RefreshTokenExpiresAt =
+                    DATEADD(
+                        DAY,
+                        7,
+                        SYSUTCDATETIME()
+                    )
+            WHERE LoginSessionID =
+                @LoginSessionID
+        `);
     }
 
 }

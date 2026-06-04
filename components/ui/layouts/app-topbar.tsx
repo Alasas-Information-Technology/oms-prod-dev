@@ -9,14 +9,14 @@ import Notification from "./notification-dropdown";
 export function AppTopbar() {
     return (
 
-        <header className="flex h-12 shrink-0 items-center gap-3 px-4 w-full fixed z-20 top-0 left-0 border-b border-muted/50 bg-background">
-            <Image src={"/c-logo.png"} alt="DIEZ_logo" className="ml-0" width={80} height={32} />
+        <header className="flex h-12 shrink-0 items-center gap-3 px-4 w-full fixed z-20 top-0 left-0 border-b border-muted/50 bg-sidebar">
+            <Image src={"/c-logo.png"} alt="DIEZ_logo" className="ml-0 !dark:invert" width={80} height={32} />
             <Separator orientation="vertical" className="my-2 h-8 mx-3" />
             <SidebarTrigger className="-ml-1" />
             <div className="flex flex-1" />
             <GlobalSearch />
             <Notification />
-            <AnimatedThemeToggler variant="rectangle" duration={500} />
+            <AnimatedThemeToggler variant="circle" duration={600} />
             <AccountDropdown />
         </header>
     )

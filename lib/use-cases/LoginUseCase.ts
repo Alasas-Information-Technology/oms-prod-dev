@@ -19,9 +19,13 @@ import {
     FailedLoginService
 } from "@/lib/services/FailedLoginService";
 import { RateLimitService } from "../services/RateLimitService";
+import { generateRefreshToken, hashToken } from "../utils/tokenGenerator";
 
 export interface LoginResult {
     accessToken: string;
+
+    refreshToken: string;
+
     session: UserSession;
 }
 
@@ -256,6 +260,20 @@ export class LoginUseCase {
                         audience: "OMS_USERS",
                     }
                 );
+            const refreshToken =
+                generateRefreshToken();
+
+            const refreshHash =
+                hashToken(
+                    refreshToken
+                );
+
+            await this.sessionService
+                .updateRefreshToken(
+                    loginSessionId,
+                    refreshHash
+                );
+
 
             await this.authRepository
                 .createLoginHistory({
@@ -280,6 +298,7 @@ export class LoginUseCase {
 
             return {
                 accessToken,
+                refreshToken,
                 session,
             };
 

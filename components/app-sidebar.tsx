@@ -161,7 +161,7 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
   return (
-    <Sidebar className="top-12" collapsible="icon" variant="sidebar"  {...props}>
+    <Sidebar className="top-12 border-r-0" collapsible="icon" variant="inset"  {...props}>
 
       {/* SIDEBAR HEADER */}
       <SidebarHeader>
