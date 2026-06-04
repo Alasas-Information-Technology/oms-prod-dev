@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { UserSession } from "@/lib/types/auth.types";
 
 import { AuthRepository }
     from "@/lib/repositories/AuthRepository";
@@ -23,7 +24,7 @@ import {
 
 export interface LoginResult {
     accessToken: string;
-    session: any;
+    session: UserSession;
 }
 
 export class LoginUseCase {
@@ -268,10 +269,11 @@ export class LoginUseCase {
                 session,
             };
 
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const err = error as Error;
 
             if (
-                error.message !==
+                err.message !==
                 "Invalid username or password"
             ) {
 
