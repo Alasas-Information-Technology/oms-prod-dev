@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import { usePathname } from "next/navigation"
-import { Icon } from "@iconify/react";
 import {
   Sidebar,
   SidebarContent,
@@ -15,172 +14,102 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
-import { GalleryVerticalEndIcon } from "lucide-react"
+import { 
+    Building2, 
+    LayoutDashboard, 
+    FileText, 
+    CheckSquare, 
+    ShoppingCart, 
+    Store, 
+    Users, 
+    UserPlus, 
+    Wallet, 
+    BarChart3, 
+    Settings 
+} from "lucide-react"
 
 // This is sample data.
 const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
-      icon: "boxicons:dashboard-filled",
-      items: [
-        {
-          title: "Home",
-          url: "/app",
-        },
-        {
-          title: "Orders",
-          url: "/app/orders",
-        },
-      ],
+      url: "/app",
+      icon: LayoutDashboard,
     },
-     {
-      title: "Settings",
-      url: "#",
-      icon: "boxicons:gear"
-     }
-    // {
-    //   title: "Build Your Application",
-    //   url: "#",
-    //   items: [
-    //     {
-    //       title: "Routing",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Data Fetching",
-    //       url: "#",
-    //       isActive: true,
-    //     },
-    //     {
-    //       title: "Rendering",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Caching",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Styling",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Optimizing",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Configuring",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Testing",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Authentication",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Deploying",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Upgrading",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Examples",
-    //       url: "#",
-    //     },
-    //   ],
-    // },
-    // {
-    //   title: "API Reference",
-    //   url: "#",
-    //   items: [
-    //     {
-    //       title: "Components",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "File Conventions",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Functions",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "next.config.js Options",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "CLI",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Edge Runtime",
-    //       url: "#",
-    //     },
-    //   ],
-    // },
-    // {
-    //   title: "Architecture",
-    //   url: "#",
-    //   items: [
-    //     {
-    //       title: "Accessibility",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Fast Refresh",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Next.js Compiler",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Supported Browsers",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Turbopack",
-    //       url: "#",
-    //     },
-    //   ],
-    // },
-    // {
-    //   title: "Community",
-    //   url: "#",
-    //   items: [
-    //     {
-    //       title: "Contribution Guide",
-    //       url: "#",
-    //     },
-    //   ],
-    // },
+    {
+      title: "OMS Requests",
+      url: "/app/requests",
+      icon: FileText,
+      items: [
+        { title: "All Requests", url: "/app/requests" },
+        { title: "My Requests", url: "/app/requests/mine" },
+      ]
+    },
+    {
+      title: "Approvals",
+      url: "/app/approvals",
+      icon: CheckSquare,
+    },
+    {
+      title: "Procurement",
+      url: "/app/procurement",
+      icon: ShoppingCart,
+    },
+    {
+      title: "Vendors",
+      url: "/app/vendors",
+      icon: Store,
+    },
+    {
+      title: "Candidates",
+      url: "/app/candidates",
+      icon: Users,
+    },
+    {
+      title: "Onboarding",
+      url: "/app/onboarding",
+      icon: UserPlus,
+    },
+    {
+      title: "Budget Management",
+      url: "/app/budget",
+      icon: Wallet,
+    },
+    {
+      title: "Reports",
+      url: "/app/reports",
+      icon: BarChart3,
+    },
+    {
+      title: "Administration",
+      url: "/app/administration",
+      icon: Settings,
+      items: [
+        { title: "Users", url: "/app/administration/users" },
+        { title: "Roles & Permissions", url: "/app/administration/roles" },
+        { title: "System Settings", url: "/app/administration/settings" },
+      ]
+    }
   ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
   return (
-    <Sidebar className="top-12 border-r-0" collapsible="icon" variant="inset"  {...props}>
+    <Sidebar className="top-12 !border-muted-foreground/20" collapsible="icon" {...props}>
 
       {/* SIDEBAR HEADER */}
-      <SidebarHeader>
+      <SidebarHeader className="border-b border-sidebar-border py-4 px-4">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <GalleryVerticalEndIcon className="size-4" />
+            <SidebarMenuButton size="lg" asChild className="hover:bg-transparent">
+              <a href="/app">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                  <Building2 className="size-4" />
                 </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-medium">Documentation</span>
-                  <span className="">v1.0.0</span>
+                <div className="flex flex-col gap-0.5 leading-none ml-2">
+                  <span className="font-semibold text-base tracking-tight">DIEZ OMS</span>
+                  <span className="text-xs text-muted-foreground">Enterprise Portal</span>
                 </div>
               </a>
             </SidebarMenuButton>
@@ -189,25 +118,25 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
       {/* SIDEBAR CONTENT */}
-      <SidebarContent>
+      <SidebarContent className="pt-4">
         <SidebarGroup>
-          <SidebarMenu className="gap-2">
+          <SidebarMenu className="gap-1.5">
             {data.navMain.map((item) => (
               <SidebarMenuItem key={item.title}>
 
-                <SidebarMenuButton asChild>
-                  <a href={item.url} className="font-medium flex items-center gap-2">
-                    <Icon icon={item?.icon} width={24} height={24}/>
+                <SidebarMenuButton asChild isActive={pathname === item.url || (pathname?.startsWith(item.url) && item.url !== "/app")} tooltip={item.title}>
+                  <a href={item.url} className="font-medium flex items-center gap-3 px-3 py-2">
+                    <item.icon className="size-5" />
                     <span>{item.title}</span>
                   </a>
                 </SidebarMenuButton>
 
                 {item.items?.length ? (
-                  <SidebarMenuSub className="ml-0 border-l-0 px-1.5">
-                    {item.items.map((item) => (
-                      <SidebarMenuSubItem key={item.title}>
-                        <SidebarMenuSubButton asChild isActive={pathname === item.url}>
-                          <a href={item.url}>{item.title}</a>
+                  <SidebarMenuSub className="ml-5 border-l border-sidebar-border/50 px-1.5 py-1">
+                    {item.items.map((subItem) => (
+                      <SidebarMenuSubItem key={subItem.title}>
+                        <SidebarMenuSubButton asChild isActive={pathname === subItem.url}>
+                          <a href={subItem.url} className="text-muted-foreground hover:text-foreground">{subItem.title}</a>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     ))}

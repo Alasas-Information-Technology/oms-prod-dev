@@ -19,7 +19,8 @@ import {
     FailedLoginService
 } from "@/lib/services/FailedLoginService";
 import { RateLimitService } from "../services/RateLimitService";
-import { generateRefreshToken, hashToken } from "../utils/tokenGenerator";
+import { RefreshTokenService } from "../services/RefreshTokenService";
+import { SECURITY } from "@/lib/constants/security";
 
 export interface LoginResult {
     accessToken: string;
@@ -46,6 +47,9 @@ export class LoginUseCase {
 
     private rateLimitService =
         new RateLimitService();
+
+    private refreshTokenService =
+        new RefreshTokenService();
 
     async execute(
         username: string,
@@ -232,7 +236,11 @@ export class LoginUseCase {
             const loginSessionId =
                 await this.sessionService
                     .createSession(
-                        user.UserID
+                        user.UserID,
+                        ipAddress,
+                        userAgent,
+                        browserName,
+                        deviceType
                     );
 
             const session =
@@ -255,16 +263,16 @@ export class LoginUseCase {
                     },
                     process.env.JWT_SECRET!,
                     {
-                        expiresIn: "1d",
-                        issuer: "OMS",
-                        audience: "OMS_USERS",
+                        expiresIn: SECURITY.ACCESS_TOKEN_EXPIRY as any,
+                        issuer: process.env.JWT_ISSUER || "OMS",
+                        audience: process.env.JWT_AUDIENCE || "OMS_USERS",
                     }
                 );
             const refreshToken =
-                generateRefreshToken();
+                this.refreshTokenService.generate();
 
             const refreshHash =
-                hashToken(
+                this.refreshTokenService.hash(
                     refreshToken
                 );
 

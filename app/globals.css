@@ -182,3 +182,41 @@
   animation: none;
   mix-blend-mode: normal;
 }
+
+@utility glass {
+  @apply bg-white/70 backdrop-blur-xl border border-white/20 dark:bg-slate-900/70 dark:border-white/10;
+}
+
+@utility glass-card {
+  @apply glass shadow-md;
+}
+
+@utility glass-popover {
+  @apply glass shadow-xl;
+}
+
+@utility mesh-bg {
+  background-color: var(--background);
+  background-image: 
+    radial-gradient(at 40% 20%, hsla(216,100%,96%,0.7) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, hsla(189,100%,94%,0.7) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, hsla(220,100%,97%,0.7) 0px, transparent 50%),
+    radial-gradient(at 80% 50%, hsla(210,100%,96%,0.7) 0px, transparent 50%);
+}
+
+.dark .mesh-bg {
+  background-color: var(--background);
+  background-image: 
+    radial-gradient(at 40% 20%, hsla(216,100%,15%,0.3) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, hsla(189,100%,10%,0.3) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, hsla(220,100%,15%,0.3) 0px, transparent 50%),
+    radial-gradient(at 80% 50%, hsla(210,100%,12%,0.3) 0px, transparent 50%);
+}
+
+@utility premium-transition {
+  @apply transition-all duration-300 ease-out;
+}
+
+@utility hover-scale {
+  @apply premium-transition hover:scale-[1.02] active:scale-[0.98];
+}

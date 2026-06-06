@@ -3,17 +3,21 @@
 import { cookies } from "next/headers";
 import { AuthService } from "@/lib/services/AuthService";
 
-export async function setAuthCookie(token: string) {
+/**
+ * Clears both auth cookies.
+ * Used as a fallback during logout or when the frontend detects auth failure.
+ */
+export async function clearAuthCookie() {
   const cookieStore = await cookies();
-  cookieStore.set("oms_access_token", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/",
-    maxAge: 60 * 60 * 24, // 1 day
-  });
+  cookieStore.delete("oms_access_token");
+  cookieStore.delete("oms_refresh_token");
 }
 
+/**
+ * Server-side logout.
+ * Calls the logout API endpoint using the current access token,
+ * then clears both auth cookies regardless of the API call result.
+ */
 export async function serverLogout() {
   const cookieStore = await cookies();
   const token = cookieStore.get("oms_access_token")?.value;
@@ -28,7 +32,7 @@ export async function serverLogout() {
       await fetch(`${protocol}://${host}/api/auth/logout`, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`,
+          "Cookie": `oms_access_token=${token}`,
           "x-forwarded-for": headersList.get("x-forwarded-for") || "",
           "user-agent": headersList.get("user-agent") || ""
         }
@@ -39,13 +43,14 @@ export async function serverLogout() {
   }
   
   cookieStore.delete("oms_access_token");
+  cookieStore.delete("oms_refresh_token");
 }
 
-export async function clearAuthCookie() {
-  const cookieStore = await cookies();
-  cookieStore.delete("oms_access_token");
-}
-
+/**
+ * Validates the current access token and returns the user session.
+ * Used by AuthProvider to load user data on mount.
+ * Returns null if the token is missing, expired, or invalid.
+ */
 export async function getAuthSession() {
   const cookieStore = await cookies();
   const token = cookieStore.get("oms_access_token")?.value;

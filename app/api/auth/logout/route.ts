@@ -1,5 +1,7 @@
-import { NextRequest }
-    from "next/server";
+import {
+    NextRequest,
+    NextResponse,
+} from "next/server";
 
 import {
     LogoutUseCase
@@ -15,15 +17,22 @@ export async function POST(
 
     try {
 
-        const authHeader =
+        // Read user context from middleware-injected headers
+        const loginSessionId =
             request.headers.get(
-                "authorization"
+                "x-login-session-id"
             );
 
-        if (!authHeader) {
+        const userId =
+            request.headers.get(
+                "x-user-id"
+            );
 
-            return Response.json(
+        if (!loginSessionId || !userId) {
+
+            return NextResponse.json(
                 {
+                    success: false,
                     message:
                         "Unauthorized"
                 },
@@ -32,12 +41,6 @@ export async function POST(
                 }
             );
         }
-
-        const token =
-            authHeader.replace(
-                "Bearer ",
-                ""
-            );
 
         const ipAddress =
             request.headers.get(
@@ -50,18 +53,26 @@ export async function POST(
             ) ?? "UNKNOWN";
 
         await logoutUseCase.execute(
-            token,
+            loginSessionId,
+            userId,
             ipAddress,
             userAgent
         );
 
-        return Response.json({
+        // Build response and clear both auth cookies
+        const response = NextResponse.json({
             success: true
         });
 
+        response.cookies.delete("oms_access_token");
+        response.cookies.delete("oms_refresh_token");
+
+        return response;
+
     } catch {
 
-        return Response.json(
+        // Even on error, attempt to clear cookies
+        const response = NextResponse.json(
             {
                 success: false,
                 message:
@@ -71,5 +82,10 @@ export async function POST(
                 status: 500
             }
         );
+
+        response.cookies.delete("oms_access_token");
+        response.cookies.delete("oms_refresh_token");
+
+        return response;
     }
 }

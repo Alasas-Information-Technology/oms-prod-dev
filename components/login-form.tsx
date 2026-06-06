@@ -57,19 +57,7 @@ export function LoginForm({
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     setError(null);
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: data.Username, password: data.Password }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok || !result.accessToken) {
-        throw new Error(result.message || "Login failed");
-      }
-
-      await login(result.accessToken, result.session);
+      await login(data.Username, data.Password);
       router.push("/app"); // Redirect to dashboard
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred");
