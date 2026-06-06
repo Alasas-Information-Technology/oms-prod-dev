@@ -28,6 +28,7 @@ import {
   Settings
 } from "lucide-react"
 import { Icon as Iconify } from "@iconify/react"
+import { AppSignature } from "./AppSignature"
 
 // This is sample data.
 const data = {
@@ -97,25 +98,11 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
   return (
-    <Sidebar className="top-12 !border-muted-foreground/20" collapsible="icon" {...props}>
+    <Sidebar className="!border-muted-foreground/20" {...props}>
 
       {/* SIDEBAR HEADER */}
-      <SidebarHeader className="border-b border-sidebar-border py-4 px-4">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild className="hover:bg-transparent">
-              <a href="/app">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <Building2 className="size-4" />
-                </div>
-                <div className="flex flex-col gap-0.5 leading-none ml-2">
-                  <span className="font-semibold text-base tracking-tight">DIEZ OMS</span>
-                  <span className="text-xs text-muted-foreground">Enterprise Portal</span>
-                </div>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+      <SidebarHeader className="border-b border-sidebar-border h-12 flex flex-row items-center">
+        <AppSignature />
       </SidebarHeader>
 
       {/* SIDEBAR CONTENT */}
