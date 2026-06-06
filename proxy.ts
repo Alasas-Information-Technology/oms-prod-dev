@@ -9,13 +9,14 @@ const JWT_SECRET = new TextEncoder().encode(
 const INTERNAL_ROUTES = ['/api/internal']
 const VENDOR_ROUTES = ['/api/vendor']
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/favicon.ico') ||
-    pathname.startsWith('/public')
+    pathname.startsWith('/public') ||
+    pathname.startsWith('/api/auth/')
   ) {
     return NextResponse.next()
   }
@@ -24,11 +25,20 @@ export async function middleware(request: NextRequest) {
     request.cookies.get('oms_access_token')?.value ||
     request.headers.get('authorization')?.replace('Bearer ', '')
 
+  const isApiRoute = pathname.startsWith('/api/')
+
   if (!token) {
-    return NextResponse.json(
-      { message: 'Unauthorized' },
-      { status: 401 }
-    )
+    if (isApiRoute) {
+      return NextResponse.json(
+        { message: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+    // For non-API routes, if they are not on /login, redirect to /login
+    if (pathname !== '/login') {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+    return NextResponse.next()
   }
 
   try {
@@ -38,6 +48,11 @@ export async function middleware(request: NextRequest) {
     )
 
     const userType = payload.userType as string
+
+    // If logged in and trying to access login page, redirect to dashboard
+    if (pathname === '/login') {
+      return NextResponse.redirect(new URL('/app', request.url))
+    }
 
     /*
      * Internal Portal Protection
@@ -110,19 +125,27 @@ export async function middleware(request: NextRequest) {
         headers: requestHeaders,
       },
     });
-    
+
   } catch {
-    return NextResponse.json(
-      { message: 'Invalid Token' },
-      { status: 401 }
-    )
+    if (isApiRoute) {
+      return NextResponse.json(
+        { message: 'Invalid Token' },
+        { status: 401 }
+      )
+    }
+
+    // Invalid token on UI routes -> clear cookie & redirect to login
+    const response = NextResponse.redirect(new URL('/login', request.url))
+    response.cookies.delete('oms_access_token')
+    return response
   }
 }
 
 export const config = {
   matcher: [
     '/api/:path*',
-    '/dashboard/:path*',
+    '/app/:path*',
     '/vendor/:path*',
+    '/login',
   ],
 }
