@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { LoginUseCase } from "@/lib/use-cases/LoginUseCase";
-
+import { SECURITY } from "@/lib/constants/security";
 
 const loginUseCase =
     new LoginUseCase();
@@ -34,7 +34,31 @@ export async function POST(
                 userAgent
             );
 
-        return Response.json(result);
+        // Build response WITHOUT tokens in the body (security requirement)
+        const response = NextResponse.json({
+            success: true,
+            session: result.session,
+        });
+
+        // Set access token as HttpOnly cookie
+        response.cookies.set("oms_access_token", result.accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            path: "/",
+            maxAge: SECURITY.ACCESS_TOKEN_COOKIE_MAX_AGE,
+        });
+
+        // Set refresh token as HttpOnly cookie
+        response.cookies.set("oms_refresh_token", result.refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            path: "/",
+            maxAge: SECURITY.REFRESH_TOKEN_COOKIE_MAX_AGE,
+        });
+
+        return response;
 
     } catch (error: any) {
 
@@ -57,14 +81,13 @@ export async function POST(
             );
         }
 
-        return Response.json(
+        return NextResponse.json(
             {
                 success: false,
                 message: error.message,
-                stack: error.stack
             },
             {
-                status: 500
+                status: 401
             }
         );
     }

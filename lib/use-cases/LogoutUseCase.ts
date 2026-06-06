@@ -1,11 +1,16 @@
-import jwt from "jsonwebtoken";
-
 import { AuthRepository }
     from "@/lib/repositories/AuthRepository";
 
 import { SessionService }
     from "@/lib/services/SessionService";
 
+/**
+ * LogoutUseCase
+ *
+ * Handles session revocation, refresh token revocation, and logout history.
+ * Reads loginSessionId and userId from middleware-injected headers
+ * (already validated by middleware) instead of re-verifying the JWT.
+ */
 export class LogoutUseCase {
 
     private authRepository =
@@ -15,26 +20,29 @@ export class LogoutUseCase {
         new SessionService();
 
     async execute(
-        token: string,
+        loginSessionId: string,
+        userId: string,
         ipAddress?: string,
         userAgent?: string
     ): Promise<void> {
 
-        const payload =
-            jwt.verify(
-                token,
-                process.env.JWT_SECRET!
-            ) as any;
-
+        // Revoke the session
         await this.sessionService
             .revokeSession(
-                payload.loginSessionId
+                loginSessionId
             );
 
+        // Revoke the refresh token
+        await this.sessionService
+            .revokeRefreshToken(
+                loginSessionId
+            );
+
+        // Record logout history
         const user =
             await this.authRepository
                 .getUserSessionData(
-                    payload.userId
+                    userId
                 );
 
         if (user) {
@@ -42,11 +50,9 @@ export class LogoutUseCase {
             await this.authRepository
                 .createLogoutHistory({
 
-                    loginSessionId:
-                        payload.loginSessionId,
+                    loginSessionId,
 
-                    userId:
-                        payload.userId,
+                    userId,
 
                     username:
                         user.username,
@@ -59,5 +65,9 @@ export class LogoutUseCase {
                         "USER_LOGOUT"
                 });
         }
+
+        console.info(
+            `[AUTH] User logout — Session: ${loginSessionId}`
+        );
     }
 }
