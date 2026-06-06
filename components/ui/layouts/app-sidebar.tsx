@@ -1,7 +1,5 @@
 "use client"
 
-import * as React from "react"
-import { usePathname } from "next/navigation"
 import {
   Sidebar,
   SidebarContent,
@@ -13,23 +11,24 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
+import { Icon as Iconify } from "@iconify/react"
 import {
-  Building2,
-  LayoutDashboard,
-  FileText,
+  BarChart3,
   CheckSquare,
+  FileText,
+  Settings,
   ShoppingCart,
   Store,
-  Users,
   UserPlus,
-  Wallet,
-  BarChart3,
-  Settings
+  Users,
+  Wallet
 } from "lucide-react"
-import { Icon as Iconify } from "@iconify/react"
+import { motion } from "motion/react"
+import { usePathname } from "next/navigation"
+import * as React from "react"
 import { AppSignature } from "./AppSignature"
-
 // This is sample data.
 const data = {
   navMain: [
@@ -96,13 +95,18 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const pathname = usePathname()
+  const pathname = usePathname();
+  const { state } = useSidebar()
   return (
-    <Sidebar className="!border-muted-foreground/20" {...props}>
+    <Sidebar className="border-muted-foreground/20!" {...props}>
 
       {/* SIDEBAR HEADER */}
       <SidebarHeader className="border-b border-sidebar-border h-12 flex flex-row items-center">
-        <AppSignature />
+        {state === "expanded" && (
+          <motion.div layoutId="app-signature-container" className="w-full">
+            <AppSignature />
+          </motion.div>
+        )}
       </SidebarHeader>
 
       {/* SIDEBAR CONTENT */}
