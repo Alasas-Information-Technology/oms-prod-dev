@@ -14,19 +14,20 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
-import { 
-    Building2, 
-    LayoutDashboard, 
-    FileText, 
-    CheckSquare, 
-    ShoppingCart, 
-    Store, 
-    Users, 
-    UserPlus, 
-    Wallet, 
-    BarChart3, 
-    Settings 
+import {
+  Building2,
+  LayoutDashboard,
+  FileText,
+  CheckSquare,
+  ShoppingCart,
+  Store,
+  Users,
+  UserPlus,
+  Wallet,
+  BarChart3,
+  Settings
 } from "lucide-react"
+import { Icon as Iconify } from "@iconify/react"
 
 // This is sample data.
 const data = {
@@ -34,7 +35,7 @@ const data = {
     {
       title: "Dashboard",
       url: "/app",
-      icon: LayoutDashboard,
+      icon: "material-symbols:dashboard",
     },
     {
       title: "OMS Requests",
@@ -126,7 +127,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
                 <SidebarMenuButton asChild isActive={pathname === item.url || (pathname?.startsWith(item.url) && item.url !== "/app")} tooltip={item.title}>
                   <a href={item.url} className="font-medium flex items-center gap-3 px-3 py-2">
-                    <item.icon className="size-5" />
+                    {typeof item.icon === "string" ? <Iconify icon={item.icon} className="size-5.5! text-primary" /> : <item.icon className="size-5" />}
                     <span>{item.title}</span>
                   </a>
                 </SidebarMenuButton>
