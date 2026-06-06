@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Lora, Ubuntu_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/components/theme-provider"
 
 const fontSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -33,8 +35,20 @@ export default function RootLayout({
     <html
       lang="en"
       className={cn("h-full", "antialiased", fontSans.variable, fontSerif.variable, "font-sans", fontMono.variable)}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
