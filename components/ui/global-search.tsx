@@ -23,7 +23,7 @@ export function GlobalSearch() {
     <Button
       onClick={() => setOpen(true)}
       variant="outline"
-      className="flex w-64 justify-start gap-3 text-muted-foreground"
+      className="flex w-[500px] justify-start gap-3 text-muted-foreground"
     >
       <Search className="h-4 w-4" />
       Search...
