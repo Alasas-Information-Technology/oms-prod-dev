@@ -1,6 +1,6 @@
 import { getAuthSession } from "@/app/actions/auth";
 import { BudgetKpiCard } from "@/components/oms/budget-kpi";
-import { GenericKpiCard } from "@/components/oms/simple-kpi";
+import { SimpleKpiCard } from "@/components/oms/simple-kpi";
 import { Badge } from "@/components/ui/badge";
 
 export default async function Page() {
@@ -51,7 +51,7 @@ export default async function Page() {
 
         </div>
         <BudgetKpiCard reserved={65.893} consumed={22}/>
-        <GenericKpiCard icon="material-symbols:unknown-document-outline" value={1000} title="Total Contracts" description="aarush"/>
+        <SimpleKpiCard icon="material-symbols:unknown-document-outline" value={1000} title="Total Contracts" description="aarush"/>
         <div className="aspect-video rounded-xl bg-muted/50" />
         <div className="aspect-video rounded-xl bg-muted/50" />
       </div>

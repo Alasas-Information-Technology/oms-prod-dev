@@ -3,12 +3,31 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import { Progress } from "@/components/ui/progress";
-import { Skeleton } from "@/components/ui/skeleton";
+import { AnimatePresence, motion } from "motion/react";
 
 type BudgetKpiCardProps = {
   reserved: number;
   consumed: number;
 };
+
+function Shimmer({ className }: { className?: string }) {
+  return (
+    <motion.div
+      className={`rounded-md ${className ?? ""}`}
+      style={{
+        backgroundImage:
+          "linear-gradient(90deg, var(--muted) 25%, color-mix(in oklch, var(--foreground) 8%, var(--muted)) 50%, var(--muted) 75%)",
+        backgroundSize: "200% 100%",
+      }}
+      animate={{ backgroundPositionX: ["200%", "-200%"] }}
+      transition={{
+        duration: 1.5,
+        ease: "linear",
+        repeat: Number.POSITIVE_INFINITY,
+      }}
+    />
+  );
+}
 
 export function BudgetKpiCard({ reserved, consumed }: BudgetKpiCardProps) {
   const [loading, setLoading] = useState(true);
@@ -37,11 +56,9 @@ export function BudgetKpiCard({ reserved, consumed }: BudgetKpiCardProps) {
 
 
         <div className="mt-8 flex items-end justify-between">
-          <Skeleton className="h-10 w-28" />
-          <Skeleton className="h-5 w-10" />
-        </div>
-
-        <Skeleton className="mt-8 h-2 w-full" />
+          <p className="text-3xl font-bold">
+            AED{consumed.toFixed(1)}
+          </p>
 
         <div className="mt-2 flex justify-between">
           <Skeleton className="h-4 w-20" />
@@ -50,9 +67,6 @@ export function BudgetKpiCard({ reserved, consumed }: BudgetKpiCardProps) {
 
 
         </div>
-      </div>
-    );
-  }
 
   return (
     <div className="rounded-xl border bg-background p-4 shadow-sm">
