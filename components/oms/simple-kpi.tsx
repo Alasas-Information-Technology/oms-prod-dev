@@ -71,8 +71,6 @@ export function SimpleKpiCard({ icon, value, title, description, color, bg }: Ge
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Content layer — always mounted, fades in */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: loading ? 0 : 1 }}
