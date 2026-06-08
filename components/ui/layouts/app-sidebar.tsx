@@ -1,7 +1,5 @@
 "use client"
 
-import * as React from "react"
-import { usePathname } from "next/navigation"
 import {
   Sidebar,
   SidebarContent,
@@ -13,28 +11,31 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
-import { 
-    Building2, 
-    LayoutDashboard, 
-    FileText, 
-    CheckSquare, 
-    ShoppingCart, 
-    Store, 
-    Users, 
-    UserPlus, 
-    Wallet, 
-    BarChart3, 
-    Settings 
+import { Icon as Iconify } from "@iconify/react"
+import {
+  BarChart3,
+  CheckSquare,
+  FileText,
+  Settings,
+  ShoppingCart,
+  Store,
+  UserPlus,
+  Users,
+  Wallet
 } from "lucide-react"
-
+import { motion } from "motion/react"
+import { usePathname } from "next/navigation"
+import * as React from "react"
+import { AppSignature } from "./AppSignature"
 // This is sample data.
 const data = {
   navMain: [
     {
       title: "Dashboard",
       url: "/app",
-      icon: LayoutDashboard,
+      icon: "material-symbols:dashboard",
     },
     {
       title: "OMS Requests",
@@ -94,27 +95,18 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const pathname = usePathname()
+  const pathname = usePathname();
+  const { state } = useSidebar()
   return (
-    <Sidebar className="top-12 !border-muted-foreground/20" collapsible="icon" {...props}>
+    <Sidebar className="border-muted-foreground/20!" {...props}>
 
       {/* SIDEBAR HEADER */}
-      <SidebarHeader className="border-b border-sidebar-border py-4 px-4">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild className="hover:bg-transparent">
-              <a href="/app">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <Building2 className="size-4" />
-                </div>
-                <div className="flex flex-col gap-0.5 leading-none ml-2">
-                  <span className="font-semibold text-base tracking-tight">DIEZ OMS</span>
-                  <span className="text-xs text-muted-foreground">Enterprise Portal</span>
-                </div>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+      <SidebarHeader className="border-b border-sidebar-border h-12 flex flex-row items-center">
+        {state === "expanded" && (
+          <motion.div layoutId="app-signature-container" className="w-full">
+            <AppSignature />
+          </motion.div>
+        )}
       </SidebarHeader>
 
       {/* SIDEBAR CONTENT */}
@@ -126,7 +118,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
                 <SidebarMenuButton asChild isActive={pathname === item.url || (pathname?.startsWith(item.url) && item.url !== "/app")} tooltip={item.title}>
                   <a href={item.url} className="font-medium flex items-center gap-3 px-3 py-2">
-                    <item.icon className="size-5" />
+                    {typeof item.icon === "string" ? <Iconify icon={item.icon} className="size-5.5! text-primary" /> : <item.icon className="size-5" />}
                     <span>{item.title}</span>
                   </a>
                 </SidebarMenuButton>
