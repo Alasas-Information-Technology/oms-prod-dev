@@ -45,7 +45,7 @@ export function BudgetKpiCard({ reserved, consumed }: BudgetKpiCardProps) {
   }, []);
 
   return (
-    <div className="relative rounded-xl border bg-background p-5 shadow-sm overflow-hidden flex flex-col justify-between">
+    <div className="relative rounded-xl border bg-background p-5 shadow-sm overflow-hidden flex flex-col justify-between h-full">
       {/* Skeleton layer */}
       <AnimatePresence>
         {loading && (
@@ -61,6 +61,7 @@ export function BudgetKpiCard({ reserved, consumed }: BudgetKpiCardProps) {
               <Shimmer className="h-6 w-32" />
               <Shimmer className="h-10 w-10 rounded-full" />
             </div>
+            <div className="flex flex-1"></div>
 
             <div>
               <div className="mt-6 flex items-end justify-between">
@@ -84,8 +85,9 @@ export function BudgetKpiCard({ reserved, consumed }: BudgetKpiCardProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: loading ? 0 : 1 }}
         transition={{ duration: 0.4, ease: "easeInOut", delay: loading ? 0 : 0.1 }}
+        className="h-full flex flex-col"
       >
-        <div className="flex items-center gap-3 justify-between">
+        <div className="flex items-center gap-3 justify-between flex-1">
           <h6 className="text-lg font-medium text-muted-foreground ml-0.5">
             Budget Overview
           </h6>
@@ -97,22 +99,24 @@ export function BudgetKpiCard({ reserved, consumed }: BudgetKpiCardProps) {
             />
           </div>
         </div>
+        <div className="flex flex-1"></div>
+        <div>
+          <div className="mt-8 flex items-end justify-between">
+            <p className="text-3xl font-bold">
+              AED {formatCompactNumber(consumed)}
+            </p>
 
-        <div className="mt-8 flex items-end justify-between">
-          <p className="text-3xl font-bold">
-            AED {formatCompactNumber(consumed)}
-          </p>
+            <p className="text-sm font-medium">
+              {percentage.toFixed(0)}%
+            </p>
+          </div>
 
-          <p className="text-sm font-medium">
-            {percentage.toFixed(0)}%
-          </p>
-        </div>
+          <Progress value={percentage} className="mt-8" />
 
-        <Progress value={percentage} className="mt-8" />
-
-        <div className="mt-2 flex justify-between text-sm text-muted-foreground">
-          <span>Remaining</span>
-          <span>AED {formatCompactNumber(remaining)}</span>
+          <div className="mt-2 flex justify-between text-sm text-muted-foreground">
+            <span>Remaining</span>
+            <span>AED {formatCompactNumber(remaining)}</span>
+          </div>
         </div>
       </motion.div>
     </div>
