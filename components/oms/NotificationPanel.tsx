@@ -4,7 +4,7 @@ import { cn } from "@/components/ui/utils";
 export type NotificationType = "info" | "success" | "warning" | "error";
 
 export interface Notification {
-  id: string;
+  id: string;           
   title: string;
   description: string;
   type: NotificationType;
@@ -51,6 +51,8 @@ interface NotificationPanelProps {
   onDismiss?: (id: string) => void;
   onActionClick?: (id: string) => void;
   className?: string;
+  onViewAll?: () => void;
+  hideViewAll?: boolean;
 }
 
 export function NotificationPanel({
@@ -59,6 +61,8 @@ export function NotificationPanel({
   onMarkAllRead,
   onDismiss,
   onActionClick,
+  onViewAll,
+  hideViewAll,
   className,
 }: NotificationPanelProps) {
   const unread = notifications.filter((n) => !n.read).length;
@@ -70,7 +74,7 @@ export function NotificationPanel({
         className
       )}
     >
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50/50">
+      <div className="flex items-center justify-between px-4 py-3 pr-12 border-b border-slate-100 bg-slate-50/50">
         <div className="flex items-center gap-2.5">
           <Bell size={15} className="text-slate-700" />
           <span className="text-sm font-semibold text-slate-900">Notifications</span>
@@ -176,9 +180,12 @@ export function NotificationPanel({
         )}
       </div>
 
-      {notifications.length > 0 && (
+      {notifications.length > 0 && !hideViewAll && (
         <div className="px-4 py-2.5 border-t border-slate-100 bg-slate-50/50 text-center">
-          <button className="text-xs text-primary hover:text-primary/80 font-medium transition-colors">
+          <button
+            onClick={onViewAll}
+            className="text-xs text-primary hover:text-primary/80 font-medium transition-colors"
+          >
             View all notifications
           </button>
         </div>

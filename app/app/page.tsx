@@ -24,6 +24,11 @@ export default async function Page() {
           <p>User Type: {user.userType}</p>
         </div>
 
+
+
+
+
+
         <div className="col-span-2">
           <p>Your Permissions:</p>
 
@@ -42,6 +47,8 @@ export default async function Page() {
               <li key={scope.scopeCode}>{scope.scopeCode}</li>
             ))}
           </ul>
+
+
         </div>
         <BudgetKpiCard reserved={65.893} consumed={22}/>
         <GenericKpiCard icon="material-symbols:unknown-document-outline" value={1000} title="Total Contracts" description="aarush"/>

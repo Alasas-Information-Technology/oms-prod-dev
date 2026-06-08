@@ -26,11 +26,15 @@ export function BudgetKpiCard({ reserved, consumed }: BudgetKpiCardProps) {
 
   if (loading) {
     return (
+
+
       <div className="rounded-xl border bg-background p-4 shadow-sm">
         <div className="flex items-center justify-between">
           <Skeleton className="h-6 w-40" />
           <Skeleton className="h-12 w-12 rounded-full" />
         </div>
+
+
 
         <div className="mt-8 flex items-end justify-between">
           <Skeleton className="h-10 w-28" />
@@ -42,6 +46,9 @@ export function BudgetKpiCard({ reserved, consumed }: BudgetKpiCardProps) {
         <div className="mt-2 flex justify-between">
           <Skeleton className="h-4 w-20" />
           <Skeleton className="h-4 w-20" />
+
+
+
         </div>
       </div>
     );
@@ -62,10 +69,18 @@ export function BudgetKpiCard({ reserved, consumed }: BudgetKpiCardProps) {
         </div>
       </div>
 
+
+
+
+
+
       <div className="mt-8 flex items-end justify-between">
         <p className="text-3xl font-bold">
           AED{consumed.toFixed(1)}
         </p>
+
+
+
 
         <p className="text-sm font-medium">
           {percentage.toFixed(0)}%
