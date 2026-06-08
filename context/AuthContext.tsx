@@ -51,6 +51,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     fetchUser();
+
+    // Proactive token refresh: refresh the token every 10 minutes
+    // This prevents the 15-minute access token from expiring while the user is active
+    // and ensures page navigations/reloads don't hit the server with an expired token.
+    const refreshInterval = setInterval(() => {
+      api.post("/auth/refresh").catch(() => {
+        // If proactive refresh fails, we don't immediately logout, 
+        // we'll let the standard 401 interceptor or fetchUser handle the failure later.
+      });
+    }, 10 * 60 * 1000); // 10 minutes
+
+    return () => clearInterval(refreshInterval);
   }, []);
 
   /**
