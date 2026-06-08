@@ -9,6 +9,7 @@ import {
     Tag, LayoutGrid, GitBranch, ChevronRight, ArrowUpRight,
     ArrowDownRight, Shield, Loader, FormInput, FileCheck2,
     X, LayoutDashboard, BarChart3, Settings, FileText, Users,
+    Layers, SlidersHorizontal, Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,8 +42,17 @@ import { ApprovalWorkflow, type ApprovalStep } from "@/components/oms/ApprovalWo
 import { NotificationPanel, type Notification } from "@/components/oms/NotificationPanel";
 import { cn } from "@/components/ui/utils";
 import { SimpleKpiCard } from "../oms/simple-kpi";
+import { BudgetKpiCard } from "../oms/budget-kpi";
 import { formatCompactNumber } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Slider } from "@/components/ui/slider";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Toggle } from "@/components/ui/toggle";
 
 // ─── Sample Data ──────────────────────────────────────────────────────────────
 
@@ -110,11 +120,13 @@ const NAV_GROUPS = [
             { id: "status", label: "Status & Badges", Icon: Tag },
             { id: "data", label: "Data Display", Icon: LayoutGrid },
             { id: "navigation", label: "Navigation & Tabs", Icon: LayoutDashboard },
+            { id: "extras", label: "Additional UI", Icon: Layers },
         ],
     },
     {
         label: "OMS Patterns",
         items: [
+            { id: "kpis", label: "KPI Cards", Icon: Wallet },
             { id: "workflow", label: "Approval Workflow", Icon: GitBranch },
             { id: "timeline", label: "Timeline", Icon: Clock },
             { id: "feedback", label: "Notifications", Icon: Bell },
@@ -130,6 +142,8 @@ const SECTION_TITLES: Record<string, string> = {
     status: "Status & Badges",
     data: "Data Display",
     navigation: "Navigation & Tabs",
+    extras: "Additional UI Components",
+    kpis: "KPI Cards",
     workflow: "Approval Workflow",
     timeline: "Timeline",
     feedback: "Notifications & Feedback",
@@ -908,6 +922,295 @@ function FeedbackSection() {
     );
 }
 
+// ─── Section: KPI Cards ───────────────────────────────────────────────────────
+
+function KpiSection() {
+    return (
+        <div className="space-y-8">
+            <div>
+                <SL>Simple KPI Cards</SL>
+                <div className="grid grid-cols-4 gap-4">
+                    {KPI_CARDS.map((card) => (
+                        <SimpleKpiCard
+                            key={card.label}
+                            icon={card.Icon}
+                            title={card.label}
+                            description={card.sub}
+                            value={Number(card.value)}
+                            color={card.color}
+                            bg={card.bg}
+                        />
+                    ))}
+                </div>
+            </div>
+
+            <Separator />
+
+            <div>
+                <SL>Budget KPI Card</SL>
+                <div className="grid grid-cols-3 gap-4">
+                    <BudgetKpiCard reserved={100000} consumed={68500} />
+                    <BudgetKpiCard reserved={50000} consumed={49200} />
+                    <BudgetKpiCard reserved={250000} consumed={42000} />
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// ─── Section: Additional UI Components ────────────────────────────────────────
+
+function ExtrasSection() {
+    const confirm = useConfirm();
+    const [sliderVal, setSliderVal] = useState([40]);
+
+    const handleConfirmDemo = confirm(
+        {
+            title: "Confirm Action",
+            description: "Are you sure you want to proceed with this action? This is a demo of the global useConfirm hook.",
+            confirmLabel: "Yes, proceed",
+            variant: "default",
+        },
+        () => { alert("Confirmed!"); },
+    );
+
+    const handleDestructiveDemo = confirm(
+        {
+            title: "Delete Contract?",
+            description: "This will permanently remove contract OMS-2025-001 and all associated documents from the system.",
+            confirmLabel: "Delete Permanently",
+            variant: "destructive",
+        },
+        () => { alert("Deleted!"); },
+    );
+
+    return (
+        <div className="space-y-8">
+
+            {/* ── Confirm Dialog ───────────────────────────────── */}
+            <div>
+                <SL>Confirm Dialog (useConfirm hook)</SL>
+                <p className="text-xs text-muted-foreground mb-3">A global, imperative confirmation dialog rendered once in the app via context. No need to declare the dialog in every component.</p>
+                <div className="flex gap-3">
+                    <Button onClick={handleConfirmDemo}>Confirm Action</Button>
+                    <Button variant="destructive" onClick={handleDestructiveDemo}>
+                        <Trash2 size={14} /> Destructive Confirm
+                    </Button>
+                </div>
+            </div>
+
+            <Separator />
+
+            {/* ── Accordion ────────────────────────────────────── */}
+            <div>
+                <SL>Accordion</SL>
+                <Accordion type="single" collapsible className="w-full max-w-lg">
+                    <AccordionItem value="item-1">
+                        <AccordionTrigger>What is the OMS?</AccordionTrigger>
+                        <AccordionContent>
+                            The Outsource Management System (OMS) is a platform for managing contracts, vendors, procurement workflows, and compliance reporting.
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-2">
+                        <AccordionTrigger>How are contracts approved?</AccordionTrigger>
+                        <AccordionContent>
+                            Contracts follow a multi-step approval workflow, requiring sign-off from Section Chiefs, Division Managers, Finance, Procurement, and Executive Directors.
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-3">
+                        <AccordionTrigger>What procurement modes are supported?</AccordionTrigger>
+                        <AccordionContent>
+                            The system supports Public Bidding, Limited Source Bidding, Direct Contracting, Shopping, and Lease of Real Property.
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+            </div>
+
+            <Separator />
+
+            {/* ── Avatars ──────────────────────────────────────── */}
+            <div>
+                <SL>Avatars</SL>
+                <div className="flex items-center gap-3">
+                    {[
+                        { initials: "JR", bg: "bg-primary text-white" },
+                        { initials: "MS", bg: "bg-emerald-600 text-white" },
+                        { initials: "RL", bg: "bg-indigo-600 text-white" },
+                        { initials: "AC", bg: "bg-amber-600 text-white" },
+                        { initials: "LC", bg: "bg-rose-600 text-white" },
+                    ].map((a) => (
+                        <Avatar key={a.initials} className="size-10">
+                            <AvatarFallback className={cn("text-xs font-bold", a.bg)}>{a.initials}</AvatarFallback>
+                        </Avatar>
+                    ))}
+
+                    <Separator orientation="vertical" className="h-8" />
+
+                    {/* Stacked avatars */}
+                    <div className="flex -space-x-2">
+                        {["JR", "MS", "RL", "AC", "+3"].map((initials, i) => (
+                            <Avatar key={i} className="size-8 border-2 border-background">
+                                <AvatarFallback className={cn("text-[10px] font-bold", i === 4 ? "bg-muted text-muted-foreground" : "bg-primary text-white")}>{initials}</AvatarFallback>
+                            </Avatar>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <Separator />
+
+            {/* ── Tooltips ─────────────────────────────────────── */}
+            <div>
+                <SL>Tooltips</SL>
+                <div className="flex gap-3">
+                    {(["top", "right", "bottom", "left"] as const).map((side) => (
+                        <Tooltip key={side}>
+                            <TooltipTrigger asChild>
+                                <Button variant="outline" size="sm">Tooltip {side}</Button>
+                            </TooltipTrigger>
+                            <TooltipContent side={side}>
+                                <p>This is a {side} tooltip</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    ))}
+                </div>
+            </div>
+
+            <Separator />
+
+            {/* ── Hover Card ───────────────────────────────────── */}
+            <div>
+                <SL>Hover Card</SL>
+                <HoverCard>
+                    <HoverCardTrigger asChild>
+                        <Button variant="link" className="text-primary p-0 h-auto">@TechServ Philippines Inc.</Button>
+                    </HoverCardTrigger>
+                    <HoverCardContent className="w-80">
+                        <div className="flex gap-3">
+                            <Avatar className="size-10">
+                                <AvatarFallback className="bg-primary text-white text-xs font-bold">TP</AvatarFallback>
+                            </Avatar>
+                            <div className="space-y-1">
+                                <h4 className="text-sm font-semibold">TechServ Philippines Inc.</h4>
+                                <p className="text-xs text-muted-foreground">Accredited IT service provider since 2019. Specializes in infrastructure, cloud services, and enterprise software.</p>
+                                <div className="flex items-center gap-2 pt-1">
+                                    <StatusBadge status="accredited" />
+                                    <span className="text-xs text-muted-foreground">12 active contracts</span>
+                                </div>
+                            </div>
+                        </div>
+                    </HoverCardContent>
+                </HoverCard>
+            </div>
+
+            <Separator />
+
+            {/* ── Sheet (Slide-over panel) ──────────────────────── */}
+            <div>
+                <SL>Sheet (Slide-over Panel)</SL>
+                <div className="flex gap-3">
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <Button variant="outline"><Eye size={14} /> View Details</Button>
+                        </SheetTrigger>
+                        <SheetContent>
+                            <SheetHeader>
+                                <SheetTitle>Contract Details</SheetTitle>
+                                <SheetDescription>OMS-2025-001 · TechServ Philippines Inc.</SheetDescription>
+                            </SheetHeader>
+                            <div className="space-y-4 mt-6">
+                                {[["Contract Value", "₱4,500,000.00"], ["Type", "IT Services"], ["Term", "Jan 1 – Dec 31, 2025"], ["Status", "Active"], ["Funding", "GAA FY 2025"]].map(([k, v]) => (
+                                    <div key={k} className="flex justify-between border-b pb-2">
+                                        <span className="text-sm text-muted-foreground">{k}</span>
+                                        <span className="text-sm font-medium">{v}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </SheetContent>
+                    </Sheet>
+                </div>
+            </div>
+
+            <Separator />
+
+            {/* ── Skeleton ─────────────────────────────────────── */}
+            <div>
+                <SL>Skeleton Loading States</SL>
+                <div className="grid grid-cols-2 gap-6">
+                    <Card className="shadow-none">
+                        <CardContent className="p-5 space-y-3">
+                            <div className="flex items-center gap-3">
+                                <Skeleton className="h-10 w-10 rounded-full" />
+                                <div className="space-y-2 flex-1">
+                                    <Skeleton className="h-4 w-3/4" />
+                                    <Skeleton className="h-3 w-1/2" />
+                                </div>
+                            </div>
+                            <Skeleton className="h-3 w-full" />
+                            <Skeleton className="h-3 w-5/6" />
+                            <Skeleton className="h-3 w-4/6" />
+                        </CardContent>
+                    </Card>
+                    <Card className="shadow-none">
+                        <CardContent className="p-5 space-y-3">
+                            <Skeleton className="h-5 w-32" />
+                            <Skeleton className="h-8 w-24" />
+                            <Skeleton className="h-2 w-full mt-4" />
+                            <div className="flex justify-between">
+                                <Skeleton className="h-3 w-16" />
+                                <Skeleton className="h-3 w-16" />
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+
+            <Separator />
+
+            {/* ── Slider ───────────────────────────────────────── */}
+            <div>
+                <SL>Slider</SL>
+                <div className="max-w-md space-y-4">
+                    <div>
+                        <div className="flex justify-between mb-2">
+                            <Label>Budget Allocation</Label>
+                            <span className="text-sm font-semibold text-primary">{sliderVal[0]}%</span>
+                        </div>
+                        <Slider value={sliderVal} onValueChange={setSliderVal} max={100} step={1} />
+                    </div>
+                    <div>
+                        <Label className="mb-2 block">Disabled Slider</Label>
+                        <Slider defaultValue={[65]} max={100} step={1} disabled />
+                    </div>
+                </div>
+            </div>
+
+            <Separator />
+
+            {/* ── Toggle & Toggle Group ─────────────────────────── */}
+            <div>
+                <SL>Toggle & Toggle Group</SL>
+                <div className="space-y-4">
+                    <div className="flex gap-2">
+                        <Toggle aria-label="Toggle bold" variant="outline"><Type size={14} /> Bold</Toggle>
+                        <Toggle aria-label="Toggle italic" variant="outline">Italic</Toggle>
+                        <Toggle aria-label="Toggle underline" variant="outline" disabled>Disabled</Toggle>
+                    </div>
+
+                    <div>
+                        <Label className="mb-2 block text-xs text-muted-foreground">View Mode</Label>
+                        <ToggleGroup type="single" defaultValue="grid" variant="outline">
+                            <ToggleGroupItem value="grid" aria-label="Grid view"><LayoutGrid size={14} /> Grid</ToggleGroupItem>
+                            <ToggleGroupItem value="list" aria-label="List view"><FileText size={14} /> List</ToggleGroupItem>
+                            <ToggleGroupItem value="chart" aria-label="Chart view"><BarChart3 size={14} /> Chart</ToggleGroupItem>
+                        </ToggleGroup>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 // ─── Root App ─────────────────────────────────────────────────────────────────
 
 export default function DesignSystemPage() {
@@ -924,6 +1227,8 @@ export default function DesignSystemPage() {
         status: <StatusSection />,
         data: <DataSection />,
         navigation: <NavigationSection />,
+        extras: <ExtrasSection />,
+        kpis: <KpiSection />,
         workflow: <WorkflowSection />,
         timeline: <TimelineSection />,
         feedback: <FeedbackSection />,
