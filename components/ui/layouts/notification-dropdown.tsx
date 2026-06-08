@@ -1,180 +1,76 @@
 "use client";
 
-import type { ReactElement } from "react";
-import NotificationSheet from "./notification-sheet";
 import { useState } from "react";
+import { BellRing } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import {
-  BellRing,
-  Headset,
-  LucideIcon,
-  Salad,
-  ScanText,
-  Star,
-  Video,
-} from "lucide-react";
-import { title } from "process";
 
-type Props = {
-  trigger: ReactElement;
-  defaultOpen?: boolean;
-  align?: "start" | "center" | "end";
-};
+import NotificationSheet from "./notification-sheet";
+import { NotificationPanel } from "@/components/oms/NotificationPanel";
 
-type MenuItem = {
-  iconColor: string;
-  bgColor: string;
-  icon: LucideIcon;
-  title: string;
-  desc: string;
-  time: string;
-};
-
-export const PROFILE_ITEMS: MenuItem[] = [
+const notifications = [
   {
-    iconColor: "stroke-blue-500",
-    bgColor: "bg-blue-500/10",
-    icon: Star,
-    title: "Event Today",
-    desc: "Just reminder that you have to",
-    time: "9:00 AM",
+    id: "1",
+    title: "Contract Approved",
+    description: "OMS-2025-006 has been approved and is ready for signing.",
+    type: "success" as const,
+    timestamp: "2 minutes ago",
+    read: false,
+    actionLabel: "View Contract",
+    module: "Contracts",
   },
   {
-    iconColor: "stroke-orange-400",
-    bgColor: "bg-orange-400/10",
-    icon: Video,
-    title: "Team Meeting",
-    desc: "Discuss project updates and next steps",
-    time: "10:00 AM",
+    id: "2",
+    title: "Approval Action Required",
+    description: "Procurement request requires your review.",
+    type: "warning" as const,
+    timestamp: "15 minutes ago",
+    read: false,
+    actionLabel: "Review Now",
+    module: "Approvals",
   },
   {
-    iconColor: "stroke-teal-400",
-    bgColor: "bg-teal-400/10",
-    icon: Salad,
-    title: "Lunch Break",
-    desc: "Take a break and recharge",
-    time: "12:30 PM",
-  },
-  {
-    iconColor: "stroke-red-500",
-    bgColor: "bg-red-500/10",
-    icon: Headset,
-    title: "Client Call",
-    desc: "Monthly check-in with the client",
-    time: "3:00 PM",
-  },
-  {
-    iconColor: "stroke-sky-400",
-    bgColor: "bg-sky-400/10",
-    icon: ScanText,
-    title: "Project Review",
-    desc: "Review project deliverables with client",
-    time: "4:00 PM",
+    id: "3",
+    title: "New Vendor Accredited",
+    description: "Vendor has completed accreditation.",
+    type: "info" as const,
+    timestamp: "1 hour ago",
+    read: true,
+    module: "Vendors",
   },
 ];
 
-
-export function NotificationItem({
-  bgColor,
-  iconColor,
-  icon: Icon,
-  title,
-  desc,
-  time,
-}: MenuItem) {
-  return (
-    <div className="mx-1.5 my-1 p-2 flex items-center justify-between cursor-pointer rounded-lg hover:bg-muted/50">
-      <div className="flex items-center gap-3">
-        <div className={cn("p-2.5 rounded-xl", bgColor)}>
-          <Icon size={20} className={cn("size-5", iconColor)} />
-        </div>
-
-        <div>
-          <p className="text-sm font-medium text-popover-foreground">
-            {title}
-          </p>
-          <p className="max-w-52 truncate text-sm text-muted-foreground">
-            {desc}
-          </p>
-        </div>
-      </div>
-
-      <p className="text-xs text-muted-foreground">{time}</p>
-    </div>
-  );
-}
-
-
-
-const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
+export default function NotificationsDrawer() {
   const [sheetOpen, setSheetOpen] = useState(false);
+
   return (
-    <div className="flex items-start justify-center">
-      <DropdownMenu defaultOpen={defaultOpen}>
-        <DropdownMenuTrigger>{trigger}</DropdownMenuTrigger>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button type="button" variant="outline" size="icon">
+            <BellRing className="size-4" />
+          </Button>
+        </DropdownMenuTrigger>
+
         <DropdownMenuContent
-          align={align}
-          className="p-0 w-[calc(100vw-24px)] sm:w-sm rounded-2xl data-open:slide-in-from-top-20! data-closed:slide-out-to-top-20 data-open:fade-in-0 data-closed:fade-out-0 data-closed:zoom-out-100 duration-400"
+          align="end"
+          className="w-[420px] p-0 rounded-xl overflow-hidden"
         >
-          <DropdownMenuGroup>
-            {/* title */}
-            <DropdownMenuLabel className="flex items-center justify-between p-4">
-              <p className="text-base font-medium text-popover-foreground">
-                Notifications
-              </p>
-              <Badge className="font-normal leading-0">5 New</Badge>
-            </DropdownMenuLabel>
-
-            {/* Notifications */}
-            {PROFILE_ITEMS.map((item) => (
-              <NotificationItem
-                key={item.title}
-                {...item}
-              />
-            ))}
-
-            {/* button */}
-            <div className="mx-1.5 my-1 p-2">
-              <Button onClick={() => setSheetOpen (true)} className="rounded-xl w-full cursor-pointer h-9 hover:bg-primary/80">
-                See All Notifications
-              </Button>
-            </div>
-          </DropdownMenuGroup>
+          <NotificationPanel
+            notifications={notifications}
+            onViewAll={() => setSheetOpen(true)}
+          />
         </DropdownMenuContent>
       </DropdownMenu>
-      <NotificationSheet 
+
+      <NotificationSheet
         open={sheetOpen}
         onOpenChange={setSheetOpen}
       />
-    </div>
+    </>
   );
-};
-
-const NotificationsDrawer = () => {
-  return (
-    <Dropdown
-      align="end"
-      trigger={
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-        >
-          <BellRing className="size-4" />
-        </Button>
-      }
-    />
-  );
-};
-
-export default NotificationsDrawer;
+}
