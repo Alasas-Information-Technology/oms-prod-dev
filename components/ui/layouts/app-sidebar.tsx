@@ -75,6 +75,11 @@ const data = {
       title: "Budget Management",
       url: "/app/budget",
       icon: Wallet,
+      items: [
+        { title: "Dashboard", url: "/app/budget/dashboard" },
+        { title: "Department Budgets", url: "/app/budget/department-budgets" },
+        { title: "Vendor Allocations", url: "/app/budget/vendor-allocations" },
+      ]
     },
     {
       title: "Reports",
