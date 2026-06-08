@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Lora, Ubuntu_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { AuthProvider } from "@/context/AuthContext";
-import { ThemeProvider } from "@/components/theme-provider"
+import { Providers } from "@/components/providers";
 
 const fontSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -38,16 +37,9 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-        </ThemeProvider>
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );
