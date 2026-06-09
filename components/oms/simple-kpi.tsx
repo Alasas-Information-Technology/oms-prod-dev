@@ -15,6 +15,7 @@ type GenericKpiCardProps = {
   description?: string,
   color?: string
   bg?: string
+  className?: string
 }
 
 function Shimmer({ className }: { className?: string }) {
@@ -36,7 +37,7 @@ function Shimmer({ className }: { className?: string }) {
   )
 }
 
-export function SimpleKpiCard({ icon, value, title, description, color, bg }: GenericKpiCardProps) {
+export function SimpleKpiCard({ icon, value, title, description, color, bg, className }: GenericKpiCardProps) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -48,7 +49,7 @@ export function SimpleKpiCard({ icon, value, title, description, color, bg }: Ge
   }, [])
 
   return (
-    <div className="relative rounded-xl border bg-background p-5 shadow-sm overflow-hidden flex flex-col justify-between">
+    <div className={cn("relative rounded-xl border bg-background p-5 shadow-sm overflow-hidden flex flex-col justify-between",className)}>
       {/* Skeleton layer */}
       <AnimatePresence>
         {loading && (
