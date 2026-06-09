@@ -20,7 +20,7 @@ export class SessionRepository {
                         IPAddress,
                         BrowserName,
                         DeviceType,
-                        CreatedAt,
+                        LoginAt,
                         LastActivityAt,
                         ExpiresAt,
                         IsActive
