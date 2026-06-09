@@ -9,6 +9,8 @@ import {
 }
     from "@/lib/use-cases/GetActiveSessionsUseCase";
 
+
+
 export async function GET(
     request: NextRequest
 ) {
@@ -50,4 +52,5 @@ export async function GET(
         success: true,
         sessions
     });
+
 }
