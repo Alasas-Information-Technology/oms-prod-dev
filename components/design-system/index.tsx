@@ -53,6 +53,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Slider } from "@/components/ui/slider";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Toggle } from "@/components/ui/toggle";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 // ─── Sample Data ──────────────────────────────────────────────────────────────
 
@@ -161,7 +166,7 @@ function SL({ children, className }: { children: ReactNode; className?: string }
 
 function SectionWrapper({ title, children }: { title: string; children: ReactNode }) {
     return (
-        <div className="p-6 max-w-5xl mx-auto">
+        <div className="p-6 max-w-5xl mx-auto pb-32">
             <div className="mb-6 pb-4 border-b border-slate-200">
                 <h1 className="text-xl font-bold text-slate-900">{title}</h1>
                 <p className="text-sm text-muted-foreground mt-0.5">OMS Design System · Component Library v1.0 · Dubai Integrated Economic Zones</p>
@@ -1207,6 +1212,109 @@ function ExtrasSection() {
                     </div>
                 </div>
             </div>
+
+            <Separator />
+
+            {/* ── Popover ──────────────────────────────────────── */}
+            <div>
+                <SL>Popover</SL>
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button variant="outline">Open Popover</Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80">
+                        <div className="grid gap-4">
+                            <div className="space-y-2">
+                                <h4 className="font-medium leading-none">Dimensions</h4>
+                                <p className="text-sm text-muted-foreground">
+                                    Set the dimensions for the layer.
+                                </p>
+                            </div>
+                        </div>
+                    </PopoverContent>
+                </Popover>
+            </div>
+
+            <Separator />
+
+            {/* ── Dropdown Menu ────────────────────────────────── */}
+            <div>
+                <SL>Dropdown Menu</SL>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline">Open Menu</Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>Profile</DropdownMenuItem>
+                        <DropdownMenuItem>Billing</DropdownMenuItem>
+                        <DropdownMenuItem>Team</DropdownMenuItem>
+                        <DropdownMenuItem>Subscription</DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+
+            <Separator />
+
+            {/* ── Calendar ─────────────────────────────────────── */}
+            <div>
+                <SL>Calendar</SL>
+                <div className="border rounded-md inline-block bg-white p-3">
+                    <Calendar mode="single" className="rounded-md border" />
+                </div>
+            </div>
+
+            <Separator />
+
+            {/* ── Breadcrumb ───────────────────────────────────── */}
+            <div>
+                <SL>Breadcrumb</SL>
+                <Breadcrumb>
+                    <BreadcrumbList>
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href="#">Home</BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href="#">Components</BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+                        </BreadcrumbItem>
+                    </BreadcrumbList>
+                </Breadcrumb>
+            </div>
+
+            <Separator />
+
+            {/* ── Pagination ───────────────────────────────────── */}
+            <div>
+                <SL>Pagination</SL>
+                <Pagination>
+                    <PaginationContent>
+                        <PaginationItem>
+                            <PaginationPrevious href="#" />
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">1</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#" isActive>2</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">3</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationEllipsis />
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationNext href="#" />
+                        </PaginationItem>
+                    </PaginationContent>
+                </Pagination>
+            </div>
         </div>
     );
 }
@@ -1235,10 +1343,10 @@ export default function DesignSystemPage() {
     };
 
     return (
-        <div className="flex h-screen overflow-hidden mesh-bg">
+        <div className="flex min-h-screen mesh-bg">
 
             {/* ── Sidebar ─────────────────────────────────────────── */}
-            <aside className="w-60 bg-sidebar flex flex-col h-full shrink-0 border-r border-sidebar-border overflow-hidden">
+            <aside className="w-60 bg-sidebar flex flex-col h-screen sticky top-0 shrink-0 border-r border-sidebar-border overflow-hidden">
                 {/* Logo */}
                 <div className="px-4 py-5 border-b border-sidebar-border shrink-0">
                     <div className="flex items-center gap-2.5">
@@ -1286,17 +1394,14 @@ export default function DesignSystemPage() {
             </aside>
 
             {/* ── Main Area ───────────────────────────────────────── */}
-            <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-                {/* Content */}
-                <main
-                    className="flex-1 overflow-y-auto"
-                    onClick={() => notifOpen && setNotifOpen(false)}
-                >
-                    <SectionWrapper title={SECTION_TITLES[section]}>
-                        {SECTION_MAP[section]}
-                    </SectionWrapper>
-                </main>
-            </div>
+            <main
+                className="flex-1 w-full min-w-0"
+                onClick={() => notifOpen && setNotifOpen(false)}
+            >
+                <SectionWrapper title={SECTION_TITLES[section]}>
+                    {SECTION_MAP[section]}
+                </SectionWrapper>
+            </main>
         </div>
     );
 }

@@ -1,124 +1,407 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
 import { UserSession } from "@/lib/types/auth.types";
-import { getAuthSession, clearAuthCookie } from "@/app/actions/auth";
+
+import {
+  clearAuthCookie,
+  getAuthSession,
+} from "@/app/actions/auth";
+
 import api from "@/lib/api/axios";
 
 interface AuthContextType {
   user: UserSession | null;
+
   isLoading: boolean;
-  login: (username: string, password: string) => Promise<void>;
+
+  login: (
+    username: string,
+    password: string
+  ) => Promise<void>;
+
   logout: () => Promise<void>;
+
   fetchUser: () => Promise<void>;
+
+  refreshSession: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext =
+  createContext<
+    AuthContextType | undefined
+  >(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserSession | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+export function AuthProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
+
+  const [user, setUser] =
+    useState<UserSession | null>(
+      null
+    );
+
+  const [isLoading, setIsLoading] =
+    useState(true);
 
   /**
-   * Loads User Session from server.
-   * If the access token is expired, attempts a silent refresh via the API.
+   * Prevent multiple refreshes
+   * running simultaneously
    */
-  const fetchUser = async () => {
-    try {
-      setIsLoading(true);
-      let session = await getAuthSession();
+  const refreshInProgress =
+    useRef(false);
 
-      // If session is null (token expired or missing), attempt silent refresh
-      if (!session) {
-        try {
-          // Axios will send the HttpOnly refresh token cookie automatically
-          await api.post("/auth/refresh");
-          // Retry loading session after successful refresh
-          session = await getAuthSession();
-        } catch {
-          // Refresh failed — user must re-authenticate
-        }
+  /**
+   * Silent Refresh
+   */
+  const refreshSession =
+    async () => {
+
+      if (
+        refreshInProgress.current
+      ) {
+        return;
       }
 
-      setUser(session);
-    } catch (err) {
-      console.error("Failed to fetch user:", err);
-      setUser(null);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      try {
 
+        refreshInProgress.current =
+          true;
+
+        await api.post(
+          "/auth/refresh"
+        );
+
+      } finally {
+
+        refreshInProgress.current =
+          false;
+      }
+    };
+
+  /**
+   * Loads authenticated user
+   */
+  const fetchUser =
+    async () => {
+
+      try {
+
+        setIsLoading(true);
+
+        const sessionResult =
+          await getAuthSession();
+
+        if (sessionResult === "REFRESH_REQUIRED") {
+          try {
+            await refreshSession();
+            const newSession = await getAuthSession();
+            setUser(newSession !== "REFRESH_REQUIRED" ? newSession : null);
+          } catch {
+            setUser(null);
+          }
+        } else {
+          setUser(sessionResult);
+        }
+
+      } catch (err) {
+
+        console.error(
+          "Failed to fetch user:",
+          err
+        );
+
+        setUser(
+          null
+        );
+
+      } finally {
+
+        setIsLoading(
+          false
+        );
+      }
+    };
+
+  /**
+   * Enterprise Logout
+   */
+  const forceLogout =
+    async () => {
+
+      try {
+
+        await api.post(
+          "/auth/logout"
+        );
+
+      } catch (err) {
+
+        console.error(
+          err
+        );
+      }
+
+      try {
+
+        await clearAuthCookie();
+
+      } catch { }
+
+      setUser(
+        null
+      );
+
+      if (
+        typeof window !==
+        "undefined"
+      ) {
+
+        window.location.href =
+          "/login";
+      }
+    };
+
+  /**
+   * Login
+   */
+  const login =
+    async (
+      username: string,
+      password: string
+    ) => {
+
+      const response =
+        await api.post(
+          "/auth/login",
+          {
+            username,
+            password,
+          }
+        );
+
+      if (
+        !response.data.success
+      ) {
+
+        throw new Error(
+          response.data.message ??
+          "Login failed"
+        );
+      }
+
+      /**
+       * Login API already set:
+       *
+       * oms_access_token
+       * oms_refresh_token
+       * oms_device_id
+       */
+
+      const session =
+        await getAuthSession();
+
+      setUser(
+        session !== "REFRESH_REQUIRED" ? session : null
+      );
+    };
+
+  /**
+   * Logout
+   */
+  const logout =
+    async () => {
+
+      await forceLogout();
+    };
+
+  /**
+   * Initial App Load
+   *
+   * Auto Login
+   */
   useEffect(() => {
+
     fetchUser();
 
-    // Proactive token refresh: refresh the token every 10 minutes
-    // This prevents the 15-minute access token from expiring while the user is active
-    // and ensures page navigations/reloads don't hit the server with an expired token.
-    const refreshInterval = setInterval(() => {
-      api.post("/auth/refresh").catch(() => {
-        // If proactive refresh fails, we don't immediately logout, 
-        // we'll let the standard 401 interceptor or fetchUser handle the failure later.
-      });
-    }, 10 * 60 * 1000); // 10 minutes
-
-    return () => clearInterval(refreshInterval);
   }, []);
 
   /**
-   * Login via API.
-   * The login API sets HttpOnly cookies on the response automatically.
-   * We then fetch the user session from the server.
+   * Refresh every 10 minutes
+   *
+   * Access token = 15 mins
    */
-  const login = async (username: string, password: string) => {
-    const response = await api.post("/auth/login", { username, password });
+  useEffect(() => {
 
-    if (!response.data.success) {
-      throw new Error(response.data.message || "Login failed");
-    }
+    const interval =
+      setInterval(
+        async () => {
 
-    // The HttpOnly cookies are now set by the API response.
-    // Load the user session from the server.
-    setUser(response.data.session);
-  };
+          try {
+
+            await refreshSession();
+
+          } catch {
+
+            /**
+             * Ignore
+             *
+             * User may already
+             * be logged out.
+             */
+          }
+
+        },
+        10 * 60 * 1000
+      );
+
+    return () =>
+      clearInterval(
+        interval
+      );
+
+  }, []);
 
   /**
-   * Logout.
-   * Calls the logout API (which revokes the session and clears cookies),
-   * then clears local state and redirects to login.
+   * Refresh when tab
+   * becomes active again
+   *
+   * Solves:
+   *
+   * Laptop sleep
+   * Browser reopen
+   * Long inactivity
    */
-  const logout = async () => {
-    try {
-      await api.post("/auth/logout");
-    } catch (e) {
-      console.error("Failed to call logout API:", e);
-    }
+  useEffect(() => {
 
-    // Fallback: clear cookies via server action in case the API didn't
-    try {
-      await clearAuthCookie();
-    } catch {
-      // Ignore
-    }
+    const handleFocus =
+      async () => {
 
-    setUser(null);
+        try {
 
-    if (typeof window !== "undefined") {
-      window.location.href = "/login";
-    }
-  };
+          const sessionResult =
+            await getAuthSession();
+
+          if (sessionResult === "REFRESH_REQUIRED") {
+            try {
+              await refreshSession();
+              const newSession = await getAuthSession();
+              setUser(newSession !== "REFRESH_REQUIRED" ? newSession : null);
+            } catch {
+              setUser(null);
+            }
+          } else {
+            setUser(sessionResult);
+          }
+
+        } catch {
+
+          setUser(
+            null
+          );
+        }
+      };
+
+    window.addEventListener(
+      "focus",
+      handleFocus
+    );
+
+    return () => {
+
+      window.removeEventListener(
+        "focus",
+        handleFocus
+      );
+    };
+
+  }, []);
+
+  /**
+   * Optional:
+   * Refresh when tab
+   * becomes visible
+   */
+  useEffect(() => {
+
+    const handleVisibility =
+      async () => {
+
+        if (
+          document.visibilityState !==
+          "visible"
+        ) {
+          return;
+        }
+
+        try {
+
+          await refreshSession();
+
+        } catch {
+          // ignore
+        }
+      };
+
+    document.addEventListener(
+      "visibilitychange",
+      handleVisibility
+    );
+
+    return () => {
+
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibility
+      );
+    };
+
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, fetchUser }}>
+    <AuthContext.Provider
+      value={{
+        user,
+
+        isLoading,
+
+        login,
+
+        logout,
+
+        fetchUser,
+
+        refreshSession,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+
+  const context =
+    useContext(
+      AuthContext
+    );
+
+  if (!context) {
+
+    throw new Error(
+      "useAuth must be used within AuthProvider"
+    );
   }
+
   return context;
 }

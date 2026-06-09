@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { jwtVerify } from 'jose'
 import { errors } from 'jose'
+import { authService } from './lib/services'
+import { detectDeviceType } from './lib/utils/deviceDetector'
+import { detectBrowser } from './lib/utils/browserDetector'
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET!
@@ -11,10 +14,27 @@ const JWT_AUDIENCE = process.env.JWT_AUDIENCE || 'OMS_USERS'
 
 // internal routes for internal portal and vendor routes for vendor portal
 const INTERNAL_ROUTES = ['/api/internal']
-const VENDOR_ROUTES = ['/api/vendor']
+const VENDOR_ROUTES = ['/api/vendor'];
+
+
 
 export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl
+  const { pathname } = request.nextUrl;
+
+  const userAgent =
+    request.headers.get(
+      "user-agent"
+    ) ?? "UNKNOWN";
+
+  const deviceType =
+    detectDeviceType(
+      userAgent ?? ""
+    );
+
+  const browserName =
+    detectBrowser(
+      userAgent ?? ""
+    );
 
   if (
     pathname.startsWith('/_next') ||
@@ -27,7 +47,10 @@ export async function proxy(request: NextRequest) {
 
   const token =
     request.cookies.get('oms_access_token')?.value ||
-    request.headers.get('authorization')?.replace('Bearer ', '')
+    request.headers.get('authorization')?.replace('Bearer ', '');
+
+  const device_id =
+    request.cookies.get("oms_device_id")?.value || "";
 
   const isApiRoute = pathname.startsWith('/api/')
 
@@ -88,6 +111,36 @@ export async function proxy(request: NextRequest) {
       response.cookies.delete('oms_access_token')
       response.cookies.delete('oms_refresh_token')
       return response
+    }
+
+
+    console.log(
+      "Device Cookie:",
+      device_id
+    );
+
+    console.log(
+      "Session:",
+      loginSessionId
+    );
+
+    const fingerprintValid =
+      await authService
+        .validateFingerprint(
+          loginSessionId,
+          device_id
+        );
+
+    console.log(
+      "Fingerprint Valid:",
+      fingerprintValid
+    );
+
+    if (!fingerprintValid) {
+      const response = NextResponse.redirect(new URL('/login', request.url));
+      response.cookies.delete('oms_access_token');
+      response.cookies.delete('oms_refresh_token');
+      return response;
     }
 
     // ─────────────────────────────────────────────────────
@@ -200,37 +253,120 @@ export async function proxy(request: NextRequest) {
   } catch (error) {
 
     // ─────────────────────────────────────────────────────
-    // JWT Expired → return 401 immediately
-    // Middleware MUST NOT refresh, issue tokens, or retry
+    // Access Token Expired
+    // Frontend must call /api/auth/refresh
+    // DO NOT redirect to login here
+    // DO NOT clear refresh token here
     // ─────────────────────────────────────────────────────
     if (error instanceof errors.JWTExpired) {
+
       if (isApiRoute) {
+
         return NextResponse.json(
-          { message: 'Token expired' },
-          { status: 401 }
-        )
+          {
+            code: "TOKEN_EXPIRED",
+            message: "Access token expired"
+          },
+          {
+            status: 401
+          }
+        );
+
       }
-      // For UI routes with expired tokens, let the frontend handle refresh
-      // Return 401 status via a redirect is not ideal, so we still redirect to
-      // let the AuthProvider/Axios interceptor handle the refresh flow
-      const response = NextResponse.redirect(new URL('/login', request.url))
-      response.cookies.delete('oms_access_token')
-      return response
+
+      const response = NextResponse.next();
+
+      response.headers.set(
+        "x-token-expired",
+        "true"
+      );
+
+      return response;
     }
 
-    // All other JWT errors (invalid signature, wrong issuer/audience, malformed)
+    // ─────────────────────────────────────────────────────
+    // Invalid JWT
+    // Signature Tampering
+    // Wrong Issuer
+    // Wrong Audience
+    // Malformed Token
+    // ─────────────────────────────────────────────────────
+    if (
+      error instanceof errors.JWTInvalid ||
+      error instanceof errors.JWSSignatureVerificationFailed
+    ) {
+
+      if (isApiRoute) {
+
+        return NextResponse.json(
+          {
+            code: "INVALID_TOKEN",
+            message: "Invalid token"
+          },
+          {
+            status: 401
+          }
+        );
+      }
+
+      const response =
+        NextResponse.redirect(
+          new URL(
+            "/login",
+            request.url
+          )
+        );
+
+      response.cookies.delete(
+        "oms_access_token"
+      );
+
+      response.cookies.delete(
+        "oms_refresh_token"
+      );
+
+      return response;
+    }
+
+    // ─────────────────────────────────────────────────────
+    // Unknown Auth Error
+    // Fail Secure
+    // ─────────────────────────────────────────────────────
+    console.error(
+      "Proxy Authentication Error:",
+      error
+    );
+
     if (isApiRoute) {
+
       return NextResponse.json(
-        { message: 'Invalid Token' },
-        { status: 401 }
-      )
+        {
+          code: "AUTH_ERROR",
+          message: "Authentication failed"
+        },
+        {
+          status: 401
+        }
+      );
     }
 
-    // Invalid token on UI routes -> clear cookies & redirect to login
-    const response = NextResponse.redirect(new URL('/login', request.url))
-    response.cookies.delete('oms_access_token')
-    response.cookies.delete('oms_refresh_token')
-    return response
+    const response =
+      NextResponse.redirect(
+        new URL(
+          "/login",
+          request.url
+        )
+      );
+
+    response.cookies.delete(
+      "oms_access_token"
+    );
+
+    response.cookies.delete(
+      "oms_refresh_token"
+    );
+
+    return response;
   }
 }
 

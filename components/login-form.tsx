@@ -1,4 +1,7 @@
+"use client"
+
 import { cn } from "@/lib/utils"
+import { motion, AnimatePresence } from "motion/react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
@@ -24,6 +27,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form"
 import { ShineBorder } from "./ui/shine-border"
 import Image from "next/image"
+import { BorderBeam } from "./ui/border-beam"
 
 const schema = z.object({
   Username: z.string().min(3, "Username is required"),
@@ -68,13 +72,15 @@ export function LoginForm({
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
 
-      <Card className="relative">
+      <Card className="relative pt-6">
         <a href="#" className="flex items-center gap-2 self-center font-medium">
 
           <Image src={"/c-logo.png"} alt="DIEZ_logo" width={180} height={180} />
 
         </a>
-        <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} borderWidth={2} />
+        {isSubmitting && <BorderBeam duration={10} size={200} borderWidth={2} />}
+        {error && <ShineBorder shineColor={["#DA1F05", "#F33C04", "#FE650D", "#FFC11F"]} borderWidth={2} />}
+
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-extrabold">Welcome back</CardTitle>
           <CardDescription className="text-muted-foreground">
@@ -85,11 +91,21 @@ export function LoginForm({
           <FormProvider {...form}>
             <form onSubmit={handleSubmit(onSubmit)}>
               <FieldGroup>
-                {error && (
-                  <div className="p-3 text-sm text-red-500 bg-red-100 rounded-md">
-                    {error}
-                  </div>
-                )}
+                <AnimatePresence>
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-3 text-sm text-red-500 bg-red-100 rounded-md">
+                        {error}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
                 <RHFInput
                   name="Username"
                   label="Username"
