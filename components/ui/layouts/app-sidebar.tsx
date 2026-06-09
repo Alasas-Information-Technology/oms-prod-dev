@@ -77,6 +77,7 @@ const data = {
       icon: Wallet,
       items: [
         { title: "Dashboard", url: "/app/budget/dashboard" },
+        { title: "Annual Budgets", url: "/app/budget/annual-budget" },
         { title: "Department Budgets", url: "/app/budget/dept-budget" },
         { title: "Vendor Allocations", url: "/app/budget/vendor-allocations" },
       ]
