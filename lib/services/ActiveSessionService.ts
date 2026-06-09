@@ -32,7 +32,7 @@ export class ActiveSessionService {
                     session.DeviceType,
 
                 createdAt:
-                    session.CreatedAt,
+                    session.LoginAt,
 
                 lastActivityAt:
                     session.LastActivityAt,
