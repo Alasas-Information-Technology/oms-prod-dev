@@ -58,7 +58,9 @@ api.interceptors.response.use(
 
             if (
                 typeof window !==
-                "undefined"
+                "undefined" &&
+                window.location.pathname !==
+                "/login"
             ) {
 
                 window.location.href =
@@ -171,7 +173,9 @@ api.interceptors.response.use(
 
             if (
                 typeof window !==
-                "undefined"
+                "undefined" &&
+                window.location.pathname !==
+                "/login"
             ) {
 
                 window.location.href =

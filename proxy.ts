@@ -47,7 +47,10 @@ export async function proxy(request: NextRequest) {
 
   const token =
     request.cookies.get('oms_access_token')?.value ||
-    request.headers.get('authorization')?.replace('Bearer ', '')
+    request.headers.get('authorization')?.replace('Bearer ', '');
+
+  const device_id =
+    request.cookies.get("oms_device_id")?.value || "";
 
   const isApiRoute = pathname.startsWith('/api/')
 
@@ -114,8 +117,7 @@ export async function proxy(request: NextRequest) {
       await authService
         .validateFingerprint(
           loginSessionId,
-          browserName,
-          deviceType
+          device_id
         );
 
     if (!fingerprintValid) {

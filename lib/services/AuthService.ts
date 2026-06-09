@@ -163,8 +163,7 @@ export class AuthService {
 
     async validateFingerprint(
         loginSessionId: string,
-        browserName: string,
-        deviceType: string
+        deviceId: string
     ): Promise<boolean> {
 
         const db = await getDb();
@@ -177,7 +176,7 @@ export class AuthService {
             )
             .query(`
             SELECT
-                Fingerprint
+                DeviceFingerprint
             FROM auth.LoginSessions
             WHERE LoginSessionID =
                 @LoginSessionID
@@ -192,17 +191,11 @@ export class AuthService {
 
         const storedFingerprint =
             result.recordset[0]
-                .Fingerprint;
+                .DeviceFingerprint;
 
-        /**
-         * Legacy session
-         */
-        if (!storedFingerprint) {
-            return true;
-        }
 
         const currentFingerprint =
-            `${browserName}|${deviceType}`;
+            `${deviceId}`;
 
         return (
             storedFingerprint ===

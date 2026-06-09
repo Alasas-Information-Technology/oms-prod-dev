@@ -18,4 +18,7 @@ export const SECURITY = {
 
     /** Refresh token cookie max-age in seconds (7 days) */
     REFRESH_TOKEN_COOKIE_MAX_AGE: 60 * 60 * 24 * 7,
+
+    /** device_id cookie max-age in seconds (30 days) */
+    DEVICE_ID_COOKIE_MAX_AGE: 60 * 60 * 24 * 30,
 };
