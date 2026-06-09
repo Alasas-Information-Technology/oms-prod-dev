@@ -99,29 +99,20 @@ export function AuthProvider({
 
         setIsLoading(true);
 
-        /**
-         * Try silent refresh first.
-         *
-         * If refresh token is valid,
-         * new access token is issued.
-         *
-         * If access token already valid,
-         * backend can simply return success.
-         */
-        try {
-
-          await refreshSession();
-
-        } catch {
-          // ignore
-        }
-
-        const session =
+        const sessionResult =
           await getAuthSession();
 
-        setUser(
-          session
-        );
+        if (sessionResult === "REFRESH_REQUIRED") {
+          try {
+            await refreshSession();
+            const newSession = await getAuthSession();
+            setUser(newSession !== "REFRESH_REQUIRED" ? newSession : null);
+          } catch {
+            setUser(null);
+          }
+        } else {
+          setUser(sessionResult);
+        }
 
       } catch (err) {
 

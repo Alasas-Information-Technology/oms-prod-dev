@@ -71,7 +71,7 @@ export function LoginForm({
       <Card className="relative">
         <a href="#" className="flex items-center gap-2 self-center font-medium">
 
-          <Image src={"/c-logo.png"} alt="DIEZ_logo" width={180} height={180} />
+          <Image src={"/c-logo.png"} alt="DIEZ_logo" loading="eager" width={180} height={180} />
 
         </a>
         <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} borderWidth={2} />
