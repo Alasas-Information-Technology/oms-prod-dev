@@ -22,17 +22,17 @@ const chartData = [
   {
     name: "Allocated",
     value: 750000,
-    fill: "var(--color-allocated)",
+    fill: "#2ec4b6",
   },
   {
     name: "Committed",
     value: 650000,
-    fill: "var(--color-committed)",
+    fill: "#2997c8",
   },
   {
     name: "Available",
     value: 350000,
-    fill: "var(--color-available)",
+    fill: "#7ccbc7",
   },
 ];
 
@@ -85,15 +85,17 @@ export function BudgetDistributionChart() {
 
           </PieChart>
         </ChartContainer>
-        <div className="mt-4 flex flex-wrap justify-center gap-4">
+        <div className="mt-4 flex justify-center gap-8">
           {chartData.map((item) => (
-            <div key={item.name} className="flex items-center gap-2 text-sm">
+            <div
+              key={item.name}
+              className="flex items-center gap-2 text-sm font-medium"
+            >
               <span
-                className="h-3 w-3 rounded-full"
+                className="h-3 w-3 rounded-full border"
                 style={{ backgroundColor: item.fill }}
               />
               <span>{item.name}</span>
-              <span className="font-medium">AED {item.value.toLocaleString()}</span>
             </div>
           ))}
         </div>

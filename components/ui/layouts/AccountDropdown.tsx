@@ -101,7 +101,12 @@ const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
 
                         {/* Main Links */}
                         {PROFILE_ITEMS.map(({ label, icon: Icon }) => (
-                            <DropdownMenuItem key={label} className={itemClass}>
+                            <DropdownMenuItem
+                                key={label}
+                                className={itemClass}
+                                onClick={() => {
+                                if (label === "My Profile") {
+                                    router.push("/app/profile");}}}>
                                 <Icon size={20} />
                                 <span>{label}</span>
                             </DropdownMenuItem>
