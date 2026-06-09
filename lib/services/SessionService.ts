@@ -75,6 +75,8 @@ export class SessionService {
         const db = await getDb();
 
         const loginSessionId = uuidv4();
+        const fingerprint =
+            `${browserName}|${deviceType}`;
 
         await db
             .request()
@@ -85,6 +87,7 @@ export class SessionService {
             .input("BrowserName", browserName)
             .input("DeviceType", deviceType)
             .input("SessionExpiryDays", SECURITY.SESSION_EXPIRY_DAYS)
+            .input("Fingerprint", fingerprint)
             .query(`
             INSERT INTO auth.LoginSessions
             (
@@ -98,7 +101,8 @@ export class SessionService {
                 UserAgent,
                 BrowserName,
                 DeviceType,
-                LastActivityAt
+                LastActivityAt,
+                Fingerprint
             )
             VALUES
             (
@@ -112,7 +116,8 @@ export class SessionService {
                 @UserAgent,
                 @BrowserName,
                 @DeviceType,
-                SYSUTCDATETIME()
+                SYSUTCDATETIME(),
+                @Fingerprint
             )
         `);
 

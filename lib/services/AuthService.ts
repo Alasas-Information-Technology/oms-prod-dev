@@ -1,15 +1,14 @@
 import jwt from "jsonwebtoken";
 
-import { AuthRepository }
-    from "@/lib/repositories/AuthRepository";
+import { AuthRepository } from "@/lib/repositories/AuthRepository";
 
-import { SessionService }
-    from "./SessionService";
+import { SessionService } from "./SessionService";
 
 import {
     JwtPayload,
     UserSession
 } from "@/lib/types/auth.types";
+import { getDb } from "../db";
 
 export class AuthService {
 
@@ -161,4 +160,54 @@ export class AuthService {
             session,
         };
     }
+
+    async validateFingerprint(
+        loginSessionId: string,
+        browserName: string,
+        deviceType: string
+    ): Promise<boolean> {
+
+        const db = await getDb();
+
+        const result = await db
+            .request()
+            .input(
+                "LoginSessionID",
+                loginSessionId
+            )
+            .query(`
+            SELECT
+                Fingerprint
+            FROM auth.LoginSessions
+            WHERE LoginSessionID =
+                @LoginSessionID
+            AND IsActive = 1
+        `);
+
+        if (
+            result.recordset.length === 0
+        ) {
+            return false;
+        }
+
+        const storedFingerprint =
+            result.recordset[0]
+                .Fingerprint;
+
+        /**
+         * Legacy session
+         */
+        if (!storedFingerprint) {
+            return true;
+        }
+
+        const currentFingerprint =
+            `${browserName}|${deviceType}`;
+
+        return (
+            storedFingerprint ===
+            currentFingerprint
+        );
+    }
+
 }
