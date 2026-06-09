@@ -212,7 +212,7 @@ export function AuthProvider({
         await getAuthSession();
 
       setUser(
-        session
+        session !== "REFRESH_REQUIRED" ? session : null
       );
     };
 
@@ -289,14 +289,20 @@ export function AuthProvider({
 
         try {
 
-          await refreshSession();
-
-          const session =
+          const sessionResult =
             await getAuthSession();
 
-          setUser(
-            session
-          );
+          if (sessionResult === "REFRESH_REQUIRED") {
+            try {
+              await refreshSession();
+              const newSession = await getAuthSession();
+              setUser(newSession !== "REFRESH_REQUIRED" ? newSession : null);
+            } catch {
+              setUser(null);
+            }
+          } else {
+            setUser(sessionResult);
+          }
 
         } catch {
 
