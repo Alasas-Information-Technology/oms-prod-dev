@@ -53,6 +53,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Slider } from "@/components/ui/slider";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Toggle } from "@/components/ui/toggle";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 // ─── Sample Data ──────────────────────────────────────────────────────────────
 
@@ -1206,6 +1211,109 @@ function ExtrasSection() {
                         </ToggleGroup>
                     </div>
                 </div>
+            </div>
+
+            <Separator />
+
+            {/* ── Popover ──────────────────────────────────────── */}
+            <div>
+                <SL>Popover</SL>
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button variant="outline">Open Popover</Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80">
+                        <div className="grid gap-4">
+                            <div className="space-y-2">
+                                <h4 className="font-medium leading-none">Dimensions</h4>
+                                <p className="text-sm text-muted-foreground">
+                                    Set the dimensions for the layer.
+                                </p>
+                            </div>
+                        </div>
+                    </PopoverContent>
+                </Popover>
+            </div>
+
+            <Separator />
+
+            {/* ── Dropdown Menu ────────────────────────────────── */}
+            <div>
+                <SL>Dropdown Menu</SL>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline">Open Menu</Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>Profile</DropdownMenuItem>
+                        <DropdownMenuItem>Billing</DropdownMenuItem>
+                        <DropdownMenuItem>Team</DropdownMenuItem>
+                        <DropdownMenuItem>Subscription</DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+
+            <Separator />
+
+            {/* ── Calendar ─────────────────────────────────────── */}
+            <div>
+                <SL>Calendar</SL>
+                <div className="border rounded-md inline-block bg-white p-3">
+                    <Calendar mode="single" className="rounded-md border" />
+                </div>
+            </div>
+
+            <Separator />
+
+            {/* ── Breadcrumb ───────────────────────────────────── */}
+            <div>
+                <SL>Breadcrumb</SL>
+                <Breadcrumb>
+                    <BreadcrumbList>
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href="#">Home</BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href="#">Components</BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+                        </BreadcrumbItem>
+                    </BreadcrumbList>
+                </Breadcrumb>
+            </div>
+
+            <Separator />
+
+            {/* ── Pagination ───────────────────────────────────── */}
+            <div>
+                <SL>Pagination</SL>
+                <Pagination>
+                    <PaginationContent>
+                        <PaginationItem>
+                            <PaginationPrevious href="#" />
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">1</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#" isActive>2</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">3</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationEllipsis />
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationNext href="#" />
+                        </PaginationItem>
+                    </PaginationContent>
+                </Pagination>
             </div>
         </div>
     );

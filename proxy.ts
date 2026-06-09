@@ -113,12 +113,28 @@ export async function proxy(request: NextRequest) {
       return response
     }
 
+
+    console.log(
+      "Device Cookie:",
+      device_id
+    );
+
+    console.log(
+      "Session:",
+      loginSessionId
+    );
+
     const fingerprintValid =
       await authService
         .validateFingerprint(
           loginSessionId,
           device_id
         );
+
+    console.log(
+      "Fingerprint Valid:",
+      fingerprintValid
+    );
 
     if (!fingerprintValid) {
       const response = NextResponse.redirect(new URL('/login', request.url));

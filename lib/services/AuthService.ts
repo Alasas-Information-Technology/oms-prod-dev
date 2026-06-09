@@ -183,6 +183,7 @@ export class AuthService {
             AND IsActive = 1
         `);
 
+
         if (
             result.recordset.length === 0
         ) {
@@ -193,13 +194,12 @@ export class AuthService {
             result.recordset[0]
                 .DeviceFingerprint;
 
-
         const currentFingerprint =
             `${deviceId}`;
 
         return (
-            storedFingerprint ===
-            currentFingerprint
+            storedFingerprint.toUpperCase() ===
+            currentFingerprint.toUpperCase()
         );
     }
 
