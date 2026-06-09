@@ -21,17 +21,17 @@ import {
 
 const chartData = [
   { month: "January", allocation: 320000, commitments: 140000, supplements: 10000 },
-  { month: "February", allocation: 480000, commitments: 260000, supplements: 45000 },
+  { month: "February", allocation: 480000, commitments: 860000, supplements: 45000 },
   { month: "March", allocation: 410000, commitments: 210000, supplements: 20000 },
   { month: "April", allocation: 720000, commitments: 520000, supplements: 80000 },
   { month: "May", allocation: 580000, commitments: 340000, supplements: 35000 },
-  { month: "June", allocation: 920000, commitments: 710000, supplements: 120000 },
+  { month: "June", allocation: 620000, commitments: 390000, supplements: 490000 },
 ]
 
-const chartConfig = {
+const chartConfig = {                        
   allocation: {
     label: "Allocation",
-    color: "var(--chart-1)",
+    color: "var(--primary)",
   },
   commitments: {
     label: "Commitments",
