@@ -55,7 +55,9 @@ export class LoginUseCase {
         username: string,
         password: string,
         ipAddress?: string,
-        userAgent?: string
+        userAgent?: string,
+        deviceFingerprint?: string
+
     ): Promise<LoginResult> {
 
         const deviceType =
@@ -240,7 +242,8 @@ export class LoginUseCase {
                         ipAddress,
                         userAgent,
                         browserName,
-                        deviceType
+                        deviceType,
+                        deviceFingerprint
                     );
 
             const session =

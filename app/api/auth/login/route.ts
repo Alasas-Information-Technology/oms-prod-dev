@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { LoginUseCase } from "@/lib/use-cases/LoginUseCase";
 import { SECURITY } from "@/lib/constants/security";
+import { randomUUID as uuidv4 } from "crypto";
 
 const loginUseCase =
     new LoginUseCase();
@@ -23,6 +24,8 @@ export async function POST(
             "user-agent"
         ) ?? "UNKNOWN";
 
+    const deviceFingerprint = uuidv4();
+
     try {
         const body = await request.json();
 
@@ -31,7 +34,8 @@ export async function POST(
                 body.username,
                 body.password,
                 ipAddress,
-                userAgent
+                userAgent,
+                deviceFingerprint
             );
 
         // Build response WITHOUT tokens in the body (security requirement)
@@ -57,6 +61,21 @@ export async function POST(
             path: "/",
             maxAge: SECURITY.REFRESH_TOKEN_COOKIE_MAX_AGE,
         });
+
+        response.cookies.set(
+            "oms_device_id",
+            deviceFingerprint,
+            {
+                httpOnly: true,
+                secure: true,
+                sameSite: "strict",
+                path: "/",
+                maxAge: SECURITY.DEVICE_ID_COOKIE_MAX_AGE
+            }
+        );
+
+
+
 
         return response;
 
