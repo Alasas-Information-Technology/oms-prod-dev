@@ -50,29 +50,6 @@ api.interceptors.response.use(
         }
 
         /**
-         * Only refresh expired tokens
-         */
-        if (
-            code !== "TOKEN_EXPIRED"
-        ) {
-
-            if (
-                typeof window !==
-                "undefined" &&
-                window.location.pathname !==
-                "/login"
-            ) {
-
-                window.location.href =
-                    "/login";
-            }
-
-            return Promise.reject(
-                error
-            );
-        }
-
-        /**
          * Never retry refresh endpoint
          */
         if (
@@ -84,6 +61,33 @@ api.interceptors.response.use(
                 error
             );
         }
+
+        /**
+         * Only refresh expired tokens
+         */
+        if (
+            code !== "TOKEN_EXPIRED"
+        ) {
+
+            if (
+                typeof window !==
+                "undefined" &&
+                window.location.pathname !==
+                "/login" &&
+                window.location.pathname !==
+                "/"
+            ) {
+
+                window.location.href =
+                    "/login";
+            }
+
+            return Promise.reject(
+                error
+            );
+        }
+
+
 
         /**
          * Prevent infinite loops
@@ -175,7 +179,9 @@ api.interceptors.response.use(
                 typeof window !==
                 "undefined" &&
                 window.location.pathname !==
-                "/login"
+                "/login" &&
+                window.location.pathname !==
+                "/"
             ) {
 
                 window.location.href =
