@@ -78,7 +78,7 @@ export function LoginForm({
           <Image src={"/c-logo.png"} alt="DIEZ_logo" width={180} height={180} />
 
         </a>
-        {isSubmitting && <BorderBeam duration={10} size={200} />}
+        {isSubmitting && <BorderBeam duration={10} size={200} borderWidth={2} />}
         {error && <ShineBorder shineColor={["#DA1F05", "#F33C04", "#FE650D", "#FFC11F"]} borderWidth={2} />}
 
         <CardHeader className="text-center">

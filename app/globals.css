@@ -164,15 +164,18 @@
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
   --animate-shine: shine var(--duration) infinite linear;
+
   @keyframes shine {
-  0% {
-    background-position: 0% 0%;
+    0% {
+      background-position: 0% 0%;
     }
-  50% {
-    background-position: 100% 100%;
+
+    50% {
+      background-position: 100% 100%;
     }
-  to {
-    background-position: 0% 0%;
+
+    to {
+      background-position: 0% 0%;
     }
   }
 }
@@ -184,6 +187,12 @@
 
   body {
     @apply bg-background text-foreground;
+
+  }
+
+  html,
+  body {
+    overscroll-behavior: none !important;
   }
 }
 
@@ -207,20 +216,20 @@
 
 @utility mesh-bg {
   background-color: var(--background);
-  background-image: 
-    radial-gradient(at 40% 20%, hsla(216,100%,96%,0.7) 0px, transparent 50%),
-    radial-gradient(at 80% 0%, hsla(189,100%,94%,0.7) 0px, transparent 50%),
-    radial-gradient(at 0% 50%, hsla(220,100%,97%,0.7) 0px, transparent 50%),
-    radial-gradient(at 80% 50%, hsla(210,100%,96%,0.7) 0px, transparent 50%);
+  background-image:
+    radial-gradient(at 40% 20%, hsla(216, 100%, 96%, 0.7) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, hsla(189, 100%, 94%, 0.7) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, hsla(220, 100%, 97%, 0.7) 0px, transparent 50%),
+    radial-gradient(at 80% 50%, hsla(210, 100%, 96%, 0.7) 0px, transparent 50%);
 }
 
 .dark .mesh-bg {
   background-color: var(--background);
-  background-image: 
-    radial-gradient(at 40% 20%, hsla(216,100%,15%,0.3) 0px, transparent 50%),
-    radial-gradient(at 80% 0%, hsla(189,100%,10%,0.3) 0px, transparent 50%),
-    radial-gradient(at 0% 50%, hsla(220,100%,15%,0.3) 0px, transparent 50%),
-    radial-gradient(at 80% 50%, hsla(210,100%,12%,0.3) 0px, transparent 50%);
+  background-image:
+    radial-gradient(at 40% 20%, hsla(216, 100%, 15%, 0.3) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, hsla(189, 100%, 10%, 0.3) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, hsla(220, 100%, 15%, 0.3) 0px, transparent 50%),
+    radial-gradient(at 80% 50%, hsla(210, 100%, 12%, 0.3) 0px, transparent 50%);
 }
 
 @utility premium-transition {

@@ -19,9 +19,9 @@ export function AppTopbar() {
                 </motion.div>
             )}
             <div className="flex justify-center mx-auto">
-                <GlobalSearch/>
+                <GlobalSearch />
             </div>
-            
+
 
             <Notification />
             <AnimatedThemeToggler variant="circle" duration={600} />
