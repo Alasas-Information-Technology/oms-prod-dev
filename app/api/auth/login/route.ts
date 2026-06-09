@@ -24,7 +24,7 @@ export async function POST(
             "user-agent"
         ) ?? "UNKNOWN";
 
-    const deviceFingerprint = uuidv4();
+    const deviceFingerprint = request.cookies.get("oms_device_id")?.value ?? uuidv4();
 
     try {
         const body = await request.json();

@@ -54,8 +54,12 @@ export async function serverLogout() {
 export async function getAuthSession() {
   const cookieStore = await cookies();
   const token = cookieStore.get("oms_access_token")?.value;
+  const refreshToken = cookieStore.get("oms_refresh_token")?.value;
   
-  if (!token) return null;
+  if (!token) {
+    if (refreshToken) return "REFRESH_REQUIRED";
+    return null;
+  }
 
   try {
     const authService = new AuthService();
@@ -64,6 +68,7 @@ export async function getAuthSession() {
     return session;
   } catch (error) {
     console.error("Session validation failed:", error);
+    if (refreshToken) return "REFRESH_REQUIRED";
     return null;
   }
 }
