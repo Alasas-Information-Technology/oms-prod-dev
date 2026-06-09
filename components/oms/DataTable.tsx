@@ -252,7 +252,7 @@ export function DataTable<T extends Record<string, unknown>>({
                                 className={cn(
                                   "gap-2 text-sm",
                                   action.variant === "destructive" &&
-                                    "text-destructive focus:text-destructive"
+                                  "text-destructive focus:text-destructive"
                                 )}
                               >
                                 {action.icon}
