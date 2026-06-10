@@ -13,6 +13,9 @@ import {
 } from "@/lib/services/RefreshTokenService";
 
 import { SECURITY } from "@/lib/constants/security";
+import { SecurityEventService } from "@/lib/services/SecurityEventService";
+import { SECURITY_EVENTS } from "@/lib/constants/securityEvents";
+
 
 /**
  * RefreshUseCase
@@ -25,6 +28,8 @@ import { SECURITY } from "@/lib/constants/security";
  * - Replay detection: reuse of a rotated token revokes the entire session
  * - Session validation before issuing new tokens
  */
+
+
 export class RefreshUseCase {
 
     private authService =
@@ -36,8 +41,13 @@ export class RefreshUseCase {
     private refreshTokenService =
         new RefreshTokenService();
 
+    private securityEventService =
+        new SecurityEventService();
+
     async execute(
-        refreshToken: string
+        refreshToken: string,
+        ipAddress?: string,
+        userAgent?: string
     ) {
 
         // 1. Hash the incoming refresh token
@@ -67,7 +77,23 @@ export class RefreshUseCase {
         //    If the refresh token was already rotated (revoked), this is a replay attack.
         //    An attacker is reusing a token that was already consumed.
         //    Immediately revoke the entire session to protect the user.
+
         if (session.RefreshTokenRevokedAt !== null) {
+
+            // --- GRACE PERIOD FOR CONCURRENT REFRESHES ---
+            // React StrictMode or multiple tabs might fire refresh requests at the exact same time.
+            // If the token was revoked within the last 30 seconds, treat it as a concurrent request, not an attack.
+            const revokedAt = new Date(session.RefreshTokenRevokedAt);
+            const now = new Date();
+            const diffInSeconds = (now.getTime() - revokedAt.getTime()) / 1000;
+
+            if (diffInSeconds < 30) {
+                console.warn(
+                    `[SECURITY] Concurrent refresh detected within grace period (${diffInSeconds.toFixed(1)}s). Ignoring replay detection.`
+                );
+                throw new Error("CONCURRENT_REFRESH");
+            }
+
             console.error(
                 `[SECURITY] REFRESH TOKEN REPLAY DETECTED — Session: ${session.LoginSessionID}, User: ${session.UserID}. Revoking entire session.`
             );
@@ -76,6 +102,17 @@ export class RefreshUseCase {
                 .revokeSessionFull(
                     session.LoginSessionID
                 );
+
+            await this.securityEventService.log(
+                SECURITY_EVENTS.REFRESH_TOKEN_REPLAY,
+                {
+                    userId: session.UserID,
+                    loginSessionId: session.LoginSessionID,
+                    description: "Refresh token replay attack detected",
+                    ipAddress,
+                    userAgent
+                }
+            );
 
             throw new Error(
                 "REFRESH_TOKEN_REPLAY"
@@ -107,6 +144,18 @@ export class RefreshUseCase {
             console.warn(
                 `[SECURITY] Refresh attempt on expired session: ${session.LoginSessionID}`
             );
+
+            await this.securityEventService.log(
+                SECURITY_EVENTS.SESSION_EXPIRED,
+                {
+                    userId: session.UserID,
+                    loginSessionId: session.LoginSessionID,
+                    description: "Attempted to refresh an expired session",
+                    ipAddress,
+                    userAgent
+                }
+            );
+
             throw new Error(
                 "Session has expired"
             );
@@ -120,6 +169,18 @@ export class RefreshUseCase {
             console.warn(
                 `[SECURITY] Refresh attempt with expired refresh token: ${session.LoginSessionID}`
             );
+
+            await this.securityEventService.log(
+                SECURITY_EVENTS.TOKEN_EXPIRED,
+                {
+                    userId: session.UserID,
+                    loginSessionId: session.LoginSessionID,
+                    description: "Attempted to use an expired refresh token",
+                    ipAddress,
+                    userAgent
+                }
+            );
+
             throw new Error(
                 "Refresh token has expired"
             );
@@ -148,13 +209,17 @@ export class RefreshUseCase {
         //     However, we also revoke the old token explicitly for defense-in-depth.
         await this.sessionService
             .revokeRefreshToken(
-                session.LoginSessionID
+                session.LoginSessionID,
+                ipAddress,
+                userAgent
             );
 
         await this.sessionService
             .rotateRefreshToken(
                 session.LoginSessionID,
-                newRefreshHash
+                newRefreshHash,
+                ipAddress,
+                userAgent
             );
 
         // 12. Update last activity timestamp

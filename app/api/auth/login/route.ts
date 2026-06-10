@@ -1,10 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
-import { LoginUseCase } from "@/lib/use-cases/LoginUseCase";
 import { SECURITY } from "@/lib/constants/security";
+import { SECURITY_EVENTS } from "@/lib/constants/securityEvents";
+import { SecurityEventService } from "@/lib/services/SecurityEventService";
+import { LoginUseCase } from "@/lib/use-cases/LoginUseCase";
 import { randomUUID as uuidv4 } from "crypto";
+import { NextRequest, NextResponse } from "next/server";
 
 const loginUseCase =
     new LoginUseCase();
+
+const securityEventService =
+    new SecurityEventService();
+
+
 
 export async function POST(
     request: NextRequest
@@ -77,6 +84,8 @@ export async function POST(
 
 
 
+
+
         return response;
 
     } catch (error: any) {
@@ -87,6 +96,15 @@ export async function POST(
             error.name ===
             "RateLimitExceededError"
         ) {
+
+            await securityEventService.log(
+                SECURITY_EVENTS.RATE_LIMIT_EXCEEDED,
+                {
+                    ipAddress,
+                    userAgent,
+                    description: "Login rate limit exceeded"
+                }
+            );
 
             return NextResponse.json(
                 {

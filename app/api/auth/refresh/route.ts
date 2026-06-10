@@ -13,6 +13,20 @@ export async function POST(
     request: NextRequest
 ) {
 
+    const forwarded =
+        request.headers.get(
+            "x-forwarded-for"
+        );
+
+    const ipAddress =
+        forwarded?.split(",")[0] ??
+        "UNKNOWN";
+
+    const userAgent =
+        request.headers.get(
+            "user-agent"
+        ) ?? "UNKNOWN";
+
     try {
 
         // Read refresh token from HttpOnly cookie only
@@ -65,6 +79,20 @@ export async function POST(
         return response;
 
     } catch (error: any) {
+
+        // Concurrent refresh (React StrictMode / Multiple tabs)
+        // Return 200 OK so the client interceptor resolves and uses the new cookies
+        if (error?.message === "CONCURRENT_REFRESH") {
+            return NextResponse.json(
+                {
+                    success: true,
+                    message: "Concurrent refresh handled"
+                },
+                {
+                    status: 200
+                }
+            );
+        }
 
         // Replay attack detection — return 403 Forbidden
         if (error?.message === "REFRESH_TOKEN_REPLAY") {

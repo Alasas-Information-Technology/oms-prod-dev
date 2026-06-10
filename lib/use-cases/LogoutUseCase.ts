@@ -4,6 +4,12 @@ import { AuthRepository }
 import { SessionService }
     from "@/lib/services/SessionService";
 
+import { SecurityEventService }
+    from "@/lib/services/SecurityEventService";
+
+import { SECURITY_EVENTS }
+    from "@/lib/constants/securityEvents";
+
 /**
  * LogoutUseCase
  *
@@ -18,6 +24,9 @@ export class LogoutUseCase {
 
     private sessionService =
         new SessionService();
+
+    private securityEventService =
+        new SecurityEventService();
 
     async execute(
         loginSessionId: string,
@@ -64,6 +73,17 @@ export class LogoutUseCase {
                     logoutReason:
                         "USER_LOGOUT"
                 });
+
+            await this.securityEventService.log(
+                SECURITY_EVENTS.LOGOUT,
+                {
+                    userId,
+                    loginSessionId,
+                    ipAddress,
+                    userAgent,
+                    description: "User explicitly logged out"
+                }
+            );
         }
 
         console.info(

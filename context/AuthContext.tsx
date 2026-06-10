@@ -55,11 +55,24 @@ export function AuthProvider({
     useState(true);
 
   /**
+   * Sync API client headers with user state
+   */
+  useEffect(() => {
+    if (user) {
+      api.defaults.headers.common["x-user-id"] = user.userId;
+      api.defaults.headers.common["x-login-session-id"] = user.loginSessionId;
+    } else {
+      delete api.defaults.headers.common["x-user-id"];
+      delete api.defaults.headers.common["x-login-session-id"];
+    }
+  }, [user]);
+
+  /**
    * Prevent multiple refreshes
    * running simultaneously
    */
   const refreshInProgress =
-    useRef(false);
+    useRef<Promise<void> | null>(null);
 
   /**
    * Silent Refresh
@@ -70,23 +83,21 @@ export function AuthProvider({
       if (
         refreshInProgress.current
       ) {
-        return;
+        return refreshInProgress.current;
       }
 
-      try {
+      const promise = (async () => {
+        try {
+          await api.post(
+            "/auth/refresh"
+          );
+        } finally {
+          refreshInProgress.current = null;
+        }
+      })();
 
-        refreshInProgress.current =
-          true;
-
-        await api.post(
-          "/auth/refresh"
-        );
-
-      } finally {
-
-        refreshInProgress.current =
-          false;
-      }
+      refreshInProgress.current = promise;
+      return promise;
     };
 
   /**
@@ -327,46 +338,7 @@ export function AuthProvider({
 
   }, []);
 
-  /**
-   * Optional:
-   * Refresh when tab
-   * becomes visible
-   */
-  useEffect(() => {
 
-    const handleVisibility =
-      async () => {
-
-        if (
-          document.visibilityState !==
-          "visible"
-        ) {
-          return;
-        }
-
-        try {
-
-          await refreshSession();
-
-        } catch {
-          // ignore
-        }
-      };
-
-    document.addEventListener(
-      "visibilitychange",
-      handleVisibility
-    );
-
-    return () => {
-
-      document.removeEventListener(
-        "visibilitychange",
-        handleVisibility
-      );
-    };
-
-  }, []);
 
   return (
     <AuthContext.Provider
