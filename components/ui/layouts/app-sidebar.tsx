@@ -73,7 +73,7 @@ const data = {
     },
     {
       title: "Budget Management",
-      url: "/app/budget",
+      url: "",
       icon: Wallet,
       items: [
         { title: "Dashboard", url: "/app/budget/dashboard" },
