@@ -80,6 +80,12 @@ const data = {
         { title: "Annual Budgets", url: "/app/budget/annual-budget" },
         { title: "Department Budgets", url: "/app/budget/dept-budget" },
         { title: "Vendor Allocations", url: "/app/budget/vendor-allocation" },
+        { title: "Budget Commitments", url: "/app/budget/budget-commitment"},
+        { title: "Budget Suppliments", url: "/app/budget/budget-suppliments"},
+        { title: "Budget Transfer", url: "/app/budget/budget-transfer"},
+        { title: "Budget Forecasting", url: "/app/budget/budget-forecasting"},
+        { title: "Reports", url: "/app/budget/reports"},
+        { title: "Audit Trail", url: "/app/budget/audit-trail"},
       ]
     },
     {
