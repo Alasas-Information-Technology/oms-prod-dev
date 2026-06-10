@@ -26,7 +26,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 const vendorAllocations = [
-    { department: "IT", vendor: "ABC Technologies", allocated: "AED 600,000", committed: "AED 540,000", available: "AED 60,000", utilization: "90%" },
+    { department: "IT", vendor: "ABC Technologies", allocated: "AED 600,000", committed: "AED 540,000", available: "AED 60,000", utilization: "96%" },
     { department: "IT", vendor: "XYZ Solutions", allocated: "AED 400,000", committed: "AED 360,000", available: "AED 40,000", utilization: "90%" },
     { department: "IT", vendor: "Cloud Services UAE", allocated: "AED 250,000", committed: "AED 100,000", available: "AED 150,000", utilization: "40%" },
     { department: "IT", vendor: "DataCore Solutions", allocated: "AED 350,000", committed: "AED 315,000", available: "AED 35,000", utilization: "90%" },
