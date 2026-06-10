@@ -75,6 +75,21 @@ export class RefreshUseCase {
         //    An attacker is reusing a token that was already consumed.
         //    Immediately revoke the entire session to protect the user.
         if (session.RefreshTokenRevokedAt !== null) {
+            
+            // --- GRACE PERIOD FOR CONCURRENT REFRESHES ---
+            // React StrictMode or multiple tabs might fire refresh requests at the exact same time.
+            // If the token was revoked within the last 30 seconds, treat it as a concurrent request, not an attack.
+            const revokedAt = new Date(session.RefreshTokenRevokedAt);
+            const now = new Date();
+            const diffInSeconds = (now.getTime() - revokedAt.getTime()) / 1000;
+
+            if (diffInSeconds < 30) {
+                console.warn(
+                    `[SECURITY] Concurrent refresh detected within grace period (${diffInSeconds.toFixed(1)}s). Ignoring replay detection.`
+                );
+                throw new Error("CONCURRENT_REFRESH");
+            }
+
             console.error(
                 `[SECURITY] REFRESH TOKEN REPLAY DETECTED — Session: ${session.LoginSessionID}, User: ${session.UserID}. Revoking entire session.`
             );

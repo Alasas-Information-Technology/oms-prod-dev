@@ -309,7 +309,9 @@ export class SessionService {
                         DAY,
                         @RefreshTokenDays,
                         SYSUTCDATETIME()
-                    )
+                    ),
+                    
+                RefreshTokenRevokedAt = NULL
 
             WHERE LoginSessionID =
                 @LoginSessionID
