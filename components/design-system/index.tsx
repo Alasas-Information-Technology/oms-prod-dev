@@ -166,7 +166,7 @@ function SL({ children, className }: { children: ReactNode; className?: string }
 
 function SectionWrapper({ title, children }: { title: string; children: ReactNode }) {
     return (
-        <div className="p-6 max-w-5xl mx-auto">
+        <div className="p-6 max-w-5xl mx-auto pb-32">
             <div className="mb-6 pb-4 border-b border-slate-200">
                 <h1 className="text-xl font-bold text-slate-900">{title}</h1>
                 <p className="text-sm text-muted-foreground mt-0.5">OMS Design System · Component Library v1.0 · Dubai Integrated Economic Zones</p>
@@ -1343,10 +1343,10 @@ export default function DesignSystemPage() {
     };
 
     return (
-        <div className="flex h-screen overflow-hidden mesh-bg">
+        <div className="flex min-h-screen mesh-bg">
 
             {/* ── Sidebar ─────────────────────────────────────────── */}
-            <aside className="w-60 bg-sidebar flex flex-col h-full shrink-0 border-r border-sidebar-border overflow-hidden">
+            <aside className="w-60 bg-sidebar flex flex-col h-screen sticky top-0 shrink-0 border-r border-sidebar-border overflow-hidden">
                 {/* Logo */}
                 <div className="px-4 py-5 border-b border-sidebar-border shrink-0">
                     <div className="flex items-center gap-2.5">
@@ -1394,17 +1394,14 @@ export default function DesignSystemPage() {
             </aside>
 
             {/* ── Main Area ───────────────────────────────────────── */}
-            <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-                {/* Content */}
-                <main
-                    className="flex-1 overflow-y-auto"
-                    onClick={() => notifOpen && setNotifOpen(false)}
-                >
-                    <SectionWrapper title={SECTION_TITLES[section]}>
-                        {SECTION_MAP[section]}
-                    </SectionWrapper>
-                </main>
-            </div>
+            <main
+                className="flex-1 w-full min-w-0"
+                onClick={() => notifOpen && setNotifOpen(false)}
+            >
+                <SectionWrapper title={SECTION_TITLES[section]}>
+                    {SECTION_MAP[section]}
+                </SectionWrapper>
+            </main>
         </div>
     );
 }

@@ -13,6 +13,20 @@ export async function POST(
     request: NextRequest
 ) {
 
+    const forwarded =
+        request.headers.get(
+            "x-forwarded-for"
+        );
+
+    const ipAddress =
+        forwarded?.split(",")[0] ??
+        "UNKNOWN";
+
+    const userAgent =
+        request.headers.get(
+            "user-agent"
+        ) ?? "UNKNOWN";
+
     try {
 
         // Read refresh token from HttpOnly cookie only
