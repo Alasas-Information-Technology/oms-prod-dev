@@ -33,10 +33,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", fontSans.variable, fontSerif.variable, "font-sans", fontMono.variable)}
+      className={cn("antialiased", fontSans.variable, fontSerif.variable, "font-sans", fontMono.variable)}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-screen flex flex-col">
         <Providers>
           {children}
         </Providers>

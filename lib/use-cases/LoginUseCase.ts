@@ -21,6 +21,8 @@ import {
 import { RateLimitService } from "../services/RateLimitService";
 import { RefreshTokenService } from "../services/RefreshTokenService";
 import { SECURITY } from "@/lib/constants/security";
+import { SecurityEventService } from "../services/SecurityEventService";
+import { SECURITY_EVENTS } from "../constants/securityEvents";
 
 export interface LoginResult {
     accessToken: string;
@@ -50,6 +52,9 @@ export class LoginUseCase {
 
     private refreshTokenService =
         new RefreshTokenService();
+
+    private securityEventService =
+        new SecurityEventService();
 
     async execute(
         username: string,
@@ -83,43 +88,7 @@ export class LoginUseCase {
             );
 
 
-        const isLocked =
-            await this.failedLoginService
-                .isLocked(
-                    username
-                );
 
-        if (isLocked) {
-
-            await this.authRepository
-                .createFailedLoginAttempt({
-                    username,
-                    ipAddress,
-                    userAgent,
-                    deviceType,
-                    browserName,
-                    isSSOLogin: false,
-                    failureReason:
-                        "ACCOUNT_LOCKED",
-                });
-
-            await this.authRepository
-                .createLoginHistory({
-                    username,
-                    ipAddress,
-                    userAgent,
-                    deviceType,
-                    browserName,
-                    isSSOLogin: false,
-                    loginResult: "FAILED",
-                    failureReason:
-                        "ACCOUNT_LOCKED"
-                });
-
-            throw new Error(
-                "Invalid username or password"
-            );
-        }
 
 
         try {
@@ -165,6 +134,67 @@ export class LoginUseCase {
                             "INVALID_USERNAME",
                     });
 
+                await this.securityEventService.log(
+                    SECURITY_EVENTS.LOGIN_FAILURE,
+                    {
+                        description: "INVALID_USERNAME",
+                        ipAddress,
+                        userAgent,
+                    }
+                );
+
+                throw new Error(
+                    "Invalid username or password"
+                );
+            }
+
+            // ACCOUNT LOCKOUT CHECK
+            const isLocked =
+                await this.failedLoginService
+                    .isLocked(
+                        username
+                    );
+
+            if (isLocked) {
+
+                await this.authRepository
+                    .createFailedLoginAttempt({
+                        username,
+                        ipAddress,
+                        userAgent,
+                        deviceType,
+                        browserName,
+                        isSSOLogin: false,
+                        failureReason:
+                            "ACCOUNT_LOCKED",
+                    });
+
+                await this.authRepository
+                    .createLoginHistory({
+                        username,
+                        ipAddress,
+                        userAgent,
+                        deviceType,
+                        browserName,
+                        isSSOLogin: false,
+                        loginResult: "FAILED",
+                        failureReason:
+                            "ACCOUNT_LOCKED"
+                    });
+
+
+                // LOGS SECURITY EVENT
+                await this.securityEventService.log(
+                    SECURITY_EVENTS.ACCOUNT_LOCKED,
+                    {
+                        userId:
+                            user.UserID,
+                        ipAddress,
+                        userAgent,
+                    }
+                );
+
+
                 throw new Error(
                     "Invalid username or password"
                 );
@@ -185,7 +215,6 @@ export class LoginUseCase {
                         failureReason:
                             "ACCOUNT_INACTIVE"
                     });
-
                 throw new Error(
                     "Invalid username or password"
                 );
@@ -224,6 +253,20 @@ export class LoginUseCase {
                         failureReason:
                             "INVALID_PASSWORD"
                     });
+
+                await this.securityEventService.log(
+                    SECURITY_EVENTS.LOGIN_FAILURE,
+                    {
+                        userId: user.UserID,
+                        description:
+                            "INVALID_PASSWORD",
+
+                        ipAddress,
+
+                        userAgent,
+                    }
+                );
+
 
                 throw new Error(
                     "Invalid username or password"
@@ -306,6 +349,19 @@ export class LoginUseCase {
 
                     loginResult: "SUCCESS"
                 });
+
+
+            // LOGS SECURITY EVENT
+            await this.securityEventService.log(
+                SECURITY_EVENTS.LOGIN_SUCCESS,
+                {
+                    userId:
+                        user.UserID,
+                    loginSessionId:
+                        loginSessionId,
+                    description: `Successfully logged in from ${userAgent} with IP ${ipAddress}`,
+                }
+            );
 
             return {
                 accessToken,
