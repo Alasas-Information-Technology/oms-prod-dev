@@ -13,6 +13,8 @@ import {
 } from "@/lib/services/RefreshTokenService";
 
 import { SECURITY } from "@/lib/constants/security";
+import { SecurityEventService } from "@/lib/services/SecurityEventService";
+import { SECURITY_EVENTS } from "@/lib/constants/securityEvents";
 
 /**
  * RefreshUseCase
@@ -36,8 +38,13 @@ export class RefreshUseCase {
     private refreshTokenService =
         new RefreshTokenService();
 
+    private securityEventService =
+        new SecurityEventService();
+
     async execute(
-        refreshToken: string
+        refreshToken: string,
+        ipAddress?: string,
+        userAgent?: string
     ) {
 
         // 1. Hash the incoming refresh token
@@ -77,6 +84,17 @@ export class RefreshUseCase {
                     session.LoginSessionID
                 );
 
+            await this.securityEventService.log(
+                SECURITY_EVENTS.REFRESH_TOKEN_REPLAY,
+                {
+                    userId: session.UserID,
+                    loginSessionId: session.LoginSessionID,
+                    description: "Refresh token replay attack detected",
+                    ipAddress,
+                    userAgent
+                }
+            );
+
             throw new Error(
                 "REFRESH_TOKEN_REPLAY"
             );
@@ -107,6 +125,18 @@ export class RefreshUseCase {
             console.warn(
                 `[SECURITY] Refresh attempt on expired session: ${session.LoginSessionID}`
             );
+
+            await this.securityEventService.log(
+                SECURITY_EVENTS.SESSION_EXPIRED,
+                {
+                    userId: session.UserID,
+                    loginSessionId: session.LoginSessionID,
+                    description: "Attempted to refresh an expired session",
+                    ipAddress,
+                    userAgent
+                }
+            );
+
             throw new Error(
                 "Session has expired"
             );
@@ -120,6 +150,18 @@ export class RefreshUseCase {
             console.warn(
                 `[SECURITY] Refresh attempt with expired refresh token: ${session.LoginSessionID}`
             );
+
+            await this.securityEventService.log(
+                SECURITY_EVENTS.TOKEN_EXPIRED,
+                {
+                    userId: session.UserID,
+                    loginSessionId: session.LoginSessionID,
+                    description: "Attempted to use an expired refresh token",
+                    ipAddress,
+                    userAgent
+                }
+            );
+
             throw new Error(
                 "Refresh token has expired"
             );
@@ -148,13 +190,17 @@ export class RefreshUseCase {
         //     However, we also revoke the old token explicitly for defense-in-depth.
         await this.sessionService
             .revokeRefreshToken(
-                session.LoginSessionID
+                session.LoginSessionID,
+                ipAddress,
+                userAgent
             );
 
         await this.sessionService
             .rotateRefreshToken(
                 session.LoginSessionID,
-                newRefreshHash
+                newRefreshHash,
+                ipAddress,
+                userAgent
             );
 
         // 12. Update last activity timestamp

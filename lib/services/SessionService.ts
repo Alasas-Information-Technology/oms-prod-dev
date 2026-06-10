@@ -1,8 +1,17 @@
+import { SECURITY } from "@/lib/constants/security";
 import { getDb } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
-import { SECURITY } from "@/lib/constants/security";
+import { SecurityEventService } from "./SecurityEventService";
+import { SECURITY_EVENTS } from "../constants/securityEvents";
+
 
 export class SessionService {
+
+    private securityEventService =
+        new SecurityEventService();
+
+
+
     async validateSession(
         loginSessionId: string
     ): Promise<boolean> {
@@ -39,6 +48,16 @@ export class SessionService {
             RevokedAt = SYSUTCDATETIME()
         WHERE LoginSessionID = @LoginSessionID
       `);
+
+        await this.securityEventService.log(
+            SECURITY_EVENTS.SESSION_REVOKED,
+            {
+                description:
+                    "User Session Revoked",
+
+                loginSessionId
+            }
+        );
     }
 
     /**
@@ -124,6 +143,22 @@ export class SessionService {
                 @DeviceFingerprint
             )
         `);
+
+        await this.securityEventService.log(
+            SECURITY_EVENTS.SESSION_CREATED,
+            {
+                userId,
+                description:
+                    "User Session Created",
+
+                loginSessionId,
+
+                ipAddress,
+
+                userAgent,
+            }
+        );
+
 
         return loginSessionId;
     }
@@ -242,7 +277,9 @@ export class SessionService {
 
     async rotateRefreshToken(
         loginSessionId: string,
-        refreshTokenHash: string
+        refreshTokenHash: string,
+        ipAddress?: string,
+        userAgent?: string
     ): Promise<void> {
 
         const db = await getDb();
@@ -277,6 +314,20 @@ export class SessionService {
             WHERE LoginSessionID =
                 @LoginSessionID
         `);
+
+        await this.securityEventService.log(
+            SECURITY_EVENTS.REFRESH_TOKEN_ROTATED,
+            {
+                description:
+                    "Refresh Token Rotated",
+
+                loginSessionId,
+
+                ipAddress,
+
+                userAgent,
+            }
+        );
     }
 
     async updateLastActivity(
@@ -292,10 +343,13 @@ export class SessionService {
                 LastActivityAt = SYSUTCDATETIME()
             WHERE LoginSessionID = @LoginSessionID
         `);
+
     }
 
     async revokeRefreshToken(
-        loginSessionId: string
+        loginSessionId: string,
+        ipAddress?: string,
+        userAgent?: string
     ): Promise<void> {
         const db = await getDb();
         await db
@@ -307,8 +361,20 @@ export class SessionService {
                 RefreshTokenRevokedAt = SYSUTCDATETIME()
             WHERE LoginSessionID = @LoginSessionID
         `);
-    }
+        await this.securityEventService.log(
+            SECURITY_EVENTS.REFRESH_TOKEN_REVOKED,
+            {
+                description:
+                    "Refresh Token Revoked",
 
+                loginSessionId,
+
+                ipAddress,
+
+                userAgent,
+            }
+        );
+    }
 
     async getSessionById(
         loginSessionId: string

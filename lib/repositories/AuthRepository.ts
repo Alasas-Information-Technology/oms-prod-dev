@@ -2,6 +2,8 @@ import { getDb } from "@/lib/db";
 import {
     verifyPassword
 } from "@/lib/utils/password";
+import * as sql from "mssql";
+
 
 export interface AuthUserRecord {
     userId: string;
@@ -543,6 +545,10 @@ export class AuthRepository {
             credential.passwordHash
         );
     }
+
+
+    // Security Events
+
     async createFailedLoginAttempt(
         data: {
             userId?: string;
@@ -592,5 +598,79 @@ export class AuthRepository {
                 @FailureReason
             )
         `);
+    }
+
+    async createSecurityEvent(
+        data: {
+            userId?: string;
+            loginSessionId?: string;
+            eventType: string;
+            eventDescription?: string;
+            ipAddress?: string;
+            userAgent?: string;
+        }
+    ): Promise<void> {
+
+        const db = await getDb();
+
+        await db
+            .request()
+
+            .input(
+                "UserID",
+                sql.UniqueIdentifier,
+                data.userId ?? null
+            )
+
+            .input(
+                "LoginSessionID",
+                sql.UniqueIdentifier,
+                data.loginSessionId ?? null
+            )
+
+            .input(
+                "EventType",
+                sql.NVarChar(100),
+                data.eventType
+            )
+
+            .input(
+                "EventDescription",
+                sql.NVarChar(1000),
+                data.eventDescription ?? null
+            )
+
+            .input(
+                "IPAddress",
+                sql.NVarChar(100),
+                data.ipAddress ?? null
+            )
+
+            .input(
+                "UserAgent",
+                sql.NVarChar(sql.MAX),
+                data.userAgent ?? null
+            )
+
+            .query(`
+        INSERT INTO auth.SecurityEvents
+        (
+            UserID,
+            LoginSessionID,
+            EventType,
+            EventDescription,
+            IPAddress,
+            UserAgent
+        )
+        VALUES
+        (
+            @UserID,
+            @LoginSessionID,
+            @EventType,
+            @EventDescription,
+            @IPAddress,
+            @UserAgent
+        )
+    `);
     }
 }
