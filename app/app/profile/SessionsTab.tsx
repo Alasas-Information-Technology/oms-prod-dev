@@ -1,11 +1,11 @@
 "use client";
 
 import { LogOut, RefreshCw, AlertCircle, Loader2 } from "lucide-react";
-import { Session } from "./profile.types";
+import { ActiveSession } from "@/lib/types/session.types";
 import { SessionRow } from "./SessionRow";
 
 interface SessionsTabProps {
-    sessions: Session[];
+    sessions: ActiveSession[];
     loading: boolean;
     error: string | null;
     onTerminate: (loginSessionId: string) => void;
@@ -20,8 +20,11 @@ const TABLE_HEADERS = [
     "LAST ACTIVE",
     "EXPIRES",
     "STATUS",
-    "",
+    "ACTIONS",
 ];
+
+// Single source of truth — must match SessionRow exactly
+export const SESSION_GRID = "grid-cols-[2fr_1fr_1.6fr_1fr_1.6fr_1fr_120px]";
 
 export function SessionsTab({
     sessions,
@@ -48,7 +51,7 @@ export function SessionsTab({
                 <button
                     onClick={onTerminateAll}
                     disabled={loading || otherCount === 0}
-                    className="flex items-center gap-2 text-sm font-medium text-destructive border border-destructive/30 px-4 py-2 rounded-lg hover:bg-destructive/10 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                    className="cursor-pointer flex items-center gap-2 text-sm font-medium text-destructive border border-destructive/30 px-4 py-2 rounded-lg hover:bg-destructive/10 transition-colors disabled:opacity-40 disabled:pointer-events-none"
                 >
                     <LogOut className="w-4 h-4" />
                     Terminate All Other Sessions
@@ -70,7 +73,7 @@ export function SessionsTab({
                     <p className="text-sm text-muted-foreground">{error}</p>
                     <button
                         onClick={onRetry}
-                        className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                        className="cursor-pointer flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
                     >
                         <RefreshCw className="w-3.5 h-3.5" />
                         Try again
@@ -81,7 +84,7 @@ export function SessionsTab({
             {/* Table */}
             {!loading && !error && (
                 <>
-                    <div className="grid grid-cols-[2fr_1.2fr_1.5fr_1.2fr_1.5fr_1.2fr_auto] gap-4 pb-3 border-b border-border">
+                    <div className={`grid ${SESSION_GRID} gap-4 pb-3 border-b border-border`}>
                         {TABLE_HEADERS.map((h, i) => (
                             <span key={i} className="text-[10px] font-semibold text-muted-foreground tracking-wider uppercase">
                                 {h}

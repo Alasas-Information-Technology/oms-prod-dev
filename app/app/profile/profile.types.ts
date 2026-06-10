@@ -14,21 +14,21 @@ export interface UserProfile {
     lastPasswordChange: number; // days ago
 }
 
-export type DeviceType = "Desktop" | "Mobile" | "Tablet";
-export type BrowserType = "CHROME" | "FIREFOX" | "SAFARI" | "EDGE" | "OTHER";
-export type SessionStatus = "Current" | "Active" | "Expired";
-
+// Matches the API response shape exactly
 export interface Session {
-    id: string;
-    deviceType: DeviceType;
-    browser: BrowserType;
-    deviceId: string;
+    loginSessionId: string;
     ipAddress: string;
-    signedIn: string;
-    lastActive: string;
-    expires: string;
-    status: SessionStatus;
-    isCurrent?: boolean;
+    browserName: string;
+    deviceType: string;
+    createdAt: string;
+    lastActivityAt: string;
+    expiresAt: string;
+    isCurrentSession: boolean;
+}
+
+export interface SessionsApiResponse {
+    success: boolean;
+    sessions: Session[];
 }
 
 export type ProfileTab = "profile" | "sessions";

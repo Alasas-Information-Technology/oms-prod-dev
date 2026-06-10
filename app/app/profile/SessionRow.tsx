@@ -2,6 +2,7 @@
 
 import { Monitor, Smartphone, Tablet, Calendar, Clock, Trash2 } from "lucide-react";
 import { ActiveSession } from "@/lib/types/session.types";
+import { SESSION_GRID } from "./SessionsTab";
 
 interface SessionRowProps {
     session: ActiveSession;
@@ -29,7 +30,6 @@ function DeviceIcon({ type }: { type: string }) {
     return <Monitor className={cls} />;
 }
 
-/** Accepts a Date object or ISO string, formats to UAE time */
 function formatDateTime(value: Date | string): string {
     return new Date(value).toLocaleString("en-GB", {
         day: "2-digit",
@@ -41,7 +41,6 @@ function formatDateTime(value: Date | string): string {
     });
 }
 
-/** Returns a human-readable "Xm ago / Xh ago / Xd ago" string */
 function timeAgo(value: Date | string): string {
     const diffMs = Date.now() - new Date(value).getTime();
     const mins = Math.floor(diffMs / 60_000);
@@ -59,36 +58,36 @@ export function SessionRow({ session, onTerminate }: SessionRowProps) {
 
     return (
         <div
-            className={`grid grid-cols-[2fr_1.2fr_1.5fr_1.2fr_1.5fr_1.2fr_auto] items-center gap-4 py-4 border-b border-border last:border-0 ${isCurrent ? "bg-accent/20 -mx-6 px-6 rounded-lg" : ""
+            className={`grid ${SESSION_GRID} items-center gap-4 py-4 border-b border-border last:border-0 ${isCurrent ? "bg-accent/20 -mx-6 px-6 rounded-lg" : ""
                 }`}
         >
             {/* Device / Browser */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0">
                 <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
                     <DeviceIcon type={session.deviceType} />
                 </div>
-                <div>
+                <div className="min-w-0">
                     <div className="flex items-center gap-2">
                         <span className="text-sm font-medium text-foreground capitalize">
                             {session.deviceType.toLowerCase()}
                         </span>
-                        <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border ${getBrowserBadgeClass(session.browserName)}`}>
+                        <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border shrink-0 ${getBrowserBadgeClass(session.browserName)}`}>
                             {session.browserName.toUpperCase()}
                         </span>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-0.5 font-mono">
+                    <p className="text-xs text-muted-foreground mt-0.5 font-mono truncate">
                         {session.loginSessionId.slice(0, 8)}...
                     </p>
                 </div>
             </div>
 
             {/* IP Address */}
-            <span className="text-sm text-muted-foreground font-mono">{session.ipAddress}</span>
+            <span className="text-sm text-muted-foreground font-mono truncate">{session.ipAddress}</span>
 
             {/* Signed In */}
             <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                 <Calendar className="w-3.5 h-3.5 shrink-0" />
-                {formatDateTime(session.createdAt)}
+                <span className="truncate">{formatDateTime(session.createdAt)}</span>
             </div>
 
             {/* Last Active */}
@@ -98,33 +97,33 @@ export function SessionRow({ session, onTerminate }: SessionRowProps) {
             </div>
 
             {/* Expires */}
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-muted-foreground truncate">
                 {formatDateTime(session.expiresAt)}
             </span>
 
             {/* Status */}
             <div>
                 {isCurrent ? (
-                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-primary bg-accent border border-primary/20 px-2.5 py-1 rounded-full">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-primary bg-accent border border-primary/20 px-2.5 py-1 rounded-full whitespace-nowrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                         Current
                     </span>
                 ) : (
-                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground px-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50" />
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground whitespace-nowrap">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                         Active
                     </span>
                 )}
             </div>
 
-            {/* Action */}
-            <div className="w-24 flex justify-end">
+            {/* Actions */}
+            <div className="flex justify-end">
                 {isCurrent ? (
                     <span className="text-xs text-muted-foreground italic">This device</span>
                 ) : (
                     <button
                         onClick={() => onTerminate(session.loginSessionId)}
-                        className="flex items-center gap-1.5 text-xs font-medium text-destructive border border-destructive/30 px-3 py-1.5 rounded-lg hover:bg-destructive/10 transition-colors"
+                        className="cursor-pointer flex items-center gap-1.5 text-xs font-medium text-destructive border border-destructive/30 px-3 py-1.5 rounded-lg hover:bg-destructive/10 transition-colors"
                     >
                         <Trash2 className="w-3.5 h-3.5" />
                         Terminate

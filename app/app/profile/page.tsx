@@ -24,7 +24,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="mx-auto py-8">
         {/* Page Title */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-foreground">My Profile</h1>
