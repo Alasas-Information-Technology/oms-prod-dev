@@ -55,6 +55,21 @@ export function AuthProvider({
     useState(true);
 
   /**
+   * Sync API client headers with user state
+   */
+  useEffect(() => {
+    if (user) {
+      api.defaults.headers.common["x-user-id"] = user.userId;
+      api.defaults.headers.common["x-login-session-id"] = user.loginSessionId;
+      api.defaults.headers.common["x-user-session"] = user.loginSessionId;
+    } else {
+      delete api.defaults.headers.common["x-user-id"];
+      delete api.defaults.headers.common["x-login-session-id"];
+      delete api.defaults.headers.common["x-user-session"];
+    }
+  }, [user]);
+
+  /**
    * Prevent multiple refreshes
    * running simultaneously
    */

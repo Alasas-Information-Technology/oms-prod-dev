@@ -16,6 +16,7 @@ import { SECURITY } from "@/lib/constants/security";
 import { SecurityEventService } from "@/lib/services/SecurityEventService";
 import { SECURITY_EVENTS } from "@/lib/constants/securityEvents";
 
+
 /**
  * RefreshUseCase
  *
@@ -27,6 +28,8 @@ import { SECURITY_EVENTS } from "@/lib/constants/securityEvents";
  * - Replay detection: reuse of a rotated token revokes the entire session
  * - Session validation before issuing new tokens
  */
+
+
 export class RefreshUseCase {
 
     private authService =
@@ -74,8 +77,9 @@ export class RefreshUseCase {
         //    If the refresh token was already rotated (revoked), this is a replay attack.
         //    An attacker is reusing a token that was already consumed.
         //    Immediately revoke the entire session to protect the user.
+
         if (session.RefreshTokenRevokedAt !== null) {
-            
+
             // --- GRACE PERIOD FOR CONCURRENT REFRESHES ---
             // React StrictMode or multiple tabs might fire refresh requests at the exact same time.
             // If the token was revoked within the last 30 seconds, treat it as a concurrent request, not an attack.
