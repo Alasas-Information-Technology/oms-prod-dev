@@ -43,7 +43,7 @@ export function SimpleKpiCard({ icon, value, title, description, color, bg, clas
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false)
-    }, 3000)
+    }, 1000)
 
     return () => clearTimeout(timer)
   }, [])
