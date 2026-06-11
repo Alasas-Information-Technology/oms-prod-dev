@@ -115,6 +115,8 @@ export async function DELETE(
         await sessionService
             .revokeSession(id);
 
+        const user = await authRepository.getUserSessionData(userId);
+
         await authRepository.createLogoutHistory({
             userId,
             loginSessionId: id,
@@ -129,7 +131,7 @@ export async function DELETE(
                     "user-agent"
                 ) ?? "",
             username:
-                session.UserName
+                user?.username ?? "Unknown"
         });
 
         return NextResponse.json({
@@ -138,7 +140,8 @@ export async function DELETE(
                 "Session terminated"
         });
 
-    } catch {
+    } catch (error) {
+        console.error("Error terminating session:", error);
 
         return NextResponse.json(
             {
