@@ -28,6 +28,7 @@ const processQueue = (error: any) => {
     failedQueue = [];
 };
 
+
 api.interceptors.response.use(
     response => response,
 
@@ -198,5 +199,6 @@ api.interceptors.response.use(
         }
     }
 );
+
 
 export default api;
