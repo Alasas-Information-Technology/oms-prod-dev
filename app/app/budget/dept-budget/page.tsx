@@ -1,6 +1,8 @@
 import { SimpleKpiCard } from "@/components/oms/simple-kpi";
 import { DepartmentBudgetBarChart } from "@/components/oms/budget-bar-chart";
-import { DepartmentBudgetTable } from "@/components/oms/department-budget-table";
+import { DataTable } from "@/components/oms/DataTable";
+import { departmentBudgets } from "@/components/oms/mock-data";
+import { departmentBudgetColumns } from "@/components/oms/table-config";
 
 export default function DeptBudget() {
   return (
@@ -20,9 +22,15 @@ export default function DeptBudget() {
         <DepartmentBudgetBarChart />
       </div>
       <div className="md:col-span-4 row-span-7">
-        <DepartmentBudgetTable/>
+        <DataTable
+          columns={departmentBudgetColumns}
+          data={departmentBudgets}
+          keyField="id"
+          enableSearch
+          enableExport
+        />
       </div>
-      
+
 
     </div>
   );
