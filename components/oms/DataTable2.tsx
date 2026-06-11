@@ -1,17 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-    Search,
-    ChevronUp,
-    ChevronDown,
-    ChevronsUpDown,
-    ChevronLeft,
-    ChevronRight,
-    ChevronsLeft,
-    ChevronsRight,
-    X,
-} from "lucide-react";
+import { Icon } from '@iconify/react';
 import {
     Table,
     TableBody,
@@ -186,9 +176,9 @@ function buildPageItems(
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function SortIcon({ direction }: { direction: SortDirection }) {
-    if (direction === "asc") return <ChevronUp className="w-3.5 h-3.5 shrink-0" />;
-    if (direction === "desc") return <ChevronDown className="w-3.5 h-3.5 shrink-0" />;
-    return <ChevronsUpDown className="w-3.5 h-3.5 shrink-0 opacity-40" />;
+    if (direction === "asc") return <Icon icon="mdi:chevron-up" className="w-3.5 h-3.5 shrink-0" />;
+    if (direction === "desc") return <Icon icon="mdi:chevron-down" className="w-3.5 h-3.5 shrink-0" />;
+    return <Icon icon="mdi:swap-vertical" className="w-3.5 h-3.5 shrink-0 opacity-40" />;
 }
 
 function SkeletonRows({ cols }: { cols: number }) {
@@ -292,7 +282,10 @@ export function DataTable<T>({
                     <div className="flex items-center gap-2 shrink-0 flex-wrap">
                         {searchable && (
                             <div className="relative">
-                                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+                                <Icon
+                                    icon="mdi:magnify"
+                                    className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none"
+                                />
                                 <input
                                     type="text"
                                     value={search}
@@ -305,7 +298,7 @@ export function DataTable<T>({
                                         onClick={() => setSearch("")}
                                         className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
                                     >
-                                        <X className="w-3.5 h-3.5" />
+                                        <Icon icon="mdi:close" className="w-3.5 h-3.5" />
                                     </button>
                                 )}
                             </div>
@@ -433,7 +426,7 @@ export function DataTable<T>({
                             title="First page"
                             className="cursor-pointer w-7 h-7 flex items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-30 disabled:pointer-events-none"
                         >
-                            <ChevronsLeft className="w-3.5 h-3.5" />
+                            <Icon icon="mdi:chevron-double-left" className="w-3.5 h-3.5" />
                         </button>
 
                         {/* Previous page */}
@@ -443,7 +436,7 @@ export function DataTable<T>({
                             title="Previous page"
                             className="cursor-pointer w-7 h-7 flex items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-30 disabled:pointer-events-none"
                         >
-                            <ChevronLeft className="w-3.5 h-3.5" />
+                            <Icon icon="mdi:chevron-left" className="w-3.5 h-3.5" />
                         </button>
 
                         {/* Smart page number pills */}
@@ -481,7 +474,7 @@ export function DataTable<T>({
                             title="Next page"
                             className="cursor-pointer w-7 h-7 flex items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-30 disabled:pointer-events-none"
                         >
-                            <ChevronRight className="w-3.5 h-3.5" />
+                            <Icon icon="mdi:chevron-right" className="w-3.5 h-3.5" />
                         </button>
 
                         {/* Last page */}
@@ -491,7 +484,7 @@ export function DataTable<T>({
                             title="Last page"
                             className="cursor-pointer w-7 h-7 flex items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-30 disabled:pointer-events-none"
                         >
-                            <ChevronsRight className="w-3.5 h-3.5" />
+                            <Icon icon="mdi:chevron-double-right" className="w-3.5 h-3.5" />
                         </button>
                     </div>
                 </div>

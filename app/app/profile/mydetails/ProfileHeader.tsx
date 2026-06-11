@@ -1,6 +1,6 @@
 "use client";
 
-import { Camera, Pencil } from "lucide-react";
+import { Icon } from '@iconify/react';
 import { UserProfile } from "../profile.types";
 
 interface ProfileHeaderProps {
@@ -21,7 +21,7 @@ export function ProfileHeader({ profile, onEditClick }: ProfileHeaderProps) {
                         className="absolute bottom-0 right-0 w-6 h-6 bg-card border border-border rounded-full flex items-center justify-center hover:bg-muted transition-colors shadow-sm"
                         aria-label="Change profile photo"
                     >
-                        <Camera className="w-3 h-3 text-muted-foreground" />
+                        <Icon icon="mdi:camera" className="w-3 h-3 text-muted-foreground" />
                     </button>
                 </div>
 
@@ -40,7 +40,7 @@ export function ProfileHeader({ profile, onEditClick }: ProfileHeaderProps) {
                 onClick={onEditClick}
                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground border border-border rounded-lg hover:bg-muted transition-colors"
             >
-                <Pencil className="w-4 h-4" />
+                <Icon icon="mdi:pencil" className="w-4 h-4" />
                 Edit Profile
             </button>
         </div>

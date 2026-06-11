@@ -1,4 +1,4 @@
-import { CheckCircle, Lock } from "lucide-react";
+import { Icon } from '@iconify/react';
 import { UserProfile } from "../profile.types";
 
 interface AccountDetailsCardProps {
@@ -26,7 +26,7 @@ export function AccountDetailsCard({ profile, onChangePassword }: AccountDetails
                     <div className="flex justify-between items-center">
                         <span className="text-xs text-muted-foreground">Account Status</span>
                         <span className="flex items-center gap-1 text-xs font-medium text-primary">
-                            <CheckCircle className="w-3.5 h-3.5" />
+                            <Icon icon="mdi:check-circle" className="w-3.5 h-3.5" />
                             {profile.accountStatus}
                         </span>
                     </div>
@@ -36,7 +36,7 @@ export function AccountDetailsCard({ profile, onChangePassword }: AccountDetails
             {/* Security */}
             <div className="bg-accent/30 rounded-xl border border-border px-5 py-4">
                 <div className="flex items-center gap-2 mb-2">
-                    <Lock className="w-4 h-4 text-muted-foreground" />
+                    <Icon icon="mdi:lock" className="w-4 h-4 text-muted-foreground" />
                     <h3 className="text-sm font-semibold text-foreground">Security</h3>
                 </div>
                 <p className="text-xs text-muted-foreground mb-3">
