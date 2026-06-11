@@ -48,7 +48,7 @@ export function TabsButton<T extends string = string>({
                         className={cn(
                             // base
                             "inline-flex items-center gap-2 rounded-lg px-5 py-2 text-sm font-medium",
-                            "transition-all duration-150 select-none outline-none",
+                            "transition-all duration-150 select-none outline-none cursor-pointer",
                             // inactive
                             "text-muted-foreground hover:text-foreground",
                             // active — data-[state=active] driven by Radix

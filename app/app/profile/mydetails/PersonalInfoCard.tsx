@@ -1,5 +1,5 @@
 import { User, Mail, Phone, Globe, Building2, Shield } from "lucide-react";
-import { UserProfile } from "./profile.types";
+import { UserProfile } from "../profile.types";
 
 interface PersonalInfoCardProps {
     profile: UserProfile;

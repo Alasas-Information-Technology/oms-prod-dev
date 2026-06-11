@@ -1,10 +1,10 @@
 "use client";
 
 import { ProfileTabs } from "./ProfileTabs";
-import { ProfileHeader } from "./ProfileHeader";
-import { PersonalInfoCard } from "./PersonalInfoCard";
-import { AccountDetailsCard } from "./AccountDetailsCard";
-import { SessionsTab } from "./SessionsTab";
+import { ProfileHeader } from "./mydetails/ProfileHeader";
+import { PersonalInfoCard } from "./mydetails/PersonalInfoCard";
+import { AccountDetailsCard } from "./mydetails/AccountDetailsCard";
+import { SessionsTab } from "./sessions/SessionsTab";
 import { useProfilePage } from "./useProfilePage";
 
 export default function ProfilePage() {
@@ -23,19 +23,23 @@ export default function ProfilePage() {
   } = useProfilePage();
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="mx-auto py-8">
-        {/* Page Title */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-foreground">My Profile</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage your personal information and active sessions
-          </p>
-        </div>
+    <div className="min-h-screen ">
+      <div className="mx-auto py-8 ">
+        <div className="flex justify-between">
+          {/* Tabs */}
+          <div className="mb-6">
+            <ProfileTabs activeTab={activeTab} onChange={setActiveTab} />
+          </div>
 
-        {/* Tabs */}
-        <div className="mb-6">
-          <ProfileTabs activeTab={activeTab} onChange={setActiveTab} />
+          {/* Page Title */}
+
+          <div className="mb-6 flex-col ">
+            <h1 className="text-2xl font-bold text-foreground items-end">My Profile</h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Manage your personal information
+            </p>
+          </div>
+
         </div>
 
         {/* Profile Tab */}

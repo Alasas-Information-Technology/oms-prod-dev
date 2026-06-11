@@ -1,7 +1,7 @@
 "use client";
 
 import { Camera, Pencil } from "lucide-react";
-import { UserProfile } from "./profile.types";
+import { UserProfile } from "../profile.types";
 
 interface ProfileHeaderProps {
     profile: UserProfile;
