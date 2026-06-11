@@ -10,8 +10,6 @@ export class SessionService {
     private securityEventService =
         new SecurityEventService();
 
-
-
     async validateSession(
         loginSessionId: string
     ): Promise<boolean> {
