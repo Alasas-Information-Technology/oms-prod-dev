@@ -229,15 +229,19 @@ export async function proxy(request: NextRequest) {
       JSON.stringify(user.roles)
     )
 
-    requestHeaders.set(
-      'x-permissions',
-      JSON.stringify(user.permissions)
-    )
+    if (!isApiRoute) {
+      requestHeaders.set(
+        'x-permissions',
+        JSON.stringify(user.permissions)
+      )
+    }
 
-    requestHeaders.set(
-      'x-scopes',
-      JSON.stringify(user.scopes)
-    )
+    if (!isApiRoute) {
+      requestHeaders.set(
+        'x-scopes',
+        JSON.stringify(user.scopes)
+      )
+    }
 
     // Update last activity asynchronously (fire-and-forget, don't block the request)
     sessionService.updateLastActivity(loginSessionId).catch(() => {

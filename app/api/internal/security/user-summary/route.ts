@@ -1,23 +1,32 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { SecurityRepository } from "@/lib/repositories/SecurityRepository";
 
-import { GetSecurityDashboardSummaryUseCase } from "@/lib/use-cases/security-dashboard/GetSecurityDashboardSummaryUseCase";
+import { GetUserSecuritySummaryUseCase } from "@/lib/use-cases/security-dashboard/GetUserSecuritySummaryUseCase";
 
-export async function GET() {
+export async function GET(
+    request: NextRequest
+) {
 
     try {
+
+        const userId =
+            request.headers.get(
+                "x-user-id"
+            )!;
 
         const repository =
             new SecurityRepository();
 
         const useCase =
-            new GetSecurityDashboardSummaryUseCase(
+            new GetUserSecuritySummaryUseCase(
                 repository
             );
 
         const result =
-            await useCase.execute();
+            await useCase.execute(
+                userId
+            );
 
         return NextResponse.json(
             result
@@ -30,7 +39,7 @@ export async function GET() {
         return NextResponse.json(
             {
                 message:
-                    "Failed to load dashboard"
+                    "Failed to load summary"
             },
             {
                 status: 500
