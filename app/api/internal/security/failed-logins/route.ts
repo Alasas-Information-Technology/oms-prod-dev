@@ -3,12 +3,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { SecurityRepository } from "@/lib/repositories/SecurityRepository";
 
 import { GetFailedLoginsUseCase } from "@/lib/use-cases/security-dashboard/GetFailedLoginsUseCase";
+import { authorize } from "@/lib/auth/authorization";
 
 export async function GET(
     request: NextRequest
 ) {
 
     try {
+        await authorize(request, ["SECURITY.FAILED_LOGINS.VIEW"]);
 
         const page =
             Number(

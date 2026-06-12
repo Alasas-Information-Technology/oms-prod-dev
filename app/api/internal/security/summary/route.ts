@@ -1,12 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { SecurityRepository } from "@/lib/repositories/SecurityRepository";
 
 import { GetSecurityDashboardSummaryUseCase } from "@/lib/use-cases/security-dashboard/GetSecurityDashboardSummaryUseCase";
+import { authorize } from "@/lib/auth/authorization";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
 
     try {
+        await authorize(request, ["SECURITY.DASHBOARD.VIEW"]);
 
         const repository =
             new SecurityRepository();

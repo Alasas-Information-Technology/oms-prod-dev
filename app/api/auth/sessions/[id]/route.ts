@@ -3,10 +3,11 @@ import {
     NextResponse
 } from "next/server";
 
+import { authorize } from "@/lib/auth/authorization";
+import { AuthRepository } from "@/lib/repositories/AuthRepository";
 import {
     SessionService
 } from "@/lib/services/SessionService";
-import { AuthRepository } from "@/lib/repositories/AuthRepository";
 
 const sessionService =
     new SessionService();
@@ -23,6 +24,8 @@ export async function DELETE(
         }>;
     }
 ) {
+
+    await authorize(request, ["SECURITY.SESSIONS.REVOKE"]);
 
     try {
 

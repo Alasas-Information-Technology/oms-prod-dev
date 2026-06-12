@@ -9,31 +9,32 @@ export async function authorize(
     requiredPermissions: string[]
 ) {
 
-
-    const userId =
+    const permissions =
         JSON.parse(
             request.headers.get(
-                "x-user-id"
-            ) || "[]"
+                "x-permissions"
+            ) ?? "[]"
         );
 
-    const permissions = await permissionRepository.getPermissions(
-        userId
-    )
+    // if (
+    //     permissions.includes(
+    //         "SECURITY.ADMIN"
+    //     )
+    // ) {
+    //     return true;
+    // }
 
     const allowed =
         requiredPermissions.every(
-            p =>
+            permission =>
                 permissions.includes(
-                    p
+                    permission
                 )
         );
 
     if (!allowed) {
-
         throw new Error(
             "FORBIDDEN"
         );
     }
 }
-
