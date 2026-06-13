@@ -3,14 +3,14 @@ import { getDb } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
 import { SecurityEventService } from "./SecurityEventService";
 import { SECURITY_EVENTS } from "../constants/securityEvents";
+import { securityEventBus } from "@/lib/events/securityEventBus";
+import { securitySettingsService } from "./SecuritySettingsService";
 
 
 export class SessionService {
 
     private securityEventService =
         new SecurityEventService();
-
-
 
     async validateSession(
         loginSessionId: string
@@ -34,7 +34,8 @@ export class SessionService {
     }
 
     async revokeSession(
-        loginSessionId: string
+        loginSessionId: string,
+        isAdminRevoke: boolean = false
     ): Promise<void> {
         const db = await getDb();
 
@@ -50,14 +51,18 @@ export class SessionService {
       `);
 
         await this.securityEventService.log(
-            SECURITY_EVENTS.SESSION_REVOKED,
+            isAdminRevoke ? SECURITY_EVENTS.ADMIN_REVOKE_SESSION : SECURITY_EVENTS.SESSION_REVOKED,
             {
                 description:
-                    "User Session Revoked",
+                    isAdminRevoke ?
+                        "User Session Revoked by Admin" :
+                        "User Session Revoked",
 
                 loginSessionId
             }
         );
+
+        securityEventBus.emit("security-event");
     }
 
     /**
@@ -80,6 +85,36 @@ export class SessionService {
                 RefreshTokenRevokedAt = SYSUTCDATETIME()
             WHERE LoginSessionID = @LoginSessionID
         `);
+        securityEventBus.emit("security-event");
+    }
+
+    async revokeAllSessionsForUser(
+        userId: string,
+        event: string
+    ): Promise<void> {
+        const db = await getDb();
+
+        await db
+            .request()
+            .input("UserID", userId)
+            .query(`
+            UPDATE auth.LoginSessions
+            SET
+                IsActive = 0,
+                RevokedAt = SYSUTCDATETIME(),
+                RefreshTokenRevokedAt = SYSUTCDATETIME()
+            WHERE UserID = @UserID
+        `);
+
+        await this.securityEventService.log(
+            event,
+            {
+                userId,
+                description: event
+            }
+        );
+
+        securityEventBus.emit("security-event");
     }
 
     async createSession(
@@ -97,6 +132,8 @@ export class SessionService {
         const loginSessionId = uuidv4();
         const fingerprint =
             `${browserName}|${deviceType}`;
+            
+        const sessionExpiryDays = await securitySettingsService.getRefreshTokenLifetime();
 
         await db
             .request()
@@ -106,7 +143,7 @@ export class SessionService {
             .input("UserAgent", userAgent)
             .input("BrowserName", browserName)
             .input("DeviceType", deviceType)
-            .input("SessionExpiryDays", SECURITY.SESSION_EXPIRY_DAYS)
+            .input("SessionExpiryDays", sessionExpiryDays)
             .input("Fingerprint", fingerprint)
             .input("DeviceFingerprint", deviceFingerprint)
             .query(`
@@ -182,7 +219,7 @@ export class SessionService {
             )
             .input(
                 "RefreshTokenDays",
-                SECURITY.REFRESH_TOKEN_DAYS
+                await securitySettingsService.getRefreshTokenLifetime()
             )
             .query(`
             UPDATE auth.LoginSessions
@@ -201,6 +238,7 @@ export class SessionService {
             WHERE LoginSessionID =
                 @LoginSessionID
         `);
+        securityEventBus.emit("security-event");
     }
 
     /**
@@ -296,7 +334,7 @@ export class SessionService {
             )
             .input(
                 "RefreshTokenDays",
-                SECURITY.REFRESH_TOKEN_DAYS
+                await securitySettingsService.getRefreshTokenLifetime()
             )
             .query(`
             UPDATE auth.LoginSessions
@@ -439,6 +477,62 @@ export class SessionService {
             AND
                 IsActive = 1
         `);
+        securityEventBus.emit("security-event");
+    }
+
+    async getActiveSessionCount(userId: string): Promise<number> {
+        const db = await getDb();
+        const result = await db.request()
+            .input("UserID", userId)
+            .query(`
+                SELECT COUNT(*) as count
+                FROM auth.LoginSessions
+                WHERE UserID = @UserID
+                AND IsActive = 1
+                AND RevokedAt IS NULL
+                AND ExpiresAt > SYSUTCDATETIME()
+            `);
+        return result.recordset[0]?.count || 0;
+    }
+
+    async revokeOldestSession(userId: string): Promise<void> {
+        const db = await getDb();
+        
+        // Find the oldest active session
+        const oldestSessionResult = await db.request()
+            .input("UserID", userId)
+            .query(`
+                SELECT TOP 1 LoginSessionID
+                FROM auth.LoginSessions
+                WHERE UserID = @UserID
+                AND IsActive = 1
+                AND RevokedAt IS NULL
+                AND ExpiresAt > SYSUTCDATETIME()
+                ORDER BY LoginAt ASC
+            `);
+            
+        if (oldestSessionResult.recordset.length > 0) {
+            const oldestSessionId = oldestSessionResult.recordset[0].LoginSessionID;
+            
+            await db.request()
+                .input("LoginSessionID", oldestSessionId)
+                .query(`
+                    UPDATE auth.LoginSessions
+                    SET IsActive = 0, RevokedAt = SYSUTCDATETIME()
+                    WHERE LoginSessionID = @LoginSessionID
+                `);
+                
+            await this.securityEventService.log(
+                SECURITY_EVENTS.SESSION_AUTO_REVOKED,
+                {
+                    userId,
+                    loginSessionId: oldestSessionId,
+                    description: "Auto-revoked oldest session due to concurrent session limit"
+                }
+            );
+            
+            securityEventBus.emit("security-event");
+        }
     }
 
 }

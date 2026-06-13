@@ -1,19 +1,20 @@
 import {
     NextRequest,
     NextResponse
-}
-    from "next/server";
+} from "next/server";
 
+import { authorize } from "@/lib/auth/authorization";
 import {
     GetActiveSessionsUseCase
-}
-    from "@/lib/use-cases/GetActiveSessionsUseCase";
+} from "@/lib/use-cases/GetActiveSessionsUseCase";
 
 
 
 export async function GET(
     request: NextRequest
 ) {
+
+    await authorize(request, ["SECURITY.FAILED_LOGINS.VIEW"]);
 
     const userId =
         request.headers.get(

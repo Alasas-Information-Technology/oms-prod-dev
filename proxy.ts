@@ -40,7 +40,8 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/_next') ||
     pathname.startsWith('/favicon.ico') ||
     pathname.startsWith('/public') ||
-    pathname.startsWith('/api/auth/')
+    pathname === '/api/auth/login' ||
+    pathname === '/api/auth/refresh'
   ) {
     return NextResponse.next()
   }
@@ -114,33 +115,28 @@ export async function proxy(request: NextRequest) {
     }
 
 
-    console.log(
-      "Device Cookie:",
-      device_id
-    );
+    const { securitySettingsService } = await import('@/lib/services/SecuritySettingsService');
+    const requireFingerprint = await securitySettingsService.requireSessionFingerprinting();
 
-    console.log(
-      "Session:",
-      loginSessionId
-    );
+    if (requireFingerprint) {
+      const fingerprintValid =
+        await authService
+          .validateFingerprint(
+            loginSessionId,
+            device_id
+          );
 
-    const fingerprintValid =
-      await authService
-        .validateFingerprint(
-          loginSessionId,
-          device_id
-        );
+      console.log(
+        "Fingerprint Valid:",
+        fingerprintValid
+      );
 
-    console.log(
-      "Fingerprint Valid:",
-      fingerprintValid
-    );
-
-    if (!fingerprintValid) {
-      const response = NextResponse.redirect(new URL('/login', request.url));
-      response.cookies.delete('oms_access_token');
-      response.cookies.delete('oms_refresh_token');
-      return response;
+      if (!fingerprintValid) {
+        const response = NextResponse.redirect(new URL('/login', request.url));
+        response.cookies.delete('oms_access_token');
+        response.cookies.delete('oms_refresh_token');
+        return response;
+      }
     }
 
     // ─────────────────────────────────────────────────────
@@ -238,6 +234,7 @@ export async function proxy(request: NextRequest) {
       'x-scopes',
       JSON.stringify(user.scopes)
     )
+
 
     // Update last activity asynchronously (fire-and-forget, don't block the request)
     sessionService.updateLastActivity(loginSessionId).catch(() => {
@@ -365,6 +362,7 @@ export async function proxy(request: NextRequest) {
     response.cookies.delete(
       "oms_refresh_token"
     );
+
 
     return response;
   }

@@ -3,10 +3,11 @@ import {
     NextResponse
 } from "next/server";
 
+import { authorize } from "@/lib/auth/authorization";
+import { AuthRepository } from "@/lib/repositories/AuthRepository";
 import {
     SessionService
 } from "@/lib/services/SessionService";
-import { AuthRepository } from "@/lib/repositories/AuthRepository";
 
 const sessionService =
     new SessionService();
@@ -23,6 +24,8 @@ export async function DELETE(
         }>;
     }
 ) {
+
+    await authorize(request, ["SECURITY.SESSIONS.REVOKE"]);
 
     try {
 
@@ -115,6 +118,8 @@ export async function DELETE(
         await sessionService
             .revokeSession(id);
 
+        const user = await authRepository.getUserSessionData(userId);
+
         await authRepository.createLogoutHistory({
             userId,
             loginSessionId: id,
@@ -129,7 +134,7 @@ export async function DELETE(
                     "user-agent"
                 ) ?? "",
             username:
-                session.UserName
+                user?.username ?? "Unknown"
         });
 
         return NextResponse.json({
@@ -138,7 +143,8 @@ export async function DELETE(
                 "Session terminated"
         });
 
-    } catch {
+    } catch (error) {
+        console.error("Error terminating session:", error);
 
         return NextResponse.json(
             {

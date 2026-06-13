@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { formatCompactNumber } from "@/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 import { cn } from "../ui/utils"
+import { Card } from "../ui/card"
 
 type GenericKpiCardProps = {
   icon: string
@@ -49,7 +50,7 @@ export function SimpleKpiCard({ icon, value, title, description, color, bg, clas
   }, [])
 
   return (
-    <div className={cn("relative rounded-xl border bg-background p-5 shadow-sm overflow-hidden flex flex-col justify-between",className)}>
+    <Card className={cn("relative rounded-xl p-5 shadow-sm overflow-hidden flex flex-col justify-between border-none", className)}>
       {/* Skeleton layer */}
       <AnimatePresence>
         {loading && (
@@ -104,6 +105,6 @@ export function SimpleKpiCard({ icon, value, title, description, color, bg, clas
           </p>
         )}
       </motion.div>
-    </div>
+    </Card>
   )
 }

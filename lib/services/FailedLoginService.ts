@@ -1,19 +1,13 @@
 import { AuthRepository }
     from "@/lib/repositories/AuthRepository";
 
-import { SECURITY }
-    from "@/lib/constants/security";
+import { securitySettingsService }
+    from "@/lib/services/SecuritySettingsService";
 
 export class FailedLoginService {
 
     private authRepository =
         new AuthRepository();
-
-    private readonly MAX_FAILED_ATTEMPTS =
-        SECURITY.MAX_FAILED_ATTEMPTS;
-
-    private readonly LOCKOUT_MINUTES =
-        SECURITY.LOCKOUT_MINUTES;
 
     async isLocked(
         username: string
@@ -72,16 +66,21 @@ export class FailedLoginService {
                 .getFailedLoginCount(
                     userId
                 );
+                
+        const maxFailedAttempts = 
+            await securitySettingsService.getMaxFailedLoginAttempts();
 
         if (
             failedCount >=
-            this.MAX_FAILED_ATTEMPTS
+            maxFailedAttempts
         ) {
+            const lockoutDuration = 
+                await securitySettingsService.getLockoutDuration();
 
             await this.authRepository
                 .lockUser(
                     userId,
-                    this.LOCKOUT_MINUTES
+                    lockoutDuration
                 );
         }
     }
