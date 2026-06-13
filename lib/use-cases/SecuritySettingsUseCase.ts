@@ -34,28 +34,53 @@ export class SecuritySettingsUseCase {
         };
     }
 
-    async updateSettings(data: UpdateSecuritySettingsDto, updatedBy: string) {
+    async updateSettings(
+        data: UpdateSecuritySettingsDto,
+        updatedBy: string,
+        ipAddress?: string,
+        userAgent?: string
+    ) {
+        const oldSettings = await this.getSettings();
+
         const settingsToUpdate = [
-            { code: "MAX_CONCURRENT_SESSIONS", value: String(data.maxConcurrentSessions) },
-            { code: "ALLOW_MULTIPLE_SESSIONS", value: String(data.allowMultipleSessions) },
-            { code: "AUTO_REVOKE_OLDEST_SESSION", value: String(data.autoRevokeOldestSession) },
-            { code: "ACCESS_TOKEN_LIFETIME", value: String(data.accessTokenLifetime) },
-            { code: "REFRESH_TOKEN_LIFETIME", value: String(data.refreshTokenLifetime) },
-            { code: "REQUIRE_SESSION_FINGERPRINTING", value: String(data.requireSessionFingerprinting) },
-            { code: "MAX_FAILED_LOGIN_ATTEMPTS", value: String(data.maxFailedLoginAttempts) },
-            { code: "LOCKOUT_DURATION", value: String(data.lockoutDuration) },
-            { code: "ENABLE_REPLAY_DETECTION", value: String(data.enableReplayDetection) },
-            { code: "REPLAY_ACTION_REVOKE", value: String(data.replayActionRevoke) },
-            { code: "REPLAY_ACTION_LOG", value: String(data.replayActionLog) },
-            { code: "REPLAY_ACTION_LOGOUT", value: String(data.replayActionLogout) },
-            { code: "SECURITY_EVENTS_RETENTION", value: String(data.securityEventsRetention) },
-            { code: "LOGIN_HISTORY_RETENTION", value: String(data.loginHistoryRetention) },
-            { code: "LOGOUT_HISTORY_RETENTION", value: String(data.logoutHistoryRetention) },
-            { code: "FAILED_LOGIN_RETENTION", value: String(data.failedLoginRetention) },
+            { code: "MAX_CONCURRENT_SESSIONS", value: String(data.maxConcurrentSessions), old: String(oldSettings.maxConcurrentSessions) },
+            { code: "ALLOW_MULTIPLE_SESSIONS", value: String(data.allowMultipleSessions), old: String(oldSettings.allowMultipleSessions) },
+            { code: "AUTO_REVOKE_OLDEST_SESSION", value: String(data.autoRevokeOldestSession), old: String(oldSettings.autoRevokeOldestSession) },
+            { code: "ACCESS_TOKEN_LIFETIME", value: String(data.accessTokenLifetime), old: String(oldSettings.accessTokenLifetime) },
+            { code: "REFRESH_TOKEN_LIFETIME", value: String(data.refreshTokenLifetime), old: String(oldSettings.refreshTokenLifetime) },
+            { code: "REQUIRE_SESSION_FINGERPRINTING", value: String(data.requireSessionFingerprinting), old: String(oldSettings.requireSessionFingerprinting) },
+            { code: "MAX_FAILED_LOGIN_ATTEMPTS", value: String(data.maxFailedLoginAttempts), old: String(oldSettings.maxFailedLoginAttempts) },
+            { code: "LOCKOUT_DURATION", value: String(data.lockoutDuration), old: String(oldSettings.lockoutDuration) },
+            { code: "ENABLE_REPLAY_DETECTION", value: String(data.enableReplayDetection), old: String(oldSettings.enableReplayDetection) },
+            { code: "REPLAY_ACTION_REVOKE", value: String(data.replayActionRevoke), old: String(oldSettings.replayActionRevoke) },
+            { code: "REPLAY_ACTION_LOG", value: String(data.replayActionLog), old: String(oldSettings.replayActionLog) },
+            { code: "REPLAY_ACTION_LOGOUT", value: String(data.replayActionLogout), old: String(oldSettings.replayActionLogout) },
+            { code: "SECURITY_EVENTS_RETENTION", value: String(data.securityEventsRetention), old: String(oldSettings.securityEventsRetention) },
+            { code: "LOGIN_HISTORY_RETENTION", value: String(data.loginHistoryRetention), old: String(oldSettings.loginHistoryRetention) },
+            { code: "LOGOUT_HISTORY_RETENTION", value: String(data.logoutHistoryRetention), old: String(oldSettings.logoutHistoryRetention) },
+            { code: "FAILED_LOGIN_RETENTION", value: String(data.failedLoginRetention), old: String(oldSettings.failedLoginRetention) },
         ];
 
+        const { SecurityEventService } = await import("@/lib/services/SecurityEventService");
+        const securityEventService = new SecurityEventService();
+        const { SECURITY_EVENTS } = await import("@/lib/constants/securityEvents");
+        const { securityEventBus } = await import("@/lib/events/securityEventBus");
+
         for (const setting of settingsToUpdate) {
-            await this.repository.update(setting.code, setting.value, updatedBy);
+            if (setting.value !== setting.old) {
+                await this.repository.update(setting.code, setting.value, updatedBy);
+                
+                await securityEventService.log(SECURITY_EVENTS.SECURITY_SETTING_CHANGED as any, {
+                    userId: updatedBy,
+                    ipAddress,
+                    userAgent,
+                    description: `Security setting ${setting.code} changed from ${setting.old} to ${setting.value}`
+                });
+            }
+        }
+
+        if (typeof securityEventBus !== "undefined") {
+            securityEventBus.emit("security-event");
         }
     }
 }

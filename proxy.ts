@@ -115,23 +115,28 @@ export async function proxy(request: NextRequest) {
     }
 
 
-    const fingerprintValid =
-      await authService
-        .validateFingerprint(
-          loginSessionId,
-          device_id
-        );
+    const { securitySettingsService } = await import('@/lib/services/SecuritySettingsService');
+    const requireFingerprint = await securitySettingsService.requireSessionFingerprinting();
 
-    console.log(
-      "Fingerprint Valid:",
-      fingerprintValid
-    );
+    if (requireFingerprint) {
+      const fingerprintValid =
+        await authService
+          .validateFingerprint(
+            loginSessionId,
+            device_id
+          );
 
-    if (!fingerprintValid) {
-      const response = NextResponse.redirect(new URL('/login', request.url));
-      response.cookies.delete('oms_access_token');
-      response.cookies.delete('oms_refresh_token');
-      return response;
+      console.log(
+        "Fingerprint Valid:",
+        fingerprintValid
+      );
+
+      if (!fingerprintValid) {
+        const response = NextResponse.redirect(new URL('/login', request.url));
+        response.cookies.delete('oms_access_token');
+        response.cookies.delete('oms_refresh_token');
+        return response;
+      }
     }
 
     // ─────────────────────────────────────────────────────

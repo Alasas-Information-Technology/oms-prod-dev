@@ -1,3 +1,4 @@
+import { SimpleKpiCard } from "@/components/oms/simple-kpi";
 import {
     Card,
     CardContent,
@@ -6,8 +7,7 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { SecurityDashboardDto } from "@/lib/types/security.types";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { SimpleKpiCard } from "@/components/oms/simple-kpi";
+import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
 interface Props {
     summary: SecurityDashboardDto | null;
@@ -33,7 +33,7 @@ export function SecurityMonitoringCard({ summary, isLoading }: Props) {
     const failedLoginImpact = Math.min(summary.failedLogins24Hours * 2, 40);
     const replayImpact = Math.min(summary.refreshTokenReplayEvents24Hours * 10, 50);
     const lockedAccountImpact = Math.min(summary.lockedUsers * 5, 30);
-    
+
     const healthScore = Math.max(100 - failedLoginImpact - replayImpact - lockedAccountImpact, 0);
 
     let healthColor = "#22c55e"; // Green
@@ -89,7 +89,7 @@ export function SecurityMonitoringCard({ summary, isLoading }: Props) {
                             </span>
                         </div>
                     </div>
-                    
+
                     <div className="space-y-4">
                         <h4 className="text-sm font-semibold uppercase text-muted-foreground">System Health Factors</h4>
                         <div className="space-y-2">

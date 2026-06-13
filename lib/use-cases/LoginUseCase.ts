@@ -23,6 +23,7 @@ import { RefreshTokenService } from "../services/RefreshTokenService";
 import { SECURITY } from "@/lib/constants/security";
 import { SecurityEventService } from "../services/SecurityEventService";
 import { SECURITY_EVENTS } from "../constants/securityEvents";
+import { securitySettingsService } from "../services/SecuritySettingsService";
 
 export interface LoginResult {
     accessToken: string;
@@ -278,6 +279,44 @@ export class LoginUseCase {
                     user.UserID
                 );
 
+            const allowMultipleSessions = await securitySettingsService.isMultipleSessionsAllowed();
+            const maxConcurrentSessions = await securitySettingsService.getMaxConcurrentSessions();
+            const autoRevokeOldestSession = await securitySettingsService.getAutoRevokeOldestSession();
+            
+            const activeSessionCount = await this.sessionService.getActiveSessionCount(user.UserID);
+
+            if (!allowMultipleSessions && activeSessionCount > 0) {
+                if (autoRevokeOldestSession) {
+                    await this.sessionService.revokeOldestSession(user.UserID);
+                } else {
+                    await this.securityEventService.log(
+                        SECURITY_EVENTS.CONCURRENT_SESSION_LIMIT_EXCEEDED,
+                        {
+                            userId: user.UserID,
+                            description: "Concurrent session limit exceeded (multiple sessions disabled).",
+                            ipAddress,
+                            userAgent
+                        }
+                    );
+                    throw new Error("CONCURRENT_SESSION_LIMIT_EXCEEDED");
+                }
+            } else if (allowMultipleSessions && activeSessionCount >= maxConcurrentSessions) {
+                if (autoRevokeOldestSession) {
+                    await this.sessionService.revokeOldestSession(user.UserID);
+                } else {
+                    await this.securityEventService.log(
+                        SECURITY_EVENTS.CONCURRENT_SESSION_LIMIT_EXCEEDED,
+                        {
+                            userId: user.UserID,
+                            description: `Concurrent session limit exceeded (${maxConcurrentSessions} max).`,
+                            ipAddress,
+                            userAgent
+                        }
+                    );
+                    throw new Error("CONCURRENT_SESSION_LIMIT_EXCEEDED");
+                }
+            }
+
             const loginSessionId =
                 await this.sessionService
                     .createSession(
@@ -298,6 +337,8 @@ export class LoginUseCase {
             session.loginSessionId =
                 loginSessionId;
 
+            const accessTokenLifetime = await securitySettingsService.getAccessTokenLifetime();
+
             const accessToken =
                 jwt.sign(
                     {
@@ -309,7 +350,7 @@ export class LoginUseCase {
                     },
                     process.env.JWT_SECRET!,
                     {
-                        expiresIn: SECURITY.ACCESS_TOKEN_EXPIRY as any,
+                        expiresIn: `${accessTokenLifetime}m` as any,
                         issuer: process.env.JWT_ISSUER || "OMS",
                         audience: process.env.JWT_AUDIENCE || "OMS_USERS",
                     }

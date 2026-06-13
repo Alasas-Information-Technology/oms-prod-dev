@@ -15,6 +15,7 @@ import {
 import { SECURITY } from "@/lib/constants/security";
 import { SecurityEventService } from "@/lib/services/SecurityEventService";
 import { SECURITY_EVENTS } from "@/lib/constants/securityEvents";
+import { securitySettingsService } from "@/lib/services/SecuritySettingsService";
 
 
 /**
@@ -78,7 +79,9 @@ export class RefreshUseCase {
         //    An attacker is reusing a token that was already consumed.
         //    Immediately revoke the entire session to protect the user.
 
-        if (session.RefreshTokenRevokedAt !== null) {
+        const isReplayDetectionEnabled = await securitySettingsService.isReplayDetectionEnabled();
+
+        if (isReplayDetectionEnabled && session.RefreshTokenRevokedAt !== null) {
 
             // --- GRACE PERIOD FOR CONCURRENT REFRESHES ---
             // React StrictMode or multiple tabs might fire refresh requests at the exact same time.
@@ -95,24 +98,37 @@ export class RefreshUseCase {
             }
 
             console.error(
-                `[SECURITY] REFRESH TOKEN REPLAY DETECTED — Session: ${session.LoginSessionID}, User: ${session.UserID}. Revoking entire session.`
+                `[SECURITY] REFRESH TOKEN REPLAY DETECTED — Session: ${session.LoginSessionID}, User: ${session.UserID}. Applying configured actions.`
             );
 
-            await this.sessionService
-                .revokeSessionFull(
-                    session.LoginSessionID
+            const replayActions = await securitySettingsService.getReplayActions();
+
+            if (replayActions.revoke) {
+                await this.sessionService
+                    .revokeSessionFull(
+                        session.LoginSessionID
+                    );
+            }
+
+            if (replayActions.log) {
+                await this.securityEventService.log(
+                    SECURITY_EVENTS.REFRESH_TOKEN_REPLAY,
+                    {
+                        userId: session.UserID,
+                        loginSessionId: session.LoginSessionID,
+                        description: "Refresh token replay attack detected",
+                        ipAddress,
+                        userAgent
+                    }
                 );
+            }
 
-            await this.securityEventService.log(
-                SECURITY_EVENTS.REFRESH_TOKEN_REPLAY,
-                {
-                    userId: session.UserID,
-                    loginSessionId: session.LoginSessionID,
-                    description: "Refresh token replay attack detected",
-                    ipAddress,
-                    userAgent
-                }
-            );
+            if (replayActions.logout) {
+                await this.sessionService.revokeAllSessionsForUser(
+                    session.UserID,
+                    SECURITY_EVENTS.REPLAY_TRIGGERED_GLOBAL_LOGOUT
+                );
+            }
 
             throw new Error(
                 "REFRESH_TOKEN_REPLAY"
@@ -228,6 +244,8 @@ export class RefreshUseCase {
                 session.LoginSessionID
             );
 
+        const accessTokenLifetime = await securitySettingsService.getAccessTokenLifetime();
+
         // 13. Generate new JWT access token
         const accessToken =
             jwt.sign(
@@ -240,7 +258,7 @@ export class RefreshUseCase {
                 },
                 process.env.JWT_SECRET!,
                 {
-                    expiresIn: SECURITY.ACCESS_TOKEN_EXPIRY as any,
+                    expiresIn: `${accessTokenLifetime}m` as any,
                     issuer: process.env.JWT_ISSUER || "OMS",
                     audience: process.env.JWT_AUDIENCE || "OMS_USERS",
                 }

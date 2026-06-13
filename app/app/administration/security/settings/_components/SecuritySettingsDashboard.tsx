@@ -1,29 +1,29 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Icon } from "@iconify/react";
 
-import { useSecuritySettings } from "@/hooks/useSecuritySettings";
 import { useSecurityMonitoring } from "@/hooks/useSecurityMonitoring";
-import { updateSecuritySettingsSchema, UpdateSecuritySettingsInput } from "@/lib/validations/security-settings.schema";
+import { useSecuritySettings } from "@/hooks/useSecuritySettings";
+import { updateSecuritySettingsSchema } from "@/lib/validations/security-settings.schema";
 
-import { Form } from "@/components/ui/form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import { AccountLockoutCard } from "./sections/AccountLockoutCard";
+import { AuditTrailGrid } from "./sections/AuditTrailGrid";
 import { AuthenticationPoliciesCard } from "./sections/AuthenticationPoliciesCard";
 import { ConcurrentSessionPolicyCard } from "./sections/ConcurrentSessionPolicyCard";
-import { AccountLockoutCard } from "./sections/AccountLockoutCard";
+import { DangerZoneCard } from "./sections/DangerZoneCard";
 import { RateLimitingCard } from "./sections/RateLimitingCard";
 import { ReplayDetectionCard } from "./sections/ReplayDetectionCard";
 import { RetentionPolicyCard } from "./sections/RetentionPolicyCard";
 import { SecurityMonitoringCard } from "./sections/SecurityMonitoringCard";
-import { DangerZoneCard } from "./sections/DangerZoneCard";
-import { AuditTrailGrid } from "./sections/AuditTrailGrid";
 
 export function SecuritySettingsDashboard() {
     const { settings, isLoading: isSettingsLoading, isSaving, updateSettings } = useSecuritySettings();
@@ -102,36 +102,36 @@ export function SecuritySettingsDashboard() {
 
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
                     <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent p-0 overflow-x-auto overflow-y-hidden flex-nowrap">
-                        <TabsTrigger 
-                            value="authentication" 
+                        <TabsTrigger
+                            value="authentication"
                             className="relative flex items-center gap-2 h-10 rounded-none border-b-2 border-b-transparent bg-transparent px-4 py-2 font-medium text-muted-foreground shadow-none transition-colors hover:text-foreground data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
                         >
                             <Icon icon="mdi:lock-outline" className="h-4 w-4" />
                             Authentication
                         </TabsTrigger>
-                        <TabsTrigger 
-                            value="sessions" 
+                        <TabsTrigger
+                            value="sessions"
                             className="relative flex items-center gap-2 h-10 rounded-none border-b-2 border-b-transparent bg-transparent px-4 py-2 font-medium text-muted-foreground shadow-none transition-colors hover:text-foreground data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
                         >
                             <Icon icon="mdi:shield-account-outline" className="h-4 w-4" />
                             Sessions
                         </TabsTrigger>
-                        <TabsTrigger 
-                            value="protection" 
+                        <TabsTrigger
+                            value="protection"
                             className="relative flex items-center gap-2 h-10 rounded-none border-b-2 border-b-transparent bg-transparent px-4 py-2 font-medium text-muted-foreground shadow-none transition-colors hover:text-foreground data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
                         >
                             <Icon icon="mdi:alert-shield-outline" className="h-4 w-4" />
                             Protection
                         </TabsTrigger>
-                        <TabsTrigger 
-                            value="audit" 
+                        <TabsTrigger
+                            value="audit"
                             className="relative flex items-center gap-2 h-10 rounded-none border-b-2 border-b-transparent bg-transparent px-4 py-2 font-medium text-muted-foreground shadow-none transition-colors hover:text-foreground data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
                         >
                             <Icon icon="mdi:text-box-search-outline" className="h-4 w-4" />
                             Audit & Logs
                         </TabsTrigger>
-                        <TabsTrigger 
-                            value="monitoring" 
+                        <TabsTrigger
+                            value="monitoring"
                             className="relative flex items-center gap-2 h-10 rounded-none border-b-2 border-b-transparent bg-transparent px-4 py-2 font-medium text-muted-foreground shadow-none transition-colors hover:text-foreground data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
                         >
                             <Icon icon="mdi:monitor-dashboard" className="h-4 w-4" />
