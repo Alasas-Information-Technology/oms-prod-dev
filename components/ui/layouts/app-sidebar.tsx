@@ -94,6 +94,8 @@ const data = {
         { title: "Users", url: "/app/administration/users" },
         { title: "Roles & Permissions", url: "/app/administration/roles" },
         { title: "System Settings", url: "/app/administration/settings" },
+        { title: "Security Settings", url: "/app/administration/security/settings" },
+        { title: "Security Dashboard", url: "/app/administration/security-dashboard" },
       ]
     }
   ],

@@ -3,6 +3,7 @@ import {
     verifyPassword
 } from "@/lib/utils/password";
 import * as sql from "mssql";
+import { securityEventBus } from "@/lib/events/securityEventBus";
 
 
 export interface AuthUserRecord {
@@ -259,6 +260,7 @@ export class AuthRepository {
                 @FailureReason
             )
         `);
+        securityEventBus.emit("security-event");
     }
 
     async createLogoutHistory(
@@ -321,6 +323,7 @@ export class AuthRepository {
                 @LogoutReason
             )
         `);
+        securityEventBus.emit("security-event");
     }
 
     // security 
@@ -391,6 +394,7 @@ export class AuthRepository {
 
             WHERE UserID = @UserID
         `);
+        securityEventBus.emit("security-event");
     }
     async lockUser(
         userId: string,
@@ -418,6 +422,7 @@ export class AuthRepository {
 
             WHERE UserID = @UserID
         `);
+        securityEventBus.emit("security-event");
     }
     async resetFailedLogin(
         userId: string
@@ -442,6 +447,7 @@ export class AuthRepository {
 
             WHERE UserID = @UserID
         `);
+        securityEventBus.emit("security-event");
     }
     async getFailedLoginCount(
         userId: string
@@ -491,6 +497,7 @@ export class AuthRepository {
 
             WHERE UserID = @UserID
         `);
+        securityEventBus.emit("security-event");
     }
     async getUserCredential(
         userId: string
@@ -598,6 +605,7 @@ export class AuthRepository {
                 @FailureReason
             )
         `);
+        securityEventBus.emit("security-event");
     }
 
     async createSecurityEvent(

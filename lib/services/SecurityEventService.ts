@@ -1,5 +1,6 @@
 import { AuthRepository }
     from "@/lib/repositories/AuthRepository";
+import { securityEventBus } from "@/lib/events/securityEventBus";
 
 export class SecurityEventService {
 
@@ -36,5 +37,7 @@ export class SecurityEventService {
                 userAgent:
                     options?.userAgent,
             });
+
+        securityEventBus.emit("security-event");
     }
 }
