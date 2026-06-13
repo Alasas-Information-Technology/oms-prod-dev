@@ -40,7 +40,8 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/_next') ||
     pathname.startsWith('/favicon.ico') ||
     pathname.startsWith('/public') ||
-    pathname.startsWith('/api/auth/')
+    pathname === '/api/auth/login' ||
+    pathname === '/api/auth/refresh'
   ) {
     return NextResponse.next()
   }
@@ -113,16 +114,6 @@ export async function proxy(request: NextRequest) {
       return response
     }
 
-
-    console.log(
-      "Device Cookie:",
-      device_id
-    );
-
-    console.log(
-      "Session:",
-      loginSessionId
-    );
 
     const fingerprintValid =
       await authService
@@ -229,19 +220,16 @@ export async function proxy(request: NextRequest) {
       JSON.stringify(user.roles)
     )
 
-    if (!isApiRoute) {
-      requestHeaders.set(
-        'x-permissions',
-        JSON.stringify(user.permissions)
-      )
-    }
+    requestHeaders.set(
+      'x-permissions',
+      JSON.stringify(user.permissions)
+    )
 
-    if (!isApiRoute) {
-      requestHeaders.set(
-        'x-scopes',
-        JSON.stringify(user.scopes)
-      )
-    }
+    requestHeaders.set(
+      'x-scopes',
+      JSON.stringify(user.scopes)
+    )
+
 
     // Update last activity asynchronously (fire-and-forget, don't block the request)
     sessionService.updateLastActivity(loginSessionId).catch(() => {
@@ -369,6 +357,7 @@ export async function proxy(request: NextRequest) {
     response.cookies.delete(
       "oms_refresh_token"
     );
+
 
     return response;
   }

@@ -1,8 +1,4 @@
 import { NextRequest } from "next/server";
-import { PermissionRepository } from "@/lib/repositories/PermissionRepository";
-
-
-const permissionRepository = new PermissionRepository();
 
 export async function authorize(
     request: NextRequest,

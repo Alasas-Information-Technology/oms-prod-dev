@@ -3,6 +3,7 @@ import { getDb } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
 import { SecurityEventService } from "./SecurityEventService";
 import { SECURITY_EVENTS } from "../constants/securityEvents";
+import { securityEventBus } from "@/lib/events/securityEventBus";
 
 
 export class SessionService {
@@ -32,7 +33,8 @@ export class SessionService {
     }
 
     async revokeSession(
-        loginSessionId: string
+        loginSessionId: string,
+        isAdminRevoke: boolean = false
     ): Promise<void> {
         const db = await getDb();
 
@@ -48,14 +50,18 @@ export class SessionService {
       `);
 
         await this.securityEventService.log(
-            SECURITY_EVENTS.SESSION_REVOKED,
+            isAdminRevoke ? SECURITY_EVENTS.ADMIN_REVOKE_SESSION : SECURITY_EVENTS.SESSION_REVOKED,
             {
                 description:
-                    "User Session Revoked",
+                    isAdminRevoke ?
+                        "User Session Revoked by Admin" :
+                        "User Session Revoked",
 
                 loginSessionId
             }
         );
+
+        securityEventBus.emit("security-event");
     }
 
     /**
@@ -78,6 +84,36 @@ export class SessionService {
                 RefreshTokenRevokedAt = SYSUTCDATETIME()
             WHERE LoginSessionID = @LoginSessionID
         `);
+        securityEventBus.emit("security-event");
+    }
+
+    async revokeAllSessionsForUser(
+        userId: string,
+        event: string
+    ): Promise<void> {
+        const db = await getDb();
+
+        await db
+            .request()
+            .input("UserID", userId)
+            .query(`
+            UPDATE auth.LoginSessions
+            SET
+                IsActive = 0,
+                RevokedAt = SYSUTCDATETIME(),
+                RefreshTokenRevokedAt = SYSUTCDATETIME()
+            WHERE UserID = @UserID
+        `);
+
+        await this.securityEventService.log(
+            event,
+            {
+                userId,
+                description: event
+            }
+        );
+
+        securityEventBus.emit("security-event");
     }
 
     async createSession(
@@ -199,6 +235,7 @@ export class SessionService {
             WHERE LoginSessionID =
                 @LoginSessionID
         `);
+        securityEventBus.emit("security-event");
     }
 
     /**
@@ -437,6 +474,7 @@ export class SessionService {
             AND
                 IsActive = 1
         `);
+        securityEventBus.emit("security-event");
     }
 
 }

@@ -9,6 +9,11 @@ const config: sql.config = {
         encrypt: true,
         trustServerCertificate: true,
     },
+    pool: {
+        max: 100,
+        min: 0,
+        idleTimeoutMillis: 30000
+    }
 };
 
 let pool: sql.ConnectionPool;

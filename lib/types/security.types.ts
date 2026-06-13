@@ -138,3 +138,45 @@ export interface SecurityDashboardDto {
 
     refreshTokenReplayEvents24Hours: number;
 }
+
+
+export interface FailedLoginsChartDto {
+    date: string;
+    count: number;
+}
+
+export interface SecurityEventsByTypeDto {
+    eventType: string;
+    count: number;
+}
+
+export interface SessionsByDeviceDto {
+    device: string;
+    count: number;
+}
+
+export interface SessionsByRoleDto {
+    role: string;
+    count: number;
+}
+
+export interface LoginTrendDto {
+    date: string;
+    success: number;
+    failure: number;
+}
+
+export interface ReplayEventsDto {
+    date: string;
+    count: number;
+}
+
+export interface LockedAccountsDto {
+    username: string;
+    lockouts: number;
+}
+
+export interface SessionsCreatedPerDayDto {
+    date: string;
+    count: number;
+}

@@ -1,5 +1,5 @@
 import { getDb } from "../db";
-import { CreateSecurityEventDto, FailedLoginAttemptDto, LoginHistoryDto, LogoutHistoryDto, SecurityDashboardDto, SecurityEventDto, SecuritySummaryDto, SessionActivityDto } from "../types/security.types";
+import { CreateSecurityEventDto, FailedLoginAttemptDto, FailedLoginsChartDto, LoginHistoryDto, LogoutHistoryDto, SecurityDashboardDto, SecurityEventDto, SecurityEventsByTypeDto, SecuritySummaryDto, SessionActivityDto, SessionsByDeviceDto, SessionsByRoleDto, LoginTrendDto, ReplayEventsDto, LockedAccountsDto, SessionsCreatedPerDayDto } from "../types/security.types";
 
 export class SecurityRepository {
 
@@ -517,5 +517,167 @@ export class SecurityRepository {
     }
 
 
+    async failedLoginChartData(): Promise<FailedLoginsChartDto[]> {
 
+        const db =
+            await getDb();
+
+        const result =
+            await db.request()
+                .query(`
+                    SELECT
+                        CAST(AttemptedAt AS DATE) AS [Date],
+                        COUNT(*) AS Total
+                    FROM auth.FailedLoginAttempts
+                    WHERE AttemptedAt >= DATEADD(DAY,-30,SYSUTCDATETIME())
+                    GROUP BY CAST(AttemptedAt AS DATE)
+                    ORDER BY [Date]
+            `);
+
+        return result.recordset.map((row) => ({
+            date: row.Date instanceof Date ? row.Date.toISOString().split('T')[0] : String(row.Date),
+            count: Number(row.Total)
+        }));
+    }
+
+
+    async securityEventsByTypeChartData(): Promise<SecurityEventsByTypeDto[]> {
+
+        const db =
+            await getDb();
+
+        const result =
+            await db.request()
+                .query(`
+                    SELECT
+                        EventType,
+                        COUNT(*) AS Total
+                    FROM auth.SecurityEvents
+                    GROUP BY EventType
+                    ORDER BY Total DESC
+            `);
+
+        return result.recordset.map((row) => ({
+            eventType: row.EventType,
+            count: Number(row.Total)
+        }));
+    }
+
+    async sessionsByDeviceChartData(): Promise<SessionsByDeviceDto[]> {
+        const db = await getDb();
+        const result = await db.request().query(`
+            SELECT
+                DeviceInfo,
+                COUNT(*) AS Total
+            FROM auth.LoginSessions
+            WHERE IsActive=1
+            AND RevokedAt IS NULL
+            GROUP BY DeviceInfo
+        `);
+        return result.recordset.map((row) => ({
+            device: row.DeviceInfo || "Unknown",
+            count: Number(row.Total)
+        }));
+    }
+
+    async sessionsByRoleChartData(): Promise<SessionsByRoleDto[]> {
+        const db = await getDb();
+        const result = await db.request().query(`
+            SELECT
+                r.RoleCode,
+                COUNT(DISTINCT ls.LoginSessionID) AS Total
+            FROM auth.LoginSessions ls
+            INNER JOIN auth.UserRoles ur
+                ON ur.UserID = ls.UserID
+            INNER JOIN auth.Roles r
+                ON r.RoleID = ur.RoleID
+            WHERE ls.IsActive = 1
+            AND ls.RevokedAt IS NULL
+            GROUP BY r.RoleCode
+            ORDER BY Total DESC
+        `);
+        return result.recordset.map((row) => ({
+            role: row.RoleCode,
+            count: Number(row.Total)
+        }));
+    }
+
+    async loginTrendChartData(): Promise<LoginTrendDto[]> {
+        const db = await getDb();
+        const result = await db.request().query(`
+            SELECT
+                CAST(LoginAt AS DATE) AS [Date],
+                SUM(
+                    CASE
+                        WHEN LoginResult='SUCCESS'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS Successes,
+                SUM(
+                    CASE
+                        WHEN LoginResult<>'SUCCESS'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS Failures
+            FROM auth.LoginHistory
+            GROUP BY CAST(LoginAt AS DATE)
+            ORDER BY [Date]
+        `);
+        return result.recordset.map((row) => ({
+            date: row.Date instanceof Date ? row.Date.toISOString().split('T')[0] : String(row.Date),
+            success: Number(row.Successes),
+            failure: Number(row.Failures)
+        }));
+    }
+
+    async replayEventsChartData(): Promise<ReplayEventsDto[]> {
+        const db = await getDb();
+        const result = await db.request().query(`
+            SELECT
+                CAST(CreatedAt AS DATE) AS [Date],
+                COUNT(*) AS Total
+            FROM auth.SecurityEvents
+            WHERE EventType='REFRESH_TOKEN_REPLAY'
+            GROUP BY CAST(CreatedAt AS DATE)
+            ORDER BY [Date]
+        `);
+        return result.recordset.map((row) => ({
+            date: row.Date instanceof Date ? row.Date.toISOString().split('T')[0] : String(row.Date),
+            count: Number(row.Total)
+        }));
+    }
+
+    async lockedAccountsChartData(): Promise<LockedAccountsDto[]> {
+        const db = await getDb();
+        const result = await db.request().query(`
+            SELECT
+                Username,
+                FailedLoginCount
+            FROM auth.Users
+            WHERE LockedUntil > SYSUTCDATETIME()
+            ORDER BY FailedLoginCount DESC
+        `);
+        return result.recordset.map((row) => ({
+            username: row.Username,
+            lockouts: Number(row.FailedLoginCount)
+        }));
+    }
+
+    async sessionsCreatedPerDayChartData(): Promise<SessionsCreatedPerDayDto[]> {
+        const db = await getDb();
+        const result = await db.request().query(`
+            SELECT
+                CAST(LoginAt AS DATE) AS [Date],
+                COUNT(*) AS Total
+            FROM auth.LoginSessions
+            GROUP BY CAST(LoginAt AS DATE)
+            ORDER BY [Date]
+        `);
+        return result.recordset.map((row) => ({
+            date: row.Date instanceof Date ? row.Date.toISOString().split('T')[0] : String(row.Date),
+            count: Number(row.Total)
+        }));
+    }
 }
