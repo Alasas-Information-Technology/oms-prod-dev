@@ -6,7 +6,8 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { SecurityDashboardDto } from "@/lib/types/security.types";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { SimpleKpiCard } from "@/components/oms/simple-kpi";
 
 interface Props {
     summary: SecurityDashboardDto | null;
@@ -108,23 +109,49 @@ export function SecurityMonitoringCard({ summary, isLoading }: Props) {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                    <MetricCard title="Active Sessions" value={summary.activeSessions} />
-                    <MetricCard title="Locked Users" value={summary.lockedUsers} />
-                    <MetricCard title="Failed Logins (24h)" value={summary.failedLogins24Hours} />
-                    <MetricCard title="Security Events (24h)" value={summary.securityEvents24Hours} />
-                    <MetricCard title="Replay Events (24h)" value={summary.refreshTokenReplayEvents24Hours} />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                    <SimpleKpiCard
+                        title="Active Sessions"
+                        value={summary.activeSessions || 0}
+                        icon="mdi:shield-account"
+                        description="Currently active"
+                        color="text-blue-600"
+                        bg="bg-blue-100"
+                    />
+                    <SimpleKpiCard
+                        title="Locked Users"
+                        value={summary.lockedUsers || 0}
+                        icon="mdi:lock-outline"
+                        description="Requires admin unlock"
+                        color="text-orange-600"
+                        bg="bg-orange-100"
+                    />
+                    <SimpleKpiCard
+                        title="Failed Logins"
+                        value={summary.failedLogins24Hours || 0}
+                        icon="mdi:alert-circle-outline"
+                        description="Last 24 hours"
+                        color="text-red-600"
+                        bg="bg-red-100"
+                    />
+                    <SimpleKpiCard
+                        title="Security Events"
+                        value={summary.securityEvents24Hours || 0}
+                        icon="mdi:shield-alert-outline"
+                        description="Last 24 hours"
+                        color="text-purple-600"
+                        bg="bg-purple-100"
+                    />
+                    <SimpleKpiCard
+                        title="Replay Events"
+                        value={summary.refreshTokenReplayEvents24Hours || 0}
+                        icon="mdi:shield-alert"
+                        description="Last 24 hours"
+                        color="text-red-700"
+                        bg="bg-red-200 dark:bg-red-500/20"
+                    />
                 </div>
             </CardContent>
         </Card>
-    );
-}
-
-function MetricCard({ title, value }: { title: string, value: string | number }) {
-    return (
-        <div className="rounded-xl border bg-card text-card-foreground shadow-sm p-4 flex flex-col items-center text-center justify-center gap-2">
-            <span className="text-xs text-muted-foreground font-medium uppercase">{title}</span>
-            <span className="text-2xl font-bold">{value}</span>
-        </div>
     );
 }

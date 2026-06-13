@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Shield, Lock, Activity, Save, RotateCcw, AlertTriangle, FileText } from "lucide-react";
+import { Icon } from "@iconify/react";
 
 import { useSecuritySettings } from "@/hooks/useSecuritySettings";
 import { useSecurityMonitoring } from "@/hooks/useSecurityMonitoring";
@@ -28,6 +28,7 @@ import { AuditTrailGrid } from "./sections/AuditTrailGrid";
 export function SecuritySettingsDashboard() {
     const { settings, isLoading: isSettingsLoading, isSaving, updateSettings } = useSecuritySettings();
     const { summary, isLoading: isSummaryLoading } = useSecurityMonitoring();
+    const [activeTab, setActiveTab] = useState("authentication");
 
     const form = useForm({
         resolver: zodResolver(updateSecuritySettingsSchema),
@@ -72,51 +73,68 @@ export function SecuritySettingsDashboard() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
+                {/* Header */}
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight">Security Settings</h1>
-                        <p className="text-muted-foreground mt-2 max-w-2xl">
-                            Manage authentication policies, session controls, lockout protection, rate limiting, and security monitoring.
+                        <h1 className="text-3xl font-bold tracking-tight text-foreground">Security Settings</h1>
+                        <p className="text-muted-foreground mt-1 max-w-2xl text-sm">
+                            Configure enterprise authentication policies, session controls, and threat protection measures.
                         </p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3 shrink-0">
                         <Button
                             type="button"
                             variant="outline"
                             onClick={() => form.reset()}
                             disabled={!hasUnsavedChanges || isSaving}
+                            className="gap-2"
                         >
-                            <RotateCcw className="mr-2 h-4 w-4" />
-                            Restore Defaults
+                            <Icon icon="mdi:restore" className="w-4 h-4" />
+                            Discard Changes
                         </Button>
-                        <Button type="submit" disabled={isSaving || !hasUnsavedChanges}>
-                            <Save className="mr-2 h-4 w-4" />
-                            {isSaving ? "Saving..." : "Save Changes"}
+                        <Button type="submit" disabled={isSaving || !hasUnsavedChanges} className="gap-2">
+                            <Icon icon="mdi:content-save-outline" className="w-4 h-4" />
+                            {isSaving ? "Saving..." : "Save Settings"}
                         </Button>
                     </div>
                 </div>
 
-                <Tabs defaultValue="authentication" className="space-y-6">
-                    <TabsList className="grid grid-cols-2 md:grid-cols-5 w-full h-auto gap-2 bg-transparent p-0">
-                        <TabsTrigger value="authentication" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary border bg-card">
-                            <Lock className="mr-2 h-4 w-4" />
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+                    <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent p-0 overflow-x-auto overflow-y-hidden flex-nowrap">
+                        <TabsTrigger 
+                            value="authentication" 
+                            className="relative flex items-center gap-2 h-10 rounded-none border-b-2 border-b-transparent bg-transparent px-4 py-2 font-medium text-muted-foreground shadow-none transition-colors hover:text-foreground data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                        >
+                            <Icon icon="mdi:lock-outline" className="h-4 w-4" />
                             Authentication
                         </TabsTrigger>
-                        <TabsTrigger value="sessions" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary border bg-card">
-                            <Shield className="mr-2 h-4 w-4" />
+                        <TabsTrigger 
+                            value="sessions" 
+                            className="relative flex items-center gap-2 h-10 rounded-none border-b-2 border-b-transparent bg-transparent px-4 py-2 font-medium text-muted-foreground shadow-none transition-colors hover:text-foreground data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                        >
+                            <Icon icon="mdi:shield-account-outline" className="h-4 w-4" />
                             Sessions
                         </TabsTrigger>
-                        <TabsTrigger value="protection" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary border bg-card">
-                            <AlertTriangle className="mr-2 h-4 w-4" />
+                        <TabsTrigger 
+                            value="protection" 
+                            className="relative flex items-center gap-2 h-10 rounded-none border-b-2 border-b-transparent bg-transparent px-4 py-2 font-medium text-muted-foreground shadow-none transition-colors hover:text-foreground data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                        >
+                            <Icon icon="mdi:alert-shield-outline" className="h-4 w-4" />
                             Protection
                         </TabsTrigger>
-                        <TabsTrigger value="audit" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary border bg-card">
-                            <FileText className="mr-2 h-4 w-4" />
+                        <TabsTrigger 
+                            value="audit" 
+                            className="relative flex items-center gap-2 h-10 rounded-none border-b-2 border-b-transparent bg-transparent px-4 py-2 font-medium text-muted-foreground shadow-none transition-colors hover:text-foreground data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                        >
+                            <Icon icon="mdi:text-box-search-outline" className="h-4 w-4" />
                             Audit & Logs
                         </TabsTrigger>
-                        <TabsTrigger value="monitoring" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary border bg-card">
-                            <Activity className="mr-2 h-4 w-4" />
+                        <TabsTrigger 
+                            value="monitoring" 
+                            className="relative flex items-center gap-2 h-10 rounded-none border-b-2 border-b-transparent bg-transparent px-4 py-2 font-medium text-muted-foreground shadow-none transition-colors hover:text-foreground data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                        >
+                            <Icon icon="mdi:monitor-dashboard" className="h-4 w-4" />
                             Monitoring
                         </TabsTrigger>
                     </TabsList>
