@@ -80,6 +80,8 @@ export async function POST(
 
     } catch (error: any) {
 
+        console.log(error);
+
         // Concurrent refresh (React StrictMode / Multiple tabs)
         // Return 200 OK so the client interceptor resolves and uses the new cookies
         if (error?.message === "CONCURRENT_REFRESH") {
