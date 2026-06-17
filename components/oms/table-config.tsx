@@ -140,3 +140,62 @@ export const transferColumns = [
     // ),
   },
 ];
+
+export const requisitionColumns = [
+  { key: "requestNo", header: "Request #" },
+  { key: "department", header: "Department" },
+  { key: "vendor", header: "Vendor" },
+  { key: "requestedAmount", header: "Requested Amount" },
+  { key: "approvedAmount", header: "Approved Amount" },
+  { key: "status", header: "Status" },
+  { key: "requestDate", header: "Request Date" }
+  
+]
+
+
+export const myRequisitionColumns = [
+  { key: "requestNo", header: "Request #" },
+  { key: "position", header: "Position" },
+  { key: "department", header: "Department" },
+  { key: "budget", header: "Budget" },
+  { key: "status", header: "Status" },
+  { key: "submittedDate", header: "Submitted Date" },
+];
+
+export const pendingApprovalColumns = [
+  { key: "requestNo", header: "Request #" },
+  { key: "requestor", header: "Requestor" },
+  { key: "department", header: "Department" },
+  { key: "position", header: "Position" },
+  { key: "amount", header: "Amount" },
+  { key: "submittedDate", header: "Submitted Date" },
+  { key: "status", header: "Status" },
+];
+
+export const draftColumns = [
+  { key: "draftNo", header: "Draft #" },
+  { key: "position", header: "Position" },
+  { key: "department", header: "Department" },
+  { key: "budget", header: "Budget" },
+  { key: "lastModified", header: "Last Modified" },
+  { key: "status", header: "Status" },
+];
+
+export const clarificationColumns = [
+  { key: "requestNo", header: "Request #" },
+  { key: "returnedBy", header: "Returned By" },
+  { key: "department", header: "Department" },
+  { key: "reason", header: "Reason" },
+  { key: "returnedDate", header: "Returned Date" },
+  { key: "status", header: "Status" },
+];
+
+export const allRequisitionColumns = [
+  { key: "requestNo", header: "Request #" },
+  { key: "requestor", header: "Requestor" },
+  { key: "position", header: "Position" },
+  { key: "department", header: "Department" },
+  { key: "budget", header: "Budget" },
+  { key: "status", header: "Status" },
+  { key: "submittedDate", header: "Submitted Date" },
+];

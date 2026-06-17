@@ -59,3 +59,84 @@ export const transfers = [
   { id: "TRF-007", source: "Operations", target: "Procurement", amount: "AED 130,000", status: "Pending Approval" },
   { id: "TRF-008", source: "Finance", target: "IT", amount: "AED 40,000", status: "Rejected" },
 ];
+
+export const requestionRequests = [
+  { id: "PR-001", requestNo: "PR-2026-001", department: "IT", vendor: "ABC Technologies", requestedAmount: "AED 150,000", approvedAmount: "AED 150,000", status: "Approved", requestDate: "12-Jan-2026" },
+  { id: "PR-002", requestNo: "PR-2026-002", department: "Finance", vendor: "FinTech Partners", requestedAmount: "AED 200,000", approvedAmount: "AED 0", status: "Pending", requestDate: "15-Jan-2026" },
+  { id: "PR-003", requestNo: "PR-2026-003", department: "HR", vendor: "People First LLC", requestedAmount: "AED 80,000", approvedAmount: "AED 80,000", status: "Approved", requestDate: "18-Jan-2026" },
+  { id: "PR-004", requestNo: "PR-2026-004", department: "Operations", vendor: "Logistics Hub", requestedAmount: "AED 320,000", approvedAmount: "AED 250,000", status: "Approved", requestDate: "20-Jan-2026" },
+  { id: "PR-005", requestNo: "PR-2026-005", department: "IT", vendor: "Cloud Services UAE", requestedAmount: "AED 120,000", approvedAmount: "AED 0", status: "Pending", requestDate: "22-Jan-2026" },
+  { id: "PR-006", requestNo: "PR-2026-006", department: "Procurement", vendor: "Prime Supplies", requestedAmount: "AED 450,000", approvedAmount: "AED 450,000", status: "Approved", requestDate: "24-Jan-2026" },
+  { id: "PR-007", requestNo: "PR-2026-007", department: "Finance", vendor: "AuditPro Services", requestedAmount: "AED 60,000", approvedAmount: "AED 0", status: "Rejected", requestDate: "26-Jan-2026" },
+  { id: "PR-008", requestNo: "PR-2026-008", department: "Operations", vendor: "Global Systems", requestedAmount: "AED 180,000", approvedAmount: "AED 180,000", status: "Approved", requestDate: "28-Jan-2026" },
+  { id: "PR-009", requestNo: "PR-2026-009", department: "HR", vendor: "Training Academy", requestedAmount: "AED 95,000", approvedAmount: "AED 95,000", status: "Approved", requestDate: "30-Jan-2026" },
+  { id: "PR-010", requestNo: "PR-2026-010", department: "IT", vendor: "CyberShield Security", requestedAmount: "AED 275,000", approvedAmount: "AED 0", status: "Pending", requestDate: "02-Feb-2026" },
+];
+
+export const myRequisitions = [
+  { id: "REQ-001", requestNo: "REQ-2026-001", position: "Software Engineer", department: "IT", budget: "AED 25,000", status: "Approved", submittedDate: "12-Jan-2026" },
+  { id: "REQ-002", requestNo: "REQ-2026-002", position: "Network Engineer", department: "IT", budget: "AED 22,000", status: "Pending", submittedDate: "15-Jan-2026" },
+  { id: "REQ-003", requestNo: "REQ-2026-003", position: "HR Executive", department: "HR", budget: "AED 18,000", status: "Approved", submittedDate: "18-Jan-2026" },
+  { id: "REQ-004", requestNo: "REQ-2026-004", position: "Finance Analyst", department: "Finance", budget: "AED 20,000", status: "Draft", submittedDate: "20-Jan-2026" },
+  { id: "REQ-005", requestNo: "REQ-2026-005", position: "Procurement Officer", department: "Procurement", budget: "AED 19,000", status: "Pending", submittedDate: "22-Jan-2026" },
+  { id: "REQ-006", requestNo: "REQ-2026-006", position: "Project Manager", department: "Operations", budget: "AED 35,000", status: "Approved", submittedDate: "25-Jan-2026" },
+  { id: "REQ-007", requestNo: "REQ-2026-007", position: "Business Analyst", department: "IT", budget: "AED 24,000", status: "Rejected", submittedDate: "28-Jan-2026" },
+  { id: "REQ-008", requestNo: "REQ-2026-008", position: "Recruitment Specialist", department: "HR", budget: "AED 17,000", status: "Approved", submittedDate: "30-Jan-2026" },
+  { id: "REQ-009", requestNo: "REQ-2026-009", position: "Accountant", department: "Finance", budget: "AED 16,000", status: "Pending", submittedDate: "02-Feb-2026" },
+  { id: "REQ-010", requestNo: "REQ-2026-010", position: "Systems Administrator", department: "IT", budget: "AED 23,000", status: "Approved", submittedDate: "05-Feb-2026" },
+];
+
+
+export const pendingApprovals = [
+  { id: "APP-001", requestNo: "REQ-2026-011", requestor: "Ahmed Khan", department: "IT", position: "Software Engineer", amount: "AED 25,000", submittedDate: "08-Feb-2026", status: "Pending" },
+  { id: "APP-002", requestNo: "REQ-2026-012", requestor: "Sarah Ali", department: "HR", position: "HR Executive", amount: "AED 18,000", submittedDate: "09-Feb-2026", status: "Pending" },
+  { id: "APP-003", requestNo: "REQ-2026-013", requestor: "Mohammed Noor", department: "Finance", position: "Financial Analyst", amount: "AED 22,000", submittedDate: "10-Feb-2026", status: "Pending" },
+  { id: "APP-004", requestNo: "REQ-2026-014", requestor: "Fatima Hassan", department: "Procurement", position: "Procurement Officer", amount: "AED 20,000", submittedDate: "11-Feb-2026", status: "Pending" },
+  { id: "APP-005", requestNo: "REQ-2026-015", requestor: "Omar Saleh", department: "Operations", position: "Project Manager", amount: "AED 35,000", submittedDate: "12-Feb-2026", status: "Pending" },
+  { id: "APP-006", requestNo: "REQ-2026-016", requestor: "Aisha Rahman", department: "IT", position: "Systems Administrator", amount: "AED 23,000", submittedDate: "13-Feb-2026", status: "Pending" },
+  { id: "APP-007", requestNo: "REQ-2026-017", requestor: "Ali Hamad", department: "HR", position: "Recruitment Specialist", amount: "AED 17,000", submittedDate: "14-Feb-2026", status: "Clarification Required" },
+  { id: "APP-008", requestNo: "REQ-2026-018", requestor: "Noura Ahmed", department: "Finance", position: "Accountant", amount: "AED 16,000", submittedDate: "15-Feb-2026", status: "Pending" },
+  { id: "APP-009", requestNo: "REQ-2026-019", requestor: "Khalid Yusuf", department: "Operations", position: "Business Analyst", amount: "AED 24,000", submittedDate: "16-Feb-2026", status: "Pending" },
+  { id: "APP-010", requestNo: "REQ-2026-020", requestor: "Mariam Saeed", department: "IT", position: "Network Engineer", amount: "AED 21,000", submittedDate: "17-Feb-2026", status: "Pending" },
+];
+
+
+export const draftRequisitions = [
+  { id: "DR-001", draftNo: "DR-2026-001", position: "Software Engineer", department: "IT", budget: "AED 25,000", lastModified: "17-Jun-2026", status: "Ready" },
+  { id: "DR-002", draftNo: "DR-2026-002", position: "HR Executive", department: "HR", budget: "AED 18,000", lastModified: "16-Jun-2026", status: "Incomplete" },
+  { id: "DR-003", draftNo: "DR-2026-003", position: "Business Analyst", department: "Finance", budget: "AED 22,000", lastModified: "15-Jun-2026", status: "Ready" },
+  { id: "DR-004", draftNo: "DR-2026-004", position: "Project Manager", department: "Operations", budget: "AED 35,000", lastModified: "14-Jun-2026", status: "Incomplete" },
+  { id: "DR-005", draftNo: "DR-2026-005", position: "Procurement Officer", department: "Procurement", budget: "AED 20,000", lastModified: "13-Jun-2026", status: "Ready" },
+  { id: "DR-006", draftNo: "DR-2026-006", position: "Network Engineer", department: "IT", budget: "AED 21,000", lastModified: "12-Jun-2026", status: "Incomplete" },
+  { id: "DR-007", draftNo: "DR-2026-007", position: "Recruitment Specialist", department: "HR", budget: "AED 17,000", lastModified: "11-Jun-2026", status: "Ready" },
+  { id: "DR-008", draftNo: "DR-2026-008", position: "Accountant", department: "Finance", budget: "AED 16,000", lastModified: "10-Jun-2026", status: "Ready" },
+];
+
+export const clarificationRequests = [
+  { id: "CL-001", requestNo: "REQ-2026-021", returnedBy: "Finance Manager", department: "IT", reason: "Budget justification missing", returnedDate: "18-Jun-2026", status: "Pending Response" },
+  { id: "CL-002", requestNo: "REQ-2026-022", returnedBy: "HR Director", department: "HR", reason: "Position description incomplete", returnedDate: "17-Jun-2026", status: "Pending Response" },
+  { id: "CL-003", requestNo: "REQ-2026-023", returnedBy: "Procurement Head", department: "Procurement", reason: "Vendor details required", returnedDate: "16-Jun-2026", status: "Resolved" },
+  { id: "CL-004", requestNo: "REQ-2026-024", returnedBy: "Finance Manager", department: "Finance", reason: "Budget exceeds allocation", returnedDate: "15-Jun-2026", status: "Pending Response" },
+  { id: "CL-005", requestNo: "REQ-2026-025", returnedBy: "Operations Manager", department: "Operations", reason: "Resource count mismatch", returnedDate: "14-Jun-2026", status: "Resolved" },
+  { id: "CL-006", requestNo: "REQ-2026-026", returnedBy: "HR Director", department: "HR", reason: "Reporting manager not specified", returnedDate: "13-Jun-2026", status: "Pending Response" },
+  { id: "CL-007", requestNo: "REQ-2026-027", returnedBy: "Finance Manager", department: "IT", reason: "Cost breakdown required", returnedDate: "12-Jun-2026", status: "Resolved" },
+  { id: "CL-008", requestNo: "REQ-2026-028", returnedBy: "Procurement Head", department: "Procurement", reason: "Supporting documents missing", returnedDate: "11-Jun-2026", status: "Pending Response" },
+];
+
+export const allRequisitions = [
+  { id: "REQ-001", requestNo: "REQ-2026-001", requestor: "Ahmed Khan", position: "Software Engineer", department: "IT", budget: "AED 25,000", status: "Approved", submittedDate: "12-Jan-2026" },
+  { id: "REQ-002", requestNo: "REQ-2026-002", requestor: "Sarah Ali", position: "Network Engineer", department: "IT", budget: "AED 22,000", status: "Pending", submittedDate: "15-Jan-2026" },
+  { id: "REQ-003", requestNo: "REQ-2026-003", requestor: "Mohammed Noor", position: "HR Executive", department: "HR", budget: "AED 18,000", status: "Approved", submittedDate: "18-Jan-2026" },
+  { id: "REQ-004", requestNo: "REQ-2026-004", requestor: "Fatima Hassan", position: "Finance Analyst", department: "Finance", budget: "AED 20,000", status: "Draft", submittedDate: "20-Jan-2026" },
+  { id: "REQ-005", requestNo: "REQ-2026-005", requestor: "Omar Saleh", position: "Procurement Officer", department: "Procurement", budget: "AED 19,000", status: "Pending", submittedDate: "22-Jan-2026" },
+  { id: "REQ-006", requestNo: "REQ-2026-006", requestor: "Aisha Rahman", position: "Project Manager", department: "Operations", budget: "AED 35,000", status: "Approved", submittedDate: "25-Jan-2026" },
+  { id: "REQ-007", requestNo: "REQ-2026-007", requestor: "Ali Hamad", position: "Business Analyst", department: "IT", budget: "AED 24,000", status: "Rejected", submittedDate: "28-Jan-2026" },
+  { id: "REQ-008", requestNo: "REQ-2026-008", requestor: "Noura Ahmed", position: "Recruitment Specialist", department: "HR", budget: "AED 17,000", status: "Approved", submittedDate: "30-Jan-2026" },
+  { id: "REQ-009", requestNo: "REQ-2026-009", requestor: "Khalid Yusuf", position: "Accountant", department: "Finance", budget: "AED 16,000", status: "Pending", submittedDate: "02-Feb-2026" },
+  { id: "REQ-010", requestNo: "REQ-2026-010", requestor: "Mariam Saeed", position: "Systems Administrator", department: "IT", budget: "AED 23,000", status: "Approved", submittedDate: "05-Feb-2026" },
+  { id: "REQ-011", requestNo: "REQ-2026-011", requestor: "Ahmed Khan", position: "Data Engineer", department: "IT", budget: "AED 27,000", status: "Pending Approval", submittedDate: "08-Feb-2026" },
+  { id: "REQ-012", requestNo: "REQ-2026-012", requestor: "Sarah Ali", position: "HR Manager", department: "HR", budget: "AED 28,000", status: "Pending Approval", submittedDate: "09-Feb-2026" },
+  { id: "REQ-013", requestNo: "REQ-2026-013", requestor: "Mohammed Noor", position: "Financial Controller", department: "Finance", budget: "AED 32,000", status: "Pending Approval", submittedDate: "10-Feb-2026" },
+  { id: "REQ-014", requestNo: "REQ-2026-014", requestor: "Fatima Hassan", position: "Procurement Manager", department: "Procurement", budget: "AED 30,000", status: "Clarification Required", submittedDate: "11-Feb-2026" },
+  { id: "REQ-015", requestNo: "REQ-2026-015", requestor: "Omar Saleh", position: "Operations Supervisor", department: "Operations", budget: "AED 21,000", status: "Draft", submittedDate: "12-Feb-2026" },
+];

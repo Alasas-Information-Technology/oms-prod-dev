@@ -52,9 +52,17 @@ const data = {
       icon: CheckSquare,
     },
     {
-      title: "Procurement",
-      url: "/app/procurement",
+      title: "Requesition",
+      url: "/app/requisition/dashboard",
       icon: ShoppingCart,
+      items:[
+        { title: "My Requesition", url: "/app/requisition/my-requesition" },
+        { title: "Pending Approvals", url: "/app/requisition/approvals" },
+        { title: "Draft", url: "/app/requisition/draft" },
+        { title: "Clarifications", url: "/app/requisition/clarifications" },
+        { title: "All Requestions", url: "/app/requisition/all-requesitions" },
+
+      ]
     },
     {
       title: "Vendors",
@@ -73,10 +81,9 @@ const data = {
     },
     {
       title: "Budget Management",
-      url: "",
+      url: "/app/budget/dashboard",
       icon: Wallet,
       items: [
-        { title: "Dashboard", url: "/app/budget/dashboard" },
         { title: "Annual Budgets", url: "/app/budget/annual-budget" },
         { title: "Department Budgets", url: "/app/budget/dept-budget" },
         { title: "Vendor Allocations", url: "/app/budget/vendor-allocation" },
