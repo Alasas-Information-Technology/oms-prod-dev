@@ -170,10 +170,31 @@ export function SocPanel({ recentEvents }: SocPanelProps) {
 export function FailedLoginsChart({ chartsData }: ChartsDataProps) {
   const failedLogins7Days = useMemo(() => {
     const raw = chartsData?.failedLogins || [];
-    return raw.slice(-7).map(item => ({
-      day: safeFormatDate(item.date, "EEE"),
-      count: item.count || 0,
-    }));
+    
+    // Generate the last 7 calendar days ending today
+    const result = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (6 - i));
+      return {
+        dateStr: format(d, "yyyy-MM-dd"),
+        day: format(d, "do EEE"),
+        count: 0
+      };
+    });
+
+    // Map database records to the generated days
+    raw.forEach(item => {
+      const itemDate = new Date(item.date);
+      if (!isNaN(itemDate.getTime())) {
+        const itemDateStr = format(itemDate, "yyyy-MM-dd");
+        const match = result.find(r => r.dateStr === itemDateStr);
+        if (match) {
+          match.count = item.count || 0;
+        }
+      }
+    });
+
+    return result.map(({ day, count }) => ({ day, count }));
   }, [chartsData?.failedLogins]);
   const failedLoginsConfig = { count: { label: "Failed Attempts", color: "#ef4444" } };
 
