@@ -51,20 +51,18 @@ export async function POST(
             session: result.session,
         });
 
-        // Set access token as HttpOnly cookie
         response.cookies.set("oms_access_token", result.accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            sameSite: "lax",
             path: "/",
             maxAge: SECURITY.ACCESS_TOKEN_COOKIE_MAX_AGE,
         });
 
-        // Set refresh token as HttpOnly cookie
         response.cookies.set("oms_refresh_token", result.refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            sameSite: "lax",
             path: "/",
             maxAge: SECURITY.REFRESH_TOKEN_COOKIE_MAX_AGE,
         });
@@ -74,8 +72,8 @@ export async function POST(
             deviceFingerprint,
             {
                 httpOnly: true,
-                secure: true,
-                sameSite: "strict",
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
                 path: "/",
                 maxAge: SECURITY.DEVICE_ID_COOKIE_MAX_AGE
             }

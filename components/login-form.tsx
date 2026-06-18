@@ -62,7 +62,8 @@ export function LoginForm({
     setError(null);
     try {
       await login(data.Username, data.Password);
-      router.push("/app"); // Redirect to dashboard
+      // router.push("app");
+      window.location.href = "/app";
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred");
     }

@@ -2,20 +2,21 @@
 
 import Link from "next/link";
 import { motion, type Variants } from "motion/react";
-import { 
-  Building2, 
-  ArrowRight, 
-  ShieldCheck, 
-  FileText, 
-  GitBranch, 
-  LineChart, 
-  ChevronRight 
+import {
+  Building2,
+  ArrowRight,
+  ShieldCheck,
+  FileText,
+  GitBranch,
+  LineChart,
+  ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/components/ui/utils";
 
 export default function LandingPage() {
+
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     show: {
@@ -92,7 +93,7 @@ export default function LandingPage() {
         <section className="w-full py-20 md:py-32 flex flex-col items-center justify-center text-center px-4 relative overflow-hidden">
           {/* Background decoration */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-3xl -z-10 pointer-events-none" />
-          
+
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -138,7 +139,7 @@ export default function LandingPage() {
               <p className="text-muted-foreground max-w-xl mx-auto">Everything you need to orchestrate the complete lifecycle of third-party service provider engagements.</p>
             </div>
 
-            <motion.div 
+            <motion.div
               variants={containerVariants}
               initial="hidden"
               whileInView="show"
