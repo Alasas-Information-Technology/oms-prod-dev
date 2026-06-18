@@ -321,11 +321,12 @@ export const clarificationColumns = [
 ];
 
 export const allRequisitionColumns = [
-  { key: "requestNo", header: "Request #" },
-  { key: "requestor", header: "Requestor" },
-  { key: "position", header: "Position" },
+  { key: "id", header: "Request #" },
+  { key: "requestDate", header: "Request Date" },
+  { key: "requestedBy", header: "Requested By" },
+  { key: "positionName", header: "Position Name" },
   { key: "department", header: "Department" },
-  { key: "budget", header: "Budget" },
+  { key: "budgetAmount", header: "Budget Amount" },
   {
     key: "status", header: "Status", render: (value: unknown) => (
       <Badge
@@ -350,5 +351,4 @@ export const allRequisitionColumns = [
       </Badge>
     ),
   },
-  { key: "submittedDate", header: "Submitted Date" },
 ];
