@@ -6,7 +6,24 @@ export const departmentBudgetColumns = [
   { key: "allocated", header: "Allocated Amount" },
   { key: "committed", header: "Committed Amount" },
   { key: "available", header: "Available Amount" },
-  { key: "utilization", header: "Utilization %" },
+  {
+    key: "utilization", header: "Utilization %", render: (value: unknown) => {
+    const percentage = parseInt(String(value).replace("%", ""));
+
+    return (
+      <Badge
+        variant="outline"
+        className={
+          percentage >= 80
+            ? "bg-red-100 text-red-700 border-red-200"
+            : "bg-green-100 text-green-700 border-green-200"
+        }
+      >
+        {String(value)}
+      </Badge>
+    );
+  },
+  },
 ];
 
 export const annualBudgetColumns = [
@@ -19,18 +36,22 @@ export const annualBudgetColumns = [
   {
     key: "status",
     header: "Status",
-    // render: (value: string) => (
-    //   <Badge
-    //     variant="outline"
-    //     className={
-    //       value === "Open"
-    //         ? "bg-green-100 text-green-700 border-green-200"
-    //         : "bg-red-100 text-red-700 border-red-200"
-    //     }
-    //   >
-    //     {value}
-    //   </Badge>
-    // ),
+    render: (value: unknown) => {
+
+      console.log(value);
+      return (
+        <Badge
+          variant="outline"
+          className={
+            value === "Open"
+              ? "bg-green-100 text-green-700 border-green-200"
+              : "bg-red-100 text-red-700 border-red-200"
+          }
+        >
+          {String(value)}
+        </Badge>
+      )
+    },
   },
 ];
 export const vendorAllocationColumns = [
@@ -42,20 +63,24 @@ export const vendorAllocationColumns = [
   {
     key: "utilization",
     header: "Utilization %",
-    // render: (value: unknown) => (
-    //   <Badge
-    //     variant="outline"
-    //     className={
-    //       parseInt(String(value)) >= 80
-    //         ? "bg-red-100 text-red-700 border-red-200"
-    //         : "bg-green-100 text-green-700 border-green-200"
-    //     }
-    //   >
-    //     {String(value)}
-    //   </Badge>
-    // ),
+    render: (value: unknown) => {
+    const percentage = parseInt(String(value).replace("%", ""));
+
+    return (
+      <Badge
+        variant="outline"
+        className={
+          percentage >= 80
+            ? "bg-red-100 text-red-700 border-red-200"
+            : "bg-green-100 text-green-700 border-green-200"
+        }
+      >
+        {String(value)}
+      </Badge>
+    );
   },
-];
+},
+]
 
 export const commitmentColumns = [
   { key: "id", header: "Commitment #" },
@@ -68,20 +93,20 @@ export const commitmentColumns = [
   {
     key: "status",
     header: "Status",
-    // render: (value: unknown) => (
-    //   <Badge
-    //     variant="outline"
-    //     className={
-    //       value === "Active"
-    //         ? "bg-green-100 text-green-700 border-green-200"
-    //         : value === "Partially Released"
-    //         ? "bg-yellow-100 text-yellow-700 border-yellow-200"
-    //         : "bg-red-100 text-red-700 border-red-200"
-    //     }
-    //   >
-    //     {String(value)}
-    //   </Badge>
-    // ),
+    render: (value: unknown) => (
+      <Badge
+        variant="outline"
+        className={
+          value === "Active"
+            ? "bg-green-100 text-green-700 border-green-200"
+            : value === "Partially Released"
+              ? "bg-yellow-100 text-yellow-700 border-yellow-200"
+              : "bg-red-100 text-red-700 border-red-200"
+        }
+      >
+        {String(value)}
+      </Badge>
+    ),
   },
 ];
 
@@ -95,22 +120,22 @@ export const supplementColumns = [
   {
     key: "status",
     header: "Status",
-    // render: (value: unknown) => (
-    //   <Badge
-    //     variant="outline"
-    //     className={
-    //       value === "Approved"
-    //         ? "bg-green-100 text-green-700 border-green-200"
-    //         : value === "Pending Approval"
-    //         ? "bg-yellow-100 text-yellow-700 border-yellow-200"
-    //         : value === "Draft"
-    //         ? "bg-slate-100 text-slate-700 border-slate-200"
-    //         : "bg-red-100 text-red-700 border-red-200"
-    //     }
-    //   >
-    //     {String(value)}
-    //   </Badge>
-    // ),
+    render: (value: unknown) => (
+      <Badge
+        variant="outline"
+        className={
+          value === "Approved"
+            ? "bg-green-100 text-green-700 border-green-200"
+            : value === "Pending Approval"
+              ? "bg-yellow-100 text-yellow-700 border-yellow-200"
+              : value === "Draft"
+                ? "bg-slate-100 text-slate-700 border-slate-200"
+                : "bg-red-100 text-red-700 border-red-200"
+        }
+      >
+        {String(value)}
+      </Badge>
+    ),
   },
 ];
 
@@ -122,22 +147,22 @@ export const transferColumns = [
   {
     key: "status",
     header: "Status",
-    // render: (value: unknown) => (
-    //   <Badge
-    //     variant="outline"
-    //     className={
-    //       value === "Approved"
-    //         ? "bg-green-100 text-green-700 border-green-200"
-    //         : value === "Pending Approval"
-    //         ? "bg-yellow-100 text-yellow-700 border-yellow-200"
-    //         : value === "Draft"
-    //         ? "bg-slate-100 text-slate-700 border-slate-200"
-    //         : "bg-red-100 text-red-700 border-red-200"
-    //     }
-    //   >
-    //     {String(value)}
-    //   </Badge>
-    // ),
+    render: (value: unknown) => (
+      <Badge
+        variant="outline"
+        className={
+          value === "Approved"
+            ? "bg-green-100 text-green-700 border-green-200"
+            : value === "Pending Approval"
+              ? "bg-yellow-100 text-yellow-700 border-yellow-200"
+              : value === "Draft"
+                ? "bg-slate-100 text-slate-700 border-slate-200"
+                : "bg-red-100 text-red-700 border-red-200"
+        }
+      >
+        {String(value)}
+      </Badge>
+    ),
   },
 ];
 
@@ -147,9 +172,32 @@ export const requisitionColumns = [
   { key: "vendor", header: "Vendor" },
   { key: "requestedAmount", header: "Requested Amount" },
   { key: "approvedAmount", header: "Approved Amount" },
-  { key: "status", header: "Status" },
+  {
+    key: "status", header: "Status", render: (value: unknown) => (
+      <Badge
+        variant="outline"
+        className={
+          value === "Approved"
+            ? "bg-green-100 text-green-700 border-green-200"
+            : value === "Pending" || value === "Pending Approval"
+              ? "bg-yellow-100 text-yellow-700 border-yellow-200"
+              : value === "Draft"
+                ? "bg-slate-100 text-slate-700 border-slate-200"
+                : value === "Clarification Required"
+                  ? "bg-blue-100 text-blue-700 border-blue-200"
+                  : value === "Resolved"
+                    ? "bg-green-100 text-green-700 border-green-200"
+                    : value === "Pending Response"
+                      ? "bg-orange-100 text-orange-700 border-orange-200"
+                      : "bg-red-100 text-red-700 border-red-200"
+        }
+      >
+        {String(value)}
+      </Badge>
+    ),
+  },
   { key: "requestDate", header: "Request Date" }
-  
+
 ]
 
 
@@ -158,7 +206,30 @@ export const myRequisitionColumns = [
   { key: "position", header: "Position" },
   { key: "department", header: "Department" },
   { key: "budget", header: "Budget" },
-  { key: "status", header: "Status" },
+  {
+    key: "status", header: "Status", render: (value: unknown) => (
+      <Badge
+        variant="outline"
+        className={
+          value === "Approved"
+            ? "bg-green-100 text-green-700 border-green-200"
+            : value === "Pending" || value === "Pending Approval"
+              ? "bg-yellow-100 text-yellow-700 border-yellow-200"
+              : value === "Draft"
+                ? "bg-slate-100 text-slate-700 border-slate-200"
+                : value === "Clarification Required"
+                  ? "bg-blue-100 text-blue-700 border-blue-200"
+                  : value === "Resolved"
+                    ? "bg-green-100 text-green-700 border-green-200"
+                    : value === "Pending Response"
+                      ? "bg-orange-100 text-orange-700 border-orange-200"
+                      : "bg-red-100 text-red-700 border-red-200"
+        }
+      >
+        {String(value)}
+      </Badge>
+    ),
+  },
   { key: "submittedDate", header: "Submitted Date" },
 ];
 
@@ -169,7 +240,30 @@ export const pendingApprovalColumns = [
   { key: "position", header: "Position" },
   { key: "amount", header: "Amount" },
   { key: "submittedDate", header: "Submitted Date" },
-  { key: "status", header: "Status" },
+  {
+    key: "status", header: "Status", render: (value: unknown) => (
+      <Badge
+        variant="outline"
+        className={
+          value === "Approved"
+            ? "bg-green-100 text-green-700 border-green-200"
+            : value === "Pending" || value === "Pending Approval"
+              ? "bg-yellow-100 text-yellow-700 border-yellow-200"
+              : value === "Draft"
+                ? "bg-slate-100 text-slate-700 border-slate-200"
+                : value === "Clarification Required"
+                  ? "bg-blue-100 text-blue-700 border-blue-200"
+                  : value === "Resolved"
+                    ? "bg-green-100 text-green-700 border-green-200"
+                    : value === "Pending Response"
+                      ? "bg-orange-100 text-orange-700 border-orange-200"
+                      : "bg-red-100 text-red-700 border-red-200"
+        }
+      >
+        {String(value)}
+      </Badge>
+    ),
+  },
 ];
 
 export const draftColumns = [
@@ -178,7 +272,20 @@ export const draftColumns = [
   { key: "department", header: "Department" },
   { key: "budget", header: "Budget" },
   { key: "lastModified", header: "Last Modified" },
-  { key: "status", header: "Status" },
+  {
+    key: "status", header: "Status", render: (value: unknown) => (
+      <Badge
+        variant="outline"
+        className={
+          value === "Ready"
+            ? "bg-green-100 text-green-700 border-green-200"
+            : "bg-red-100 text-red-700 border-red-200"
+        }
+      >
+        {String(value)}
+      </Badge>
+    ),
+  },
 ];
 
 export const clarificationColumns = [
@@ -187,7 +294,30 @@ export const clarificationColumns = [
   { key: "department", header: "Department" },
   { key: "reason", header: "Reason" },
   { key: "returnedDate", header: "Returned Date" },
-  { key: "status", header: "Status" },
+  {
+    key: "status", header: "Status", render: (value: unknown) => (
+      <Badge
+        variant="outline"
+        className={
+          value === "Approved"
+            ? "bg-green-100 text-green-700 border-green-200"
+            : value === "Pending" || value === "Pending Approval"
+              ? "bg-yellow-100 text-yellow-700 border-yellow-200"
+              : value === "Draft"
+                ? "bg-slate-100 text-slate-700 border-slate-200"
+                : value === "Clarification Required"
+                  ? "bg-blue-100 text-blue-700 border-blue-200"
+                  : value === "Resolved"
+                    ? "bg-green-100 text-green-700 border-green-200"
+                    : value === "Pending Response"
+                      ? "bg-orange-100 text-orange-700 border-orange-200"
+                      : "bg-red-100 text-red-700 border-red-200"
+        }
+      >
+        {String(value)}
+      </Badge>
+    ),
+  },
 ];
 
 export const allRequisitionColumns = [
@@ -196,6 +326,29 @@ export const allRequisitionColumns = [
   { key: "position", header: "Position" },
   { key: "department", header: "Department" },
   { key: "budget", header: "Budget" },
-  { key: "status", header: "Status" },
+  {
+    key: "status", header: "Status", render: (value: unknown) => (
+      <Badge
+        variant="outline"
+        className={
+          value === "Approved"
+            ? "bg-green-100 text-green-700 border-green-200"
+            : value === "Pending" || value === "Pending Approval"
+              ? "bg-yellow-100 text-yellow-700 border-yellow-200"
+              : value === "Draft"
+                ? "bg-slate-100 text-slate-700 border-slate-200"
+                : value === "Clarification Required"
+                  ? "bg-blue-100 text-blue-700 border-blue-200"
+                  : value === "Resolved"
+                    ? "bg-green-100 text-green-700 border-green-200"
+                    : value === "Pending Response"
+                      ? "bg-orange-100 text-orange-700 border-orange-200"
+                      : "bg-red-100 text-red-700 border-red-200"
+        }
+      >
+        {String(value)}
+      </Badge>
+    ),
+  },
   { key: "submittedDate", header: "Submitted Date" },
 ];

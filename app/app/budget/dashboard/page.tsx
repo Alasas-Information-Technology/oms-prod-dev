@@ -1,3 +1,4 @@
+"use client";
 import { SimpleKpiCard } from "@/components/oms/simple-kpi";
 import { BudgetDistributionChart } from "@/components/oms/donought"
 import { MonthlyBudgetTrend } from "@/components/oms/MonthlyBudgetTrend";

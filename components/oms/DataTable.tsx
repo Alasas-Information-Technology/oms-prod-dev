@@ -66,6 +66,7 @@ interface DataTableProps<T extends Record<string, unknown> = Record<string, unkn
   selectable?: boolean;
   onSelectionChange?: (selected: T[]) => void;
   rowActions?: RowAction<T>[];
+  toolbarActions?: ReactNode;
   pageSize?: number;
   loading?: boolean;
   emptyMessage?: string;
@@ -87,6 +88,7 @@ export function DataTable<T extends Record<string, unknown>>({
   selectable = false,
   onSelectionChange,
   rowActions,
+  toolbarActions,
   pageSize: initialPageSize = 8,
   loading = false,
   emptyMessage = "No records found.",
@@ -266,7 +268,7 @@ export function DataTable<T extends Record<string, unknown>>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowSelection]);
 
-  const hasToolbar = enableSearch || enableExport;
+  const hasToolbar = enableSearch || enableExport || toolbarActions;
 
   return (
     <div className={cn("flex flex-col gap-3", className)}>
@@ -287,6 +289,7 @@ export function DataTable<T extends Record<string, unknown>>({
           ) : <div />}
           
           <div className="flex items-center gap-2 w-full sm:w-auto">
+            {toolbarActions}
             {enableExport && (
               <Button 
                 variant="outline" 

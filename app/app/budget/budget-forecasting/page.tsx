@@ -1,4 +1,4 @@
-
+"use client";
 import { SimpleKpiCard } from "@/components/oms/simple-kpi";
 export default function  BudgetForecasting(){
     return(

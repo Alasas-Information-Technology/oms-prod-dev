@@ -1,9 +1,21 @@
+"use client";
 import { SimpleKpiCard } from "@/components/oms/simple-kpi";
 import { AnnualBudgetTrend } from "@/components/oms/annual-budget-linechart";
 import { DataTable } from "@/components/oms/DataTable";
 import { annualBudgets } from "@/components/oms/mock-data";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { StatusFilter, YearFilter } from "@/components/oms/table-filters";
 import { annualBudgetColumns } from "@/components/oms/table-config";
 export default function AnnualBudget() {
+  const [status, setStatus] = useState("all");
+  const [year, setYear] = useState("all");
+  const filteredData = annualBudgets.filter((item) => {
+    const matchesStatus = status === "all" || item.status === status;
+    const matchesYear = year === "all" || String(item.year) === year;
+    return matchesStatus && matchesYear;
+  });
+
   return (
     <div>
       <div className="grid auto-rows-min gap-4 md:grid-cols-4">
@@ -23,10 +35,20 @@ export default function AnnualBudget() {
 
         </div>
         <div className="md:col-span-4 row-span-7">
-          <DataTable 
-          columns={annualBudgetColumns}
-            data={annualBudgets}
+          <DataTable
+            columns={annualBudgetColumns as any}
+            data={filteredData as any}
             keyField="id"
+            enableSearch
+            enableExport
+            toolbarActions={
+              <div className="flex items-center gap-2">
+                <YearFilter value={year} onChange={setYear} />
+                <StatusFilter value={status} onChange={setStatus} options={["Approved", "Draft", "Closed"]} />
+                <Button variant="outline">Edit Budget</Button>
+                <Button>Create Budget</Button>
+              </div>
+            }
           />
 
         </div>
