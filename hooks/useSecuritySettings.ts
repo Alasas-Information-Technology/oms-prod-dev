@@ -36,10 +36,11 @@ export function useSecuritySettings() {
             setError(null);
             return true;
         } catch (err: any) {
-            setError(err.response?.data?.message || err.message || 'Failed to update security settings');
+            const errorMsg = err.response?.data?.message || err.message || 'Failed to update security settings';
+            setError(errorMsg);
             // Revert on error
             fetchSettings();
-            return false;
+            throw new Error(errorMsg);
         } finally {
             setIsSaving(false);
         }

@@ -42,7 +42,8 @@ export async function POST(
                 body.password,
                 ipAddress,
                 userAgent,
-                deviceFingerprint
+                deviceFingerprint,
+                body.confirmRevokeOldest
             );
 
         // Build response WITHOUT tokens in the body (security requirement)
@@ -113,6 +114,27 @@ export async function POST(
                 {
                     status: 429,
                 }
+            );
+        }
+
+        if (error.message === "MAX_SESSIONS_REACHED") {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "Maximum number of sessions reached, please contact your admin."
+                },
+                { status: 403 }
+            );
+        }
+
+        if (error.message === "CONFIRM_REVOKE_OLDEST") {
+            return NextResponse.json(
+                {
+                    success: false,
+                    code: "CONFIRM_REVOKE_OLDEST",
+                    message: "Confirmation required to revoke oldest session"
+                },
+                { status: 409 }
             );
         }
 

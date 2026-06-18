@@ -62,7 +62,8 @@ export class LoginUseCase {
         password: string,
         ipAddress?: string,
         userAgent?: string,
-        deviceFingerprint?: string
+        deviceFingerprint?: string,
+        confirmRevokeOldest?: boolean
 
     ): Promise<LoginResult> {
 
@@ -287,7 +288,11 @@ export class LoginUseCase {
 
             if (!allowMultipleSessions && activeSessionCount > 0) {
                 if (autoRevokeOldestSession) {
-                    await this.sessionService.revokeOldestSession(user.UserID);
+                    if (confirmRevokeOldest) {
+                        await this.sessionService.revokeOldestSession(user.UserID);
+                    } else {
+                        throw new Error("CONFIRM_REVOKE_OLDEST");
+                    }
                 } else {
                     await this.securityEventService.log(
                         SECURITY_EVENTS.CONCURRENT_SESSION_LIMIT_EXCEEDED,
@@ -298,11 +303,15 @@ export class LoginUseCase {
                             userAgent
                         }
                     );
-                    throw new Error("CONCURRENT_SESSION_LIMIT_EXCEEDED");
+                    throw new Error("MAX_SESSIONS_REACHED");
                 }
             } else if (allowMultipleSessions && activeSessionCount >= maxConcurrentSessions) {
                 if (autoRevokeOldestSession) {
-                    await this.sessionService.revokeOldestSession(user.UserID);
+                    if (confirmRevokeOldest) {
+                        await this.sessionService.revokeOldestSession(user.UserID);
+                    } else {
+                        throw new Error("CONFIRM_REVOKE_OLDEST");
+                    }
                 } else {
                     await this.securityEventService.log(
                         SECURITY_EVENTS.CONCURRENT_SESSION_LIMIT_EXCEEDED,
@@ -313,7 +322,7 @@ export class LoginUseCase {
                             userAgent
                         }
                     );
-                    throw new Error("CONCURRENT_SESSION_LIMIT_EXCEEDED");
+                    throw new Error("MAX_SESSIONS_REACHED");
                 }
             }
 

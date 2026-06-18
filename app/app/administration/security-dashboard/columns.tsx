@@ -36,6 +36,10 @@ export type RawActiveSession = {
   IPAddress: string;
   LoginAt: string;
   ExpiresAt: string;
+  DeviceInfo?: string;
+  BrowserName?: string;
+  DeviceType?: string;
+  LastActivityAt?: string;
 };
 
 export type RawDashboardResponse = {
@@ -82,17 +86,33 @@ export const sessionsColumns: ColumnDef<RawActiveSession>[] = [
     render: (val) => <span className="font-mono text-xs">{val as string}</span>
   },
   { key: "Username", header: "User", sortable: true },
+  {
+    key: "DeviceType",
+    header: "Device",
+    sortable: false,
+    render: (_, row) => {
+      const browser = row.BrowserName || "Unknown Browser";
+      const device = row.DeviceType || row.DeviceInfo || "Unknown Device";
+      return <span>{browser} on {device}</span>;
+    }
+  },
   { key: "IPAddress", header: "IP Address", sortable: true },
   {
     key: "LoginAt",
-    header: "Created",
+    header: "Signed In",
     sortable: true,
     render: (val) => val ? format(new Date(val as string), 'MMM d, HH:mm') : '-'
   },
   {
-    key: "ExpiresAt",
-    header: "Expires",
+    key: "LastActivityAt",
+    header: "Last Active",
     sortable: true,
     render: (val) => val ? format(new Date(val as string), 'MMM d, HH:mm') : '-'
+  },
+  {
+    key: "IsActive",
+    header: "Status",
+    sortable: false,
+    render: () => <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Active</span>
   }
 ];

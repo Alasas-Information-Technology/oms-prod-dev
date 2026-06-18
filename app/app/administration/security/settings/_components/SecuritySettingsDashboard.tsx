@@ -59,9 +59,11 @@ export function SecuritySettingsDashboard() {
     }, [settings, form]);
 
     const onSubmit = async (data: any) => {
-        const success = await updateSettings(data);
-        if (success) {
+        try {
+            await updateSettings(data);
             toast.success("Security settings updated successfully.");
+        } catch (error: any) {
+            toast.error(error.message || "Failed to update security settings.");
         }
     };
 

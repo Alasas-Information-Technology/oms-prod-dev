@@ -439,6 +439,9 @@ export class SecurityRepository {
                     u.Username,
                     ls.IPAddress,
                     ls.DeviceInfo,
+                    ls.BrowserName,
+                    ls.DeviceType,
+                    ls.LastActivityAt,
                     ls.LoginAt,
                     ls.ExpiresAt
                 FROM auth.LoginSessions ls

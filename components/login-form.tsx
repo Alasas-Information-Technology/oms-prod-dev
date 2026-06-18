@@ -14,6 +14,16 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import {
   Field,
   FieldDescription,
   FieldGroup,
@@ -44,6 +54,7 @@ export function LoginForm({
   const { login } = useAuth();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [showRevokeConfirm, setShowRevokeConfirm] = useState(false);
 
   const form = useForm<FormFields>({
     resolver: zodResolver(schema as any),
@@ -62,7 +73,21 @@ export function LoginForm({
     setError(null);
     try {
       await login(data.Username, data.Password);
-      // router.push("app");
+      window.location.href = "/app";
+    } catch (err: any) {
+      if (err.code === "CONFIRM_REVOKE_OLDEST" || err.message === "CONFIRM_REVOKE_OLDEST") {
+        setShowRevokeConfirm(true);
+      } else {
+        setError(err.message || "An unexpected error occurred");
+      }
+    }
+  }
+
+  const handleConfirmRevoke = async () => {
+    setShowRevokeConfirm(false);
+    setError(null);
+    try {
+      await login(form.getValues().Username, form.getValues().Password, true);
       window.location.href = "/app";
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred");
@@ -165,6 +190,23 @@ export function LoginForm({
         By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
         and <a href="#">Privacy Policy</a>.
       </FieldDescription>
+
+      <AlertDialog open={showRevokeConfirm} onOpenChange={setShowRevokeConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Maximum Sessions Reached</AlertDialogTitle>
+            <AlertDialogDescription>
+              You have reached the maximum number of active sessions. Do you want to sign out from your oldest session to continue logging in?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmRevoke} className="bg-primary text-primary-foreground hover:bg-primary/90">
+              Yes, Sign Out Oldest
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
