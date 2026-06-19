@@ -7,6 +7,8 @@ import { SimpleKpiCard } from "@/components/oms/simple-kpi";
 import { DataTable } from "@/components/oms/DataTable";
 import { Button } from "@/components/ui/button";
 import { DepartmentFilter, StatusFilter } from "@/components/oms/table-filters";
+import { MostUrgentApprovalWidget } from "@/components/oms/most-urgent-approval-widget";
+import { CompactKpiCard } from "@/components/oms/compact-kpi-card";
 
 export default function Pending() {
   const [status, setStatus] = useState("all");
@@ -20,10 +22,15 @@ export default function Pending() {
 
   return (
     <div className="grid auto-rows-min gap-4 md:grid-cols-4">
-      <SimpleKpiCard className="h-[128px]" icon="material-symbols:approval-outline" value={8} title="Pending Approvals" description="Awaiting your action" />
-      <SimpleKpiCard className="h-[128px]" icon="material-symbols:schedule-outline" value={3} title="Urgent Requests" description="Older than 3 days" />
-      <SimpleKpiCard className="h-[128px]" icon="material-symbols:check-circle-outline" value={12} title="Approved This Month" description="Completed approvals" />
-      <SimpleKpiCard className="h-[128px]" icon="material-symbols:warning-outline" value={2} title="Clarifications" description="Returned for info" />
+      <div className="grid grid-cols-2 gap-3 md:col-span-1 h-[220px]">
+        <CompactKpiCard title="Pending Approvals" value={8} />
+        <CompactKpiCard title="Urgent Requests" value={3} />
+        <CompactKpiCard title="Approved This Month" value={12} />
+        <CompactKpiCard title="Clarifications" value={2} />
+      </div>
+      <div className="md:col-span-3 h-[220px]">
+        <MostUrgentApprovalWidget />
+      </div>
 
       <div className="md:col-span-4">
         <DataTable

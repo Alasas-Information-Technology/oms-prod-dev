@@ -7,10 +7,12 @@ import { SimpleKpiCard } from "@/components/oms/simple-kpi";
 import { DataTable } from "@/components/oms/DataTable";
 import { StatusFilter, DepartmentFilter } from "@/components/oms/table-filters";
 import { Button } from "@/components/ui/button";
+import { CreateRequisitionForm } from "@/components/oms/create-requisition-forms";
 
 export default function Drafts() {
   const [status, setStatus] = useState("all");
   const [department, setDepartment] = useState("all");
+  const [openCreateForm, setOpenCreateForm] = useState(false);
 
   const filteredData = draftRequisitions.filter((item) => {
     const matchesStatus = status === "all" || item.status === status;
@@ -30,10 +32,12 @@ export default function Drafts() {
           <div className="flex items-center gap-2">
             <DepartmentFilter value={department} onChange={setDepartment} />
             <StatusFilter value={status} onChange={setStatus} options={["Ready", "Incomplete"]} />
-            <Button>Create Requisition</Button>
+            <Button onClick={() => setOpenCreateForm(true)}>Create Requisition</Button>
           </div>
         } />
       </div>
+
+      <CreateRequisitionForm open={openCreateForm} onClose={() => setOpenCreateForm(false)} />
     </div>
   );
 }

@@ -7,7 +7,8 @@ import { SimpleKpiCard } from "@/components/oms/simple-kpi";
 import { DataTable } from "@/components/oms/DataTable";
 import { Button } from "@/components/ui/button";
 import { DepartmentFilter, StatusFilter } from "@/components/oms/table-filters";
-
+import { RequisitionPerformanceWidget } from "@/components/oms/reqisition-performance-widget";
+import { RequisitionPipelineChart } from "@/components/oms/requisition-pipline-chart";
 export default function MyRequesition() {
   const [status, setStatus] = useState("all");
   const [department, setDepartment] = useState("all");
@@ -24,7 +25,13 @@ export default function MyRequesition() {
       <SimpleKpiCard className="h-[128px]" icon="material-symbols:pending-actions" value={6} title="Pending Approval" description="Awaiting review" />
       <SimpleKpiCard className="h-[128px]" icon="material-symbols:check-circle-outline" value={15} title="Approved" description="Successfully approved" />
       <SimpleKpiCard className="h-[128px]" icon="material-symbols:draft-outline" value={3} title="Drafts" description="Not yet submitted" />
+ <div className="md:col-span-3 row-span-2">
+        <RequisitionPipelineChart />
+      </div>
 
+      <div className="md:col-span-1 row-span-2">
+        <RequisitionPerformanceWidget />
+      </div>
       <div className="md:col-span-4">
         <DataTable columns={myRequisitionColumns as any} data={filteredData as any} keyField="id" enableSearch enableExport toolbarActions={
           <div className="flex items-center gap-2">
