@@ -352,3 +352,30 @@ export const allRequisitionColumns = [
     ),
   },
 ];
+
+
+export const userInformationColumns = [
+  { key: "employeeId", header: "Employee ID" },
+  { key: "employeeName", header: "Employee Name" },
+  { key: "email", header: "Email Address" },
+  { key: "department", header: "Department" },
+  { key: "role", header: "Role" },
+  { key: "userType", header: "User Type" },
+  {
+    key: "status",
+    header: "Status",
+    render: (value: unknown) => (
+      <Badge
+        variant="outline"
+        className={
+          value === "Active"
+            ? "bg-green-100 text-green-700 border-green-200"
+            : "bg-red-100 text-red-700 border-red-200"
+        }
+      >
+        {String(value)}
+      </Badge>
+    ),
+  },
+  { key: "lastLogin", header: "Last Login" },
+];

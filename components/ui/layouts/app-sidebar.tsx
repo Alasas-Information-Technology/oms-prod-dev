@@ -100,6 +100,11 @@ const data = {
       url: "/app/reports",
       icon: BarChart3,
     },
+        {
+      title: "User Information",
+      url: "/app/userpage",
+      icon: BarChart3,
+    },
     {
       title: "Administration",
       url: "/app/administration",

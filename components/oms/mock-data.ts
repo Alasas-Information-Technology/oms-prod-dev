@@ -135,3 +135,15 @@ export const allRequisitions = [
   { id: "REQ-2026-009", requestDate: "20-Jan-2026", requestedBy: "Khalid Saeed", positionName: "Business Analyst", department: "IT", budgetAmount: "AED 24000",  status: "Draft" },
   { id: "REQ-2026-010", requestDate: "22-Jan-2026", requestedBy: "Mariam Yusuf", positionName: "Operations Coordinator", department: "Operations", budgetAmount: "AED 19000", status: "Pending Approval" },
 ];
+
+
+export const userInformation = [
+  { employeeId: "EMP-001", employeeName: "Ahmed Khan", email: "ahmed.khan@diez.ae", department: "IT", role: "System Administrator", userType: "Internal", status: "Active", lastLogin: "22-Jun-2026 08:15 AM" },
+  { employeeId: "EMP-002", employeeName: "Sarah Ali", email: "sarah.ali@diez.ae", department: "HR", role: "HR Executive", userType: "Internal", status: "Active", lastLogin: "22-Jun-2026 09:02 AM" },
+  { employeeId: "EMP-003", employeeName: "Mohammed Noor", email: "m.noor@diez.ae", department: "Finance", role: "Financial Analyst", userType: "Internal", status: "Issue", lastLogin: "21-Jun-2026 04:11 PM" },
+  { employeeId: "EMP-004", employeeName: "Fatima Hassan", email: "fatima.hassan@diez.ae", department: "Procurement", role: "Procurement Officer", userType: "Internal", status: "Active", lastLogin: "22-Jun-2026 07:48 AM" },
+  { employeeId: "EMP-005", employeeName: "Omar Saleh", email: "omar.saleh@vendor.com", department: "Operations", role: "Project Manager", userType: "External", status: "Active", lastLogin: "22-Jun-2026 10:30 AM" },
+  { employeeId: "EMP-006", employeeName: "Aisha Rahman", email: "aisha.rahman@diez.ae", department: "IT", role: "Network Engineer", userType: "Internal", status: "Issue", lastLogin: "20-Jun-2026 03:20 PM" },
+  { employeeId: "EMP-007", employeeName: "Ali Hamad", email: "ali.hamad@vendor.com", department: "HR", role: "Recruitment Consultant", userType: "External", status: "Active", lastLogin: "22-Jun-2026 08:55 AM" },
+  { employeeId: "EMP-008", employeeName: "Noura Ahmed", email: "noura.ahmed@diez.ae", department: "Finance", role: "Accountant", userType: "Internal", status: "Active", lastLogin: "22-Jun-2026 09:45 AM" },
+];
