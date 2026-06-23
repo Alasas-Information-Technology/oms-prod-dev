@@ -47,7 +47,7 @@ export function CreateProfileForm({ open, onClose }: { open: boolean; onClose: (
   if (!open) return null;
 
   const stepFields = {
-    1: ["empId", "username", "email", "userType", "userId"] as const,
+    1: ["empId", "username", "email", "userType"] as const,
     2: ["firstName", "lastName", "mobile", "jobTitle"] as const,
     3: ["departmentId", "businessId", "sectionId"] as const,
   };
@@ -88,7 +88,6 @@ export function CreateProfileForm({ open, onClose }: { open: boolean; onClose: (
                 <Field label="Username" error={errors.username?.message}><Input {...register("username")} placeholder="ahmed.khan" /></Field>
                 <Field label="Email" error={errors.email?.message}><Input {...register("email")} placeholder="ahmed.khan@diez.ae" /></Field>
                 <Field label="User Type" error={errors.userType?.message}><SelectBox register={register("userType")} options={userTypes} /></Field>
-                <Field label="User ID" error={errors.userId?.message}><Input {...register("userId")} placeholder="USR-001" /></Field>
               </Section>
             )}
 
