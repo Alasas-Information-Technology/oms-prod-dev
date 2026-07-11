@@ -11,9 +11,9 @@ export default async function Page() {
 
   return (
 
-    <div className="flex flex-1 flex-col gap-4 p-4 pt-5">
+    <div className="flex flex-1 flex-col gap-8 p-8 pt-8">
 
-      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+      <div className="grid auto-rows-min gap-8 md:grid-cols-3">
         <div className="flex flex-col gap-2">
           <p>Hello {user.username}, you are viewing this via SSR!</p>
 
@@ -51,10 +51,10 @@ export default async function Page() {
         </div>
         <BudgetKpiCard reserved={65.893} consumed={22} />
         <SimpleKpiCard icon="material-symbols:unknown-document-outline" value={1000} title="Total Contracts" description="aarush" />
-        <div className="aspect-video rounded-xl bg-muted/50" />
-        <div className="aspect-video rounded-xl bg-muted/50" />
+        <div className="aspect-video rounded-2xl bg-card border border-border shadow-sm" />
+        <div className="aspect-video rounded-2xl bg-card border border-border shadow-sm" />
       </div>
-      <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+      <div className="min-h-screen flex-1 rounded-2xl bg-card border border-border shadow-sm md:min-h-min" />
     </div>
   )
 }

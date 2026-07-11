@@ -35,9 +35,7 @@ import RHFInput from "@/components/ui/formfields/RHFInput"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form"
-import { ShineBorder } from "./ui/shine-border"
 import Image from "next/image"
-import { BorderBeam } from "./ui/border-beam"
 
 const schema = z.object({
   Username: z.string().min(3, "Username is required"),
@@ -98,14 +96,10 @@ export function LoginForm({
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
 
-      <Card className="relative pt-6">
-        <a href="#" className="flex items-center gap-2 self-center font-medium">
-
+      <Card className="relative overflow-hidden border-border/50 shadow-xl">
+        <a href="#" className="flex items-center gap-2 self-center font-medium mt-8">
           <Image src={"/c-logo.png"} alt="DIEZ_logo" width={180} height={180} />
-
         </a>
-        {isSubmitting && <BorderBeam duration={10} size={200} borderWidth={2} />}
-        {error && <ShineBorder shineColor={["#DA1F05", "#F33C04", "#FE650D", "#FFC11F"]} borderWidth={2} />}
 
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-extrabold">Welcome back</CardTitle>
