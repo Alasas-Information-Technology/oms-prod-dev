@@ -17,9 +17,13 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   getFilteredRowModel,
+  getGroupedRowModel,
+  getExpandedRowModel,
   ColumnDef as TanstackColumnDef,
   flexRender,
   SortingState,
+  GroupingState,
+  ExpandedState,
   FilterFn,
 } from "@tanstack/react-table";
 import {
@@ -78,6 +82,7 @@ interface DataTableProps<T extends Record<string, unknown> = Record<string, unkn
   enableExport?: boolean;
   exportFilename?: string;
   pageSizeOptions?: number[];
+  groupBy?: string[];
 }
 
 export function DataTable<T extends Record<string, unknown>>({
@@ -97,10 +102,13 @@ export function DataTable<T extends Record<string, unknown>>({
   enableExport = false,
   exportFilename = "export",
   pageSizeOptions = [8, 10, 20, 50, 100],
+  groupBy,
 }: DataTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [globalFilter, setGlobalFilter] = useState("");
+  const [grouping, setGrouping] = useState<GroupingState>(groupBy || []);
+  const [expanded, setExpanded] = useState<ExpandedState>(true);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: initialPageSize,
@@ -244,16 +252,22 @@ export function DataTable<T extends Record<string, unknown>>({
       rowSelection,
       globalFilter,
       pagination,
+      grouping,
+      expanded,
     },
     getRowId: (row) => String(row[keyField]),
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: setPagination,
+    onGroupingChange: setGrouping,
+    onExpandedChange: setExpanded,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getGroupedRowModel: getGroupedRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
     globalFilterFn: customGlobalFilterFn,
   });
 
@@ -361,6 +375,20 @@ export function DataTable<T extends Record<string, unknown>>({
               </TableRow>
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row, idx) => {
+                if (row.getIsGrouped()) {
+                  const colId = row.groupingColumnId || "";
+                  return (
+                    <TableRow key={row.id} className="bg-slate-100 hover:bg-slate-200 cursor-pointer font-medium" onClick={row.getToggleExpandedHandler()}>
+                      <TableCell colSpan={finalColumns.length} className="py-2 px-4">
+                        <div className="flex items-center gap-2 text-slate-800">
+                          {row.getIsExpanded() ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                          <span>{colId}: {String(row.getValue(colId))} ({row.subRows.length})</span>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                }
+
                 const isSelected = row.getIsSelected();
                 return (
                   <TableRow
@@ -373,6 +401,10 @@ export function DataTable<T extends Record<string, unknown>>({
                     )}
                   >
                     {row.getVisibleCells().map((cell) => {
+                      if (cell.getIsGrouped()) return null;
+                      if (cell.getIsPlaceholder()) {
+                        return <TableCell key={cell.id} />;
+                      }
                       const meta = cell.column.columnDef.meta as any;
                       return (
                         <TableCell

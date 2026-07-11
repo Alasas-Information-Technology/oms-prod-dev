@@ -14,6 +14,16 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import {
   Field,
   FieldDescription,
   FieldGroup,
@@ -25,9 +35,7 @@ import RHFInput from "@/components/ui/formfields/RHFInput"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form"
-import { ShineBorder } from "./ui/shine-border"
 import Image from "next/image"
-import { BorderBeam } from "./ui/border-beam"
 
 const schema = z.object({
   Username: z.string().min(3, "Username is required"),
@@ -44,6 +52,7 @@ export function LoginForm({
   const { login } = useAuth();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [showRevokeConfirm, setShowRevokeConfirm] = useState(false);
 
   const form = useForm<FormFields>({
     resolver: zodResolver(schema as any),
@@ -62,7 +71,21 @@ export function LoginForm({
     setError(null);
     try {
       await login(data.Username, data.Password);
-      // router.push("app");
+      window.location.href = "/app";
+    } catch (err: any) {
+      if (err.code === "CONFIRM_REVOKE_OLDEST" || err.message === "CONFIRM_REVOKE_OLDEST") {
+        setShowRevokeConfirm(true);
+      } else {
+        setError(err.message || "An unexpected error occurred");
+      }
+    }
+  }
+
+  const handleConfirmRevoke = async () => {
+    setShowRevokeConfirm(false);
+    setError(null);
+    try {
+      await login(form.getValues().Username, form.getValues().Password, true);
       window.location.href = "/app";
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred");
@@ -73,14 +96,10 @@ export function LoginForm({
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
 
-      <Card className="relative pt-6">
-        <a href="#" className="flex items-center gap-2 self-center font-medium">
-
+      <Card className="relative overflow-hidden border-border/50 shadow-xl">
+        <a href="#" className="flex items-center gap-2 self-center font-medium mt-8">
           <Image src={"/c-logo.png"} alt="DIEZ_logo" width={180} height={180} />
-
         </a>
-        {isSubmitting && <BorderBeam duration={10} size={200} borderWidth={2} />}
-        {error && <ShineBorder shineColor={["#DA1F05", "#F33C04", "#FE650D", "#FFC11F"]} borderWidth={2} />}
 
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-extrabold">Welcome back</CardTitle>
@@ -165,6 +184,23 @@ export function LoginForm({
         By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
         and <a href="#">Privacy Policy</a>.
       </FieldDescription>
+
+      <AlertDialog open={showRevokeConfirm} onOpenChange={setShowRevokeConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Maximum Sessions Reached</AlertDialogTitle>
+            <AlertDialogDescription>
+              You have reached the maximum number of active sessions. Do you want to sign out from your oldest session to continue logging in?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmRevoke} className="bg-primary text-primary-foreground hover:bg-primary/90">
+              Yes, Sign Out Oldest
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

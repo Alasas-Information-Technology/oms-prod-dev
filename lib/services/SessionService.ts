@@ -117,6 +117,31 @@ export class SessionService {
         securityEventBus.emit("security-event");
     }
 
+    async revokeAllSessionsSystemWide(adminUserId: string): Promise<void> {
+        const db = await getDb();
+
+        await db
+            .request()
+            .query(`
+            UPDATE auth.LoginSessions
+            SET
+                IsActive = 0,
+                RevokedAt = SYSUTCDATETIME(),
+                RefreshTokenRevokedAt = SYSUTCDATETIME()
+            WHERE IsActive = 1
+        `);
+
+        await this.securityEventService.log(
+            SECURITY_EVENTS.ADMIN_REVOKE_SESSION,
+            {
+                userId: adminUserId,
+                description: "Admin forced logout for all active users system-wide"
+            }
+        );
+
+        securityEventBus.emit("security-event");
+    }
+
     async createSession(
         userId: string,
         ipAddress?: string,

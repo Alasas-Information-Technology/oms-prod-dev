@@ -25,7 +25,8 @@ interface AuthContextType {
 
   login: (
     username: string,
-    password: string
+    password: string,
+    confirmRevokeOldest?: boolean
   ) => Promise<void>;
 
   logout: () => Promise<void>;
@@ -186,46 +187,57 @@ export function AuthProvider({
   /**
    * Login
    */
-  const login =
-    async (
-      username: string,
-      password: string
-    ) => {
-
-      const response =
-        await api.post(
-          "/auth/login",
-          {
-            username,
-            password,
+    const login =
+      async (
+        username: string,
+        password: string,
+        confirmRevokeOldest?: boolean
+      ) => {
+  
+        try {
+          const response =
+            await api.post(
+              "/auth/login",
+              {
+                username,
+                password,
+                confirmRevokeOldest
+              }
+            );
+  
+          if (
+            !response.data.success
+          ) {
+  
+            throw new Error(
+              response.data.message ??
+              "Login failed"
+            );
           }
-        );
-
-      if (
-        !response.data.success
-      ) {
-
-        throw new Error(
-          response.data.message ??
-          "Login failed"
-        );
-      }
-
-      /**
-       * Login API already set:
-       *
-       * oms_access_token
-       * oms_refresh_token
-       * oms_device_id
-       */
-
-      const session =
-        await getAuthSession();
-
-      setUser(
-        session !== "REFRESH_REQUIRED" ? session : null
-      );
-    };
+  
+          /**
+           * Login API already set:
+           *
+           * oms_access_token
+           * oms_refresh_token
+           * oms_device_id
+           */
+  
+          const session =
+            await getAuthSession();
+  
+          setUser(
+            session !== "REFRESH_REQUIRED" ? session : null
+          );
+        } catch (error: any) {
+          if (error.response?.data?.code === "CONFIRM_REVOKE_OLDEST") {
+            const customError = new Error("CONFIRM_REVOKE_OLDEST");
+            (customError as any).code = "CONFIRM_REVOKE_OLDEST";
+            throw customError;
+          }
+          throw new Error(error.response?.data?.message || error.message || "Login failed");
+        }
+      };
 
   /**
    * Logout

@@ -330,6 +330,7 @@ export default function SecurityDashboard() {
                 data={sessions}
                 keyField="LoginSessionID"
                 loading={loading}
+                groupBy={["Username"]}
                 emptyMessage="No active sessions found"
                 compact={true}
                 enableSearch={true}
