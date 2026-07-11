@@ -42,7 +42,7 @@ export function WorkforceCore({ isDark }: { isDark?: boolean }) {
         <MeshTransmissionMaterial
           background={new THREE.Color(isDark ? "#000000" : "#EDF4FE")}
           backside
-          samples={8}
+          samples={4}
           transmission={1}
           thickness={2.5}
           roughness={0.25}
@@ -53,7 +53,7 @@ export function WorkforceCore({ isDark }: { isDark?: boolean }) {
           temporalDistortion={0.15}
           ior={1.45}
           color="#e0e7ff"
-          resolution={1024}
+          resolution={128}
         />
       </Sphere>
 
@@ -81,33 +81,29 @@ export function WorkforceCore({ isDark }: { isDark?: boolean }) {
         />
       </mesh>
 
-      {/* Orbiting Ring 1 (Thin Liquid Glass) */}
+      {/* Orbiting Ring 1 (Optimized Glass) */}
       <mesh ref={ring1Ref}>
-        <torusGeometry args={[1.6, 0.015, 32, 100]} />
-        <MeshTransmissionMaterial
-          samples={4}
+        <torusGeometry args={[1.6, 0.015, 16, 64]} />
+        <meshPhysicalMaterial
           transmission={1}
-          thickness={0.1}
+          transparent={true}
           roughness={0.1}
-          chromaticAberration={0.08}
+          thickness={0.1}
           ior={1.5}
           color="#a5b4fc"
-          resolution={512}
         />
       </mesh>
 
-      {/* Orbiting Ring 2 (Thin Liquid Glass) */}
+      {/* Orbiting Ring 2 (Optimized Glass) */}
       <mesh ref={ring2Ref}>
-        <torusGeometry args={[1.9, 0.01, 32, 100]} />
-        <MeshTransmissionMaterial
-          samples={4}
+        <torusGeometry args={[1.9, 0.01, 16, 64]} />
+        <meshPhysicalMaterial
           transmission={1}
-          thickness={0.1}
+          transparent={true}
           roughness={0.15}
-          chromaticAberration={0.05}
+          thickness={0.1}
           ior={1.4}
           color="#7474C1"
-          resolution={512}
         />
       </mesh>
 

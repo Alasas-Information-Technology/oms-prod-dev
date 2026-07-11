@@ -38,7 +38,7 @@ const flexisNodes = [
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-[100vh] lg:min-h-[90vh] flex items-center pt-32 pb-16 overflow-x-hidden bg-background">
+    <section className="relative min-h-[100vh] lg:min-h-[90vh] flex items-center pt-32 pb-16 overflow-hidden bg-background">
 
       {/* Enterprise Digital Grid Background */}
       <div

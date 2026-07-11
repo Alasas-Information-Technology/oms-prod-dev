@@ -131,8 +131,8 @@ export default function Hero3DScene() {
     <div className="w-full h-full cursor-grab active:cursor-grabbing" style={{ minHeight: 600 }}>
       <Canvas
         camera={{ position: [0, 0, 11.5], fov: 45 }}
-        dpr={[1, 2]}
-        gl={{ antialias: true, alpha: true }}
+        dpr={[1, 1.2]}
+        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         style={{ background: "transparent" }}
         frameloop={reducedMotion ? "demand" : "always"}
       >

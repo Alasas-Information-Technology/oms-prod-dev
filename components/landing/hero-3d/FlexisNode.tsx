@@ -60,21 +60,13 @@ export function FlexisNode({ id, label, position, delay, isDark }: FlexisNodePro
         onPointerOut={onPointerOut}
       >
         <sphereGeometry args={[0.32, 32, 32]} />
-        <MeshTransmissionMaterial
-          background={new THREE.Color(isDark ? "#000000" : "#EDF4FE")}
-          backside
-          samples={4}
+        <meshPhysicalMaterial
           transmission={1}
-          thickness={0.8}
+          transparent={true}
           roughness={0.25}
-          chromaticAberration={0.05}
-          anisotropy={0.3}
-          distortion={0.3}
-          distortionScale={0.2}
-          temporalDistortion={0.1}
+          thickness={0.8}
           ior={1.45}
           color="#a5b4fc"
-          resolution={512}
         />
         {/* Inner solid core for the node */}
         <mesh>
