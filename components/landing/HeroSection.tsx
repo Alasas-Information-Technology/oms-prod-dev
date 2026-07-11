@@ -63,12 +63,12 @@ export function HeroSection() {
             animate="show"
             className="flex flex-col items-start text-left lg:pr-8"
           >
-            {/* <motion.div variants={itemVariants} className="mb-6">
+            <motion.div variants={itemVariants} className="mb-6">
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/60 bg-card shadow-sm text-xs font-semibold uppercase tracking-widest text-primary">
                 <span className="flex h-2 w-2 rounded-full bg-primary" />
                 Enterprise Outsource Management
               </span>
-            </motion.div> */}
+            </motion.div>
 
             <motion.h1
               variants={itemVariants}
@@ -81,7 +81,7 @@ export function HeroSection() {
 
             <motion.p
               variants={itemVariants}
-              className="text-lg text-muted-foreground leading-relaxed mb-8 max-w-xl"
+              className="text-lg text-muted-foreground leading-relaxed mb-8 max-w-lg"
             >
               A unified enterprise platform to govern workforce engagement, accredit service providers, and automate the complete procurement lifecycle with government-grade security.
             </motion.p>
@@ -117,41 +117,40 @@ export function HeroSection() {
             <Suspense fallback={null}>
               <Hero3DScene />
             </Suspense>
-          </motion.div>
-
-          {/* Mobile Fallback: Lightweight CSS Animation */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" as any, delay: 0.3 }}
-            className="relative w-full lg:hidden flex flex-col items-center py-8"
-          >
-            <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-6">
-              Integrated Workforce Models
-            </span>
-            <div className="flex items-center justify-center gap-3 flex-wrap">
-              {flexisNodes.map((node, i) => (
-                <motion.div
-                  key={node.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.5 + (i * 0.1), ease: "easeOut" as any }}
-                  className="group relative"
-                >
-                  <div className="w-14 h-14 bg-card/80 backdrop-blur-md border border-border/50 shadow-sm rounded-xl flex items-center justify-center hover:bg-primary hover:border-primary transition-all duration-300 cursor-default">
-                    <span className="font-bold text-lg text-primary group-hover:text-white">{node.id}</span>
-                  </div>
-
-                  {/* Tooltip */}
-                  <div className="absolute -top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-                    <div className="bg-heading text-white text-[10px] font-semibold uppercase tracking-wider py-1.5 px-3 rounded-lg whitespace-nowrap shadow-xl">
-                      {node.label}
+            {/* FLEXIS Models Legend */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" as any, delay: 0.8 }}
+              className="absolute bottom-4 left-0 right-0 w-full flex flex-col items-center pointer-events-auto z-20"
+            >
+              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4">
+                Integrated Workforce Models
+              </span>
+              <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap px-4">
+                {flexisNodes.map((node, i) => (
+                  <motion.div
+                    key={node.id}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4, delay: 1 + (i * 0.1), ease: "easeOut" as any }}
+                    className="group relative"
+                  >
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-card border border-border/60 shadow-sm rounded-full flex items-center justify-center hover:bg-primary hover:border-primary transition-all duration-300 cursor-default">
+                      <span className="font-bold text-sm sm:text-base text-primary group-hover:text-white">{node.id}</span>
                     </div>
-                    <div className="w-2 h-2 bg-heading rotate-45 absolute -bottom-1 left-1/2 -translate-x-1/2" />
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+                    
+                    {/* Tooltip */}
+                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                      <div className="bg-heading dark:bg-card dark:text-card-foreground text-white text-[10px] font-semibold uppercase tracking-wider py-1.5 px-3 rounded-lg whitespace-nowrap shadow-xl border dark:border-border/50">
+                        {node.label}
+                        <div className="w-2 h-2 bg-heading dark:bg-card rotate-45 absolute -bottom-1 left-1/2 -translate-x-1/2 dark:border-r dark:border-b dark:border-border/50" />
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>
@@ -161,7 +160,7 @@ export function HeroSection() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none"
+        className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none"
       >
         <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
           Scroll to explore

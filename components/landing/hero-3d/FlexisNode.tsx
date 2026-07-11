@@ -89,31 +89,23 @@ export function FlexisNode({ id, label, position, delay, isDark }: FlexisNodePro
         </mesh>
       </mesh>
 
-      {/* Main Letter label on the node face */}
-      <Text
-        position={[position[0], position[1], position[2] + 0.35]}
-        fontSize={0.24}
-        fontWeight={800}
-        color={isDark ? "#FFFFFF" : "#000D5A"}
-        anchorX="center"
-        anchorY="middle"
+      {/* HTML Floating Card replacing the 3D text for readability */}
+      <Html
+        position={[
+          position[0] + (position[0] > 0 ? 0.45 : -0.45), 
+          position[1] + 0.35, 
+          position[2]
+        ]}
+        center
+        zIndexRange={[100, 0]}
       >
-        {id}
-      </Text>
-
-      {/* Hover tooltip */}
-      {hovered && (
-        <Html
-          position={[position[0], position[1] + 0.5, position[2]]}
-          center
-          style={{ transition: "all 0.2s", opacity: hovered ? 1 : 0 }}
+        <div 
+          className={`flex items-center gap-2 bg-card/95 backdrop-blur-md text-foreground text-[11px] sm:text-xs font-semibold py-1.5 px-3 sm:py-2 sm:px-4 rounded-full shadow-lg border border-border/50 whitespace-nowrap transition-all duration-300 ${hovered ? 'scale-105 shadow-primary/20 border-primary/30' : ''}`}
         >
-          <div className="bg-heading dark:bg-card dark:text-card-foreground text-white text-[10px] font-semibold uppercase tracking-wider py-1.5 px-3 rounded-lg whitespace-nowrap shadow-xl border dark:border-border/50">
-            {label}
-            <div className="w-2 h-2 bg-heading dark:bg-card rotate-45 absolute -bottom-1 left-1/2 -translate-x-1/2 dark:border-r dark:border-b dark:border-border/50" />
-          </div>
-        </Html>
-      )}
+          <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+          {id}
+        </div>
+      </Html>
     </group>
   );
 }

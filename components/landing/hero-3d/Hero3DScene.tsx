@@ -10,21 +10,20 @@ import { FlexisNode } from "./FlexisNode";
 import { ConnectionLines } from "./ConnectionLines";
 import { ParticleField } from "./ParticleField";
 
-const FLEXIS_DATA = [
-  { id: "F", label: "Full Time" },
-  { id: "L", label: "Limited Term" },
-  { id: "E", label: "Expert" },
-  { id: "X", label: "Seasonal" },
-  { id: "I", label: "Interim" },
-  { id: "S", label: "Specific" },
+const MODULE_DATA = [
+  { id: "Vendors", label: "Vendor Registry & Evaluation" },
+  { id: "Security", label: "Government-Grade Access" },
+  { id: "Workflows", label: "Configurable Approvals" },
+  { id: "Analytics", label: "Real-time Data Insights" },
+  { id: "Contracts", label: "Digital Lifecycle" },
 ];
 
-const NODE_POSITIONS = getNodePositions(2.8);
+const NODE_POSITIONS = getNodePositions(2.8, MODULE_DATA.length);
 
-// Calculate hexagonal positions around center
-function getNodePositions(radius: number): [number, number, number][] {
-  return FLEXIS_DATA.map((_, i) => {
-    const angle = (i / FLEXIS_DATA.length) * Math.PI * 2 - Math.PI / 2;
+// Calculate radial positions around center
+function getNodePositions(radius: number, count: number): [number, number, number][] {
+  return Array.from({ length: count }).map((_, i) => {
+    const angle = (i / count) * Math.PI * 2 - Math.PI / 2;
     return [
       Math.cos(angle) * radius,
       Math.sin(angle) * radius * 0.8, // Reduced squashing
@@ -76,11 +75,10 @@ function SceneContent({ isDark }: { isDark: boolean }) {
       {/* Premium Interactive Presentation Controls */}
       <PresentationControls
         global
-        config={{ mass: 2, tension: 500 }}
         snap={true}
         rotation={[0, 0.3, 0]}
         polar={[-Math.PI / 4, Math.PI / 4]}
-        azimuth={[-Math.PI / 2, Math.PI / 2]}
+        azimuth={[-Math.PI / 4, Math.PI / 4]}
       >
         <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
           {/* Scene content with entrance animation */}
@@ -88,8 +86,8 @@ function SceneContent({ isDark }: { isDark: boolean }) {
             {/* Central OMS Core */}
             <WorkforceCore isDark={isDark} />
 
-            {/* FLEXIS Nodes */}
-            {FLEXIS_DATA.map((node, i) => (
+            {/* Module Nodes */}
+            {MODULE_DATA.map((node, i) => (
               <FlexisNode
                 key={node.id}
                 id={node.id}
@@ -132,7 +130,7 @@ export default function Hero3DScene() {
   return (
     <div className="w-full h-full cursor-grab active:cursor-grabbing" style={{ minHeight: 600 }}>
       <Canvas
-        camera={{ position: [0, 0, 9.5], fov: 45 }}
+        camera={{ position: [0, 0, 11.5], fov: 45 }}
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: true }}
         style={{ background: "transparent" }}
