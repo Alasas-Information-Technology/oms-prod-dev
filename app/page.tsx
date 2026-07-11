@@ -18,29 +18,29 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col font-sans selection:bg-primary/20">
       <LandingNav />
-      
+
       <main className="flex-1 flex flex-col">
         <HeroSection />
-        
+
         <FlexisIntro />
         <FlexisExperience />
-        
+
         <PlatformOverview />
-        
+
         <Capabilities />
-        
+
         <ProcessJourney />
-        
+
         <WhyDiez />
-        
+
         <SecuritySection />
-        
+
         <TechShowcase />
-        
-        <IndustriesSection />
-        
+
+        {/* <IndustriesSection /> */}
+
         <ImplementationJourney />
-        
+
         <FinalCTA />
       </main>
 
