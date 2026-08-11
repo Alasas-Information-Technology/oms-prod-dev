@@ -41,11 +41,19 @@ export function LandingNav() {
         <div className="w-full max-w-[1280px] mx-auto px-6 lg:px-16 flex items-center justify-between">
           <Link href="/" className="flex-shrink-0 flex items-center gap-2">
             <Image
-              src="/c-logo.png"
+              src="/logos/DIEZ_Logo_color.svg"
               alt="DIEZ OMS Logo"
               width={140}
-              height={48}
-              className="h-10 w-auto object-contain"
+              height={60}
+              className="h-15 w-auto object-cover dark:hidden"
+              priority
+            />
+            <Image
+              src="/logos/DIEZ_Logo_white.svg"
+              alt="DIEZ OMS Logo"
+              width={140}
+              height={60}
+              className="h-15 w-auto object-cover hidden dark:block"
               priority
             />
           </Link>

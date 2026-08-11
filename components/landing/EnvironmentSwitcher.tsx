@@ -46,7 +46,7 @@ export function EnvironmentSwitcher() {
   const currentTheme = theme === "system" ? "light" : theme;
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="fixed bottom-8 right-8 z-[100] flex items-end justify-end"
     >
@@ -83,7 +83,7 @@ export function EnvironmentSwitcher() {
                   Digital Workspace
                 </p>
               </div>
-              <button 
+              <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsOpen(false);
@@ -117,7 +117,7 @@ export function EnvironmentSwitcher() {
                   setTimeout(() => setIsOpen(false), 200);
                 }}
               />
-              <ThemeOption
+              {/* <ThemeOption
                 icon={<MonitorSmartphone className="w-5 h-5 text-muted-foreground" />}
                 title="System Default"
                 description="Match your operating system's active display settings."
@@ -126,7 +126,7 @@ export function EnvironmentSwitcher() {
                   setTheme("system");
                   setTimeout(() => setIsOpen(false), 200);
                 }}
-              />
+              /> */}
             </div>
           </motion.div>
         )}
@@ -135,17 +135,17 @@ export function EnvironmentSwitcher() {
   );
 }
 
-function ThemeOption({ 
-  icon, 
-  title, 
-  description, 
-  isActive, 
-  onClick 
-}: { 
-  icon: React.ReactNode; 
-  title: string; 
-  description: string; 
-  isActive: boolean; 
+function ThemeOption({
+  icon,
+  title,
+  description,
+  isActive,
+  onClick
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  isActive: boolean;
   onClick: (e: React.MouseEvent) => void;
 }) {
   return (
@@ -156,8 +156,8 @@ function ThemeOption({
       }}
       className={cn(
         "w-full text-left p-4 rounded-xl flex items-start gap-4 transition-all duration-300 relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-        isActive 
-          ? "bg-primary/5 border border-primary/20 shadow-sm" 
+        isActive
+          ? "bg-primary/5 border border-primary/20 shadow-sm"
           : "bg-transparent border border-transparent hover:bg-secondary/40 hover:border-border/60 hover:shadow-sm"
       )}
       aria-pressed={isActive}
@@ -168,7 +168,7 @@ function ThemeOption({
       )}>
         {icon}
       </div>
-      
+
       <div className="flex-1 pr-6">
         <h4 className={cn("text-sm font-semibold mb-1 transition-colors", isActive ? "text-primary" : "text-heading group-hover:text-primary")}>
           {title}
