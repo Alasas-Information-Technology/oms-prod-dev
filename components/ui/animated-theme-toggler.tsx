@@ -248,10 +248,10 @@ export const AnimatedThemeToggler = ({
       size="icon"
       ref={buttonRef}
       onClick={toggleTheme}
-      className={cn(className)}
+      className={cn("size-10 dark:bg-card/30", className)}
       {...props}
     >
-      {isDark ? <Sun /> : <Moon />}
+      {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
       <span className="sr-only z-30">Toggle theme</span>
     </Button>
   )

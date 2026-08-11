@@ -63,7 +63,7 @@ const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
     };
 
     return (
-        <div className="flex items-start justify-center">
+        <div className="flex items-center justify-center">
             <DropdownMenu defaultOpen={defaultOpen}>
                 <DropdownMenuTrigger className="cursor-pointer">
                     {trigger}
@@ -147,8 +147,8 @@ const AccountDropdown = () => {
         <Dropdown
             align="end"
             trigger={
-                <div className="rounded-full">
-                    <Avatar className="size-8 cursor-pointer">
+                <div className="rounded-full flex items-center justify-center">
+                    <Avatar className="size-9 cursor-pointer">
                         <AvatarImage
                             src="https://images.shadcnspace.com/assets/profiles/user-11.jpg"
                             alt="David McMichael"
