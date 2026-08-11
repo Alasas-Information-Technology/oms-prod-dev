@@ -12,7 +12,7 @@ export function AppTopbar() {
     const { state } = useSidebar();
 
     return (
-        <header className="flex h-12 shrink-0 items-center gap-3 px-4 w-full sticky z-20 top-0 border-b !border-muted-foreground/20 bg-background transition-all duration-200 ease-linear">
+        <header className="flex h-14 shrink-0 items-center gap-3 px-4 w-full sticky z-20 top-0 border-b border-muted-foreground/20 bg-background transition-all duration-200 ease-linear">
             {state === "collapsed" && (
                 <motion.div layoutId="app-signature-container">
                     <AppSignature />

@@ -10,7 +10,7 @@ export function AppSignature() {
             <motion.div
                 layout
                 initial={false}
-                className="flex items-center h-12 w-full gap-3"
+                className="flex items-center h-14 w-full gap-3"
                 transition={{
                     layout: {
                         duration: 0.25,

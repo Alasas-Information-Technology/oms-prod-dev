@@ -269,6 +269,7 @@ export function DataTable<T extends Record<string, unknown>>({
     getGroupedRowModel: getGroupedRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     globalFilterFn: customGlobalFilterFn,
+    autoResetPageIndex: false,
   });
 
   // Call the external onSelectionChange when internal selection changes
@@ -295,7 +296,7 @@ export function DataTable<T extends Record<string, unknown>>({
                 placeholder="Search records..."
                 value={globalFilter ?? ""}
                 onChange={(e) => setGlobalFilter(e.target.value)}
-                className="pl-9 bg-white shadow-sm"
+                className="pl-9 bg-white dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 shadow-sm"
               />
             </div>
           ) : <div />}
@@ -317,11 +318,11 @@ export function DataTable<T extends Record<string, unknown>>({
       )}
 
       {/* Table Container */}
-      <div className="rounded-md border border-slate-200 overflow-hidden bg-white/50 backdrop-blur-sm glass-card">
+      <div className="rounded-md border border-slate-200 dark:border-slate-800 overflow-hidden bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm glass-card">
         <Table>
-          <TableHeader className="bg-slate-50/80 border-b border-slate-200">
+          <TableHeader className="bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="hover:bg-slate-50/80 border-slate-200">
+              <TableRow key={headerGroup.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-900/80 border-slate-200 dark:border-slate-800">
                 {headerGroup.headers.map((header) => {
                   const meta = header.column.columnDef.meta as any;
                   return (
@@ -329,7 +330,7 @@ export function DataTable<T extends Record<string, unknown>>({
                       key={header.id}
                       style={{ width: meta?.width }}
                       className={cn(
-                        "text-xs font-semibold text-slate-500 uppercase tracking-wider",
+                        "text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider",
                         compact ? "py-2 px-3" : "py-3 px-4",
                         meta?.align === "right" && "text-right",
                         meta?.align === "center" && "text-center"
@@ -339,7 +340,7 @@ export function DataTable<T extends Record<string, unknown>>({
                         <button
                           onClick={header.column.getToggleSortingHandler()}
                           className={cn(
-                            "group inline-flex items-center gap-1 hover:text-slate-800 transition-colors cursor-pointer select-none",
+                            "group inline-flex items-center gap-1 hover:text-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer select-none",
                             meta?.align === "right" && "justify-end w-full",
                             meta?.align === "center" && "justify-center w-full"
                           )}
@@ -378,9 +379,9 @@ export function DataTable<T extends Record<string, unknown>>({
                 if (row.getIsGrouped()) {
                   const colId = row.groupingColumnId || "";
                   return (
-                    <TableRow key={row.id} className="bg-slate-100 hover:bg-slate-200 cursor-pointer font-medium" onClick={row.getToggleExpandedHandler()}>
+                    <TableRow key={row.id} className="bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer font-medium" onClick={row.getToggleExpandedHandler()}>
                       <TableCell colSpan={finalColumns.length} className="py-2 px-4">
-                        <div className="flex items-center gap-2 text-slate-800">
+                        <div className="flex items-center gap-2 text-slate-800 dark:text-slate-200">
                           {row.getIsExpanded() ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                           <span>{colId}: {String(row.getValue(colId))} ({row.subRows.length})</span>
                         </div>
@@ -395,9 +396,9 @@ export function DataTable<T extends Record<string, unknown>>({
                     key={row.id}
                     data-state={isSelected ? "selected" : undefined}
                     className={cn(
-                      "border-slate-100 premium-transition hover:bg-slate-50 relative hover:z-10 hover:shadow-sm",
-                      idx % 2 === 1 && !isSelected && "bg-slate-50/40",
-                      isSelected && "bg-blue-50/60"
+                      "border-slate-100 dark:border-slate-800 premium-transition hover:bg-slate-50 dark:hover:bg-slate-800/50 relative hover:z-10 hover:shadow-sm",
+                      idx % 2 === 1 && !isSelected && "bg-slate-50/40 dark:bg-slate-900/10",
+                      isSelected && "bg-blue-50/60 dark:bg-blue-950/30"
                     )}
                   >
                     {row.getVisibleCells().map((cell) => {
@@ -410,7 +411,7 @@ export function DataTable<T extends Record<string, unknown>>({
                         <TableCell
                           key={cell.id}
                           className={cn(
-                            "text-sm text-slate-800",
+                            "text-sm text-slate-800 dark:text-slate-200",
                             compact ? "py-2 px-3" : "py-3 px-4",
                             meta?.align === "right" && "text-right",
                             meta?.align === "center" && "text-center"
@@ -435,7 +436,7 @@ export function DataTable<T extends Record<string, unknown>>({
 
         {/* Footer Pagination Info */}
         {(table.getPageCount() > 1 || pageSizeOptions.length > 1) && (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-2.5 border-t border-slate-200 bg-white">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-2.5 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
               {pageSizeOptions.length > 1 && (
                 <select
@@ -443,7 +444,7 @@ export function DataTable<T extends Record<string, unknown>>({
                   onChange={e => {
                     table.setPageSize(Number(e.target.value))
                   }}
-                  className="h-8 px-2 rounded-md border border-input bg-white text-xs shadow-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer"
+                  className="h-8 px-2 rounded-md border border-input bg-white dark:bg-slate-900 dark:text-slate-200 dark:border-slate-800 text-xs shadow-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer"
                 >
                   {pageSizeOptions.map(size => (
                     <option key={size} value={size}>

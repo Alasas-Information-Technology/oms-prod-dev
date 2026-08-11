@@ -108,7 +108,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar className="border-muted-foreground/20!" {...props}>
 
       {/* SIDEBAR HEADER */}
-      <SidebarHeader className="border-b border-sidebar-border h-12 flex flex-row items-center">
+      <SidebarHeader className="border-b border-muted-foreground/20 h-14 flex flex-row items-center px-4">
         {state === "expanded" && (
           <motion.div layoutId="app-signature-container" className="w-full">
             <AppSignature />
