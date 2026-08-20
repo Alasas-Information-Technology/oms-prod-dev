@@ -1,62 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { proxyToBackend } from "@/lib/api/backend-proxy";
 
-import { SecurityRepository } from "@/lib/repositories/SecurityRepository";
+export const dynamic = "force-dynamic";
 
-import { GetSecurityEventsUseCase } from "@/lib/use-cases/security-dashboard/GetSecurityEventsUseCase";
-import { authorize } from "@/lib/auth/authorization";
-
-export async function GET(
-    request: NextRequest
-) {
-
-    try {
-        await authorize(request, ["SECURITY.EVENTS.VIEW"]);
-
-        const page =
-            Number(
-                request.nextUrl.searchParams.get(
-                    "page"
-                )
-            ) || 1;
-
-        const pageSize =
-            Number(
-                request.nextUrl.searchParams.get(
-                    "pageSize"
-                )
-            ) || 25;
-
-        const repository =
-            new SecurityRepository();
-
-        const useCase =
-            new GetSecurityEventsUseCase(
-                repository
-            );
-
-        const result =
-            await useCase.execute(
-                "",
-                page,
-                pageSize
-            );
-
-        return NextResponse.json(
-            result
-        );
-
-    } catch (error) {
-
-        console.error(error);
-
-        return NextResponse.json(
-            {
-                message:
-                    "Failed to load events"
-            },
-            {
-                status: 500
-            }
-        );
-    }
+export async function GET(request: NextRequest) {
+    return proxyToBackend(request, "/api/v1/internal/security/events");
 }

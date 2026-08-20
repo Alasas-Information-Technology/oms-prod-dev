@@ -1,70 +1,8 @@
-import {
-    NextRequest,
-    NextResponse
-} from "next/server";
+import { NextRequest } from "next/server";
+import { proxyToBackend } from "@/lib/api/backend-proxy";
 
-import {
-    SessionService
-} from "@/lib/services/SessionService";
+export const dynamic = "force-dynamic";
 
-const sessionService =
-    new SessionService();
-
-export async function POST(
-    request: NextRequest
-) {
-
-    try {
-
-        const userId =
-            request.headers.get(
-                "x-user-id"
-            );
-
-        const currentSessionId =
-            request.headers.get(
-                "x-login-session-id"
-            );
-
-        if (
-            !userId ||
-            !currentSessionId
-        ) {
-            return NextResponse.json(
-                {
-                    success: false,
-                    message:
-                        "Unauthorized"
-                },
-                {
-                    status: 401
-                }
-            );
-        }
-
-        await sessionService
-            .revokeAllOtherSessions(
-                userId,
-                currentSessionId
-            );
-
-        return NextResponse.json({
-            success: true,
-            message:
-                "All other sessions terminated"
-        });
-
-    } catch {
-
-        return NextResponse.json(
-            {
-                success: false,
-                message:
-                    "Internal Server Error"
-            },
-            {
-                status: 500
-            }
-        );
-    }
+export async function POST(request: NextRequest) {
+    return proxyToBackend(request, "/api/v1/auth/sessions/revoke-all");
 }

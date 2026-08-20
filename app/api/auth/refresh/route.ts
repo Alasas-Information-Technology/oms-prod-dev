@@ -1,65 +1,72 @@
-import {
-    NextRequest,
-    NextResponse
-} from "next/server";
-
-import {
-    RefreshUseCase
-} from "@/lib/use-cases/RefreshUseCase";
-
 import { SECURITY } from "@/lib/constants/security";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(
-    request: NextRequest
-) {
+export const dynamic = "force-dynamic";
 
-    const forwarded =
-        request.headers.get(
-            "x-forwarded-for"
+const BACKEND_BASE_URL = process.env.BACKEND_BASE_URL || "http://localhost:4000";
+
+export async function POST(request: NextRequest) {
+    const forwarded = request.headers.get("x-forwarded-for");
+    const ipAddress = forwarded?.split(",")[0]?.trim() || "UNKNOWN";
+    const userAgent = request.headers.get("user-agent") || "UNKNOWN";
+    const deviceFingerprint = request.cookies.get("oms_device_id")?.value;
+
+    const token = request.cookies.get("oms_refresh_token")?.value;
+
+    if (!token) {
+        return NextResponse.json(
+            { success: false, message: "Missing refresh token" },
+            { status: 401 }
         );
-
-    const ipAddress =
-        forwarded?.split(",")[0] ??
-        "UNKNOWN";
-
-    const userAgent =
-        request.headers.get(
-            "user-agent"
-        ) ?? "UNKNOWN";
+    }
 
     try {
+        const backendResponse = await fetch(`${BACKEND_BASE_URL}/api/v1/auth/refresh`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "x-forwarded-for": ipAddress,
+                "user-agent": userAgent,
+                "x-device-fingerprint": deviceFingerprint || "",
+            },
+            body: JSON.stringify({
+                refreshToken: token,
+                deviceFingerprint,
+            }),
+            cache: "no-store",
+        });
 
-        // Read refresh token from HttpOnly cookie only
-        const token =
-            request.cookies.get("oms_refresh_token")?.value;
+        const data = await backendResponse.json();
 
-        if (!token) {
-            return NextResponse.json(
-                {
-                    success: false,
-                    message: "Missing refresh token"
-                },
-                {
-                    status: 401
-                }
-            );
+        // Check for concurrent refresh response
+        if (data?.code === "CONCURRENT_REFRESH" || data?.error?.code === "CONCURRENT_REFRESH") {
+            return NextResponse.json({
+                success: true,
+                message: "Concurrent refresh handled",
+            });
         }
 
-        const refreshUseCase =
-            new RefreshUseCase();
+        // Check for replay attack detection
+        if (backendResponse.status === 403 || data?.code === "REFRESH_TOKEN_REPLAY" || data?.error?.code === "REFRESH_TOKEN_REPLAY") {
+            const response = NextResponse.json(
+                { success: false, message: "Security violation detected" },
+                { status: 403 }
+            );
+            response.cookies.delete("oms_access_token");
+            response.cookies.delete("oms_refresh_token");
+            return response;
+        }
 
-        const result =
-            await refreshUseCase
-                .execute(token);
+        if (!backendResponse.ok) {
+            const errorPayload = data?.error || data || { message: "Invalid refresh token" };
+            return NextResponse.json(errorPayload, { status: backendResponse.status });
+        }
 
-        // Build response WITHOUT tokens in the body (security requirement)
-        const response = NextResponse
-            .json({
-                success: true,
-            });
+        const refreshResult = data?.data || data;
 
-        // Set new access token as HttpOnly cookie
-        response.cookies.set("oms_access_token", result.accessToken, {
+        const response = NextResponse.json({ success: true });
+
+        response.cookies.set("oms_access_token", refreshResult.accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
@@ -67,8 +74,7 @@ export async function POST(
             maxAge: SECURITY.ACCESS_TOKEN_COOKIE_MAX_AGE,
         });
 
-        // Set new refresh token as HttpOnly cookie (rotation)
-        response.cookies.set("oms_refresh_token", result.refreshToken, {
+        response.cookies.set("oms_refresh_token", refreshResult.refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
@@ -77,53 +83,11 @@ export async function POST(
         });
 
         return response;
-
     } catch (error: any) {
-
-        // Concurrent refresh (React StrictMode / Multiple tabs)
-        // Return 200 OK so the client interceptor resolves and uses the new cookies
-        if (error?.message === "CONCURRENT_REFRESH") {
-            return NextResponse.json(
-                {
-                    success: true,
-                    message: "Concurrent refresh handled"
-                },
-                {
-                    status: 200
-                }
-            );
-        }
-
-        // Replay attack detection — return 403 Forbidden
-        if (error?.message === "REFRESH_TOKEN_REPLAY") {
-            const response = NextResponse.json(
-                {
-                    success: false,
-                    message: "Security violation detected"
-                },
-                {
-                    status: 403
-                }
-            );
-
-            // Clear compromised cookies
-            response.cookies.delete("oms_access_token");
-            response.cookies.delete("oms_refresh_token");
-
-            return response;
-        }
-
-        // All other refresh failures — return 401
-        return NextResponse
-            .json(
-                {
-                    success: false,
-                    message:
-                        "Invalid refresh token"
-                },
-                {
-                    status: 401
-                }
-            );
+        console.error("[Refresh Proxy Error]:", error);
+        return NextResponse.json(
+            { success: false, message: "Failed to refresh token" },
+            { status: 500 }
+        );
     }
 }

@@ -46,7 +46,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 
-export interface ColumnDef<T = Record<string, unknown>> {
+export interface ColumnDef<T = any> {
   key: string;
   header: string;
   sortable?: boolean;
@@ -55,7 +55,7 @@ export interface ColumnDef<T = Record<string, unknown>> {
   render?: (value: unknown, row: T) => ReactNode;
 }
 
-export interface RowAction<T = Record<string, unknown>> {
+export interface RowAction<T = any> {
   label: string;
   icon?: ReactNode;
   onClick: (row: T) => void;
@@ -63,7 +63,7 @@ export interface RowAction<T = Record<string, unknown>> {
   separator?: boolean;
 }
 
-interface DataTableProps<T extends Record<string, unknown> = Record<string, unknown>> {
+interface DataTableProps<T = any> {
   columns: ColumnDef<T>[];
   data: T[];
   keyField: string;
@@ -78,6 +78,7 @@ interface DataTableProps<T extends Record<string, unknown> = Record<string, unkn
   
   // High-Performance Features
   enableSearch?: boolean;
+  searchPlaceholder?: string;
   globalFilterFields?: string[];
   enableExport?: boolean;
   exportFilename?: string;
@@ -85,7 +86,7 @@ interface DataTableProps<T extends Record<string, unknown> = Record<string, unkn
   groupBy?: string[];
 }
 
-export function DataTable<T extends Record<string, unknown>>({
+export function DataTable<T = any>({
   columns,
   data,
   keyField,
@@ -98,6 +99,7 @@ export function DataTable<T extends Record<string, unknown>>({
   className,
   compact = false,
   enableSearch = false,
+  searchPlaceholder = "Search records...",
   globalFilterFields,
   enableExport = false,
   exportFilename = "export",
@@ -126,7 +128,7 @@ export function DataTable<T extends Record<string, unknown>>({
       exportHeaders,
       ...filteredRows.map(row => 
         columns.map(col => {
-          const val = row[col.key];
+          const val = (row as any)[col.key];
           const stringVal = typeof val === "string" ? val : String(val ?? "");
           return `"${stringVal.replace(/"/g, '""')}"`;
         }).join(",")
@@ -176,7 +178,7 @@ export function DataTable<T extends Record<string, unknown>>({
     cols.push(
       ...columns.map((col) => ({
         id: col.key,
-        accessorFn: (row: T) => row[col.key],
+        accessorFn: (row: T) => (row as any)[col.key],
         header: col.header,
         enableSorting: col.sortable ?? false,
         cell: (info) => {
@@ -233,13 +235,13 @@ export function DataTable<T extends Record<string, unknown>>({
     // If fields are explicitly specified, search only those
     if (globalFilterFields && globalFilterFields.length > 0) {
       return globalFilterFields.some((fieldKey) => {
-        const itemValue = row.original[fieldKey];
+        const itemValue = (row.original as any)[fieldKey];
         return String(itemValue ?? "").toLowerCase().includes(value);
       });
     }
     
     // Default: search all object values
-    return Object.values(row.original).some((val) => 
+    return Object.values((row.original as Record<string, unknown>) || {}).some((val) => 
       String(val ?? "").toLowerCase().includes(value)
     );
   };
@@ -255,7 +257,7 @@ export function DataTable<T extends Record<string, unknown>>({
       grouping,
       expanded,
     },
-    getRowId: (row) => String(row[keyField]),
+    getRowId: (row) => String((row as any)[keyField]),
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
@@ -293,7 +295,7 @@ export function DataTable<T extends Record<string, unknown>>({
             <div className="relative w-full sm:max-w-xs">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
               <Input
-                placeholder="Search records..."
+                placeholder={searchPlaceholder}
                 value={globalFilter ?? ""}
                 onChange={(e) => setGlobalFilter(e.target.value)}
                 className="pl-9 bg-white dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 shadow-sm"

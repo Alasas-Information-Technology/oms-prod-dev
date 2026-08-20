@@ -1,49 +1,12 @@
-// app/api/internal/security/users/[userId]/sessions/[sessionId]/route.ts
+import { NextRequest } from "next/server";
+import { proxyToBackend } from "@/lib/api/backend-proxy";
 
-import {
-    NextRequest,
-    NextResponse
-} from "next/server";
-
-import { authorize }
-    from "@/lib/auth/authorization";
-
-import { SessionService }
-    from "@/lib/services/SessionService";
+export const dynamic = "force-dynamic";
 
 export async function DELETE(
     request: NextRequest,
-    {
-        params
-    }: {
-        params: Promise<{
-            userId: string;
-            sessionId: string;
-        }>
-    }
+    { params }: { params: Promise<{ userId: string; sessionId: string }> }
 ) {
-
-    await authorize(
-        request,
-        [
-            "SECURITY.SESSIONS.REVOKE"
-        ]
-    );
-
-    const {
-        sessionId
-    } =
-        await params;
-
-    const service =
-        new SessionService();
-
-    await service.revokeSession(
-        sessionId,
-        true
-    );
-
-    return NextResponse.json({
-        success: true
-    });
+    const { userId, sessionId } = await params;
+    return proxyToBackend(request, `/api/v1/internal/security/settings/users/${userId}/sessions/${sessionId}`);
 }

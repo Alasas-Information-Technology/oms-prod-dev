@@ -1,58 +1,53 @@
 import { SECURITY } from "@/lib/constants/security";
-import { SECURITY_EVENTS } from "@/lib/constants/securityEvents";
-import { SecurityEventService } from "@/lib/services/SecurityEventService";
-import { LoginUseCase } from "@/lib/use-cases/LoginUseCase";
 import { randomUUID as uuidv4 } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
-const loginUseCase =
-    new LoginUseCase();
+export const dynamic = "force-dynamic";
 
-const securityEventService =
-    new SecurityEventService();
+const BACKEND_BASE_URL = process.env.BACKEND_BASE_URL || "http://localhost:4000";
 
-
-
-export async function POST(
-    request: NextRequest
-) {
-
-    const forwarded =
-        request.headers.get(
-            "x-forwarded-for"
-        );
-
-    const ipAddress =
-        forwarded?.split(",")[0] ??
-        "UNKNOWN";
-
-    const userAgent =
-        request.headers.get(
-            "user-agent"
-        ) ?? "UNKNOWN";
-
-    const deviceFingerprint = request.cookies.get("oms_device_id")?.value ?? uuidv4();
+export async function POST(request: NextRequest) {
+    const forwarded = request.headers.get("x-forwarded-for");
+    const ipAddress = forwarded?.split(",")[0]?.trim() || "UNKNOWN";
+    const userAgent = request.headers.get("user-agent") || "UNKNOWN";
+    const deviceFingerprint = request.cookies.get("oms_device_id")?.value || uuidv4();
 
     try {
         const body = await request.json();
 
-        const result =
-            await loginUseCase.execute(
-                body.username,
-                body.password,
-                ipAddress,
-                userAgent,
+        const backendResponse = await fetch(`${BACKEND_BASE_URL}/api/v1/auth/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "x-forwarded-for": ipAddress,
+                "user-agent": userAgent,
+                "x-device-fingerprint": deviceFingerprint,
+            },
+            body: JSON.stringify({
+                username: body.username,
+                password: body.password,
+                confirmRevokeOldest: body.confirmRevokeOldest,
                 deviceFingerprint,
-                body.confirmRevokeOldest
-            );
-
-        // Build response WITHOUT tokens in the body (security requirement)
-        const response = NextResponse.json({
-            success: true,
-            session: result.session,
+            }),
+            cache: "no-store",
         });
 
-        response.cookies.set("oms_access_token", result.accessToken, {
+        const data = await backendResponse.json();
+
+        if (!backendResponse.ok) {
+            const errorPayload = data?.error || data || { message: "Authentication failed" };
+            return NextResponse.json(errorPayload, { status: backendResponse.status });
+        }
+
+        const loginResult = data?.data || data;
+
+        // Build response without tokens in the body (tokens stored securely in HttpOnly cookies)
+        const response = NextResponse.json({
+            success: true,
+            session: loginResult.user,
+        });
+
+        response.cookies.set("oms_access_token", loginResult.accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
@@ -60,7 +55,7 @@ export async function POST(
             maxAge: SECURITY.ACCESS_TOKEN_COOKIE_MAX_AGE,
         });
 
-        response.cookies.set("oms_refresh_token", result.refreshToken, {
+        response.cookies.set("oms_refresh_token", loginResult.refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
@@ -68,79 +63,20 @@ export async function POST(
             maxAge: SECURITY.REFRESH_TOKEN_COOKIE_MAX_AGE,
         });
 
-        response.cookies.set(
-            "oms_device_id",
-            deviceFingerprint,
-            {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "lax",
-                path: "/",
-                maxAge: SECURITY.DEVICE_ID_COOKIE_MAX_AGE
-            }
-        );
+        response.cookies.set("oms_device_id", deviceFingerprint, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/",
+            maxAge: SECURITY.DEVICE_ID_COOKIE_MAX_AGE,
+        });
 
         return response;
-
     } catch (error: any) {
-
-        console.error(error);
-
-        if (
-            error.name ===
-            "RateLimitExceededError"
-        ) {
-
-            await securityEventService.log(
-                SECURITY_EVENTS.RATE_LIMIT_EXCEEDED,
-                {
-                    ipAddress,
-                    userAgent,
-                    description: "Login rate limit exceeded"
-                }
-            );
-
-            return NextResponse.json(
-                {
-                    success: false,
-                    message:
-                        error.message,
-                },
-                {
-                    status: 429,
-                }
-            );
-        }
-
-        if (error.message === "MAX_SESSIONS_REACHED") {
-            return NextResponse.json(
-                {
-                    success: false,
-                    message: "Maximum number of sessions reached, please contact your admin."
-                },
-                { status: 403 }
-            );
-        }
-
-        if (error.message === "CONFIRM_REVOKE_OLDEST") {
-            return NextResponse.json(
-                {
-                    success: false,
-                    code: "CONFIRM_REVOKE_OLDEST",
-                    message: "Confirmation required to revoke oldest session"
-                },
-                { status: 409 }
-            );
-        }
-
+        console.error("[Login Proxy Error]:", error);
         return NextResponse.json(
-            {
-                success: false,
-                message: error.message,
-            },
-            {
-                status: 401
-            }
+            { success: false, message: error?.message || "Internal Server Error" },
+            { status: 500 }
         );
     }
 }

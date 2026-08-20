@@ -1,49 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { proxyToBackend } from "@/lib/api/backend-proxy";
 
-import { SecurityRepository } from "@/lib/repositories/SecurityRepository";
+export const dynamic = "force-dynamic";
 
-import { GetUserSecuritySummaryUseCase } from "@/lib/use-cases/security-dashboard/GetUserSecuritySummaryUseCase";
-
-export async function GET(
-    request: NextRequest
-) {
-
-    try {
-
-        const userId =
-            request.headers.get(
-                "x-user-id"
-            )!;
-
-        const repository =
-            new SecurityRepository();
-
-        const useCase =
-            new GetUserSecuritySummaryUseCase(
-                repository
-            );
-
-        const result =
-            await useCase.execute(
-                userId
-            );
-
-        return NextResponse.json(
-            result
-        );
-
-    } catch (error) {
-
-        console.error(error);
-
-        return NextResponse.json(
-            {
-                message:
-                    "Failed to load summary"
-            },
-            {
-                status: 500
-            }
-        );
-    }
+export async function GET(request: NextRequest) {
+    return proxyToBackend(request, "/api/v1/internal/security/user-summary");
 }

@@ -1,39 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { proxyToBackend } from "@/lib/api/backend-proxy";
 
-import { SecurityRepository } from "@/lib/repositories/SecurityRepository";
-import { GetSecurityDashboardDataUseCase } from "@/lib/use-cases/security-dashboard/GetSecurityDashboardDataUseCase";
+export const dynamic = "force-dynamic";
 
-export async function GET() {
-
-    try {
-
-        const repository =
-            new SecurityRepository();
-
-        const useCase =
-            new GetSecurityDashboardDataUseCase(
-                repository
-            );
-
-        const result =
-            await useCase.execute();
-
-        return NextResponse.json(
-            result
-        );
-
-    } catch (error) {
-
-        console.error(error);
-
-        return NextResponse.json(
-            {
-                message:
-                    "Failed to load security dashboard"
-            },
-            {
-                status: 500
-            }
-        );
-    }
+export async function GET(request: NextRequest) {
+    return proxyToBackend(request, "/api/v1/internal/security/dashboard");
 }
