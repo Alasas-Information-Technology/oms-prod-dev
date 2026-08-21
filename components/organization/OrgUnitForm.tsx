@@ -61,24 +61,31 @@ export type OrgUnitFormData = z.infer<typeof orgUnitSchema>;
 export interface OrgUnitFormProps {
   initialData?: Partial<OrgUnitDetailDto> | null;
   defaultParent?: OrgUnitSummaryDto | OrgUnitEntity | null;
+  parentUnit?: OrgUnitSummaryDto | OrgUnitEntity | null;
   targetTypeId?: number; // 1: Organization, 2: Business Unit, 3: Department, 4: Section
   onSubmit: (data: any) => Promise<void>;
   onCancel?: () => void;
   isSubmitting?: boolean;
+  isLoading?: boolean;
   isEdit?: boolean;
 }
 
 export function OrgUnitForm({
   initialData,
   defaultParent,
+  parentUnit,
   targetTypeId,
   onSubmit,
   onCancel,
   isSubmitting = false,
+  isLoading = false,
   isEdit = false,
 }: OrgUnitFormProps) {
+  const effectiveParent = parentUnit || defaultParent;
+  const effectiveSubmitting = isSubmitting || isLoading;
+
   const [selectedParentId, setSelectedParentId] = React.useState<string | null>(
-    initialData?.parentOrgUnitId || defaultParent?.orgUnitId || null
+    initialData?.parentOrgUnitId || effectiveParent?.orgUnitId || null
   );
   const [showAdvanced, setShowAdvanced] = React.useState(false);
   const [codeManuallyEdited, setCodeManuallyEdited] = React.useState(!!initialData?.code);
@@ -485,7 +492,7 @@ export function OrgUnitForm({
             type="button"
             variant="outline"
             onClick={onCancel}
-            disabled={isSubmitting}
+            disabled={effectiveSubmitting}
             className="h-11 px-6 text-sm font-medium"
           >
             Cancel
@@ -493,10 +500,10 @@ export function OrgUnitForm({
         )}
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={effectiveSubmitting}
           className="h-11 px-8 text-sm font-semibold gap-2 shadow-xs min-w-[150px]"
         >
-          {isSubmitting ? (
+          {effectiveSubmitting ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
               Saving...

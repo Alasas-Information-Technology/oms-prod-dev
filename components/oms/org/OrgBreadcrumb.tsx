@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
-import { OrgTypeSigil } from "./OrgTypeSigil";
+import { OrgTypeIcon } from "./OrgTypeIcon";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,7 +28,9 @@ export interface OrgBreadcrumbProps extends Omit<React.HTMLAttributes<HTMLElemen
   onSelect?: (item: OrgBreadcrumbItem) => void;
   /** Maximum number of breadcrumb nodes to display before middle-truncating (default: 4, min: 3) */
   maxVisible?: number;
-  /** Whether to render OrgTypeSigil next to each node (default: false) */
+  /** Whether to render OrgTypeIcon next to each node (default: false) */
+  showIcons?: boolean;
+  /** Legacy alias for showIcons */
   showSigils?: boolean;
   /** Whether to render unit code alongside name (default: false) */
   showCodes?: boolean;
@@ -49,54 +51,45 @@ export function OrgBreadcrumb({
   items,
   onSelect,
   maxVisible = 4,
-  showSigils = false,
+  showIcons = false,
+  showSigils,
   showCodes = false,
   className,
   ...props
 }: OrgBreadcrumbProps) {
+  const shouldShowIcons = showIcons || Boolean(showSigils);
+
   if (!items || items.length === 0) {
     return null;
   }
 
-  // If item count fits within maxVisible, display all
-  const shouldTruncate = items.length > Math.max(3, maxVisible);
-
-  let visibleItems: { item: OrgBreadcrumbItem; isCollapsedDropdown?: boolean; originalIndex: number }[] = [];
-
-  if (!shouldTruncate) {
-    visibleItems = items.map((item, idx) => ({ item, originalIndex: idx }));
-  } else {
-    // Keep Root (index 0), collapse intermediate items, keep last 2 items (items.length - 2, items.length - 1)
-    const firstItem = { item: items[0], originalIndex: 0 };
-    const collapsedItems = items.slice(1, items.length - 2);
-    const lastTwoItems = items.slice(items.length - 2).map((item, idx) => ({
-      item,
-      originalIndex: items.length - 2 + idx,
-    }));
-
-    visibleItems = [
-      firstItem,
-      { item: { name: "...", nameAr: "..." }, isCollapsedDropdown: true, originalIndex: -1 },
-      ...lastTwoItems,
-    ];
-  }
-
-  const collapsedGroup = shouldTruncate ? items.slice(1, items.length - 2) : [];
+  // Cap maxVisible to at least 3
+  const effectiveMax = Math.max(3, maxVisible);
+  const total = items.length;
 
   return (
     <nav
-      aria-label="Organization Hierarchy Breadcrumb"
-      className={cn("flex items-center flex-wrap gap-1.5 text-xs text-muted-foreground", className)}
+      aria-label="Hierarchy Breadcrumb"
+      className={cn("flex items-center text-xs text-muted-foreground", className)}
       {...props}
     >
-      <ol className="flex items-center flex-wrap gap-1.5">
-        {visibleItems.map((entry, index) => {
-          const isLast = index === visibleItems.length - 1;
-          const { item, isCollapsedDropdown, originalIndex } = entry;
+      <ol className="flex items-center flex-wrap gap-1.5 list-none p-0 m-0">
+        {items.map((item, index) => {
+          const isFirst = index === 0;
+          const isLast = index === total - 1;
+          const isSecondToLast = index === total - 2;
 
-          if (isCollapsedDropdown) {
+          // Intelligently truncate middle items if total > effectiveMax
+          if (total > effectiveMax && !isFirst && !isLast && !isSecondToLast) {
+            if (index > 1) {
+              return null; // Skip redundant middle placeholders
+            }
+
+            // Render a single middle dropdown placeholder
+            const collapsedGroup = items.slice(1, total - 2);
+
             return (
-              <li key="collapsed-menu" className="flex items-center gap-1.5">
+              <li key="collapsed-group" className="flex items-center gap-1">
                 <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0" aria-hidden="true" />
                 <DropdownMenu>
                   <DropdownMenuTrigger
@@ -113,7 +106,7 @@ export function OrgBreadcrumb({
                         className="flex items-center gap-2 text-xs py-1.5 cursor-pointer"
                       >
                         {hiddenItem.typeCode && (
-                          <OrgTypeSigil type={hiddenItem.typeCode} size="sm" />
+                          <OrgTypeIcon type={hiddenItem.typeCode} size="xs" />
                         )}
                         <span className="truncate font-medium text-foreground">
                           {hiddenItem.name}
@@ -134,14 +127,14 @@ export function OrgBreadcrumb({
           const hasLink = Boolean(item.href || onSelect);
 
           return (
-            <li key={item.orgUnitId || originalIndex} className="flex items-center gap-1.5">
+            <li key={item.orgUnitId || index} className="flex items-center gap-1.5">
               {index > 0 && (
                 <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0" aria-hidden="true" />
               )}
 
               <div className="inline-flex items-center gap-1.5">
-                {showSigils && item.typeCode && (
-                  <OrgTypeSigil type={item.typeCode} size="sm" />
+                {shouldShowIcons && item.typeCode && (
+                  <OrgTypeIcon type={item.typeCode} size="xs" />
                 )}
 
                 {isLast ? (

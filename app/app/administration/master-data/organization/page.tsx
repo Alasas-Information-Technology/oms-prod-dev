@@ -30,7 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { StatusBadge, OMSStatus } from "@/components/oms/StatusBadge";
 import {
   Dialog,
   DialogContent,
@@ -38,8 +38,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { StatusBadge, OMSStatus } from "@/components/oms/StatusBadge";
 import { OrgTree } from "@/components/organization/OrgTree";
+import { OrgUnitDetailView } from "@/components/organization/OrgUnitDetailView";
 import { OrgUnitForm } from "@/components/organization/OrgUnitForm";
 import { MoveUnitDialog } from "@/components/organization/MoveUnitDialog";
 import { DeleteUnitDialog } from "@/components/organization/DeleteUnitDialog";
@@ -61,7 +61,7 @@ import {
   OrgUnitTypeDto,
   ORG_PERMISSIONS,
 } from "@/lib/types/organization.types";
-import { cn } from "@/components/ui/utils";
+import { cn } from "@/lib/utils";
 
 export default function OrganizationTreePage() {
   const { can } = usePermission();
@@ -79,14 +79,12 @@ export default function OrganizationTreePage() {
   const [cardsFilterType, setCardsFilterType] = React.useState<number | null>(null);
   const [searchQuery, setSearchQuery] = React.useState("");
 
-  // Load detailed info for right-hand quick inspector
-  const { data: selectedDetail, isLoading: isLoadingDetail } = useOrgUnit(selectedUnitId || "");
   const { data: typesData } = useOrgUnitTypes();
 
   // Load all units for quick metric summary and card view
   const { data: allUnitsData, isLoading: isLoadingAllUnits } = useOrgUnits({
     page: 1,
-    pageSize: 500,
+    pageSize: 100,
     isActive: true,
   });
 
@@ -104,6 +102,14 @@ export default function OrganizationTreePage() {
     const secCount = all.filter((u) => u.orgUnitTypeId === 4).length;
     return { total: all.length, businessUnits: buCount, departments: deptCount, sections: secCount };
   }, [allUnitsData]);
+
+  // Auto-select root on load if none selected
+  React.useEffect(() => {
+    if (!selectedUnitId && allUnitsData?.data && allUnitsData.data.length > 0) {
+      const root = allUnitsData.data.find((u) => u.depth === 0) || allUnitsData.data[0];
+      setSelectedUnitId(root.orgUnitId);
+    }
+  }, [allUnitsData, selectedUnitId]);
 
   const filteredCards = React.useMemo(() => {
     let units = allUnitsData?.data || [];
@@ -182,52 +188,50 @@ export default function OrganizationTreePage() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Top Header & Actions - Matching Standard Original Heading Pattern */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
+    <div className="space-y-6 max-w-[1600px] mx-auto p-4 sm:p-6 pb-20">
+      {/* Top Banner & Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Organization Structure
+            Organization Master
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Visual company hierarchy, leadership structure, and department management.
+            Explore and manage the corporate organizational structure, budget owners, reporting hierarchy, and leadership appointments.
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex items-center gap-2 flex-wrap">
           {can(ORG_PERMISSIONS.EXPORT) && (
             <Button
               variant="outline"
+              size="sm"
               onClick={handleExport}
               disabled={isExporting}
-              className="gap-2 shadow-xs"
+              className="gap-2 text-xs h-9"
             >
-              {isExporting ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Download className="h-4 w-4" />
-              )}
-              Export Excel
+              {isExporting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
+              Export Hierarchy
             </Button>
           )}
 
           {can(ORG_PERMISSIONS.CREATE) && (
             <Button
+              size="sm"
               onClick={() => {
                 setCreateParentUnit(null);
                 setIsCreateOpen(true);
               }}
-              className="gap-2 shadow-xs"
+              className="gap-2 text-xs h-9"
             >
               <Plus className="h-4 w-4" />
-              New Unit
+              New Organization Unit
             </Button>
           )}
         </div>
       </div>
 
-      {/* 1-Step Quick Stats & Level Filter Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {/* Top Level Summary Metric Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div
           onClick={() => {
             setCardsFilterType(null);
@@ -243,7 +247,7 @@ export default function OrganizationTreePage() {
             <Building2 className="h-4 w-4 text-purple-600 dark:text-purple-400" />
           </div>
           <p className="text-2xl font-bold text-foreground mt-1">{stats.total || "—"}</p>
-          <span className="text-[11px] text-muted-foreground">Holding hierarchy</span>
+          <span className="text-[11px] text-muted-foreground">Across all hierarchy levels</span>
         </div>
 
         <div
@@ -258,10 +262,10 @@ export default function OrganizationTreePage() {
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-muted-foreground uppercase">Business Units</span>
-            <Briefcase className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <Building className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           </div>
           <p className="text-2xl font-bold text-foreground mt-1">{stats.businessUnits || "—"}</p>
-          <span className="text-[11px] text-muted-foreground">Executive divisions</span>
+          <span className="text-[11px] text-muted-foreground">Level 2 executive divisions</span>
         </div>
 
         <div
@@ -276,10 +280,10 @@ export default function OrganizationTreePage() {
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-muted-foreground uppercase">Departments</span>
-            <Building className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            <FolderTree className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
           </div>
           <p className="text-2xl font-bold text-foreground mt-1">{stats.departments || "—"}</p>
-          <span className="text-[11px] text-muted-foreground">Budget owners</span>
+          <span className="text-[11px] text-muted-foreground">Budget owners & cost centers</span>
         </div>
 
         <div
@@ -301,419 +305,181 @@ export default function OrganizationTreePage() {
         </div>
       </div>
 
-      {/* Main Split Layout with Tree & Inspector */}
+      {/* Main Two-Pane Split Layout (Part 3.1) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Explorer Panel */}
-        <Card className="lg:col-span-7 shadow-sm border-border">
-          <CardHeader className="pb-3 border-b border-border/50">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <CardTitle className="text-base font-semibold flex items-center gap-2">
-                  <FolderTree className="h-4.5 w-4.5 text-primary" />
-                  Organization Directory
+        {/* Left Explorer Pane: Fixed Width Tree / Cards Directory */}
+        <div className="lg:col-span-5 space-y-4">
+          <Card className="border border-border shadow-xs">
+            <CardHeader className="pb-3 border-b border-border/50">
+              <div className="flex items-center justify-between gap-3">
+                <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                  <FolderTree className="h-4 w-4 text-primary" />
+                  Organization Tree
                 </CardTitle>
-                <CardDescription className="text-xs">
-                  {viewMode === "tree" ? "Click any unit to inspect details. Hover to reveal quick 1-click actions." : "Showing directory cards with instant management actions."}
-                </CardDescription>
-              </div>
 
-              {/* View Switcher & Expand All Controls */}
-              <div className="flex items-center gap-1.5 shrink-0">
-                {viewMode === "tree" && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-8 text-xs gap-1.5"
-                    onClick={() => setExpandAll((prev) => (prev === true ? false : true))}
-                  >
-                    <ChevronsUpDown className="h-3.5 w-3.5 text-muted-foreground" />
-                    {expandAll ? "Collapse All" : "Expand All"}
-                  </Button>
-                )}
+                {/* View Switcher & Expand Controls */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {viewMode === "tree" && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs px-2 gap-1"
+                      onClick={() => setExpandAll((prev) => (prev === true ? false : true))}
+                    >
+                      <ChevronsUpDown className="h-3 w-3 text-muted-foreground" />
+                      {expandAll ? "Collapse" : "Expand"}
+                    </Button>
+                  )}
 
-                <div className="flex items-center bg-muted/60 p-0.5 rounded-lg border border-border/50">
-                  <Button
-                    variant={viewMode === "tree" ? "secondary" : "ghost"}
-                    size="sm"
-                    className="h-7 px-2.5 text-xs gap-1"
-                    onClick={() => setViewMode("tree")}
-                  >
-                    <ListTree className="h-3.5 w-3.5" />
-                    Tree
-                  </Button>
-                  <Button
-                    variant={viewMode === "cards" ? "secondary" : "ghost"}
-                    size="sm"
-                    className="h-7 px-2.5 text-xs gap-1"
-                    onClick={() => setViewMode("cards")}
-                  >
-                    <LayoutGrid className="h-3.5 w-3.5" />
-                    Cards
-                  </Button>
+                  <div className="flex items-center bg-muted/60 p-0.5 rounded-lg border border-border/50">
+                    <Button
+                      variant={viewMode === "tree" ? "secondary" : "ghost"}
+                      size="sm"
+                      className="h-6 px-2 text-[11px] gap-1"
+                      onClick={() => setViewMode("tree")}
+                    >
+                      <ListTree className="h-3 w-3" />
+                      Tree
+                    </Button>
+                    <Button
+                      variant={viewMode === "cards" ? "secondary" : "ghost"}
+                      size="sm"
+                      className="h-6 px-2 text-[11px] gap-1"
+                      onClick={() => setViewMode("cards")}
+                    >
+                      <LayoutGrid className="h-3 w-3" />
+                      Cards
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </CardHeader>
+            </CardHeader>
 
-          <CardContent className="pt-4 max-h-[750px] overflow-y-auto">
-            {viewMode === "tree" ? (
-              <OrgTree
-                selectedId={selectedUnitId}
-                forceExpandAll={expandAll}
-                onSelectUnit={(unit) => setSelectedUnitId(unit.orgUnitId)}
-                onAddChild={(parent) => {
-                  setCreateParentUnit(parent);
-                  setIsCreateOpen(true);
-                }}
-                onMoveUnit={(unit) => {
-                  setMoveTargetUnit(unit);
-                  setIsMoveOpen(true);
-                }}
-                onDeleteUnit={(unit) => {
-                  setDeleteTargetUnit(unit);
-                  setIsDeleteOpen(true);
-                }}
-                onToggleActiveUnit={(unit) => handleToggleActive(unit)}
-              />
-            ) : (
-              /* Cards View for Easy Non-Technical Browsing */
-              <div className="space-y-4">
-                {/* Search Bar in Cards Mode */}
-                <div className="relative">
-                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Filter cards by name, code, or Arabic..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 text-sm"
+            <CardContent className="p-3">
+              {viewMode === "tree" ? (
+                <div className="h-[680px]">
+                  <OrgTree
+                    selectedId={selectedUnitId}
+                    forceExpandAll={expandAll}
+                    onSelectUnit={(unit) => setSelectedUnitId(unit.orgUnitId)}
+                    onAddChild={(parent) => {
+                      setCreateParentUnit(parent);
+                      setIsCreateOpen(true);
+                    }}
+                    onMoveUnit={(unit) => {
+                      setMoveTargetUnit(unit as OrgUnitDetailDto);
+                      setIsMoveOpen(true);
+                    }}
+                    onDeleteUnit={(unit) => {
+                      setDeleteTargetUnit(unit as OrgUnitDetailDto);
+                      setIsDeleteOpen(true);
+                    }}
+                    onToggleActiveUnit={(unit) => handleToggleActive(unit)}
+                    className="h-full border-none rounded-none shadow-none"
                   />
                 </div>
-
-                {isLoadingAllUnits ? (
-                  <div className="flex flex-col items-center justify-center py-12 text-sm text-muted-foreground gap-2">
-                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                    <span>Loading organization units...</span>
+              ) : (
+                /* Cards Directory Grid */
+                <div className="space-y-3 max-h-[680px] overflow-y-auto pr-1">
+                  <div className="relative">
+                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                    <Input
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Filter cards..."
+                      className="h-8 pl-8 text-xs"
+                    />
                   </div>
-                ) : filteredCards.length === 0 ? (
-                  <div className="p-8 text-center text-sm text-muted-foreground border border-dashed rounded-lg">
-                    No organization units found matching your search.
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {filteredCards.map((unit) => {
-                      const type = unit.orgUnitTypeId ? typesMap.get(unit.orgUnitTypeId) : undefined;
-                      const isSelected = selectedUnitId === unit.orgUnitId;
-                      return (
-                        <div
-                          key={unit.orgUnitId}
-                          onClick={() => setSelectedUnitId(unit.orgUnitId)}
-                          className={cn(
-                            "p-4 rounded-xl border bg-card transition-all cursor-pointer hover:border-primary/50 hover:shadow-sm space-y-3",
-                            isSelected ? "border-primary ring-2 ring-primary/20 bg-primary/5" : ""
-                          )}
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div>
-                              <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-                                <span className="font-mono text-xs font-bold px-1.5 py-0.5 rounded bg-muted text-foreground border">
-                                  {unit.code}
-                                </span>
-                                {type && (
-                                  <Badge variant="outline" className="text-[10px] uppercase font-medium">
-                                    {type.name}
-                                  </Badge>
-                                )}
-                              </div>
-                              <h3 className="font-bold text-foreground text-sm">{unit.name}</h3>
-                              {unit.nameAr && (
-                                <p dir="rtl" className="text-xs text-muted-foreground font-arabic mt-0.5">
-                                  {unit.nameAr}
-                                </p>
-                              )}
-                            </div>
-                            <StatusBadge status={unit.isActive ? "active" : "terminated"} size="sm" />
-                          </div>
 
-                          {/* Action Buttons directly on Card (1-Click Friendly) */}
-                          <div className="flex items-center justify-between pt-2 border-t border-border/50 text-xs">
-                            <span className="text-muted-foreground font-mono">
-                              {unit.childCount || 0} sub-units
-                            </span>
-
-                            <div className="flex items-center gap-1.5">
-                              {can(ORG_PERMISSIONS.CREATE) && (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 px-2 text-xs gap-1 text-primary hover:bg-primary/10"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setCreateParentUnit(unit);
-                                    setIsCreateOpen(true);
-                                  }}
-                                >
-                                  <Plus className="h-3 w-3" />
-                                  Add Sub-Unit
-                                </Button>
-                              )}
-
-                              <Button
-                                asChild
-                                variant="outline"
-                                size="sm"
-                                className="h-7 px-2 text-xs gap-1"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Link href={`/app/administration/master-data/organization/${unit.orgUnitId}`}>
-                                  <ExternalLink className="h-3 w-3 text-muted-foreground" />
-                                  Details
-                                </Link>
-                              </Button>
-                            </div>
-                          </div>
+                  <div className="space-y-2">
+                    {filteredCards.map((unit) => (
+                      <div
+                        key={unit.orgUnitId}
+                        onClick={() => setSelectedUnitId(unit.orgUnitId)}
+                        className={cn(
+                          "p-3 rounded-lg border cursor-pointer transition-all",
+                          selectedUnitId === unit.orgUnitId
+                            ? "bg-primary/10 border-primary/40 ring-1 ring-primary/20"
+                            : "bg-card hover:bg-muted/40 border-border"
+                        )}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-semibold text-xs text-foreground truncate">{unit.name}</span>
+                          <span className="font-mono text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
+                            {unit.code}
+                          </span>
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Right Inspector Panel */}
-        <Card className="lg:col-span-5 shadow-sm border-border sticky top-6">
-          <CardHeader className="pb-3 border-b border-border/50">
-            <CardTitle className="text-base font-semibold flex items-center gap-2">
-              <Layers className="h-4.5 w-4.5 text-primary" />
-              Unit Details & Quick Actions
-            </CardTitle>
-            <CardDescription className="text-xs">
-              Overview, leadership assignments, and one-click operations.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-4">
-            {isLoadingDetail ? (
-              <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-2">
-                <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                <span className="text-sm">Loading unit details...</span>
-              </div>
-            ) : !selectedDetail ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground gap-3">
-                <Building2 className="h-10 w-10 text-muted-foreground/30" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">No unit selected</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Click any node in the tree or card directory to view details instantly.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-5">
-                {/* Header Information */}
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-muted text-foreground border">
-                        {selectedDetail.code}
-                      </span>
-                      {(selectedDetail.type?.name || (selectedDetail.orgUnitTypeId ? typesMap.get(selectedDetail.orgUnitTypeId)?.name : undefined)) && (
-                        <Badge variant="outline" className="text-[10px] py-0 px-2 uppercase font-medium">
-                          {selectedDetail.type?.name || (selectedDetail.orgUnitTypeId ? typesMap.get(selectedDetail.orgUnitTypeId)?.name : "")}
-                        </Badge>
-                      )}
-                      <StatusBadge
-                        status={selectedDetail.isActive ? "active" : "terminated"}
-                        size="sm"
-                      />
-                    </div>
-                    <h2 className="text-xl font-bold text-foreground">{selectedDetail.name}</h2>
-                    {selectedDetail.nameAr && (
-                      <p dir="rtl" className="text-sm text-muted-foreground font-arabic mt-0.5">
-                        {selectedDetail.nameAr}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Breadcrumbs Path */}
-                {selectedDetail.breadcrumb && selectedDetail.breadcrumb.length > 0 && (
-                  <div className="p-2.5 rounded-lg bg-muted/40 text-xs flex items-center gap-1.5 flex-wrap border">
-                    <span className="text-muted-foreground font-medium">Hierarchy:</span>
-                    {selectedDetail.breadcrumb.map((b, idx) => (
-                      <React.Fragment key={b.orgUnitId}>
-                        {idx > 0 && <span className="text-muted-foreground/60">/</span>}
-                        <span
-                          className={
-                            b.orgUnitId === selectedDetail.orgUnitId
-                              ? "font-bold text-foreground"
-                              : "text-muted-foreground"
-                          }
-                        >
-                          {b.code}
-                        </span>
-                      </React.Fragment>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">
+                          {unit.parentName ? `Reports to: ${unit.parentName}` : "Root Holding Entity"}
+                        </p>
+                      </div>
                     ))}
                   </div>
-                )}
-
-                {/* Primary Head Leader Card */}
-                <div className="p-3.5 rounded-xl border bg-card flex items-center gap-3.5 shadow-2xs">
-                  <div className="h-10 w-10 rounded-full bg-purple-500/10 text-purple-700 dark:text-purple-300 flex items-center justify-center font-bold shrink-0">
-                    <Crown className="h-5 w-5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[11px] font-bold uppercase text-muted-foreground">
-                      Primary Head of Unit
-                    </p>
-                    <p className="text-sm font-semibold text-foreground truncate">
-                      {selectedDetail.head ? (selectedDetail.head.displayName || selectedDetail.head.userDisplayName) : "No Head Assigned"}
-                    </p>
-                    {(selectedDetail.head?.email || selectedDetail.head?.userEmail) ? (
-                      <p className="text-xs text-muted-foreground truncate">
-                        {selectedDetail.head.email || selectedDetail.head.userEmail}
-                      </p>
-                    ) : (
-                      <p className="text-[11px] text-amber-600 dark:text-amber-400 font-medium">
-                        Assign a primary leader in the Managers tab
-                      </p>
-                    )}
-                  </div>
                 </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
-                {/* Metric Summary Grid */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 rounded-lg bg-muted/30 border border-border">
-                    <span className="text-xs text-muted-foreground">Direct Children</span>
-                    <p className="text-lg font-bold text-foreground">{selectedDetail.childCount}</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-muted/30 border border-border">
-                    <span className="text-xs text-muted-foreground">Subtree Descendants</span>
-                    <p className="text-lg font-bold text-foreground">{selectedDetail.descendantCount}</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-muted/30 border border-border">
-                    <span className="text-xs text-muted-foreground">Cost Center</span>
-                    <p className="text-sm font-semibold text-foreground font-mono">
-                      {selectedDetail.costCenterCode || "None"}
-                    </p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-muted/30 border border-border">
-                    <span className="text-xs text-muted-foreground">Oracle Code</span>
-                    <p className="text-sm font-semibold text-foreground font-mono">
-                      {selectedDetail.oracleOrgCode || "None"}
-                    </p>
-                  </div>
-                </div>
-
-                {/* 1-Step Quick Actions */}
-                <div className="space-y-2 pt-2 border-t border-border">
-                  <Button asChild className="w-full justify-center gap-2 shadow-xs">
-                    <Link href={`/app/administration/master-data/organization/${selectedDetail.orgUnitId}`}>
-                      <ExternalLink className="h-4 w-4" />
-                      Open Full Unit Management Tabs
-                    </Link>
-                  </Button>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    {can(ORG_PERMISSIONS.CREATE) && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setCreateParentUnit(selectedDetail);
-                          setIsCreateOpen(true);
-                        }}
-                        className="gap-1.5"
-                      >
-                        <Plus className="h-3.5 w-3.5" />
-                        Add Child
-                      </Button>
-                    )}
-
-                    {can(ORG_PERMISSIONS.MOVE) && selectedDetail.depth > 0 && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setMoveTargetUnit(selectedDetail);
-                          setIsMoveOpen(true);
-                        }}
-                        className="gap-1.5"
-                      >
-                        <ArrowRightLeft className="h-3.5 w-3.5" />
-                        Move Subtree
-                      </Button>
-                    )}
-
-                    {can(ORG_PERMISSIONS.UPDATE) && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleToggleActive(selectedDetail)}
-                        className="gap-1.5 col-span-2"
-                      >
-                        <Power className="h-3.5 w-3.5" />
-                        {selectedDetail.isActive ? "Deactivate Unit" : "Activate Unit"}
-                      </Button>
-                    )}
-                  </div>
-                </div>
+        {/* Right Detail Pane: Structured Unit Details with Tabs (Part 3.1 & 3.2) */}
+        <div className="lg:col-span-7">
+          {selectedUnitId ? (
+            <Card className="border border-border shadow-xs p-5 sm:p-6 min-h-[740px]">
+              <OrgUnitDetailView
+                unitId={selectedUnitId}
+                onNavigateUnit={(targetId) => setSelectedUnitId(targetId || null)}
+              />
+            </Card>
+          ) : (
+            <Card className="border border-border shadow-xs p-12 text-center flex flex-col items-center justify-center min-h-[600px] space-y-3">
+              <Building2 className="h-12 w-12 text-muted-foreground/30" />
+              <div>
+                <h3 className="text-base font-bold text-foreground">Select an Organization Unit</h3>
+                <p className="text-xs text-muted-foreground mt-1 max-w-sm">
+                  Click any node in the hierarchy tree to inspect structured metadata, direct sub-units, leadership timeline, and change history.
+                </p>
               </div>
-            )}
-          </CardContent>
-        </Card>
+            </Card>
+          )}
+        </div>
       </div>
 
-      {/* Create Modal */}
+      {/* Create Modal Dialog */}
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-        <DialogContent className="max-w-4xl max-h-[92vh] p-6 sm:p-8 overflow-y-auto rounded-2xl">
-          <DialogHeader className="pb-2 border-b border-border/50">
-            <DialogTitle className="flex items-center gap-2.5 text-2xl font-bold text-foreground">
-              <Building2 className="h-6 w-6 text-primary" />
-              New Organization Unit
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">
+              {createParentUnit ? `Add Sub-Unit under ${createParentUnit.name}` : "Create Root Organization Unit"}
             </DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground">
-              {createParentUnit ? (
-                <>
-                  Creating new sub-unit directly under <span className="font-semibold text-foreground">{createParentUnit.name}</span> ({createParentUnit.code}).
-                </>
-              ) : (
-                "Add a new holding company, division, department, or operational section to your enterprise structure."
-              )}
+            <DialogDescription className="text-xs">
+              {createParentUnit
+                ? `Creating a new organizational unit situated beneath ${createParentUnit.name} (${createParentUnit.code}).`
+                : "Initialize or register a top-level organizational entity."}
             </DialogDescription>
           </DialogHeader>
-
           <OrgUnitForm
-            defaultParent={createParentUnit}
-            onSubmit={handleCreateSubmit as (data: CreateOrgUnitDto) => Promise<void>}
+            parentUnit={createParentUnit}
+            onSubmit={handleCreateSubmit}
             onCancel={() => setIsCreateOpen(false)}
-            isSubmitting={createMutation.isPending}
+            isLoading={createMutation.isPending}
           />
         </DialogContent>
       </Dialog>
 
-      {/* Move Subtree Modal */}
+      {/* Move Subtree Modal Dialog */}
       <MoveUnitDialog
         open={isMoveOpen}
         onOpenChange={setIsMoveOpen}
         unit={moveTargetUnit}
-        onSuccess={() => {
-          if (selectedUnitId === moveTargetUnit?.orgUnitId) {
-            setSelectedUnitId(moveTargetUnit.orgUnitId);
-          }
-        }}
+        onSuccess={() => {}}
       />
 
-      {/* Delete Unit Modal */}
+      {/* Delete Unit Modal Dialog */}
       <DeleteUnitDialog
         open={isDeleteOpen}
         onOpenChange={setIsDeleteOpen}
         unit={deleteTargetUnit}
-        onSuccess={() => {
-          if (selectedUnitId === deleteTargetUnit?.orgUnitId) {
-            setSelectedUnitId(null);
-          }
-        }}
+        onSuccess={() => setSelectedUnitId(null)}
       />
     </div>
   );

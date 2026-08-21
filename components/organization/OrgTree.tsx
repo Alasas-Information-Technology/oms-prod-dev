@@ -33,7 +33,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { StatusBadge, OMSStatus } from "@/components/oms/StatusBadge";
-import { OrgTypeSigil, HierarchySpine, UnitPath } from "@/components/oms/org";
+import { OrgTypeIcon, UnitPath } from "@/components/oms/org";
 import {
   useOrgUnits,
   useOrgUnitChildren,
@@ -185,19 +185,13 @@ export function OrgTree({
     return map;
   }, [typesList]);
 
-  // Root Units Query: depth 0 (Holding Organizations)
+  // Visible Units Query (page size <= 100)
   const {
-    data: rootUnitsData,
+    data: unitsData,
     isLoading: isLoadingRoots,
     isError: isErrorRoots,
     refetch: refetchRoots,
-  } = useOrgUnits({ depth: 0, page: 1, pageSize: 50, isActive: true });
-
-  // Fallback Scoped Query: If depth 0 is empty (scoped user fragment), query accessible units
-  const { data: scopedUnitsData, isLoading: isLoadingScoped } = useOrgUnits(
-    { page: 1, pageSize: 50, isActive: true },
-    { enabled: !isLoadingRoots && (!rootUnitsData?.data || rootUnitsData.data.length === 0) }
-  );
+  } = useOrgUnits({ page: 1, pageSize: 100, isActive: true });
 
   // Server-side Search Query (Part 2.4)
   const { data: searchResultsData, isLoading: isSearching } = useOrgUnits(
@@ -227,13 +221,39 @@ export function OrgTree({
     }
   }, [expandedIds]);
 
+  // Identify root units (depth 0 or no parent) vs scoped fragment units
+  const rootUnits = React.useMemo(() => {
+    const list = unitsData?.data || [];
+    return list.filter((u) => u.depth === 0 || !u.parentOrgUnitId);
+  }, [unitsData]);
+
+  // Detect whether this is a scoped fragment (no root depth 0 nodes visible)
+  const isScopedFragment =
+    !isLoadingRoots &&
+    rootUnits.length === 0 &&
+    Boolean(unitsData?.data && unitsData.data.length > 0);
+
+  const effectiveRoots: (OrgUnitSummaryDto | OrgUnitEntity)[] = React.useMemo(() => {
+    if (rootUnits.length > 0) {
+      return rootUnits;
+    }
+    if (isScopedFragment && unitsData?.data) {
+      const allVisibleIds = new Set(unitsData.data.map((u) => u.orgUnitId));
+      const topLevelScoped = unitsData.data.filter(
+        (u) => !u.parentOrgUnitId || !allVisibleIds.has(u.parentOrgUnitId)
+      );
+      return topLevelScoped.length > 0 ? topLevelScoped : unitsData.data;
+    }
+    return [];
+  }, [rootUnits, isScopedFragment, unitsData]);
+
   // Handle forceExpandAll prop changes
   React.useEffect(() => {
     if (forceExpandAll !== undefined) {
       if (forceExpandAll) {
         // Expand all cached nodes
         const allIds = new Set<string>();
-        rootUnitsData?.data?.forEach((r) => allIds.add(r.orgUnitId));
+        effectiveRoots.forEach((r) => allIds.add(r.orgUnitId));
         childrenCache.forEach((children, pId) => {
           allIds.add(pId);
           children.forEach((c) => allIds.add(c.orgUnitId));
@@ -242,11 +262,11 @@ export function OrgTree({
       } else {
         // Collapse all except root
         const rootOnly = new Set<string>();
-        rootUnitsData?.data?.forEach((r) => rootOnly.add(r.orgUnitId));
+        effectiveRoots.forEach((r) => rootOnly.add(r.orgUnitId));
         setExpandedIds(rootOnly);
       }
     }
-  }, [forceExpandAll, rootUnitsData, childrenCache]);
+  }, [forceExpandAll, effectiveRoots, childrenCache]);
 
   // Deep link node resolution (?node=<id>) (Part 2.4)
   const { data: ancestorPathData } = useOrgUnitAncestors(deepLinkNodeId || undefined, {
@@ -263,22 +283,6 @@ export function OrgTree({
       setFocusedId(deepLinkNodeId);
     }
   }, [deepLinkNodeId, ancestorPathData]);
-
-  // Detect whether this is a scoped fragment (no root depth 0 nodes visible)
-  const isScopedFragment =
-    !isLoadingRoots &&
-    (!rootUnitsData?.data || rootUnitsData.data.length === 0) &&
-    Boolean(scopedUnitsData?.data && scopedUnitsData.data.length > 0);
-
-  const effectiveRoots: (OrgUnitSummaryDto | OrgUnitEntity)[] = React.useMemo(() => {
-    if (rootUnitsData?.data && rootUnitsData.data.length > 0) {
-      return rootUnitsData.data;
-    }
-    if (isScopedFragment && scopedUnitsData?.data) {
-      return scopedUnitsData.data;
-    }
-    return [];
-  }, [rootUnitsData, isScopedFragment, scopedUnitsData]);
 
   // Auto-expand root on initial load if expandedIds is empty
   React.useEffect(() => {
@@ -550,13 +554,16 @@ export function OrgTree({
         className="flex-1 overflow-y-auto p-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-primary select-none"
       >
         {/* Loading State: Indented Skeletons (Part 2.7) */}
-        {(isLoadingRoots || isLoadingScoped) && flatVisibleNodes.length === 0 ? (
+        {isLoadingRoots && flatVisibleNodes.length === 0 ? (
           <div className="space-y-2 p-2" aria-label="Loading hierarchy...">
             {[0, 1, 1, 2, 2, 3].map((depth, idx) => (
-              <div key={idx} className="flex items-center h-8 gap-2">
-                <HierarchySpine depth={depth} isLast={idx % 2 === 1} stepWidthPx={20} />
-                <Skeleton className="h-5 w-9 rounded" />
-                <Skeleton className="h-4 w-20 rounded" />
+              <div
+                key={idx}
+                className="flex items-center h-8 gap-2"
+                style={{ paddingLeft: `${depth * 20}px` }}
+              >
+                <Skeleton className="h-5 w-5 rounded-md shrink-0" />
+                <Skeleton className="h-4 w-16 rounded" />
                 <Skeleton className="h-4 flex-1 max-w-[140px] rounded" />
               </div>
             ))}
@@ -725,17 +732,11 @@ function TreeRow({
         !unit.isActive && "opacity-50"
       )}
     >
-      {/* Left lineage spine, expand toggle, and unit identity */}
-      <div className="flex items-center h-full min-w-0 flex-1">
-        {/* Structural Lineage Spine (Part 1.3) */}
-        <HierarchySpine
-          depth={depth}
-          isLast={isLast}
-          ancestorIsLast={ancestorIsLast}
-          stepWidthPx={20}
-          className="h-full"
-        />
-
+      {/* Left indent, expand toggle, and unit identity */}
+      <div
+        className="flex items-center h-full min-w-0 flex-1"
+        style={{ paddingLeft: `${depth * 20}px` }}
+      >
         {/* Expand / Collapse Toggle */}
         <button
           type="button"
@@ -753,8 +754,8 @@ function TreeRow({
           )}
         </button>
 
-        {/* Monospace Type Sigil (Part 1.3 & Prompt U2) */}
-        <OrgTypeSigil type={typeCode} size="sm" className="mr-2 shrink-0" />
+        {/* Standard Type Icon (Part 3.3 & v2 Foundations) */}
+        <OrgTypeIcon type={typeCode} size="xs" className="mr-2 shrink-0" />
 
         {/* Unit Code in Monospace */}
         <span className="font-mono text-[11px] text-muted-foreground font-semibold shrink-0 mr-2">
