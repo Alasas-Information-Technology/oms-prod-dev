@@ -188,20 +188,10 @@ export default function BusinessUnitsPage() {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
         <div>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-            <Link href="/app/administration/security-dashboard" className="hover:text-foreground">
-              Administration
-            </Link>
-            <ChevronRight className="h-3.5 w-3.5" />
-            <span>Master Data</span>
-            <ChevronRight className="h-3.5 w-3.5" />
-            <span className="text-foreground font-medium">Business Units</span>
-          </div>
-          <h1 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
-            <Briefcase className="h-7 w-7 text-primary" />
-            Business Units Directory
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            Business Units
           </h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <p className="text-sm text-muted-foreground mt-1">
             Overview of major corporate business divisions, leadership heads, and operational domains.
           </p>
         </div>
@@ -228,17 +218,18 @@ export default function BusinessUnitsPage() {
 
       {/* Create Modal */}
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold flex items-center gap-2">
-              <Briefcase className="h-5 w-5 text-primary" />
-              Create Business Unit
+        <DialogContent className="max-w-4xl max-h-[92vh] p-6 sm:p-8 overflow-y-auto rounded-2xl">
+          <DialogHeader className="pb-2 border-b border-border/50">
+            <DialogTitle className="text-2xl font-bold flex items-center gap-2.5 text-foreground">
+              <Briefcase className="h-6 w-6 text-primary" />
+              New Business Unit
             </DialogTitle>
-            <DialogDescription>
-              Add a new Business Unit under the holding organization.
+            <DialogDescription className="text-sm text-muted-foreground">
+              Create an executive business division under the holding organization.
             </DialogDescription>
           </DialogHeader>
           <OrgUnitForm
+            targetTypeId={2}
             onSubmit={handleCreateSubmit as (data: CreateOrgUnitDto) => Promise<void>}
             onCancel={() => setIsCreateOpen(false)}
             isSubmitting={createMutation.isPending}

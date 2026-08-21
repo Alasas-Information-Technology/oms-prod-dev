@@ -49,6 +49,20 @@ interface TreeNodeProps {
   onDelete?: (unit: OrgUnitSummaryDto | OrgUnitEntity) => void;
   onToggleActive?: (unit: OrgUnitSummaryDto | OrgUnitEntity) => void;
   typesMap: Map<number, { name: string; code: string }>;
+  forceExpandAll?: boolean;
+}
+
+function getLevelBadgeStyle(level: number, typeCode?: string) {
+  if (typeCode === "ORGANIZATION" || level === 0) {
+    return "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/20";
+  }
+  if (typeCode === "BUSINESS_UNIT" || level === 1) {
+    return "bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/20";
+  }
+  if (typeCode === "DEPARTMENT" || level === 2) {
+    return "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20";
+  }
+  return "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20";
 }
 
 function TreeNode({
@@ -61,9 +75,16 @@ function TreeNode({
   onDelete,
   onToggleActive,
   typesMap,
+  forceExpandAll,
 }: TreeNodeProps) {
-  const [isOpen, setIsOpen] = React.useState(level === 0);
+  const [isOpen, setIsOpen] = React.useState(level === 0 || forceExpandAll);
   const { can } = usePermission();
+
+  React.useEffect(() => {
+    if (forceExpandAll !== undefined) {
+      setIsOpen(forceExpandAll);
+    }
+  }, [forceExpandAll]);
 
   // Lazy load direct children only when opened
   const { data: childrenData, isLoading: isLoadingChildren } = useOrgUnitChildren(
@@ -78,6 +99,7 @@ function TreeNode({
 
   const isSelected = selectedId === unit.orgUnitId;
   const typeInfo = unit.type || (unit.orgUnitTypeId ? typesMap.get(unit.orgUnitTypeId) : undefined);
+  const badgeStyle = getLevelBadgeStyle(level, typeInfo?.code);
 
   const statusType: OMSStatus = unit.isActive ? "active" : "terminated";
 
@@ -85,54 +107,59 @@ function TreeNode({
     <div className="flex flex-col">
       <div
         className={cn(
-          "group flex items-center justify-between py-1.5 px-2 rounded-lg cursor-pointer transition-all duration-150 border border-transparent",
+          "group flex items-center justify-between py-2 px-2.5 rounded-lg cursor-pointer transition-all duration-150 border",
           isSelected
-            ? "bg-primary/10 border-primary/20 text-primary shadow-xs"
-            : "hover:bg-muted/50 text-foreground",
+            ? "bg-primary/10 border-primary/30 text-primary shadow-xs ring-1 ring-primary/20"
+            : "hover:bg-muted/60 text-foreground border-transparent",
           !unit.isActive && "opacity-60 bg-muted/20"
         )}
-        style={{ paddingLeft: `${level * 20 + 8}px` }}
+        style={{ paddingLeft: `${level * 22 + 8}px` }}
         onClick={() => onSelect(unit)}
       >
-        <div className="flex items-center gap-2 min-w-0 flex-1">
-          {/* Expand/Collapse Toggle */}
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+          {/* Expand/Collapse Toggle Button */}
           <button
             type="button"
             className={cn(
-              "p-0.5 rounded hover:bg-muted/80 text-muted-foreground transition-colors shrink-0",
+              "p-1 rounded-md hover:bg-muted text-muted-foreground transition-colors shrink-0",
               !hasChildren && "invisible"
             )}
             onClick={(e) => {
               e.stopPropagation();
               setIsOpen(!isOpen);
             }}
+            title={isOpen ? "Collapse" : "Expand"}
           >
             {isOpen ? (
-              <ChevronDown className="h-4 w-4" />
+              <ChevronDown className="h-4 w-4 text-foreground/80" />
             ) : (
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4 text-foreground/80" />
             )}
           </button>
 
           {/* Node Icon */}
           <div className="shrink-0 text-muted-foreground group-hover:text-foreground transition-colors">
             {level === 0 ? (
-              <Building2 className="h-4 w-4 text-primary" />
+              <Building2 className="h-4.5 w-4.5 text-purple-600 dark:text-purple-400" />
+            ) : level === 1 ? (
+              <Building2 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            ) : level === 2 ? (
+              <FolderTree className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
             ) : (
-              <FolderTree className="h-4 w-4" />
+              <Layers className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             )}
           </div>
 
-          {/* Node Label */}
+          {/* Node Label & Code */}
           <div className="flex items-center gap-2 min-w-0 truncate">
-            <span className="font-mono text-xs font-semibold px-1.5 py-0.5 rounded bg-muted text-foreground shrink-0">
+            <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-muted text-foreground shrink-0 border border-border/40">
               {unit.code}
             </span>
-            <span className="text-sm font-medium truncate">{unit.name}</span>
+            <span className="text-sm font-semibold truncate text-foreground">{unit.name}</span>
             {unit.nameAr && (
               <span
                 dir="rtl"
-                className="text-xs text-muted-foreground truncate hidden md:inline"
+                className="text-xs text-muted-foreground truncate hidden md:inline font-arabic"
               >
                 ({unit.nameAr})
               </span>
@@ -144,22 +171,55 @@ function TreeNode({
             {typeInfo && (
               <Badge
                 variant="outline"
-                className="text-[10px] py-0 px-1.5 font-normal uppercase bg-background"
+                className={cn("text-[10px] py-0 px-2 font-medium uppercase", badgeStyle)}
               >
                 {typeInfo.name}
               </Badge>
             )}
             <StatusBadge status={statusType} size="sm" showDot={true} />
             {unit.childCount !== undefined && unit.childCount > 0 && (
-              <span className="text-[11px] text-muted-foreground bg-muted px-1.5 py-0.2 rounded-full font-mono">
-                {unit.childCount}
+              <span className="text-[11px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full font-mono font-semibold border border-border/40">
+                {unit.childCount} sub-units
               </span>
             )}
           </div>
         </div>
 
-        {/* Action Menu */}
+        {/* 1-Click Action Buttons & Menu */}
         <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+          {/* Quick 1-Click "Add Child" */}
+          {can(ORG_PERMISSIONS.CREATE) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-xs gap-1 hover:bg-primary/10 hover:text-primary font-medium"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAddChild?.(unit);
+              }}
+              title="Add Sub-Unit"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              <span className="hidden xl:inline">Add Sub-Unit</span>
+            </Button>
+          )}
+
+          {/* Quick 1-Click "View Details" */}
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2 text-xs gap-1 hover:bg-muted font-medium"
+            onClick={(e) => e.stopPropagation()}
+            title="Open Details & Tabs"
+          >
+            <Link href={`/app/administration/master-data/organization/${unit.orgUnitId}`}>
+              <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+              <span className="hidden xl:inline">Details</span>
+            </Link>
+          </Button>
+
+          {/* More Actions Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
               <Button variant="ghost" size="icon" className="h-7 w-7">
@@ -170,27 +230,27 @@ function TreeNode({
               <DropdownMenuItem asChild>
                 <Link
                   href={`/app/administration/master-data/organization/${unit.orgUnitId}`}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 cursor-pointer"
                 >
                   <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                  <span>View Details</span>
+                  <span>View Details & Tabs</span>
                 </Link>
               </DropdownMenuItem>
 
               {can(ORG_PERMISSIONS.CREATE) && (
                 <DropdownMenuItem
                   onClick={() => onAddChild?.(unit)}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 cursor-pointer"
                 >
                   <Plus className="h-4 w-4 text-muted-foreground" />
-                  <span>Add Child Unit</span>
+                  <span>Add Sub-Unit</span>
                 </DropdownMenuItem>
               )}
 
               {can(ORG_PERMISSIONS.MOVE) && level > 0 && (
                 <DropdownMenuItem
                   onClick={() => onMove?.(unit)}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 cursor-pointer"
                 >
                   <ArrowRightLeft className="h-4 w-4 text-muted-foreground" />
                   <span>Move Subtree...</span>
@@ -200,10 +260,10 @@ function TreeNode({
               {can(ORG_PERMISSIONS.UPDATE) && (
                 <DropdownMenuItem
                   onClick={() => onToggleActive?.(unit)}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 cursor-pointer"
                 >
                   <Power className="h-4 w-4 text-muted-foreground" />
-                  <span>{unit.isActive ? "Deactivate" : "Activate"}</span>
+                  <span>{unit.isActive ? "Deactivate Unit" : "Activate Unit"}</span>
                 </DropdownMenuItem>
               )}
 
@@ -212,7 +272,7 @@ function TreeNode({
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={() => onDelete?.(unit)}
-                    className="flex items-center gap-2 text-destructive focus:text-destructive"
+                    className="flex items-center gap-2 text-destructive focus:text-destructive cursor-pointer"
                   >
                     <Trash2 className="h-4 w-4" />
                     <span>Delete Unit</span>
@@ -226,13 +286,13 @@ function TreeNode({
 
       {/* Lazy Child Nodes Container */}
       {isOpen && (
-        <div className="relative pl-2 border-l border-border/40 ml-4">
+        <div className="relative pl-2 border-l-2 border-border/50 ml-4.5 my-0.5 space-y-0.5">
           {isLoadingChildren ? (
             <div
               className="flex items-center gap-2 py-2 text-xs text-muted-foreground"
-              style={{ paddingLeft: `${(level + 1) * 20 + 8}px` }}
+              style={{ paddingLeft: `${(level + 1) * 22 + 8}px` }}
             >
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
               <span>Loading child units...</span>
             </div>
           ) : childrenData && childrenData.length > 0 ? (
@@ -248,14 +308,15 @@ function TreeNode({
                 onDelete={onDelete}
                 onToggleActive={onToggleActive}
                 typesMap={typesMap}
+                forceExpandAll={forceExpandAll}
               />
             ))
           ) : (
             <div
               className="py-1 text-xs text-muted-foreground italic"
-              style={{ paddingLeft: `${(level + 1) * 20 + 8}px` }}
+              style={{ paddingLeft: `${(level + 1) * 22 + 8}px` }}
             >
-              No child units.
+              No sub-units found under this level.
             </div>
           )}
         </div>
@@ -271,6 +332,7 @@ export interface OrgTreeProps {
   onMoveUnit?: (unit: OrgUnitSummaryDto | OrgUnitEntity) => void;
   onDeleteUnit?: (unit: OrgUnitSummaryDto | OrgUnitEntity) => void;
   onToggleActiveUnit?: (unit: OrgUnitSummaryDto | OrgUnitEntity) => void;
+  forceExpandAll?: boolean;
   className?: string;
 }
 
@@ -281,6 +343,7 @@ export function OrgTree({
   onMoveUnit,
   onDeleteUnit,
   onToggleActiveUnit,
+  forceExpandAll,
   className,
 }: OrgTreeProps) {
   // Load root organization unit(s)
@@ -329,6 +392,7 @@ export function OrgTree({
             onDelete={onDeleteUnit}
             onToggleActive={onToggleActiveUnit}
             typesMap={typesMap}
+            forceExpandAll={forceExpandAll}
           />
         ))
       )}

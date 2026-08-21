@@ -301,24 +301,6 @@ export default function OrgUnitDetailPage() {
 
   return (
     <div className="space-y-6">
-      {/* Top Breadcrumbs */}
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        <Link href="/app/administration/master-data/organization" className="hover:text-foreground">
-          Organization Hierarchy
-        </Link>
-        {unit.breadcrumb?.map((b) => (
-          <React.Fragment key={b.orgUnitId}>
-            <ChevronRight className="h-3.5 w-3.5" />
-            <Link
-              href={`/app/administration/master-data/organization/${b.orgUnitId}`}
-              className={b.orgUnitId === orgUnitId ? "text-foreground font-semibold" : "hover:text-foreground"}
-            >
-              {b.name}
-            </Link>
-          </React.Fragment>
-        ))}
-      </div>
-
       {/* Main Unit Title & Action Bar */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-6 rounded-xl border border-border bg-card shadow-xs">
         <div className="flex items-start gap-4">
@@ -624,13 +606,13 @@ export default function OrgUnitDetailPage() {
         </TabsContent>
       </Tabs>
 
-      {/* Edit Attributes Dialog */}
+      {/* Edit Dialog */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold">Edit Organization Unit</DialogTitle>
-            <DialogDescription>
-              Update non-structural attributes for <span className="font-semibold">{unit.name}</span> ({unit.code}).
+        <DialogContent className="max-w-4xl max-h-[92vh] p-6 sm:p-8 overflow-y-auto rounded-2xl">
+          <DialogHeader className="pb-2 border-b border-border/50">
+            <DialogTitle className="text-2xl font-bold text-foreground">Edit Organization Unit</DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground">
+              Update attributes and contact information for <span className="font-semibold text-foreground">{unit.name}</span> ({unit.code}).
             </DialogDescription>
           </DialogHeader>
           <OrgUnitForm
@@ -645,11 +627,11 @@ export default function OrgUnitDetailPage() {
 
       {/* Add Child Dialog */}
       <Dialog open={isAddChildOpen} onOpenChange={setIsAddChildOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold">Add Child Unit</DialogTitle>
-            <DialogDescription>
-              Create a child organization unit under <span className="font-semibold">{unit.name}</span> ({unit.code}).
+        <DialogContent className="max-w-4xl max-h-[92vh] p-6 sm:p-8 overflow-y-auto rounded-2xl">
+          <DialogHeader className="pb-2 border-b border-border/50">
+            <DialogTitle className="text-2xl font-bold text-foreground">Add Sub-Unit</DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground">
+              Create a child organization unit directly under <span className="font-semibold text-foreground">{unit.name}</span> ({unit.code}).
             </DialogDescription>
           </DialogHeader>
           <OrgUnitForm

@@ -31,7 +31,10 @@ export function AppBreadcrumb() {
           // Prepend '/app' to the assembled href
           const href = `/app/${paths.slice(0, index + 1).join("/")}`
           const isLast = index === paths.length - 1
-          const title = path.charAt(0).toUpperCase() + path.slice(1).replace(/-/g, " ")
+          const isGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(path)
+          const title = isGuid
+            ? "Unit Detail"
+            : path.charAt(0).toUpperCase() + path.slice(1).replace(/-/g, " ")
 
           return (
             <React.Fragment key={path}>

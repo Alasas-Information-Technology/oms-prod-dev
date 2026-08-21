@@ -158,20 +158,10 @@ export default function SectionsPage() {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
         <div>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-            <Link href="/app/administration/security-dashboard" className="hover:text-foreground">
-              Administration
-            </Link>
-            <ChevronRight className="h-3.5 w-3.5" />
-            <span>Master Data</span>
-            <ChevronRight className="h-3.5 w-3.5" />
-            <span className="text-foreground font-medium">Sections</span>
-          </div>
-          <h1 className="text-2xl font-bold text-foreground tracking-tight flex items-center gap-2.5">
-            <Layers className="h-7 w-7 text-primary" />
-            Sections Directory
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            Sections
           </h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <p className="text-sm text-muted-foreground mt-1">
             Granular functional subunits situated immediately underneath operational departments.
           </p>
         </div>
@@ -198,17 +188,18 @@ export default function SectionsPage() {
 
       {/* Create Modal */}
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold flex items-center gap-2">
-              <Layers className="h-5 w-5 text-primary" />
-              Create Section
+        <DialogContent className="max-w-4xl max-h-[92vh] p-6 sm:p-8 overflow-y-auto rounded-2xl">
+          <DialogHeader className="pb-2 border-b border-border/50">
+            <DialogTitle className="text-2xl font-bold flex items-center gap-2.5 text-foreground">
+              <Layers className="h-6 w-6 text-primary" />
+              New Section
             </DialogTitle>
-            <DialogDescription>
-              Add a new Section subunit under a Department.
+            <DialogDescription className="text-sm text-muted-foreground">
+              Create an operational team or subunit under a Department.
             </DialogDescription>
           </DialogHeader>
           <OrgUnitForm
+            targetTypeId={4}
             onSubmit={handleCreateSubmit as (data: CreateOrgUnitDto) => Promise<void>}
             onCancel={() => setIsCreateOpen(false)}
             isSubmitting={createMutation.isPending}

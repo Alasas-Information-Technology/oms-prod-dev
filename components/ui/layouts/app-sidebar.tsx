@@ -16,8 +16,10 @@ import {
 import { Icon as Iconify } from "@iconify/react"
 import {
   BarChart3,
+  Building2,
   CheckSquare,
   FileText,
+  Network,
   Settings,
   ShoppingCart,
   Store,
@@ -36,6 +38,17 @@ const data = {
       title: "Dashboard",
       url: "/app",
       icon: "material-symbols:dashboard",
+    },
+    {
+      title: "Organization",
+      url: "/app/administration/master-data/organization",
+      icon: Network,
+      items: [
+        { title: "Organization Master", url: "/app/administration/master-data/organization" },
+        { title: "Business Units", url: "/app/administration/master-data/business-units" },
+        { title: "Departments", url: "/app/administration/master-data/departments" },
+        { title: "Sections", url: "/app/administration/master-data/sections" },
+      ]
     },
     {
       title: "OMS Requests",
@@ -91,11 +104,12 @@ const data = {
       url: "/app/administration",
       icon: Settings,
       items: [
+        { title: "Organization Master", url: "/app/administration/master-data/organization" },
+        { title: "Security Dashboard", url: "/app/administration/security-dashboard" },
+        { title: "Security Settings", url: "/app/administration/security/settings" },
         { title: "Users", url: "/app/administration/users" },
         { title: "Roles & Permissions", url: "/app/administration/roles" },
         { title: "System Settings", url: "/app/administration/settings" },
-        { title: "Security Settings", url: "/app/administration/security/settings" },
-        { title: "Security Dashboard", url: "/app/administration/security-dashboard" },
       ]
     }
   ],
@@ -134,7 +148,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <SidebarMenuSub className="ml-5 border-l border-sidebar-border/50 px-1.5 py-1">
                     {item.items.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
-                        <SidebarMenuSubButton asChild isActive={pathname === subItem.url}>
+                        <SidebarMenuSubButton asChild isActive={pathname === subItem.url || (subItem.url !== "/app" && pathname?.startsWith(`${subItem.url}/`))}>
                           <a href={subItem.url} className="text-muted-foreground hover:text-foreground">{subItem.title}</a>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
