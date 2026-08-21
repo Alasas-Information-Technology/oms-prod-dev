@@ -148,12 +148,12 @@ const AccountDropdown = () => {
             align="end"
             trigger={
                 <div className="rounded-full flex items-center justify-center">
-                    <Avatar className="size-9 cursor-pointer">
+                    <Avatar className="size-7 cursor-pointer ring-1 ring-border">
                         <AvatarImage
                             src="https://images.shadcnspace.com/assets/profiles/user-11.jpg"
                             alt="David McMichael"
                         />
-                        <AvatarFallback>DM</AvatarFallback>
+                        <AvatarFallback className="text-[11px]">DM</AvatarFallback>
                     </Avatar>
                 </div>
             }

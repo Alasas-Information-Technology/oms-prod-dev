@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PageBarActions } from "@/components/ui/layouts/page-bar-context";
 
 import { AccountLockoutCard } from "./sections/AccountLockoutCard";
 import { AuditTrailGrid } from "./sections/AuditTrailGrid";
@@ -54,53 +55,77 @@ export function SecuritySettingsDashboard() {
 
     useEffect(() => {
         if (settings) {
-            form.reset(settings);
+            form.reset({
+                maxConcurrentSessions: settings.maxConcurrentSessions,
+                allowMultipleSessions: settings.allowMultipleSessions,
+                autoRevokeOldestSession: settings.autoRevokeOldestSession,
+                accessTokenLifetime: settings.accessTokenLifetime,
+                refreshTokenLifetime: settings.refreshTokenLifetime,
+                requireSessionFingerprinting: settings.requireSessionFingerprinting,
+                maxFailedLoginAttempts: settings.maxFailedLoginAttempts,
+                lockoutDuration: settings.lockoutDuration,
+                enableReplayDetection: settings.enableReplayDetection,
+                replayActionRevoke: settings.replayActionRevoke,
+                replayActionLog: settings.replayActionLog,
+                replayActionLogout: settings.replayActionLogout,
+                securityEventsRetention: settings.securityEventsRetention,
+                loginHistoryRetention: settings.loginHistoryRetention,
+                logoutHistoryRetention: settings.logoutHistoryRetention,
+            });
         }
     }, [settings, form]);
 
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (values: any) => {
         try {
-            await updateSettings(data);
-            toast.success("Security settings updated successfully.");
-        } catch (error: any) {
-            toast.error(error.message || "Failed to update security settings.");
+            await updateSettings(values);
+            toast.success("Security settings successfully updated");
+            form.reset(values);
+        } catch (error) {
+            toast.error("Failed to update security settings");
         }
     };
 
-    if (isSettingsLoading) {
-        return <SecuritySettingsSkeleton />;
-    }
-
     const hasUnsavedChanges = form.formState.isDirty;
+
+    if (isSettingsLoading) {
+        return (
+            <div className="space-y-6">
+                <Skeleton className="h-10 w-full" />
+                <div className="grid gap-6 md:grid-cols-2">
+                    <Skeleton className="h-96" />
+                    <Skeleton className="h-96" />
+                </div>
+            </div>
+        );
+    }
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
-                {/* Header */}
-                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-foreground">Security Settings</h1>
-                        <p className="text-muted-foreground mt-1 max-w-2xl text-sm">
-                            Configure enterprise authentication policies, session controls, and threat protection measures.
-                        </p>
-                    </div>
-                    <div className="flex items-center gap-3 shrink-0">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <PageBarActions>
+                    <div className="flex items-center gap-2">
                         <Button
                             type="button"
                             variant="outline"
+                            size="sm"
                             onClick={() => form.reset()}
                             disabled={!hasUnsavedChanges || isSaving}
-                            className="gap-2"
+                            className="gap-1.5 h-9 text-xs rounded-lg cursor-pointer"
                         >
-                            <Icon icon="mdi:restore" className="w-4 h-4" />
-                            Discard Changes
+                            <Icon icon="mdi:restore" className="w-3.5 h-3.5" />
+                            Discard
                         </Button>
-                        <Button type="submit" disabled={isSaving || !hasUnsavedChanges} className="gap-2">
-                            <Icon icon="mdi:content-save-outline" className="w-4 h-4" />
+                        <Button
+                            type="submit"
+                            size="sm"
+                            disabled={isSaving || !hasUnsavedChanges}
+                            className="gap-1.5 h-9 text-xs font-semibold rounded-lg cursor-pointer"
+                        >
+                            <Icon icon="mdi:content-save-outline" className="w-3.5 h-3.5" />
                             {isSaving ? "Saving..." : "Save Settings"}
                         </Button>
                     </div>
-                </div>
+                </PageBarActions>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
                     <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent p-0 overflow-x-auto overflow-y-hidden flex-nowrap">

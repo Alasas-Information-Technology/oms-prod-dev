@@ -36,10 +36,16 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("antialiased", fontSans.variable, fontSerif.variable, "font-sans", fontMono.variable)}
+      className={cn(
+        "h-full antialiased overflow-hidden",
+        fontSans.variable,
+        fontSerif.variable,
+        "font-sans",
+        fontMono.variable
+      )}
       suppressHydrationWarning
     >
-      <body className="min-h-screen flex flex-col">
+      <body className="h-full overflow-hidden bg-background text-foreground">
         <Providers>
           {children}
         </Providers>

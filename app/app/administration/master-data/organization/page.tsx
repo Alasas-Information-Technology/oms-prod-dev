@@ -56,6 +56,7 @@ import { MoveUnitDialog } from "@/components/organization/MoveUnitDialog";
 import { ArchiveUnitDialog } from "@/components/organization/ArchiveUnitDialog";
 import { DeleteUnitDialog } from "@/components/organization/DeleteUnitDialog";
 import { OrgTypeIcon, UnitPath } from "@/components/oms/org";
+import { PageBarActions } from "@/components/ui/layouts/page-bar-context";
 
 import {
   useOrgUnit,
@@ -290,98 +291,23 @@ function OrganizationPageContent() {
   };
 
   return (
-    <div className="space-y-6 max-w-[1600px] mx-auto p-4 sm:p-6 pb-20">
+    <>
       {/* ========================================================================= */}
-      {/* Top Header: "Organisation" + Search + 3-View Segmented Control + Actions  */}
+      {/* Sticky Page Bar Actions (View Switcher · Export · Add) (Part 4)           */}
       {/* ========================================================================= */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-            Organisation
-          </h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Explore and understand the reporting lines, departments, teams, and leadership.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3 flex-wrap">
-          {/* Global Search across all 3 views (Part 3.1) */}
-          <div ref={searchContainerRef} className="relative w-full sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <Input
-              placeholder="Search organisation..."
-              value={globalSearch}
-              onChange={(e) => {
-                setGlobalSearch(e.target.value);
-                setIsSearchDropdownOpen(true);
-              }}
-              onFocus={() => setIsSearchDropdownOpen(true)}
-              className="pl-8 pr-8 h-9 text-xs rounded-xl bg-card border-border shadow-2xs"
-            />
-            {globalSearch && (
-              <button
-                type="button"
-                onClick={() => {
-                  setGlobalSearch("");
-                  setIsSearchDropdownOpen(false);
-                }}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-
-            {/* Live Search Results Dropdown */}
-            {isSearchDropdownOpen && globalSearch.trim().length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-1.5 p-1.5 bg-card border border-border rounded-xl shadow-lg z-50 max-h-72 overflow-y-auto space-y-1 animate-in fade-in-50">
-                {searchResults.length > 0 ? (
-                  searchResults.map((result) => {
-                    const typeCode = result.type?.code || result.orgUnitType?.code || "DEPARTMENT";
-                    return (
-                      <div
-                        key={result.orgUnitId}
-                        onClick={() => handleSelectSearchResult(result)}
-                        className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-muted cursor-pointer transition-colors text-xs"
-                      >
-                        <OrgTypeIcon type={typeCode} size="sm" />
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-foreground truncate">
-                              {result.name}
-                            </span>
-                            <span className="font-mono text-[10px] text-muted-foreground bg-muted px-1 rounded border border-border/50">
-                              {result.code}
-                            </span>
-                          </div>
-                          {result.parentName && (
-                            <p className="text-[11px] text-muted-foreground truncate">
-                              Part of {result.parentName}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <p className="text-xs text-muted-foreground text-center py-3">
-                    No matching departments or teams found.
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Segmented 3-View Control: [ Chart | List | Grouped ] (Part 3.1) */}
-          <div className="flex items-center bg-muted/60 p-1 rounded-xl border border-border/60">
+      <PageBarActions>
+        <div className="flex items-center gap-2">
+          {/* Segmented 3-View Control: [ Chart | List | Grouped ] (36px tall, Part 4) */}
+          <div className="flex items-center bg-muted/60 p-0.5 rounded-lg border border-border/60 h-9">
             <Button
               type="button"
               variant={viewMode === "chart" ? "secondary" : "ghost"}
               size="sm"
               onClick={() => setViewMode("chart")}
-              className="h-8 px-3 text-xs font-semibold gap-1.5 rounded-lg transition-all"
+              className="h-7.5 px-2.5 text-xs font-semibold gap-1.5 rounded-md transition-all cursor-pointer"
             >
               <Network className="h-3.5 w-3.5" />
-              Chart
+              <span className="hidden sm:inline">Chart</span>
             </Button>
 
             <Button
@@ -389,10 +315,10 @@ function OrganizationPageContent() {
               variant={viewMode === "list" ? "secondary" : "ghost"}
               size="sm"
               onClick={() => setViewMode("list")}
-              className="h-8 px-3 text-xs font-semibold gap-1.5 rounded-lg transition-all"
+              className="h-7.5 px-2.5 text-xs font-semibold gap-1.5 rounded-md transition-all cursor-pointer"
             >
               <ListTree className="h-3.5 w-3.5" />
-              List
+              <span className="hidden sm:inline">List</span>
             </Button>
 
             <Button
@@ -400,84 +326,58 @@ function OrganizationPageContent() {
               variant={viewMode === "grouped" ? "secondary" : "ghost"}
               size="sm"
               onClick={() => setViewMode("grouped")}
-              className="h-8 px-3 text-xs font-semibold gap-1.5 rounded-lg transition-all"
+              className="h-7.5 px-2.5 text-xs font-semibold gap-1.5 rounded-md transition-all cursor-pointer"
             >
               <LayoutGrid className="h-3.5 w-3.5" />
-              Grouped
+              <span className="hidden sm:inline">Grouped</span>
             </Button>
           </div>
 
-          {/* Export Action (Gated on ORG.EXPORT, rate limit tier 7) */}
+          {/* 16px Gap before Export (Part 4) */}
+          <div className="w-2 hidden sm:block" />
+
+          {/* Export Action (Ghost/Outline, 36px tall, Part 4) */}
           {can(ORG_PERMISSIONS.EXPORT) && (
             <Button
+              type="button"
               variant="outline"
               size="sm"
               onClick={handleExport}
               disabled={isExporting}
-              className="gap-2 text-xs h-9 rounded-xl"
+              className="gap-1.5 text-xs h-9 px-3 rounded-lg border-border/80 cursor-pointer"
             >
-              {isExporting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
-              Export
+              {isExporting ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Download className="h-3.5 w-3.5" />
+              )}
+              <span className="hidden sm:inline">Export</span>
             </Button>
           )}
 
-          {/* Primary Action (⊕ Add) Gated on ORG.CREATE */}
+          {/* Primary Action (⊕ Add) (Filled, 36px tall, Part 4) */}
           {can(ORG_PERMISSIONS.CREATE) && (
             <Button
+              type="button"
               size="sm"
               onClick={() => {
                 setCreateParentUnit(null);
                 setIsCreateOpen(true);
               }}
-              className="gap-1.5 text-xs h-9 font-semibold rounded-xl"
+              className="gap-1.5 text-xs h-9 px-3.5 font-semibold rounded-lg cursor-pointer ml-1"
             >
               <Plus className="h-4 w-4" />
               Add
             </Button>
           )}
         </div>
-      </div>
-
-      {/* Mobile list view recommendation banner (Prompt V9) */}
-      {isMobile && !dismissedMobileNotice && (
-        <div className="bg-muted/40 border border-border/70 rounded-xl px-3.5 py-2.5 text-xs flex items-center justify-between text-muted-foreground gap-3">
-          <span>Showing list view on smaller screens for easier navigation.</span>
-          <div className="flex items-center gap-2 shrink-0">
-            {viewMode === "list" ? (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setViewMode("chart")}
-                className="h-6 text-xs text-primary hover:text-primary px-2"
-              >
-                View chart anyway
-              </Button>
-            ) : (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setViewMode("list")}
-                className="h-6 text-xs text-primary hover:text-primary px-2"
-              >
-                Switch to list
-              </Button>
-            )}
-            <button
-              onClick={() => setDismissedMobileNotice(true)}
-              className="text-muted-foreground hover:text-foreground p-1 rounded"
-              aria-label="Dismiss notice"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        </div>
-      )}
+      </PageBarActions>
 
       {/* ========================================================================= */}
-      {/* View 1: Chart View (Canvas + Slide-over Drawer) (Part 3.2 & 3.4)          */}
+      {/* View 1: Chart View (0 padding — Full Bleed Canvas, Part 7 & 8)            */}
       {/* ========================================================================= */}
       {viewMode === "chart" && (
-        <div className="space-y-4">
+        <div className="h-[calc(100vh-108px)] w-full overflow-hidden relative">
           <OrgChartCanvas
             selectedUnitId={selectedUnitId}
             onSelectUnit={(unit) => setSelectedUnitId(unit.orgUnitId)}
@@ -488,9 +388,38 @@ function OrganizationPageContent() {
             }}
             onSwitchToList={() => setViewMode("list")}
             deepLinkUnitId={deepLinkUnitId}
+            className="h-full w-full rounded-none border-none shadow-none"
           />
         </div>
       )}
+
+      {/* Container for Non-Canvas Views (List & Grouped: 24px padding per Part 7) */}
+      {viewMode !== "chart" && (
+        <div className="p-6 max-w-[1600px] mx-auto space-y-6">
+          {/* Mobile list view recommendation banner (Prompt V9) */}
+          {isMobile && !dismissedMobileNotice && (
+            <div className="bg-muted/40 border border-border/70 rounded-xl px-3.5 py-2.5 text-xs flex items-center justify-between text-muted-foreground gap-3">
+              <span>Showing list view on smaller screens for easier navigation.</span>
+              <div className="flex items-center gap-2 shrink-0">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setViewMode("chart")}
+                  className="h-6 text-xs text-primary hover:text-primary px-2"
+                >
+                  View chart anyway
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => setDismissedMobileNotice(true)}
+                  className="text-muted-foreground hover:text-foreground p-1 rounded cursor-pointer"
+                  aria-label="Dismiss notice"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
 
       {/* ========================================================================= */}
       {/* View 2: List View (Indented Tree + Split Pane Details) (Part 3.5)          */}
@@ -596,6 +525,8 @@ function OrganizationPageContent() {
           searchQuery={globalSearch}
         />
       )}
+    </div>
+  )}
 
       {/* ========================================================================= */}
       {/* Slide-Over Drawer for Details (Mounted on Chart / Grouped views) (Part 3.4) */}
@@ -668,6 +599,6 @@ function OrganizationPageContent() {
         unit={deleteTargetUnit}
         onSuccess={() => refetchUnits()}
       />
-    </div>
+    </>
   );
 }

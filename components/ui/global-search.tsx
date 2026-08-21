@@ -40,19 +40,33 @@ export function GlobalSearch() {
 
   return (
     <>
+      {/* Desktop Search: 420px max, centered, 11px ⌘K chip in subtle bordered pill */}
       <Button
+        type="button"
         onClick={() => setOpen(true)}
         variant="outline"
         size="sm"
-        className="flex w-[500px] justify-between text-muted-foreground"
+        className="hidden lg:flex w-full max-w-[420px] h-8 px-3 text-xs justify-between items-center bg-muted/40 hover:bg-muted/70 text-muted-foreground border-border/60 rounded-lg transition-colors cursor-pointer"
       >
-        <div className="flex items-center gap-3">
-          <Search className="h-4 w-4" />
-          <span>Search master data, actions, pages...</span>
+        <div className="flex items-center gap-2 truncate">
+          <Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+          <span className="truncate">Search master data, actions, pages...</span>
         </div>
-        <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-          <span className="text-xs">⌘</span>K
+        <kbd className="pointer-events-none inline-flex h-4.5 select-none items-center gap-0.5 rounded border border-border/80 bg-background/80 px-1.5 font-mono text-[11px] font-medium text-muted-foreground shrink-0 shadow-2xs">
+          <span>⌘</span>K
         </kbd>
+      </Button>
+
+      {/* Mobile/Tablet trigger (< 1024px): 32px icon button */}
+      <Button
+        type="button"
+        onClick={() => setOpen(true)}
+        variant="ghost"
+        size="icon"
+        className="flex lg:hidden h-8 w-8 p-0 text-muted-foreground hover:text-foreground cursor-pointer"
+        aria-label="Search"
+      >
+        <Search className="h-[18px] w-[18px]" />
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <Command>

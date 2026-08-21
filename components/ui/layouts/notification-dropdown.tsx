@@ -51,8 +51,14 @@ export default function NotificationsDrawer() {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button type="button" variant="outline" size="icon" className="size-10 dark:bg-card/30">
-            <BellRing className="size-4" />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground rounded-lg cursor-pointer"
+            aria-label="Notifications"
+          >
+            <BellRing className="h-[18px] w-[18px]" />
           </Button>
         </DropdownMenuTrigger>
 
