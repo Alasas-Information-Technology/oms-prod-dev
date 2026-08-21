@@ -7,6 +7,7 @@ import {
   useReactFlow,
   useNodesState,
   useEdgesState,
+  useViewport,
   MiniMap,
   Node,
   Edge,
@@ -35,6 +36,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { OrgChartNode, CollapsedSiblingsCard, DottedCanvasGrid } from "./chart";
 import { computeTreeLayout, LayoutOrientation } from "@/lib/org-chart/tree-layout";
 import {
@@ -54,8 +65,8 @@ const nodeTypes: NodeTypes = {
   collapsedSiblingsNode: CollapsedSiblingsCard as React.ComponentType<any>,
 };
 
-const STORAGE_KEY_EXPANDED = "oms_org_chart_expanded_v2";
-const STORAGE_KEY_ORIENTATION = "oms_org_chart_orientation_v2";
+const STORAGE_KEY_EXPANDED = "oms_org_chart_expanded_v3";
+const STORAGE_KEY_ORIENTATION = "oms_org_chart_orientation_v1";
 
 export interface OrgChartCanvasProps {
   selectedUnitId?: string | null;
@@ -211,6 +222,50 @@ function OrgChartCanvasInner({
     activeUnitIds,
   });
 
+  // Indicator and Reset Confirmation States (Part 4)
+  const [isIndicatorFaded, setIsIndicatorFaded] = React.useState(false);
+  const [isHoveringTopLeft, setIsHoveringTopLeft] = React.useState(false);
+  const [showConfirmReset, setShowConfirmReset] = React.useState(false);
+  const [isResetting, setIsResetting] = React.useState(false);
+  const fadeTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  const { zoom } = useViewport();
+  const zoomPercentage = Math.round((zoom || 1) * 100);
+
+  // Custom layout indicator 4s fade-out timer (Part 4)
+  React.useEffect(() => {
+    if (hasCustomPositions) {
+      setIsIndicatorFaded(false);
+      if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
+      fadeTimerRef.current = setTimeout(() => {
+        setIsIndicatorFaded(true);
+      }, 4000);
+    } else {
+      setIsIndicatorFaded(false);
+    }
+    return () => {
+      if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
+    };
+  }, [hasCustomPositions, customPositions]);
+
+  const performReset = React.useCallback(() => {
+    setIsResetting(true);
+    resetLayout();
+    setTimeout(() => {
+      setIsResetting(false);
+    }, 350);
+  }, [resetLayout]);
+
+  const handleRequestReset = React.useCallback(() => {
+    if (!hasCustomPositions) return;
+    const movedCount = Object.keys(customPositions).length;
+    if (movedCount > 5) {
+      setShowConfirmReset(true);
+    } else {
+      performReset();
+    }
+  }, [hasCustomPositions, customPositions, performReset]);
+
   // Persist state changes in sessionStorage
   React.useEffect(() => {
     if (typeof window !== "undefined") {
@@ -235,28 +290,53 @@ function OrgChartCanvasInner({
     }
   }, [expandedIds]);
 
-  // 3. Auto-expand the first two levels on initial mount (Part 3.2 & Part 5)
+  // 2. Populate children cache from allUnitsData
+  React.useEffect(() => {
+    if (allUnitsData?.data && allUnitsData.data.length > 0) {
+      setChildrenCache((prev) => {
+        const next = new Map(prev);
+        const parentMap = new Map<string, (OrgUnitSummaryDto | OrgUnitEntity)[]>();
+        for (const unit of allUnitsData.data) {
+          if (unit.parentOrgUnitId) {
+            const list = parentMap.get(unit.parentOrgUnitId) || [];
+            list.push(unit);
+            parentMap.set(unit.parentOrgUnitId, list);
+          }
+        }
+        for (const [parentId, children] of parentMap.entries()) {
+          if (!next.has(parentId)) {
+            next.set(parentId, children);
+          }
+        }
+        return next;
+      });
+    }
+  }, [allUnitsData?.data]);
+
+  // 3. Default Expansion: Only Root Org is expanded so only Org and Business Units are visible by default
   const hasInitializedExpansionRef = React.useRef(false);
 
   React.useEffect(() => {
     if (
       effectiveRoots.length > 0 &&
-      !hasInitializedExpansionRef.current
+      !hasInitializedExpansionRef.current &&
+      allUnitsData?.data &&
+      allUnitsData.data.length > 0
     ) {
       hasInitializedExpansionRef.current = true;
 
-      setExpandedIds((prev) => {
-        const next = new Set(prev);
+      // Expand strictly ONLY the root organization entities so Business Units are visible and Departments/Sections stay collapsed
+      setExpandedIds(() => {
+        const next = new Set<string>();
         effectiveRoots.forEach((root) => next.add(root.orgUnitId));
         return next;
       });
 
-      // Pre-fetch children for each root
+      // Pre-fetch children for the roots
       effectiveRoots.forEach(async (root) => {
         try {
           const children = await orgUnitsApi.getChildren(root.orgUnitId);
           setChildrenCache((prev) => {
-            if (prev.has(root.orgUnitId)) return prev;
             const next = new Map(prev);
             next.set(root.orgUnitId, children);
             return next;
@@ -266,7 +346,7 @@ function OrgChartCanvasInner({
         }
       });
     }
-  }, [effectiveRoots]);
+  }, [effectiveRoots, allUnitsData?.data]);
 
   // 4. Lazy Expansion Toggle Handler
   const handleToggleExpand = React.useCallback(
@@ -361,6 +441,10 @@ function OrgChartCanvasInner({
       showAllSiblingsForParents,
       selectedUnitId,
       siblingThreshold: 12,
+      nodeWidth: 240,
+      nodeHeight: 160,
+      spacingX: 48,
+      spacingY: 72,
     });
 
     const CARD_WIDTH = 240;
@@ -754,13 +838,40 @@ function OrgChartCanvasInner({
         </button>
       )}
 
-      {/* Scoped User Notice Banner (Part 6.2 - Calm, non-technical) */}
-      {isScopedFragment && (
-        <div className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3.5 py-2 rounded-xl bg-background/90 backdrop-blur-md border border-border shadow-xs text-xs text-muted-foreground animate-in fade-in-50">
-          <Info className="h-4 w-4 text-primary shrink-0" />
-          <span>You&apos;re seeing the parts of the organization you work with.</span>
-        </div>
-      )}
+      {/* Top-Left Notification & Indicator Stack (16px inset per Part 4) */}
+      <div className="absolute top-4 left-4 z-10 flex flex-col gap-2 items-start pointer-events-none">
+        {/* Scoped User Notice Banner (Part 6.2 - Calm, non-technical) */}
+        {isScopedFragment && (
+          <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-background/90 backdrop-blur-md border border-border shadow-xs text-xs text-muted-foreground animate-in fade-in-50 pointer-events-auto">
+            <Info className="h-4 w-4 text-primary shrink-0" />
+            <span>You&apos;re seeing the parts of the organization you work with.</span>
+          </div>
+        )}
+
+        {/* Custom Layout Indicator (Part 4: 12px text, --text-secondary, --surface-2 at 90%, 0.5px border, 8px radius, 6/10 padding) */}
+        {hasCustomPositions && (
+          <div
+            onMouseEnter={() => setIsHoveringTopLeft(true)}
+            onMouseLeave={() => setIsHoveringTopLeft(false)}
+            className={cn(
+              "flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-card/90 backdrop-blur-md border border-border/80 shadow-xs text-xs text-muted-foreground transition-opacity duration-300 pointer-events-auto select-none",
+              !isHoveringTopLeft && !effectiveIsDragging && isIndicatorFaded
+                ? "opacity-0 hover:opacity-100"
+                : "opacity-100"
+            )}
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+            <span className="font-medium text-foreground">Custom layout</span>
+            <button
+              type="button"
+              onClick={handleRequestReset}
+              className="ml-1 text-xs font-semibold text-primary hover:underline cursor-pointer focus:outline-none"
+            >
+              Reset
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Loading Skeleton Tree State (Part 6.5) */}
       {isLoadingRoots && (
@@ -874,8 +985,67 @@ function OrgChartCanvasInner({
         />
       </ReactFlow>
 
-      {/* Floating Canvas Controls Overlay (Bottom-Right) */}
+      {/* Floating Canvas Controls Overlay (Bottom-Right Cluster - Part 4) */}
+      {/* [ ⊖ ] 80% [ ⊕ ] │ [ ⤢ ] │ [ ⇅ ] │ [ ↺ ] */}
       <div className="absolute bottom-4 right-4 z-10 flex items-center gap-1.5 p-1.5 rounded-xl bg-card/90 backdrop-blur-md border border-border shadow-xs">
+        {/* Zoom Sub-cluster */}
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            try {
+              reactFlowInstance.zoomOut({ duration: 200 });
+            } catch {}
+          }}
+          title="Zoom out"
+          className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground hover:bg-muted"
+        >
+          <ZoomOut className="h-3.5 w-3.5" />
+        </Button>
+
+        <span
+          className="text-[11px] font-mono font-medium text-foreground min-w-[32px] text-center select-none"
+          title="Current zoom level"
+        >
+          {zoomPercentage}%
+        </span>
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            try {
+              reactFlowInstance.zoomIn({ duration: 200 });
+            } catch {}
+          }}
+          title="Zoom in"
+          className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground hover:bg-muted"
+        >
+          <ZoomIn className="h-3.5 w-3.5" />
+        </Button>
+
+        <div className="h-4 w-px bg-border/80 my-auto" />
+
+        {/* Fit to View Sub-cluster (Leaves card positions alone per Part 1.3) */}
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            try {
+              reactFlowInstance.fitView({ padding: 0.2, duration: 400 });
+            } catch {}
+          }}
+          title="Fit to view"
+          className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground hover:bg-muted"
+        >
+          <Maximize2 className="h-3.5 w-3.5" />
+        </Button>
+
+        <div className="h-4 w-px bg-border/80 my-auto" />
+
         {/* Orientation Switcher (Vertical TB / Horizontal LR - Part 6.1) */}
         <Button
           type="button"
@@ -887,78 +1057,57 @@ function OrgChartCanvasInner({
               ? "Switch to Horizontal (Left-to-Right) layout"
               : "Switch to Vertical (Top-to-Bottom) layout"
           }
-          className="h-7 px-2 text-xs gap-1.5 text-foreground hover:bg-muted"
+          className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground hover:bg-muted"
         >
           {orientation === "TB" ? (
             <ArrowUpDown className="h-3.5 w-3.5 text-primary" />
           ) : (
             <ArrowLeftRight className="h-3.5 w-3.5 text-primary" />
           )}
-          <span className="hidden sm:inline">
-            {orientation === "TB" ? "Top-Down" : "Left-Right"}
-          </span>
         </Button>
 
         <div className="h-4 w-px bg-border/80 my-auto" />
 
-        {/* Zoom Presets: 50%, 80%, 100%, Fit (Part 3.2) */}
+        {/* Reset Layout Sub-cluster (Part 4: disabled at 40% opacity when unmodified, tooltip "Reset card positions") */}
         <Button
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => {
-            try {
-              reactFlowInstance.zoomTo(0.5, { duration: 300 });
-            } catch {}
-          }}
-          className="h-7 px-2 text-[11px] font-mono text-muted-foreground hover:text-foreground"
+          onClick={handleRequestReset}
+          disabled={!hasCustomPositions}
+          title="Reset card positions"
+          className={cn(
+            "h-7 w-7 p-0 text-muted-foreground hover:text-foreground hover:bg-muted transition-opacity",
+            !hasCustomPositions && "opacity-40 cursor-not-allowed"
+          )}
         >
-          50%
-        </Button>
-
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            try {
-              reactFlowInstance.zoomTo(0.8, { duration: 300 });
-            } catch {}
-          }}
-          className="h-7 px-2 text-[11px] font-mono text-muted-foreground hover:text-foreground"
-        >
-          80%
-        </Button>
-
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            try {
-              reactFlowInstance.zoomTo(1.0, { duration: 300 });
-            } catch {}
-          }}
-          className="h-7 px-2 text-[11px] font-mono text-muted-foreground hover:text-foreground"
-        >
-          100%
-        </Button>
-
-        <Button
-          type="button"
-          variant="secondary"
-          size="sm"
-          onClick={() => {
-            try {
-              reactFlowInstance.fitView({ padding: 0.2, duration: 400 });
-            } catch {}
-          }}
-          className="h-7 px-2.5 text-xs font-semibold gap-1"
-        >
-          <Maximize2 className="h-3 w-3" />
-          Fit
+          <RotateCcw className="h-3.5 w-3.5" />
         </Button>
       </div>
+
+      {/* Confirmation Dialog when >5 cards moved per Part 4 */}
+      <AlertDialog open={showConfirmReset} onOpenChange={setShowConfirmReset}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Reset card positions?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Reset all card positions? Your arrangement will be lost.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setShowConfirmReset(false);
+                performReset();
+              }}
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              Reset
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

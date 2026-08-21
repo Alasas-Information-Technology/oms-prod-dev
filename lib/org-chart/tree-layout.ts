@@ -61,9 +61,9 @@ export function computeTreeLayout(
     selectedUnitId,
     siblingThreshold = 12,
     nodeWidth = 240,
-    nodeHeight = 180,
-    spacingX = 40,
-    spacingY = 70,
+    nodeHeight = 160,
+    spacingX = 48,
+    spacingY = 72,
   } = options;
 
   if (!rootUnits || rootUnits.length === 0) {
@@ -221,16 +221,48 @@ export function computeTreeLayout(
       });
     }
 
-    // Edge from parent
+    // Edge from parent with tier-specific sigil colors (ORG -> BU: Blue, BU -> DEPT: Green, DEPT -> SEC: Amber)
     if (d.parent && d.parent.data.id !== "__virtual_root__") {
+      let edgeStroke = "var(--border)";
+
+      if (d.data.isSyntheticCollapsed) {
+        if (d.data.childTypeWord?.includes("sec")) {
+          edgeStroke = "#f59e0b"; // Section Amber
+        } else if (d.data.childTypeWord?.includes("dep")) {
+          edgeStroke = "#10b981"; // Department Green
+        } else if (d.data.childTypeWord?.includes("bus")) {
+          edgeStroke = "#3b82f6"; // Business Unit Blue
+        }
+      } else if (d.data.unit) {
+        const targetUnit = d.data.unit;
+        const targetType = String(
+          targetUnit.type?.code ||
+          targetUnit.orgUnitType?.code ||
+          targetUnit.type?.name ||
+          targetUnit.orgUnitType?.name ||
+          (targetUnit.depth === 1 ? "BUSINESS_UNIT" : targetUnit.depth === 2 ? "DEPARTMENT" : targetUnit.depth === 3 ? "SECTION" : "")
+        ).toUpperCase();
+
+        if (targetType.includes("BUS") || targetType === "BU" || targetType === "2") {
+          // ORG -> BU: Blue (same as BU sigil)
+          edgeStroke = "#3b82f6";
+        } else if (targetType.includes("DEP") || targetType === "3") {
+          // BU -> DEPT: Green (same as Department sigil)
+          edgeStroke = "#10b981";
+        } else if (targetType.includes("SEC") || targetType === "4") {
+          // DEPT -> SEC: Amber (same as Section sigil)
+          edgeStroke = "#f59e0b";
+        }
+      }
+
       edges.push({
         id: `edge-${d.parent.data.id}->${d.data.id}`,
         source: d.parent.data.id,
         target: d.data.id,
         type: "smoothstep",
         style: {
-          stroke: "var(--border)",
-          strokeWidth: 1.5,
+          stroke: edgeStroke,
+          strokeWidth: 2,
         },
       });
     }
