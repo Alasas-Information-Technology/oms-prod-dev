@@ -122,7 +122,7 @@ export function OrgUnitCard({
         onOpenDetails?.(e);
       }}
       className={cn(
-        "relative flex flex-col w-[240px] rounded-xl bg-card border text-card-foreground transition-all duration-150 select-none",
+        "relative flex flex-col w-[240px] rounded-xl bg-card border text-card-foreground transition-all duration-150 select-none motion-reduce:transition-none",
         // Default rest state (no shadow, neutral 1px border)
         "border-border shadow-none",
         // Hover state

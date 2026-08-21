@@ -30,7 +30,7 @@ export interface OrgUnitPickerProps {
 export function OrgUnitPicker({
   value,
   onChange,
-  placeholder = "Select organization unit...",
+  placeholder = "Search and choose a department or team...",
   disabled = false,
   filterByType,
   allowsBudgetOnly = false,

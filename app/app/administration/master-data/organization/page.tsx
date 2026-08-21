@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   Building2,
@@ -14,11 +14,9 @@ import {
   ArrowRightLeft,
   Trash2,
   Power,
-  Crown,
   Layers,
   Loader2,
   Briefcase,
-  Building,
   CheckCircle2,
   ChevronsUpDown,
   LayoutGrid,
@@ -26,7 +24,8 @@ import {
   Network,
   ChevronRight,
   Eye,
-  UserCheck,
+  X,
+  Sparkles,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -47,13 +46,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { OrgChartCanvas } from "@/components/organization/OrgChartCanvas";
 import { OrgTree } from "@/components/organization/OrgTree";
+import { OrgGroupedView } from "@/components/organization/OrgGroupedView";
 import { OrgUnitDetailView } from "@/components/organization/OrgUnitDetailView";
-import { OrgUnitForm } from "@/components/organization/OrgUnitForm";
+import { AddOrgUnitWizard } from "@/components/organization/AddOrgUnitWizard";
 import { MoveUnitDialog } from "@/components/organization/MoveUnitDialog";
+import { ArchiveUnitDialog } from "@/components/organization/ArchiveUnitDialog";
 import { DeleteUnitDialog } from "@/components/organization/DeleteUnitDialog";
 import { OrgTypeIcon, UnitPath } from "@/components/oms/org";
 
@@ -64,6 +64,7 @@ import {
   useCreateOrgUnit,
   useActivateOrgUnit,
   useDeactivateOrgUnit,
+  useAssignManager,
 } from "@/hooks/useOrganization";
 import { usePermission } from "@/hooks/usePermission";
 import { orgUnitsApi } from "@/lib/api/organization";
@@ -72,7 +73,6 @@ import {
   OrgUnitDetailDto,
   OrgUnitEntity,
   CreateOrgUnitDto,
-  OrgUnitTypeDto,
   ORG_PERMISSIONS,
 } from "@/lib/types/organization.types";
 import { cn } from "@/lib/utils";
@@ -81,21 +81,27 @@ const STORAGE_KEY_VIEW_MODE = "oms_org_view_mode_v2";
 
 export default function OrganizationPage() {
   return (
-    <React.Suspense fallback={<div className="p-6">Loading organisation...</div>}>
+    <React.Suspense fallback={<div className="p-6 text-xs text-muted-foreground">Loading organisation...</div>}>
       <OrganizationPageContent />
     </React.Suspense>
   );
 }
 
 function OrganizationPageContent() {
-  const { can } = usePermission();
+  const router = useRouter();
   const searchParams = useSearchParams();
+  const { can } = usePermission();
 
-  // Read deep-linked unit if provided (?unit=<id> or ?node=<id>)
+  // Read URL params
+  const urlView = searchParams.get("view");
+  const urlType = searchParams.get("type") ? Number(searchParams.get("type")) : null;
   const deepLinkUnitId = searchParams.get("unit") || searchParams.get("node");
 
   // View Mode: "chart" (default) | "list" | "grouped" (Part 3.1)
   const [viewMode, setViewMode] = React.useState<"chart" | "list" | "grouped">(() => {
+    if (urlView === "chart" || urlView === "list" || urlView === "grouped") {
+      return urlView;
+    }
     if (typeof window !== "undefined") {
       try {
         const saved = sessionStorage.getItem(STORAGE_KEY_VIEW_MODE);
@@ -111,23 +117,41 @@ function OrganizationPageContent() {
   const [detailPanelUnitId, setDetailPanelUnitId] = React.useState<string | null>(deepLinkUnitId || null);
   const [isDetailOpen, setIsDetailOpen] = React.useState(Boolean(deepLinkUnitId));
 
+  // Global Header Search
+  const [globalSearch, setGlobalSearch] = React.useState("");
+  const [isSearchDropdownOpen, setIsSearchDropdownOpen] = React.useState(false);
+  const searchContainerRef = React.useRef<HTMLDivElement>(null);
+
+  const [isMobile, setIsMobile] = React.useState<boolean>(false);
+  const [dismissedMobileNotice, setDismissedMobileNotice] = React.useState<boolean>(false);
+
   // Dialog states
   const [isCreateOpen, setIsCreateOpen] = React.useState(false);
   const [createParentUnit, setCreateParentUnit] = React.useState<OrgUnitSummaryDto | OrgUnitEntity | null>(null);
   const [isMoveOpen, setIsMoveOpen] = React.useState(false);
   const [moveTargetUnit, setMoveTargetUnit] = React.useState<OrgUnitDetailDto | OrgUnitSummaryDto | null>(null);
+  const [isArchiveOpen, setIsArchiveOpen] = React.useState(false);
+  const [archiveTargetUnit, setArchiveTargetUnit] = React.useState<OrgUnitDetailDto | OrgUnitSummaryDto | null>(null);
   const [isDeleteOpen, setIsDeleteOpen] = React.useState(false);
   const [deleteTargetUnit, setDeleteTargetUnit] = React.useState<OrgUnitDetailDto | OrgUnitSummaryDto | null>(null);
   const [isExporting, setIsExporting] = React.useState(false);
   const [treeExpandAll, setTreeExpandAll] = React.useState<boolean | undefined>(undefined);
 
-  // Grouped view states
-  const [groupedFilterType, setGroupedFilterType] = React.useState<number | null>(null);
-  const [groupedSearchQuery, setGroupedSearchQuery] = React.useState("");
+  // Mobile viewport detection & auto-list fallback (Prompt V9 / Part 6)
+  React.useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (mobile && !sessionStorage.getItem(STORAGE_KEY_VIEW_MODE) && !urlView) {
+        setViewMode("list");
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [urlView]);
 
-  const { data: typesData } = useOrgUnitTypes();
-
-  // Load units for metrics and grouped tables
+  // Load units
   const { data: allUnitsData, isLoading: isLoadingAllUnits, refetch: refetchUnits } = useOrgUnits({
     page: 1,
     pageSize: 100,
@@ -135,10 +159,9 @@ function OrganizationPageContent() {
   });
 
   const createMutation = useCreateOrgUnit();
-  const activateMutation = useActivateOrgUnit();
-  const deactivateMutation = useDeactivateOrgUnit();
+  const assignManagerMutation = useAssignManager();
 
-  // Save view mode
+  // Persist view mode in session storage
   React.useEffect(() => {
     if (typeof window !== "undefined") {
       try {
@@ -149,88 +172,129 @@ function OrganizationPageContent() {
     }
   }, [viewMode]);
 
-  // Compute Quick Metrics
-  const stats = React.useMemo(() => {
-    const all = allUnitsData?.data || [];
-    const buCount = all.filter((u) => u.orgUnitTypeId === 2).length;
-    const deptCount = all.filter((u) => u.orgUnitTypeId === 3).length;
-    const secCount = all.filter((u) => u.orgUnitTypeId === 4).length;
-    return { total: all.length, businessUnits: buCount, departments: deptCount, sections: secCount };
-  }, [allUnitsData]);
+  // Sync with URL param changes
+  React.useEffect(() => {
+    if (urlView === "chart" || urlView === "list" || urlView === "grouped") {
+      setViewMode(urlView);
+    }
+  }, [urlView]);
 
-  // Handle open details for unit
+  // Click outside to close search dropdown
+  React.useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
+        setIsSearchDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Global search matches
+  const searchResults = React.useMemo(() => {
+    const q = globalSearch.trim().toLowerCase();
+    if (!q || !allUnitsData?.data) return [];
+    return allUnitsData.data
+      .filter((u) => {
+        const nameMatch = u.name?.toLowerCase().includes(q);
+        const nameArMatch = u.nameAr?.toLowerCase().includes(q);
+        const codeMatch = u.code?.toLowerCase().includes(q);
+        const headMatch = (u.head?.displayName || u.head?.userDisplayName || "").toLowerCase().includes(q);
+        return nameMatch || nameArMatch || codeMatch || headMatch;
+      })
+      .slice(0, 8);
+  }, [allUnitsData, globalSearch]);
+
+  // Handle Search Result Click (Part 3.1: Jumps canvas & opens panel in Chart view)
+  const handleSelectSearchResult = (unit: OrgUnitSummaryDto) => {
+    setSelectedUnitId(unit.orgUnitId);
+    setDetailPanelUnitId(unit.orgUnitId);
+    setIsDetailOpen(true);
+    setIsSearchDropdownOpen(false);
+    setGlobalSearch("");
+  };
+
+  // Open details helper
   const handleOpenDetails = React.useCallback((unit: OrgUnitSummaryDto | OrgUnitEntity) => {
     setSelectedUnitId(unit.orgUnitId);
     setDetailPanelUnitId(unit.orgUnitId);
     setIsDetailOpen(true);
   }, []);
 
-  // Handle Create Submit
-  const handleCreateSubmit = async (values: CreateOrgUnitDto) => {
+  // Handle Create Submit (Part 4.1 Guided Flow)
+  const handleCreateSubmit = async (values: CreateOrgUnitDto, leaderUserId?: string | null) => {
     try {
       const created = await createMutation.mutateAsync(values);
-      toast.success(`Unit ${created.name} (${created.code}) created successfully.`);
+
+      if (leaderUserId) {
+        try {
+          await assignManagerMutation.mutateAsync({
+            unitId: created.orgUnitId,
+            dto: {
+              userId: leaderUserId,
+              managerRoleCode: "HEAD",
+              isPrimary: true,
+              effectiveFrom: new Date().toISOString().split("T")[0],
+            },
+          });
+        } catch {
+          toast.warning("Unit created, but leader assignment could not be saved.");
+        }
+      }
+
       setIsCreateOpen(false);
       refetchUnits();
+
+      const parentName = createParentUnit?.name || "Organisation";
+      toast.success(`${created.name} added under ${parentName}.`);
+
+      // Open detail panel for newly created unit
+      setSelectedUnitId(created.orgUnitId);
+      setDetailPanelUnitId(created.orgUnitId);
+      setIsDetailOpen(true);
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to create organization unit.";
+      const errorMsg = err instanceof Error ? err.message : "Failed to create unit.";
       toast.error(errorMsg);
     }
   };
 
-  // Handle Export (Tier 7 rate limit, gated on can(ORG.EXPORT))
+  // Export Action (Gated on ORG.EXPORT, rate limit tier 7)
   const handleExport = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
     try {
-      setIsExporting(true);
-      const res = await orgUnitsApi.exportUnits();
-      if ("data" in res && res.data instanceof Blob) {
-        const url = window.URL.createObjectURL(res.data);
+      const result = await orgUnitsApi.exportUnits({ isActive: true });
+      if ("jobId" in result) {
+        toast.info(`Export queued (Job #${result.jobId}). You will be notified when ready.`);
+      } else {
+        const url = window.URL.createObjectURL(result.data);
         const link = document.createElement("a");
         link.href = url;
-        link.download = res.filename;
+        link.download = result.filename;
         document.body.appendChild(link);
         link.click();
-        link.remove();
+        document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
-        toast.success("Hierarchy exported successfully.");
-      } else if ("downloadUrl" in res && typeof res.downloadUrl === "string") {
-        window.open(res.downloadUrl, "_blank");
-        toast.success("Hierarchy exported successfully.");
-      } else {
-        toast.info((res as any).message || "Export job queued for background processing.");
+        toast.success("Organisation directory exported successfully.");
       }
-    } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Export failed.";
-      toast.error(errorMsg);
+    } catch (err: any) {
+      const status = err?.response?.status || err?.status;
+      if (status === 429) {
+        toast.error("Export rate limit reached (Tier 7). Please wait a moment before trying again.");
+      } else {
+        toast.error("Failed to export organisation data.");
+      }
     } finally {
       setIsExporting(false);
     }
   };
 
-  // Grouped Filter Data
-  const filteredGroupedUnits = React.useMemo(() => {
-    let list = allUnitsData?.data || [];
-    if (groupedFilterType !== null) {
-      list = list.filter((u) => u.orgUnitTypeId === groupedFilterType);
-    }
-    if (groupedSearchQuery.trim()) {
-      const q = groupedSearchQuery.toLowerCase();
-      list = list.filter(
-        (u) =>
-          u.name.toLowerCase().includes(q) ||
-          u.code.toLowerCase().includes(q) ||
-          (u.nameAr && u.nameAr.toLowerCase().includes(q))
-      );
-    }
-    return list;
-  }, [allUnitsData, groupedFilterType, groupedSearchQuery]);
-
   return (
     <div className="space-y-6 max-w-[1600px] mx-auto p-4 sm:p-6 pb-20">
       {/* ========================================================================= */}
-      {/* Top Header: "Organisation" + 3-View Segmented Control + Add Primary CTA   */}
+      {/* Top Header: "Organisation" + Search + 3-View Segmented Control + Actions  */}
       {/* ========================================================================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             Organisation
@@ -241,7 +305,73 @@ function OrganizationPageContent() {
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
-          {/* Segmented 3-View Control (Part 3.1) */}
+          {/* Global Search across all 3 views (Part 3.1) */}
+          <div ref={searchContainerRef} className="relative w-full sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              placeholder="Search organisation..."
+              value={globalSearch}
+              onChange={(e) => {
+                setGlobalSearch(e.target.value);
+                setIsSearchDropdownOpen(true);
+              }}
+              onFocus={() => setIsSearchDropdownOpen(true)}
+              className="pl-8 pr-8 h-9 text-xs rounded-xl bg-card border-border shadow-2xs"
+            />
+            {globalSearch && (
+              <button
+                type="button"
+                onClick={() => {
+                  setGlobalSearch("");
+                  setIsSearchDropdownOpen(false);
+                }}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+
+            {/* Live Search Results Dropdown */}
+            {isSearchDropdownOpen && globalSearch.trim().length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1.5 p-1.5 bg-card border border-border rounded-xl shadow-lg z-50 max-h-72 overflow-y-auto space-y-1 animate-in fade-in-50">
+                {searchResults.length > 0 ? (
+                  searchResults.map((result) => {
+                    const typeCode = result.type?.code || result.orgUnitType?.code || "DEPARTMENT";
+                    return (
+                      <div
+                        key={result.orgUnitId}
+                        onClick={() => handleSelectSearchResult(result)}
+                        className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-muted cursor-pointer transition-colors text-xs"
+                      >
+                        <OrgTypeIcon type={typeCode} size="sm" />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-foreground truncate">
+                              {result.name}
+                            </span>
+                            <span className="font-mono text-[10px] text-muted-foreground bg-muted px-1 rounded border border-border/50">
+                              {result.code}
+                            </span>
+                          </div>
+                          {result.parentName && (
+                            <p className="text-[11px] text-muted-foreground truncate">
+                              Part of {result.parentName}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="text-xs text-muted-foreground text-center py-3">
+                    No matching departments or teams found.
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Segmented 3-View Control: [ Chart | List | Grouped ] (Part 3.1) */}
           <div className="flex items-center bg-muted/60 p-1 rounded-xl border border-border/60">
             <Button
               type="button"
@@ -277,7 +407,7 @@ function OrganizationPageContent() {
             </Button>
           </div>
 
-          {/* Export Action */}
+          {/* Export Action (Gated on ORG.EXPORT, rate limit tier 7) */}
           {can(ORG_PERMISSIONS.EXPORT) && (
             <Button
               variant="outline"
@@ -308,8 +438,43 @@ function OrganizationPageContent() {
         </div>
       </div>
 
+      {/* Mobile list view recommendation banner (Prompt V9) */}
+      {isMobile && !dismissedMobileNotice && (
+        <div className="bg-muted/40 border border-border/70 rounded-xl px-3.5 py-2.5 text-xs flex items-center justify-between text-muted-foreground gap-3">
+          <span>Showing list view on smaller screens for easier navigation.</span>
+          <div className="flex items-center gap-2 shrink-0">
+            {viewMode === "list" ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setViewMode("chart")}
+                className="h-6 text-xs text-primary hover:text-primary px-2"
+              >
+                View chart anyway
+              </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setViewMode("list")}
+                className="h-6 text-xs text-primary hover:text-primary px-2"
+              >
+                Switch to list
+              </Button>
+            )}
+            <button
+              onClick={() => setDismissedMobileNotice(true)}
+              className="text-muted-foreground hover:text-foreground p-1 rounded"
+              aria-label="Dismiss notice"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ========================================================================= */}
-      {/* View 1: Chart View (Canvas + Slide-over Drawer)                           */}
+      {/* View 1: Chart View (Canvas + Slide-over Drawer) (Part 3.2 & 3.4)          */}
       {/* ========================================================================= */}
       {viewMode === "chart" && (
         <div className="space-y-4">
@@ -321,18 +486,19 @@ function OrganizationPageContent() {
               setCreateParentUnit(null);
               setIsCreateOpen(true);
             }}
+            onSwitchToList={() => setViewMode("list")}
             deepLinkUnitId={deepLinkUnitId}
           />
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* View 2: List View (Indented Tree + Detail Split Pane)                     */}
+      {/* View 2: List View (Indented Tree + Split Pane Details) (Part 3.5)          */}
       {/* ========================================================================= */}
       {viewMode === "list" && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           <div className="lg:col-span-5 space-y-3">
-            <Card className="border border-border shadow-xs">
+            <Card className="border border-border shadow-2xs">
               <CardHeader className="pb-3 border-b border-border/50">
                 <div className="flex items-center justify-between gap-3">
                   <CardTitle className="text-sm font-semibold flex items-center gap-2">
@@ -343,7 +509,7 @@ function OrganizationPageContent() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-7 text-xs px-2 gap-1"
+                    className="h-7 text-xs px-2 gap-1 rounded-lg"
                     onClick={() => setTreeExpandAll((prev) => (prev === true ? false : true))}
                   >
                     <ChevronsUpDown className="h-3 w-3 text-muted-foreground" />
@@ -381,14 +547,14 @@ function OrganizationPageContent() {
 
           <div className="lg:col-span-7">
             {selectedUnitId ? (
-              <Card className="border border-border shadow-xs p-5 sm:p-6 min-h-[740px]">
+              <Card className="border border-border shadow-2xs p-5 sm:p-6 min-h-[740px]">
                 <OrgUnitDetailView
                   unitId={selectedUnitId}
                   onNavigateUnit={(targetId) => setSelectedUnitId(targetId || null)}
                 />
               </Card>
             ) : (
-              <Card className="border border-border shadow-xs p-12 text-center flex flex-col items-center justify-center min-h-[600px] space-y-3">
+              <Card className="border border-border shadow-2xs p-12 text-center flex flex-col items-center justify-center min-h-[600px] space-y-3">
                 <Building2 className="h-12 w-12 text-muted-foreground/30" />
                 <div>
                   <h3 className="text-base font-bold text-foreground">Select a Department or Team</h3>
@@ -403,144 +569,59 @@ function OrganizationPageContent() {
       )}
 
       {/* ========================================================================= */}
-      {/* View 3: Grouped View (Flat Categorized Directory with Full Paths)         */}
+      {/* View 3: Grouped View (Flat Categorized Directory with Full Paths) (Part 3.6) */}
       {/* ========================================================================= */}
       {viewMode === "grouped" && (
-        <div className="space-y-4">
-          {/* Preset Filters & Quick Search */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border border-border bg-card">
-            <div className="flex items-center gap-2 flex-wrap">
-              <Button
-                variant={groupedFilterType === null ? "default" : "outline"}
-                size="sm"
-                onClick={() => setGroupedFilterType(null)}
-                className="text-xs h-8 rounded-lg"
-              >
-                All ({stats.total})
-              </Button>
-              <Button
-                variant={groupedFilterType === 2 ? "default" : "outline"}
-                size="sm"
-                onClick={() => setGroupedFilterType(2)}
-                className="text-xs h-8 rounded-lg"
-              >
-                Business Units ({stats.businessUnits})
-              </Button>
-              <Button
-                variant={groupedFilterType === 3 ? "default" : "outline"}
-                size="sm"
-                onClick={() => setGroupedFilterType(3)}
-                className="text-xs h-8 rounded-lg"
-              >
-                Departments ({stats.departments})
-              </Button>
-              <Button
-                variant={groupedFilterType === 4 ? "default" : "outline"}
-                size="sm"
-                onClick={() => setGroupedFilterType(4)}
-                className="text-xs h-8 rounded-lg"
-              >
-                Sections ({stats.sections})
-              </Button>
-            </div>
-
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-              <Input
-                value={groupedSearchQuery}
-                onChange={(e) => setGroupedSearchQuery(e.target.value)}
-                placeholder="Search by name or code..."
-                className="h-8 pl-8 text-xs rounded-lg"
-              />
-            </div>
-          </div>
-
-          {/* Grouped Table List */}
-          <Card className="border border-border shadow-xs overflow-hidden">
-            <div className="divide-y divide-border">
-              {filteredGroupedUnits.length === 0 ? (
-                <div className="p-12 text-center text-xs text-muted-foreground">
-                  No matching departments or teams found.
-                </div>
-              ) : (
-                filteredGroupedUnits.map((unit) => (
-                  <div
-                    key={unit.orgUnitId}
-                    onClick={() => handleOpenDetails(unit)}
-                    className="flex items-center justify-between p-4 hover:bg-muted/30 cursor-pointer transition-colors"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <OrgTypeIcon type={unit.orgUnitTypeId} size="sm" />
-                      <div className="space-y-0.5 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-semibold text-foreground truncate">
-                            {unit.name}
-                          </span>
-                          <span className="font-mono text-[11px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground border border-border/50">
-                            {unit.code}
-                          </span>
-                          {!unit.isActive && (
-                            <Badge variant="secondary" className="text-[10px] uppercase">
-                              Archived
-                            </Badge>
-                          )}
-                        </div>
-                        {unit.parentName ? (
-                          <p className="text-xs text-muted-foreground truncate">
-                            Part of <strong className="font-medium text-foreground">{unit.parentName}</strong>
-                          </p>
-                        ) : (
-                          <p className="text-xs text-muted-foreground">Root Organisation</p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 shrink-0">
-                      <div className="text-right hidden sm:block">
-                        <p className="text-xs font-medium text-foreground">
-                          {unit.head?.displayName || unit.head?.userDisplayName || (
-                            <span className="text-muted-foreground italic">No head assigned</span>
-                          )}
-                        </p>
-                        <p className="text-[11px] text-muted-foreground">
-                          {unit.childCount || 0} sub-units
-                        </p>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </Card>
-        </div>
+        <OrgGroupedView
+          selectedUnitId={selectedUnitId}
+          onSelectUnit={(unit) => setSelectedUnitId(unit.orgUnitId)}
+          onOpenDetails={handleOpenDetails}
+          onMoveUnit={(unit) => {
+            setMoveTargetUnit(unit as OrgUnitDetailDto);
+            setIsMoveOpen(true);
+          }}
+          onArchiveUnit={(unit) => {
+            setArchiveTargetUnit(unit as OrgUnitDetailDto);
+            setIsArchiveOpen(true);
+          }}
+          onDeleteUnit={(unit) => {
+            setDeleteTargetUnit(unit as OrgUnitDetailDto);
+            setIsDeleteOpen(true);
+          }}
+          onAddUnit={() => {
+            setCreateParentUnit(null);
+            setIsCreateOpen(true);
+          }}
+          initialTypeFilter={urlType}
+          searchQuery={globalSearch}
+        />
       )}
 
       {/* ========================================================================= */}
-      {/* Slide-over Detail Panel (Part 3.4)                                        */}
+      {/* Slide-Over Drawer for Details (Mounted on Chart / Grouped views) (Part 3.4) */}
       {/* ========================================================================= */}
       <Sheet open={isDetailOpen} onOpenChange={setIsDetailOpen}>
         <SheetContent
           side="right"
-          className="w-full sm:max-w-2xl lg:max-w-3xl overflow-y-auto p-6 bg-card border-l border-border shadow-xl"
+          className="w-full sm:max-w-2xl p-0 overflow-y-auto border-l border-border bg-background shadow-2xl"
         >
-          <SheetHeader className="pb-2 border-b border-border/50">
-            <SheetTitle className="text-lg font-bold">Department Details</SheetTitle>
-            <SheetDescription className="text-xs">
-              Structured metadata, reporting hierarchy, leadership timeline, and history log.
-            </SheetDescription>
+          <SheetHeader className="sr-only">
+            <SheetTitle>Organisation Unit Details</SheetTitle>
+            <SheetDescription>Detailed breakdown of reporting lines, teams, and staff.</SheetDescription>
           </SheetHeader>
-
           {detailPanelUnitId && (
-            <div className="pt-4">
+            <div className="p-6 sm:p-8">
               <OrgUnitDetailView
                 unitId={detailPanelUnitId}
                 onNavigateUnit={(targetId) => {
                   if (targetId) {
-                    setDetailPanelUnitId(targetId);
                     setSelectedUnitId(targetId);
+                    setDetailPanelUnitId(targetId);
+                  } else {
+                    setIsDetailOpen(false);
                   }
                 }}
+                onClose={() => setIsDetailOpen(false)}
               />
             </div>
           )}
@@ -548,22 +629,18 @@ function OrganizationPageContent() {
       </Sheet>
 
       {/* ========================================================================= */}
-      {/* Dialogs: Add, Move, Delete                                               */}
+      {/* Modal Dialogs: Add (4-step wizard), Move (3-step), Archive, Remove        */}
       {/* ========================================================================= */}
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-2xl">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold">
-              {createParentUnit ? `Add Sub-Unit under ${createParentUnit.name}` : "Add Organisation"}
-            </DialogTitle>
+            <DialogTitle className="text-xl font-bold">Add Organisation Unit</DialogTitle>
             <DialogDescription className="text-xs">
-              {createParentUnit
-                ? `Creating a new department or section situated beneath ${createParentUnit.name} (${createParentUnit.code}).`
-                : "Register a top-level organisation entity."}
+              Follow the 4-step guided flow to add a department, business unit, or section.
             </DialogDescription>
           </DialogHeader>
-          <OrgUnitForm
-            parentUnit={createParentUnit}
+          <AddOrgUnitWizard
+            initialParent={createParentUnit}
             onSubmit={handleCreateSubmit}
             onCancel={() => setIsCreateOpen(false)}
             isLoading={createMutation.isPending}
@@ -575,6 +652,13 @@ function OrganizationPageContent() {
         open={isMoveOpen}
         onOpenChange={setIsMoveOpen}
         unit={moveTargetUnit}
+        onSuccess={() => refetchUnits()}
+      />
+
+      <ArchiveUnitDialog
+        open={isArchiveOpen}
+        onOpenChange={setIsArchiveOpen}
+        unit={archiveTargetUnit}
         onSuccess={() => refetchUnits()}
       />
 

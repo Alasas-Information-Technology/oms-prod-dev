@@ -155,11 +155,11 @@ export function ManagerAssignmentPanel({
 
     return managersList.map((m) => {
       const isCurrent =
-        m.isActive &&
-        (!m.effectiveTo || new Date(m.effectiveTo) >= new Date()) &&
-        new Date(m.effectiveFrom) <= new Date();
+        Boolean(m.isActive) &&
+        (!m.effectiveTo || new Date(m.effectiveTo).getTime() >= Date.now()) &&
+        (!m.effectiveFrom || new Date(m.effectiveFrom).getTime() <= Date.now());
 
-      const fromStr = String(m.effectiveFrom).split("T")[0];
+      const fromStr = m.effectiveFrom ? String(m.effectiveFrom).split("T")[0] : "Past";
       const toStr = m.effectiveTo ? String(m.effectiveTo).split("T")[0] : "Present";
 
       const managerName = m.userDisplayName || m.username || m.userId || "Manager";

@@ -51,7 +51,9 @@ import {
 import { DataTable, ColumnDef, RowAction } from "@/components/oms/DataTable";
 import { OrgTypeIcon, UnitPath, OrgBreadcrumbItem } from "@/components/oms/org";
 import { OrgUnitForm } from "@/components/organization/OrgUnitForm";
+import { AddOrgUnitWizard } from "@/components/organization/AddOrgUnitWizard";
 import { MoveUnitDialog } from "@/components/organization/MoveUnitDialog";
+import { ArchiveUnitDialog } from "@/components/organization/ArchiveUnitDialog";
 import { DeleteUnitDialog } from "@/components/organization/DeleteUnitDialog";
 import { ManagerAssignmentPanel } from "@/components/organization/ManagerAssignmentPanel";
 
@@ -67,6 +69,7 @@ import {
   useActivateOrgUnit,
   useDeactivateOrgUnit,
   useOrgUnitTypes,
+  useAssignManager,
 } from "@/hooks/useOrganization";
 import { usePermission } from "@/hooks/usePermission";
 import {
@@ -176,6 +179,7 @@ export function OrgUnitDetailView({
   const [activeTab, setActiveTab] = React.useState("overview");
   const [isEditOpen, setIsEditOpen] = React.useState(false);
   const [isMoveOpen, setIsMoveOpen] = React.useState(false);
+  const [isArchiveOpen, setIsArchiveOpen] = React.useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = React.useState(false);
   const [isAddChildOpen, setIsAddChildOpen] = React.useState(false);
 
@@ -198,6 +202,7 @@ export function OrgUnitDetailView({
   const createMutation = useCreateOrgUnit();
   const activateMutation = useActivateOrgUnit();
   const deactivateMutation = useDeactivateOrgUnit();
+  const assignMutation = useAssignManager();
 
   // Derived metadata
   const typeCode = unit?.type?.code || unit?.orgUnitType?.code;
@@ -291,12 +296,28 @@ export function OrgUnitDetailView({
     }
   };
 
-  const handleAddChildSubmit = async (data: CreateOrgUnitDto) => {
+  const handleAddChildSubmit = async (data: CreateOrgUnitDto, leaderUserId?: string | null) => {
     try {
       const created = await createMutation.mutateAsync({ ...data, parentOrgUnitId: unit.orgUnitId });
+      if (leaderUserId) {
+        try {
+          await assignMutation.mutateAsync({
+            unitId: created.orgUnitId,
+            dto: {
+              userId: leaderUserId,
+              managerRoleCode: "HEAD",
+              isPrimary: true,
+              effectiveFrom: new Date().toISOString().split("T")[0],
+            },
+          });
+        } catch {
+          // Leadership assignment fallback
+        }
+      }
       toast.success(`${created.name} added under ${unit.name}.`);
       setIsAddChildOpen(false);
       refetchUnit();
+      onNavigateUnit?.(created.orgUnitId);
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : "Failed to add.";
       toast.error(errorMsg);
@@ -441,7 +462,7 @@ export function OrgUnitDetailView({
 
                 {can(ORG_PERMISSIONS.UPDATE) && (
                   <DropdownMenuItem
-                    onClick={handleToggleArchive}
+                    onClick={() => setIsArchiveOpen(true)}
                     className="gap-2 text-xs cursor-pointer"
                   >
                     <Archive className="h-3.5 w-3.5 text-amber-600" />
@@ -646,21 +667,20 @@ export function OrgUnitDetailView({
                 </dl>
               </CardContent>
             </Card>
-
             {/* Right Column: Budget Department Card */}
             <div className="space-y-4">
               <Card className="border border-border shadow-xs">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                     <Wallet className="h-3.5 w-3.5 text-primary" />
-                    Budget Department
+                    Budget held by
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="text-xs space-y-1">
                   {isLoadingBudget ? (
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Loader2 className="h-3 w-3 animate-spin" />
-                      Checking budget department...
+                      Checking who holds the budget...
                     </div>
                   ) : budgetOwner ? (
                     <div>
@@ -675,19 +695,19 @@ export function OrgUnitDetailView({
                 </CardContent>
               </Card>
 
-              {/* Approval Ladder Preview */}
+              {/* Sign-off Chain Preview */}
               <Card className="border border-border shadow-xs">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                     <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-                    Approval Path
+                    Sign-off chain
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-xs">
                   {isLoadingChain ? (
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Loader2 className="h-3 w-3 animate-spin" />
-                      Loading approval stages...
+                      Loading sign-off stages...
                     </div>
                   ) : approvalChain && approvalChain.length > 0 ? (
                     <div className="space-y-1.5">
@@ -698,13 +718,13 @@ export function OrgUnitDetailView({
                             {node.name}
                           </span>
                           <span className="text-muted-foreground text-[10px]">
-                            {node.head?.displayName || "Vacant"}
+                            {node.head?.displayName || "No one in charge"}
                           </span>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-muted-foreground italic">No approval path available.</p>
+                    <p className="text-muted-foreground italic">No sign-off route required.</p>
                   )}
                 </CardContent>
               </Card>
@@ -736,49 +756,46 @@ export function OrgUnitDetailView({
           </div>
 
           <DataTable
-            keyField="orgUnitId"
-            data={childrenList || []}
             columns={childrenColumns}
+            data={childrenList || []}
+            keyField="orgUnitId"
             loading={isLoadingChildren}
-            enableSearch={true}
-            emptyMessage={childMeta.emptyPrompt}
+            onRowClick={(row) => onNavigateUnit?.(row.orgUnitId)}
+            emptyMessage={`No ${childMeta.tabLabel.toLowerCase()} added under ${unit.name} yet.`}
           />
         </TabsContent>
 
         {/* ===================================================================== */}
-        {/* Tab 3: People & Leadership Timeline (Part 3.4)                       */}
+        {/* Tab 3: People & Leadership Timeline (Part 3.4 & Part 2.3)             */}
         {/* ===================================================================== */}
         <TabsContent value="people" className="space-y-4 m-0">
           <ManagerAssignmentPanel orgUnitId={unit.orgUnitId} unitName={unit.name} />
         </TabsContent>
 
         {/* ===================================================================== */}
-        {/* Tab 4: History (Plain-Language Change Log Feed per Part 3.4)         */}
+        {/* Tab 4: History (Plain-Language Change Feed per Part 3.4 & Part 2)     */}
         {/* ===================================================================== */}
         <TabsContent value="history" className="space-y-4 m-0">
           <Card className="border border-border shadow-xs">
             <CardHeader className="pb-3 border-b border-border/60">
               <CardTitle className="text-sm font-bold flex items-center gap-2">
                 <History className="h-4 w-4 text-primary" />
-                History Log
+                Change Log
               </CardTitle>
               <CardDescription className="text-xs">
-                Plain-language record of past moves, leadership appointments, and updates.
+                Plain-language record of reporting changes, appointments, and structure updates.
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-4">
               {isLoadingLogs ? (
-                <div className="space-y-3">
-                  {[1, 2, 3].map((i) => (
-                    <Skeleton key={i} className="h-16 rounded-lg" />
-                  ))}
+                <div className="p-8 text-center flex flex-col items-center justify-center space-y-2 text-xs text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                  <span>Loading history records...</span>
                 </div>
               ) : changeLogsData?.data && changeLogsData.data.length > 0 ? (
-                <div className="space-y-3 divide-y divide-border/60">
+                <div className="space-y-3 divide-y divide-border/50">
                   {changeLogsData.data.map((log: OrgUnitChangeLogDto) => {
                     const isMove = log.changeType === "MOVED" || log.changeType === "REPARENT";
-                    const isManager = log.changeType === "MANAGER_ASSIGNED" || log.changeType === "MANAGER_REMOVED";
-
                     const oldParent = log.oldValues?.parentName || log.oldValues?.parentOrgUnitId || "DIEZ";
                     const newParent = log.newValues?.parentName || log.newValues?.parentOrgUnitId || "DIEZ";
                     const operator = log.performedByDisplayName || log.performedBy || "Administrator";
@@ -800,7 +817,22 @@ export function OrgUnitDetailView({
                       sentence = `Created under ${newParent} — ${operator}, ${formattedDate}`;
                     } else if (log.changeType === "DEACTIVATED") {
                       sentence = `Archived — ${operator}, ${formattedDate}`;
+                    } else if (log.changeType === "ACTIVATED") {
+                      sentence = `Restored — ${operator}, ${formattedDate}`;
                     }
+
+                    const friendlyTag =
+                      isMove
+                        ? "Move"
+                        : log.changeType === "CREATED"
+                        ? "Created"
+                        : log.changeType === "DEACTIVATED"
+                        ? "Archived"
+                        : log.changeType === "ACTIVATED"
+                        ? "Restored"
+                        : log.changeType === "MANAGER_ASSIGNED"
+                        ? "Leadership"
+                        : "Update";
 
                     return (
                       <div key={log.changeLogId} className="pt-3 first:pt-0 flex flex-col gap-1 text-xs">
@@ -808,8 +840,8 @@ export function OrgUnitDetailView({
                           <p className="font-semibold text-foreground leading-snug">
                             {sentence}
                           </p>
-                          <span className="font-mono text-[10px] text-muted-foreground shrink-0">
-                            {log.changeType}
+                          <span className="text-[11px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full border border-border/50 shrink-0">
+                            {friendlyTag}
                           </span>
                         </div>
 
@@ -859,7 +891,7 @@ export function OrgUnitDetailView({
       </Dialog>
 
       <Dialog open={isAddChildOpen} onOpenChange={setIsAddChildOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-2xl">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">Add {childMeta.singularLabel}</DialogTitle>
             <DialogDescription className="text-xs">
@@ -867,8 +899,8 @@ export function OrgUnitDetailView({
               <span className="font-bold text-foreground">{unit.name}</span>.
             </DialogDescription>
           </DialogHeader>
-          <OrgUnitForm
-            parentUnit={unit}
+          <AddOrgUnitWizard
+            initialParent={unit}
             targetTypeId={childMeta.targetTypeId}
             onSubmit={handleAddChildSubmit}
             onCancel={() => setIsAddChildOpen(false)}
@@ -884,10 +916,19 @@ export function OrgUnitDetailView({
         onSuccess={() => refetchUnit()}
       />
 
+      <ArchiveUnitDialog
+        open={isArchiveOpen}
+        onOpenChange={setIsArchiveOpen}
+        unit={unit}
+        onSuccess={() => refetchUnit()}
+      />
+
       <DeleteUnitDialog
         open={isDeleteOpen}
         onOpenChange={setIsDeleteOpen}
         unit={unit}
+        onNavigateToTab={(tab) => setActiveTab(tab)}
+        onOpenMove={() => setIsMoveOpen(true)}
         onSuccess={() => {
           if (onNavigateUnit) {
             onNavigateUnit("");

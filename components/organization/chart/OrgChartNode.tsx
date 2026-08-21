@@ -57,6 +57,10 @@ export function OrgChartNode({ data, sourcePosition, targetPosition }: NodeProps
         e.stopPropagation();
         onSelectUnit?.(unit);
       }}
+      onDoubleClick={(e) => {
+        e.stopPropagation();
+        onOpenDetails?.(unit);
+      }}
     >
       {/* Target Handle (incoming connection from parent) */}
       <Handle

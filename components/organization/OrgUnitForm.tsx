@@ -194,28 +194,28 @@ export function OrgUnitForm({
           icon: Building2,
           color: "text-purple-600 dark:text-purple-400 bg-purple-500/10 border-purple-500/20",
           tag: "Holding Company",
-          hint: "Top-level parent organization entity",
+          hint: "Top-level holding organisation (e.g. DIEZ)",
         };
       case 2:
         return {
           icon: Briefcase,
           color: "text-blue-600 dark:text-blue-400 bg-blue-500/10 border-blue-500/20",
           tag: "Business Unit",
-          hint: "Major executive division under holding",
+          hint: "Major executive division",
         };
       case 3:
         return {
           icon: Building,
           color: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
           tag: "Department",
-          hint: "Functional team & budget owner",
+          hint: "Functional department holding operational budgets",
         };
       default:
         return {
           icon: Layers,
           color: "text-amber-600 dark:text-amber-400 bg-amber-500/10 border-amber-500/20",
           tag: "Section",
-          hint: "Operational team under a department",
+          hint: "Operational team reporting to a department",
         };
     }
   };
@@ -226,7 +226,7 @@ export function OrgUnitForm({
       {!isEdit && availableTypes.length > 1 && (
         <div className="space-y-2">
           <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            1. Select Unit Type
+            1. Select Type
           </Label>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {availableTypes.map((t) => {
@@ -266,12 +266,12 @@ export function OrgUnitForm({
         </div>
       )}
 
-      {/* 2. Parent Unit Selection */}
+      {/* 2. Reports to Selection */}
       {!isEdit && (
         <div className="space-y-2 p-4 rounded-xl bg-muted/30 border border-border">
           <div className="flex items-center justify-between">
             <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              2. Parent Organization / Division
+              2. Reports to
             </Label>
             {selectedParentId && (
               <Button
@@ -284,7 +284,7 @@ export function OrgUnitForm({
                   form.setValue("parentOrgUnitId", null);
                 }}
               >
-                Make Root Entity
+                Make top level
               </Button>
             )}
           </div>
@@ -294,7 +294,7 @@ export function OrgUnitForm({
               setSelectedParentId(unit ? unit.orgUnitId : null);
               form.setValue("parentOrgUnitId", unit ? unit.orgUnitId : null);
             }}
-            placeholder="Search and select parent (e.g. DIEZ Holding, Technology BU)..."
+            placeholder="Search and choose where this reports to..."
           />
         </div>
       )}
@@ -303,7 +303,7 @@ export function OrgUnitForm({
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            3. Basic Information
+            3. Details
           </Label>
         </div>
 
@@ -311,7 +311,7 @@ export function OrgUnitForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <Label htmlFor="name" className="text-sm font-semibold text-foreground">
-              Unit Name (English) <span className="text-destructive">*</span>
+              Name (English) <span className="text-destructive">*</span>
             </Label>
             <Input
               id="name"
@@ -327,7 +327,7 @@ export function OrgUnitForm({
 
           <div className="space-y-1.5">
             <Label htmlFor="nameAr" className="text-sm font-semibold text-muted-foreground">
-              Unit Name (Arabic - Optional)
+              Name (Arabic - Optional)
             </Label>
             <Input
               id="nameAr"
@@ -339,12 +339,12 @@ export function OrgUnitForm({
           </div>
         </div>
 
-        {/* Code & Cost Center */}
+        {/* Code & Cost Centre */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <Label htmlFor="code" className="text-sm font-semibold text-foreground">
-                Short Identifier Code <span className="text-destructive">*</span>
+                Code <span className="text-destructive">*</span>
               </Label>
               <span className="text-[11px] text-muted-foreground flex items-center gap-1">
                 <Sparkles className="h-3 w-3 text-amber-500" />
@@ -366,10 +366,10 @@ export function OrgUnitForm({
             )}
           </div>
 
-          {/* Cost Center */}
+          {/* Cost Centre */}
           <div className="space-y-1.5">
             <Label htmlFor="costCenterCode" className="text-sm font-semibold text-foreground">
-              Cost Center / Budget Code (Optional)
+              Cost centre (Optional)
             </Label>
             <Input
               id="costCenterCode"
@@ -378,13 +378,13 @@ export function OrgUnitForm({
               className="font-mono uppercase text-sm h-11 shadow-2xs"
             />
             <p className="text-[11px] text-muted-foreground">
-              Used by Finance & Budget allocation workflows.
+              Used for financial budget tracking.
             </p>
           </div>
         </div>
       </div>
 
-      {/* 4. Optional Advanced Information Accordion */}
+      {/* 4. Optional Details Accordion */}
       <div className="rounded-xl border border-border/80 bg-card overflow-hidden">
         <button
           type="button"
@@ -393,7 +393,7 @@ export function OrgUnitForm({
         >
           <div className="flex items-center gap-2">
             <SlidersHorizontal className="h-4 w-4 text-primary" />
-            <span>Additional Contact & System Details (Optional)</span>
+            <span>Optional details (Dates & contact)</span>
           </div>
           {showAdvanced ? (
             <ChevronUp className="h-4 w-4" />
@@ -407,14 +407,14 @@ export function OrgUnitForm({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="effectiveFrom" className="text-xs font-semibold">
-                  Effective Start Date
+                  Start date
                 </Label>
                 <Input id="effectiveFrom" type="date" {...form.register("effectiveFrom")} className="h-9 text-sm" />
               </div>
 
               <div className="space-y-1.5">
                 <Label htmlFor="effectiveTo" className="text-xs font-semibold">
-                  Effective End Date
+                  End date
                 </Label>
                 <Input id="effectiveTo" type="date" {...form.register("effectiveTo")} className="h-9 text-sm" />
               </div>

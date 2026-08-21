@@ -40,6 +40,7 @@ import {
   useOrgUnitTypes,
   useOrgUnitAncestors,
 } from "@/hooks/useOrganization";
+import { orgUnitsApi } from "@/lib/api/organization";
 import { usePermission } from "@/hooks/usePermission";
 import {
   OrgUnitEntity,
@@ -284,35 +285,75 @@ export function OrgTree({
     }
   }, [deepLinkNodeId, ancestorPathData]);
 
-  // Auto-expand root on initial load if expandedIds is empty
+  // Auto-expand root on initial load if expandedIds is empty & prefetch root children
   React.useEffect(() => {
-    if (effectiveRoots.length > 0 && expandedIds.size === 0) {
-      setExpandedIds(new Set(effectiveRoots.map((r) => r.orgUnitId)));
+    if (effectiveRoots.length > 0) {
+      if (expandedIds.size === 0) {
+        setExpandedIds(new Set(effectiveRoots.map((r) => r.orgUnitId)));
+      }
+
+      effectiveRoots.forEach(async (root) => {
+        try {
+          const children = await orgUnitsApi.getChildren(root.orgUnitId);
+          setChildrenCache((prev) => {
+            if (prev.has(root.orgUnitId)) return prev;
+            const next = new Map(prev);
+            next.set(root.orgUnitId, children);
+            return next;
+          });
+        } catch {
+          // Handled gracefully
+        }
+      });
     }
   }, [effectiveRoots, expandedIds.size]);
 
-  // Helper to toggle expansion
-  const toggleExpand = React.useCallback((unitId: string, e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    setExpandedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(unitId)) {
-        next.delete(unitId);
-      } else {
-        next.add(unitId);
-      }
-      return next;
-    });
-  }, []);
+  // Helper to toggle expansion with lazy fetching
+  const toggleExpand = React.useCallback(
+    async (unitId: string, e?: React.MouseEvent) => {
+      e?.stopPropagation();
+      setExpandedIds((prev) => {
+        const next = new Set(prev);
+        if (next.has(unitId)) {
+          next.delete(unitId);
+        } else {
+          next.add(unitId);
+        }
+        return next;
+      });
+
+      setChildrenCache((currentCache) => {
+        if (!currentCache.has(unitId)) {
+          orgUnitsApi
+            .getChildren(unitId)
+            .then((children) => {
+              setChildrenCache((prev) => {
+                const next = new Map(prev);
+                next.set(unitId, children);
+                return next;
+              });
+            })
+            .catch((err) => {
+              console.error("Failed to load unit children in tree:", err);
+            });
+        }
+        return currentCache;
+      });
+    },
+    []
+  );
 
   // Update children cache when loaded
-  const handleChildrenLoaded = React.useCallback((parentId: string, children: OrgUnitSummaryDto[]) => {
-    setChildrenCache((prev) => {
-      const next = new Map(prev);
-      next.set(parentId, children);
-      return next;
-    });
-  }, []);
+  const handleChildrenLoaded = React.useCallback(
+    (parentId: string, children: OrgUnitSummaryDto[]) => {
+      setChildrenCache((prev) => {
+        const next = new Map(prev);
+        next.set(parentId, children);
+        return next;
+      });
+    },
+    []
+  );
 
   // Flatten visible tree nodes for virtualisation & keyboard navigation
   const flatVisibleNodes: FlatVisibleNode[] = React.useMemo(() => {
@@ -539,7 +580,7 @@ export function OrgTree({
           <div>
             <span className="font-bold">Your departments</span>
             <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">
-              Your view is limited to your assigned organizational scope.
+              You&apos;re seeing the parts of the organisation you work with.
             </p>
           </div>
         </div>
@@ -549,13 +590,13 @@ export function OrgTree({
       <div
         ref={scrollContainerRef}
         role="tree"
-        aria-label="Organization Hierarchy Tree"
+        aria-label="Organisation tree"
         tabIndex={0}
         className="flex-1 overflow-y-auto p-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-primary select-none"
       >
         {/* Loading State: Indented Skeletons (Part 2.7) */}
         {isLoadingRoots && flatVisibleNodes.length === 0 ? (
-          <div className="space-y-2 p-2" aria-label="Loading hierarchy...">
+          <div className="space-y-2 p-2" aria-label="Loading organisation list...">
             {[0, 1, 1, 2, 2, 3].map((depth, idx) => (
               <div
                 key={idx}
@@ -572,7 +613,7 @@ export function OrgTree({
           /* Error State with Retry (Part 2.7) */
           <div className="p-6 text-center space-y-3">
             <p className="text-xs text-destructive font-medium">
-              Failed to load organization hierarchy.
+              Failed to load organisation list.
             </p>
             <Button
               variant="outline"
@@ -587,11 +628,11 @@ export function OrgTree({
         ) : flatVisibleNodes.length === 0 ? (
           /* Empty State (Part 2.7) */
           <div className="p-6 text-center space-y-2">
-            <p className="text-xs font-medium text-foreground">No organization units available.</p>
+            <p className="text-xs font-medium text-foreground">No organisation units available.</p>
             <p className="text-[11px] text-muted-foreground">
               {isScopedFragment
-                ? "No units found within your assigned scope."
-                : "Create a root organization to initialize the tree."}
+                ? "No departments or teams found in your view."
+                : "Add the first organisation unit to begin."}
             </p>
           </div>
         ) : isVirtualised ? (
@@ -816,7 +857,7 @@ function TreeRow({
                   className="gap-2 cursor-pointer"
                 >
                   <Plus className="h-3.5 w-3.5 text-emerald-600" />
-                  Add Sub-Unit
+                  Add under this
                 </DropdownMenuItem>
               )}
 
@@ -829,7 +870,7 @@ function TreeRow({
                   className="gap-2 cursor-pointer"
                 >
                   <ArrowRightLeft className="h-3.5 w-3.5 text-blue-600" />
-                  Move Subtree
+                  Move
                 </DropdownMenuItem>
               )}
 
@@ -842,7 +883,7 @@ function TreeRow({
                   className="gap-2 cursor-pointer"
                 >
                   <Power className="h-3.5 w-3.5 text-amber-600" />
-                  {unit.isActive ? "Deactivate Unit" : "Activate Unit"}
+                  {unit.isActive ? "Archive" : "Restore"}
                 </DropdownMenuItem>
               )}
 
@@ -857,7 +898,7 @@ function TreeRow({
                     className="gap-2 text-destructive focus:text-destructive cursor-pointer"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
-                    Delete Unit
+                    Remove
                   </DropdownMenuItem>
                 </>
               )}

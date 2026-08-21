@@ -75,6 +75,7 @@ interface DataTableProps<T = any> {
   emptyMessage?: string;
   className?: string;
   compact?: boolean;
+  onRowClick?: (row: T) => void;
   
   // High-Performance Features
   enableSearch?: boolean;
@@ -98,6 +99,7 @@ export function DataTable<T = any>({
   emptyMessage = "No records found.",
   className,
   compact = false,
+  onRowClick,
   enableSearch = false,
   searchPlaceholder = "Search records...",
   globalFilterFields,
@@ -397,8 +399,10 @@ export function DataTable<T = any>({
                   <TableRow
                     key={row.id}
                     data-state={isSelected ? "selected" : undefined}
+                    onClick={() => onRowClick?.(row.original)}
                     className={cn(
                       "border-slate-100 dark:border-slate-800 premium-transition hover:bg-slate-50 dark:hover:bg-slate-800/50 relative hover:z-10 hover:shadow-sm",
+                      onRowClick && "cursor-pointer",
                       idx % 2 === 1 && !isSelected && "bg-slate-50/40 dark:bg-slate-900/10",
                       isSelected && "bg-blue-50/60 dark:bg-blue-950/30"
                     )}

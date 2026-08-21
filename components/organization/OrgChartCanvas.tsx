@@ -10,8 +10,7 @@ import {
   BackgroundVariant,
   Node,
   Edge,
-  useNodesState,
-  useEdgesState,
+  NodeTypes,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
@@ -37,16 +36,11 @@ import { OrgChartNode, CollapsedSiblingsCard } from "./chart";
 import { computeTreeLayout, LayoutOrientation } from "@/lib/org-chart/tree-layout";
 import {
   useOrgUnits,
-  useOrgUnitChildren,
   useOrgUnitAncestors,
 } from "@/hooks/useOrganization";
 import { orgUnitsApi } from "@/lib/api/organization";
 import { OrgUnitSummaryDto, OrgUnitEntity } from "@/lib/types/organization.types";
 import { cn } from "@/lib/utils";
-
-import {
-  NodeTypes,
-} from "@xyflow/react";
 
 const nodeTypes: NodeTypes = {
   orgUnitNode: OrgChartNode as React.ComponentType<any>,
@@ -61,6 +55,7 @@ export interface OrgChartCanvasProps {
   onSelectUnit?: (unit: OrgUnitSummaryDto | OrgUnitEntity) => void;
   onOpenDetails?: (unit: OrgUnitSummaryDto | OrgUnitEntity) => void;
   onAddUnit?: () => void;
+  onSwitchToList?: () => void;
   deepLinkUnitId?: string | null;
   className?: string;
 }
@@ -70,6 +65,7 @@ function OrgChartCanvasInner({
   onSelectUnit,
   onOpenDetails,
   onAddUnit,
+  onSwitchToList,
   deepLinkUnitId,
   className,
 }: OrgChartCanvasProps) {
@@ -149,7 +145,7 @@ function OrgChartCanvasInner({
     return [];
   }, [rootUnits, isScopedFragment, allUnitsData]);
 
-  // Sync orientation to sessionStorage
+  // Persist state changes in sessionStorage
   React.useEffect(() => {
     if (typeof window !== "undefined") {
       try {
@@ -160,7 +156,6 @@ function OrgChartCanvasInner({
     }
   }, [orientation]);
 
-  // Sync expanded IDs to sessionStorage
   React.useEffect(() => {
     if (typeof window !== "undefined") {
       try {
@@ -180,24 +175,22 @@ function OrgChartCanvasInner({
   React.useEffect(() => {
     if (
       effectiveRoots.length > 0 &&
-      !hasInitializedExpansionRef.current &&
-      expandedIds.size === 0
+      !hasInitializedExpansionRef.current
     ) {
       hasInitializedExpansionRef.current = true;
-      const initialSet = new Set<string>();
 
-      // Expand top-level roots
-      effectiveRoots.forEach((root) => {
-        initialSet.add(root.orgUnitId);
+      setExpandedIds((prev) => {
+        const next = new Set(prev);
+        effectiveRoots.forEach((root) => next.add(root.orgUnitId));
+        return next;
       });
 
-      setExpandedIds(initialSet);
-
-      // Pre-fetch children for each root to ensure level 2 renders immediately
+      // Pre-fetch children for each root
       effectiveRoots.forEach(async (root) => {
         try {
           const children = await orgUnitsApi.getChildren(root.orgUnitId);
           setChildrenCache((prev) => {
+            if (prev.has(root.orgUnitId)) return prev;
             const next = new Map(prev);
             next.set(root.orgUnitId, children);
             return next;
@@ -207,46 +200,45 @@ function OrgChartCanvasInner({
         }
       });
     }
-  }, [effectiveRoots, expandedIds.size]);
+  }, [effectiveRoots]);
 
   // 3. Lazy Expansion Toggle Handler
   const handleToggleExpand = React.useCallback(
     async (unitId: string) => {
-      const isCurrentlyExpanded = expandedIds.has(unitId);
-
-      if (isCurrentlyExpanded) {
-        // Collapse
-        setExpandedIds((prev) => {
-          const next = new Set(prev);
+      setExpandedIds((prev) => {
+        const next = new Set(prev);
+        if (next.has(unitId)) {
           next.delete(unitId);
-          return next;
-        });
-      } else {
-        // Expand: check if children exist in cache
-        if (!childrenCache.has(unitId)) {
-          setIsLoadingChildrenMap((prev) => ({ ...prev, [unitId]: true }));
-          try {
-            const children = await orgUnitsApi.getChildren(unitId);
-            setChildrenCache((prev) => {
-              const next = new Map(prev);
-              next.set(unitId, children);
-              return next;
-            });
-          } catch (err) {
-            console.error("Failed to load unit children:", err);
-          } finally {
-            setIsLoadingChildrenMap((prev) => ({ ...prev, [unitId]: false }));
-          }
-        }
-
-        setExpandedIds((prev) => {
-          const next = new Set(prev);
+        } else {
           next.add(unitId);
-          return next;
-        });
-      }
+        }
+        return next;
+      });
+
+      // If not yet in cache, fetch children
+      setChildrenCache((currentCache) => {
+        if (!currentCache.has(unitId)) {
+          setIsLoadingChildrenMap((prev) => ({ ...prev, [unitId]: true }));
+          orgUnitsApi
+            .getChildren(unitId)
+            .then((children) => {
+              setChildrenCache((prev) => {
+                const next = new Map(prev);
+                next.set(unitId, children);
+                return next;
+              });
+            })
+            .catch((err) => {
+              console.error("Failed to load unit children:", err);
+            })
+            .finally(() => {
+              setIsLoadingChildrenMap((prev) => ({ ...prev, [unitId]: false }));
+            });
+        }
+        return currentCache;
+      });
     },
-    [expandedIds, childrenCache]
+    []
   );
 
   // 4. Show All Siblings Handler
@@ -264,8 +256,13 @@ function OrgChartCanvasInner({
     { enabled: Boolean(deepLinkUnitId) }
   );
 
+  const fetchedAncestorsRef = React.useRef<string>("");
+
   React.useEffect(() => {
     if (deepLinkUnitId && ancestorPathData && ancestorPathData.length > 0) {
+      if (fetchedAncestorsRef.current === deepLinkUnitId) return;
+      fetchedAncestorsRef.current = deepLinkUnitId;
+
       // Auto-expand all ancestors in the chain
       setExpandedIds((prev) => {
         const next = new Set(prev);
@@ -275,21 +272,20 @@ function OrgChartCanvasInner({
 
       // Pre-fetch children for each ancestor along the path
       ancestorPathData.forEach(async (ancestor) => {
-        if (!childrenCache.has(ancestor.orgUnitId)) {
-          try {
-            const children = await orgUnitsApi.getChildren(ancestor.orgUnitId);
-            setChildrenCache((prev) => {
-              const next = new Map(prev);
-              next.set(ancestor.orgUnitId, children);
-              return next;
-            });
-          } catch {
-            // Ignore
-          }
+        try {
+          const children = await orgUnitsApi.getChildren(ancestor.orgUnitId);
+          setChildrenCache((prev) => {
+            if (prev.has(ancestor.orgUnitId)) return prev;
+            const next = new Map(prev);
+            next.set(ancestor.orgUnitId, children);
+            return next;
+          });
+        } catch {
+          // Ignore
         }
       });
     }
-  }, [deepLinkUnitId, ancestorPathData, childrenCache]);
+  }, [deepLinkUnitId, ancestorPathData]);
 
   // 6. Compute Layout Nodes & Edges (via d3-hierarchy engine)
   const computedLayout = React.useMemo(() => {
@@ -344,24 +340,20 @@ function OrgChartCanvasInner({
     handleShowAllSiblings,
   ]);
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(computedLayout.nodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(computedLayout.edges);
-
-  // Sync state whenever layout changes
-  React.useEffect(() => {
-    setNodes(computedLayout.nodes);
-    setEdges(computedLayout.edges);
-  }, [computedLayout.nodes, computedLayout.edges, setNodes, setEdges]);
-
   // 7. Auto-center on initial layout or deep link
   const initialFitRef = React.useRef(false);
 
   React.useEffect(() => {
     if (computedLayout.nodes.length > 0 && !initialFitRef.current) {
       initialFitRef.current = true;
-      setTimeout(() => {
-        reactFlowInstance.fitView({ padding: 0.2, duration: 400 });
-      }, 100);
+      const timer = setTimeout(() => {
+        try {
+          reactFlowInstance.fitView({ padding: 0.2, duration: 400 });
+        } catch {
+          // Viewport not yet mounted
+        }
+      }, 150);
+      return () => clearTimeout(timer);
     }
   }, [computedLayout.nodes.length, reactFlowInstance]);
 
@@ -370,13 +362,18 @@ function OrgChartCanvasInner({
     if (deepLinkUnitId) {
       const targetNode = computedLayout.nodes.find((n) => n.id === deepLinkUnitId);
       if (targetNode) {
-        setTimeout(() => {
-          reactFlowInstance.setCenter(
-            targetNode.position.x + 120,
-            targetNode.position.y + 90,
-            { zoom: 0.9, duration: 500 }
-          );
+        const timer = setTimeout(() => {
+          try {
+            reactFlowInstance.setCenter(
+              targetNode.position.x + 120,
+              targetNode.position.y + 90,
+              { zoom: 0.9, duration: 500 }
+            );
+          } catch {
+            // Viewport not ready
+          }
         }, 200);
+        return () => clearTimeout(timer);
       }
     }
   }, [deepLinkUnitId, computedLayout.nodes, reactFlowInstance]);
@@ -431,11 +428,15 @@ function OrgChartCanvasInner({
         if (unitData && unitData.unit) {
           e.preventDefault();
           onSelectUnit?.(unitData.unit);
-          reactFlowInstance.setCenter(
-            nextNode.position.x + 120,
-            nextNode.position.y + 90,
-            { zoom: 0.9, duration: 300 }
-          );
+          try {
+            reactFlowInstance.setCenter(
+              nextNode.position.x + 120,
+              nextNode.position.y + 90,
+              { zoom: 0.9, duration: 300 }
+            );
+          } catch {
+            // Ignore
+          }
         }
       }
 
@@ -454,9 +455,9 @@ function OrgChartCanvasInner({
       }
     },
     [
+      reactFlowInstance,
       computedLayout.nodes,
       selectedUnitId,
-      reactFlowInstance,
       onSelectUnit,
       onOpenDetails,
     ]
@@ -464,52 +465,68 @@ function OrgChartCanvasInner({
 
   return (
     <div
-      role="region"
-      aria-label="Organisation Chart Canvas"
       tabIndex={0}
+      role="region"
+      aria-label="Organisation Chart Canvas. Use arrow keys to navigate between departments, Enter or Space to open details, Plus/Minus to zoom, Zero to fit view."
       onKeyDown={handleKeyDown}
       className={cn(
-        "relative w-full h-[650px] lg:h-[750px] rounded-2xl bg-card border border-border overflow-hidden select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+        "relative w-full h-[680px] min-h-[500px] rounded-2xl border border-border bg-card/60 shadow-xs overflow-hidden select-none outline-none focus-visible:ring-2 focus-visible:ring-primary/40 motion-reduce:transition-none",
         className
       )}
     >
-      {/* Scoped Fragment Header Banner (Part 6.2) */}
+      {/* Screen Reader Affordance (Prompt V9 / A11y Requirement) */}
+      {onSwitchToList && (
+        <button
+          type="button"
+          onClick={onSwitchToList}
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2.5 focus:bg-primary focus:text-primary-foreground focus:rounded-xl focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring focus:font-medium focus:text-xs"
+        >
+          Switch to accessible list view
+        </button>
+      )}
+
+      {/* Scoped User Notice Banner (Part 6.2 - Calm, non-technical) */}
       {isScopedFragment && (
-        <div className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3.5 py-2 rounded-xl bg-background/90 backdrop-blur-md border border-border/80 text-xs shadow-xs">
+        <div className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3.5 py-2 rounded-xl bg-background/90 backdrop-blur-md border border-border shadow-xs text-xs text-muted-foreground animate-in fade-in-50">
           <Info className="h-4 w-4 text-primary shrink-0" />
-          <span className="font-medium text-foreground">
-            You&apos;re seeing the parts of the organisation you work with.
+          <span>You&apos;re seeing the parts of the organisation you work with.</span>
+        </div>
+      )}
+
+      {/* Loading Skeleton Tree State (Part 6.5) */}
+      {isLoadingRoots && (
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 bg-card/80 backdrop-blur-xs space-y-6">
+          <div className="flex flex-col items-center space-y-2">
+            <Skeleton className="h-10 w-10 rounded-xl" />
+            <Skeleton className="h-4 w-48 rounded" />
+          </div>
+
+          <div className="flex items-center gap-8">
+            <Skeleton className="w-[240px] h-[160px] rounded-2xl" />
+            <Skeleton className="w-[240px] h-[160px] rounded-2xl" />
+            <Skeleton className="w-[240px] h-[160px] rounded-2xl" />
+          </div>
+
+          <span className="text-xs text-muted-foreground font-medium animate-pulse">
+            Loading organisation chart...
           </span>
         </div>
       )}
 
-      {/* Loading Skeleton Formation (Part 6.5) */}
-      {isLoadingRoots && computedLayout.nodes.length === 0 && (
-        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-8 bg-card/90 backdrop-blur-xs space-y-8">
-          <div className="flex flex-col items-center space-y-4">
-            <Skeleton className="h-[140px] w-[240px] rounded-xl" />
-            <div className="h-6 w-0.5 bg-border" />
-            <div className="flex items-center gap-8">
-              <Skeleton className="h-[140px] w-[240px] rounded-xl" />
-              <Skeleton className="h-[140px] w-[240px] rounded-xl" />
-              <Skeleton className="h-[140px] w-[240px] rounded-xl" />
-            </div>
-          </div>
-          <p className="text-xs text-muted-foreground font-medium animate-pulse">
-            Loading organisation chart...
-          </p>
-        </div>
-      )}
-
-      {/* Error State with Retry (Part 6.5) */}
+      {/* Error State with Reason and Retry (Part 6.5) */}
       {isErrorRoots && (
-        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 bg-card space-y-3">
-          <p className="text-sm font-semibold text-destructive">
-            Unable to load the organisation chart.
-          </p>
-          <p className="text-xs text-muted-foreground max-w-sm text-center">
-            Something went wrong while communicating with the server.
-          </p>
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 bg-card space-y-3 text-center">
+          <div className="h-10 w-10 rounded-full bg-destructive/10 text-destructive flex items-center justify-center">
+            <RotateCw className="h-5 w-5" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-sm font-bold text-foreground">
+              Unable to load organisation chart
+            </h3>
+            <p className="text-xs text-muted-foreground max-w-sm">
+              We encountered a network issue loading the organisation units. Please retry.
+            </p>
+          </div>
           <Button
             size="sm"
             variant="outline"
@@ -547,10 +564,8 @@ function OrgChartCanvasInner({
 
       {/* Core Interactive Canvas */}
       <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
+        nodes={computedLayout.nodes}
+        edges={computedLayout.edges}
         nodeTypes={nodeTypes}
         // Viewport Virtualization & 60fps Optimization (Part 5)
         onlyRenderVisibleElements={true}
@@ -620,7 +635,11 @@ function OrgChartCanvasInner({
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => reactFlowInstance.zoomTo(0.5, { duration: 300 })}
+          onClick={() => {
+            try {
+              reactFlowInstance.zoomTo(0.5, { duration: 300 });
+            } catch {}
+          }}
           className="h-7 px-2 text-[11px] font-mono text-muted-foreground hover:text-foreground"
         >
           50%
@@ -630,7 +649,11 @@ function OrgChartCanvasInner({
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => reactFlowInstance.zoomTo(0.8, { duration: 300 })}
+          onClick={() => {
+            try {
+              reactFlowInstance.zoomTo(0.8, { duration: 300 });
+            } catch {}
+          }}
           className="h-7 px-2 text-[11px] font-mono text-muted-foreground hover:text-foreground"
         >
           80%
@@ -640,7 +663,11 @@ function OrgChartCanvasInner({
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => reactFlowInstance.zoomTo(1.0, { duration: 300 })}
+          onClick={() => {
+            try {
+              reactFlowInstance.zoomTo(1.0, { duration: 300 });
+            } catch {}
+          }}
           className="h-7 px-2 text-[11px] font-mono text-muted-foreground hover:text-foreground"
         >
           100%
@@ -650,7 +677,11 @@ function OrgChartCanvasInner({
           type="button"
           variant="secondary"
           size="sm"
-          onClick={() => reactFlowInstance.fitView({ padding: 0.2, duration: 400 })}
+          onClick={() => {
+            try {
+              reactFlowInstance.fitView({ padding: 0.2, duration: 400 });
+            } catch {}
+          }}
           className="h-7 px-2.5 text-xs font-semibold gap-1"
         >
           <Maximize2 className="h-3 w-3" />
