@@ -69,7 +69,7 @@ export function OrgBreadcrumb({
 
   return (
     <nav
-      aria-label="Organisation path"
+      aria-label="Organization path"
       className={cn("flex items-center text-xs text-muted-foreground", className)}
       {...props}
     >

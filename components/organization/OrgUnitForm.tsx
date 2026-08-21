@@ -194,7 +194,7 @@ export function OrgUnitForm({
           icon: Building2,
           color: "text-purple-600 dark:text-purple-400 bg-purple-500/10 border-purple-500/20",
           tag: "Holding Company",
-          hint: "Top-level holding organisation (e.g. DIEZ)",
+          hint: "Top-level holding organization (e.g. DIEZ)",
         };
       case 2:
         return {

@@ -11,7 +11,7 @@ export default function SectionsRedirectPage() {
 
   return (
     <div className="p-8 text-center text-xs text-muted-foreground">
-      Redirecting to Organisation Grouped Directory...
+      Redirecting to Organization Grouped Directory...
     </div>
   );
 }

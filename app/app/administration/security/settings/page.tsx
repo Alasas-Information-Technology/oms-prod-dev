@@ -35,7 +35,7 @@ export default async function SecuritySettingsPage() {
     }
 
     return (
-        <div className="container mx-auto py-10 max-w-7xl">
+        <div className="p-6 max-w-[880px] mx-auto">
             <SecuritySettingsDashboard />
         </div>
     );

@@ -6,7 +6,6 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "./theme-provider";
 import { ConfirmProvider } from "@/hooks/use-confirm";
 import { TooltipProvider } from "./ui/tooltip";
-import { ReactLenis } from "lenis/react";
 
 export function Providers({ children }: { children: React.ReactNode }) {
     const [queryClient] = useState(
@@ -24,21 +23,19 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
     return (
         <QueryClientProvider client={queryClient}>
-            <ReactLenis root>
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="system"
-                    enableSystem
-                >
-                    <TooltipProvider>
-                        <AuthProvider>
-                            <ConfirmProvider>
-                                {children}
-                            </ConfirmProvider>
-                        </AuthProvider>
-                    </TooltipProvider>
-                </ThemeProvider>
-            </ReactLenis>
+            <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+            >
+                <TooltipProvider>
+                    <AuthProvider>
+                        <ConfirmProvider>
+                            {children}
+                        </ConfirmProvider>
+                    </AuthProvider>
+                </TooltipProvider>
+            </ThemeProvider>
         </QueryClientProvider>
     );
 }

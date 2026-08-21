@@ -29,7 +29,7 @@ export type OrgTypeKey =
 
 export interface OrgTypeIconProps extends React.HTMLAttributes<HTMLDivElement> {
   type?: OrgTypeKey;
-  size?: "xs" | "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg" | "detail";
   showLabel?: boolean;
   className?: string;
 }
@@ -46,7 +46,7 @@ export function getOrgTypeConfig(type?: OrgTypeKey): TypeConfig {
   if (normalized === "1" || normalized === "ORGANIZATION" || normalized === "ORG" || normalized === "HOLDING") {
     return {
       icon: Landmark,
-      label: "Organisation",
+      label: "Organization",
       badgeClass: "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/20",
     };
   }
@@ -96,6 +96,11 @@ const sizeConfig = {
   md: {
     container: "h-8 w-8 rounded-lg",
     icon: "h-4.5 w-4.5",
+    text: "text-sm",
+  },
+  detail: {
+    container: "h-[36px] w-[36px] rounded-[10px]",
+    icon: "h-[18px] w-[18px]",
     text: "text-sm",
   },
   lg: {

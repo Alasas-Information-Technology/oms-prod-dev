@@ -32,7 +32,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
@@ -62,6 +61,7 @@ import {
   useOrgUnitChildren,
   useOrgUnitAncestors,
   useOrgUnitChangeLog,
+  useOrgUnitCurrentHead,
   useApprovalChain,
   useBudgetOwner,
   useUpdateOrgUnit,
@@ -159,6 +159,34 @@ function formatCountSentence(
 }
 
 /**
+ * Formats a date string as '31 Dec 2025' per Part 3.5.
+ */
+function formatDisplayDate(dateStr?: string | null): string {
+  if (!dateStr) return "";
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  } catch {
+    return dateStr;
+  }
+}
+
+/**
+ * Extracts 2 initials from a person's display name.
+ */
+function getInitials(name?: string | null): string {
+  if (!name) return "";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+/**
  * OrgUnitDetailView — Slide-Over Detail Panel for Organization Units.
  *
  * Implements:
@@ -196,6 +224,7 @@ export function OrgUnitDetailView({
   const { data: changeLogsData, isLoading: isLoadingLogs } = useOrgUnitChangeLog(unitId, 1, 50);
   const { data: approvalChain, isLoading: isLoadingChain } = useApprovalChain(unitId);
   const { data: budgetOwner, isLoading: isLoadingBudget } = useBudgetOwner(unitId);
+  const { data: currentHead } = useOrgUnitCurrentHead(unitId);
 
   // Mutations
   const updateMutation = useUpdateOrgUnit();
@@ -276,7 +305,7 @@ export function OrgUnitDetailView({
           </Button>
           <Button asChild size="sm" className="text-xs">
             <Link href="/app/administration/master-data/organization">
-              Return to Organisation
+              Return to Organization
             </Link>
           </Button>
         </div>
@@ -386,7 +415,7 @@ export function OrgUnitDetailView({
             {row.head?.displayName || row.head?.userDisplayName}
           </span>
         ) : (
-          <span className="text-xs text-muted-foreground italic">No one in charge</span>
+          <span className="text-xs text-muted-foreground font-normal">No one in charge</span>
         ),
     },
     {
@@ -419,315 +448,413 @@ export function OrgUnitDetailView({
     (unit as any).peopleCount ?? (unit as any).assignedUserCount
   );
 
+  const headName =
+    currentHead?.userDisplayName ||
+    currentHead?.username ||
+    unit.head?.displayName ||
+    unit.head?.userDisplayName;
+  const isHeadAssigned = Boolean(headName && headName !== "Assigned Head");
+  const effectiveHeadSince = currentHead?.effectiveFrom
+    ? String(currentHead.effectiveFrom).split("T")[0]
+    : unit.head?.effectiveFrom
+      ? String(unit.head.effectiveFrom).split("T")[0]
+      : null;
+
   return (
-    <div className={cn("space-y-6", className)}>
+    <div className={cn("p-6 space-y-0", className)}>
       {/* ========================================================================= */}
-      {/* Top Header: Code Chip + Breadcrumb Path + ⋯ Menu + Edit (Part 3.4)         */}
+      {/* 3.1 Identity row: Code chip · Type · Actions                             */}
       {/* ========================================================================= */}
-      <div className="space-y-3 pb-4 border-b border-border/60">
-        {/* Top Meta Line: Code Chip + Panel Label */}
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded-md bg-muted text-muted-foreground border border-border/50">
-              {unit.code}
-            </span>
-            <span className="text-xs text-muted-foreground font-medium">
-              {typeName} details
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* ⋯ Menu for Destructive Actions (One Click Deep per Part 3.4) */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 w-8 p-0 rounded-lg text-muted-foreground hover:text-foreground"
-                  aria-label="More actions"
-                >
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 p-1">
-                {can(ORG_PERMISSIONS.MOVE) && (
-                  <DropdownMenuItem
-                    onClick={() => setIsMoveOpen(true)}
-                    className="gap-2 text-xs cursor-pointer"
-                  >
-                    <ArrowRightLeft className="h-3.5 w-3.5 text-blue-600" />
-                    <span>Move {typeName.toLowerCase()}</span>
-                  </DropdownMenuItem>
-                )}
-
-                {can(ORG_PERMISSIONS.UPDATE) && (
-                  <DropdownMenuItem
-                    onClick={() => setIsArchiveOpen(true)}
-                    className="gap-2 text-xs cursor-pointer"
-                  >
-                    <Archive className="h-3.5 w-3.5 text-amber-600" />
-                    <span>{unit.isActive ? `Archive ${typeName.toLowerCase()}` : `Restore ${typeName.toLowerCase()}`}</span>
-                  </DropdownMenuItem>
-                )}
-
-                {can(ORG_PERMISSIONS.DELETE) && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => setIsDeleteOpen(true)}
-                      className="gap-2 text-xs text-destructive focus:text-destructive cursor-pointer"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                      <span>Remove {typeName.toLowerCase()}</span>
-                    </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Primary Edit Button */}
-            {can(ORG_PERMISSIONS.UPDATE) && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsEditOpen(true)}
-                className="gap-1.5 text-xs h-8 rounded-lg"
-              >
-                <Edit2 className="h-3.5 w-3.5" />
-                Edit
-              </Button>
-            )}
-          </div>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <span className="font-mono text-[11px] font-normal px-[7px] py-[3px] rounded-[4px] bg-muted/60 text-muted-foreground border border-border/40 select-none">
+            {unit.code}
+          </span>
+          <span className="text-muted-foreground/60 text-[13px]">·</span>
+          <span className="text-[13px] text-muted-foreground font-normal truncate">
+            {typeName}
+          </span>
         </div>
 
-        {/* Identity Block: Icon + Name + Arabic Name + "Part of" clickable path */}
-        <div className="flex items-start gap-3 pt-1">
-          <OrgTypeIcon type={typeCode || "DEPARTMENT"} size="lg" className="mt-0.5 shrink-0" />
-          <div className="space-y-1 min-w-0 flex-1">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground leading-tight">
-              {unit.name}
-            </h1>
-
-            {unit.nameAr && (
-              <p dir="rtl" lang="ar" className="text-xs text-muted-foreground font-arabic">
-                {unit.nameAr}
-              </p>
-            )}
-
-            {/* "Part of" Clickable Lineage Path (Part 3.4) */}
-            <div className="pt-0.5 text-xs text-muted-foreground flex items-center gap-1.5 flex-wrap">
-              <span>Part of</span>
-              {breadcrumbItems.length > 0 ? (
-                <div className="flex items-center gap-1 flex-wrap">
-                  {breadcrumbItems.map((item, idx) => (
-                    <React.Fragment key={item.orgUnitId || idx}>
-                      {idx > 0 && <span className="text-muted-foreground/60">›</span>}
-                      <button
-                        type="button"
-                        onClick={() => item.orgUnitId && onNavigateUnit?.(item.orgUnitId)}
-                        className="font-medium text-foreground hover:text-primary hover:underline transition-colors"
-                      >
-                        {item.name}
-                      </button>
-                    </React.Fragment>
-                  ))}
-                </div>
-              ) : (
-                <span className="font-medium text-foreground">DIEZ (Top of organisation)</span>
+        {/* Actions: exactly 32px tall, 8px radius */}
+        <div className="flex items-center gap-1.5 shrink-0">
+          {/* ⋯ Menu for Destructive Actions */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0 rounded-[8px] text-muted-foreground hover:text-foreground hover:bg-muted"
+                aria-label="More actions"
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 p-1">
+              {can(ORG_PERMISSIONS.MOVE) && (
+                <DropdownMenuItem
+                  onClick={() => setIsMoveOpen(true)}
+                  className="gap-2 text-xs cursor-pointer"
+                >
+                  <ArrowRightLeft className="h-3.5 w-3.5 text-blue-600" />
+                  <span>Move {typeName.toLowerCase()}</span>
+                </DropdownMenuItem>
               )}
-            </div>
+
+              {can(ORG_PERMISSIONS.UPDATE) && (
+                <DropdownMenuItem
+                  onClick={() => setIsArchiveOpen(true)}
+                  className="gap-2 text-xs cursor-pointer"
+                >
+                  <Archive className="h-3.5 w-3.5 text-amber-600" />
+                  <span>{unit.isActive ? `Archive ${typeName.toLowerCase()}` : `Restore ${typeName.toLowerCase()}`}</span>
+                </DropdownMenuItem>
+              )}
+
+              {can(ORG_PERMISSIONS.DELETE) && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => setIsDeleteOpen(true)}
+                    className="gap-2 text-xs text-destructive focus:text-destructive cursor-pointer"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    <span>Remove {typeName.toLowerCase()}</span>
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Primary Edit Button: Ghost variant, 32px tall, 8px radius */}
+          {can(ORG_PERMISSIONS.UPDATE) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsEditOpen(true)}
+              className="gap-1.5 text-xs h-8 px-3 rounded-[8px] text-foreground hover:bg-muted font-normal"
+            >
+              <Edit2 className="h-3.5 w-3.5 text-muted-foreground" />
+              Edit
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 3.2 Title block: Icon (36px, 10px radius) + Title + Arabic + "Part of"   */}
+      {/* Rhythm: 16px below identity row, 6px to "Part of", 20px to tab row       */}
+      {/* ========================================================================= */}
+      <div className="flex items-start gap-3 mt-4">
+        <OrgTypeIcon
+          type={typeCode || "DEPARTMENT"}
+          size="detail"
+          className="mt-0.5 shrink-0"
+        />
+        <div className="min-w-0 flex-1">
+          <h1 className="text-[24px] font-semibold tracking-tight text-foreground leading-tight">
+            {unit.name}
+          </h1>
+
+          {unit.nameAr && (
+            <p dir="rtl" lang="ar" className="text-[13px] text-muted-foreground font-arabic mt-1">
+              {unit.nameAr}
+            </p>
+          )}
+
+          {/* "Part of": 6px under title, aligned to title's left edge */}
+          <div className="mt-1.5 text-[13px] text-muted-foreground flex items-center gap-1.5 flex-wrap">
+            <span className="text-muted-foreground/70">Part of</span>
+            {breadcrumbItems.length > 0 ? (
+              <div className="flex items-center gap-1 flex-wrap">
+                {breadcrumbItems.map((item, idx) => (
+                  <React.Fragment key={item.orgUnitId || idx}>
+                    {idx > 0 && <span className="text-muted-foreground/50 mx-0.5">›</span>}
+                    <button
+                      type="button"
+                      onClick={() => item.orgUnitId && onNavigateUnit?.(item.orgUnitId)}
+                      className="font-normal text-foreground hover:text-primary hover:underline transition-colors"
+                    >
+                      {item.name}
+                    </button>
+                  </React.Fragment>
+                ))}
+              </div>
+            ) : (
+              <span className="inline-flex items-center gap-1.5">
+                <span className="font-normal text-foreground">DIEZ</span>
+                <span className="text-[11px] px-1.5 py-0.5 rounded-[4px] bg-muted/60 text-muted-foreground font-normal border border-border/40">
+                  Top level
+                </span>
+              </span>
+            )}
           </div>
         </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* Detail Tabs (Part 3.4: Overview | Dynamic Child Type | People | History)  */}
+      {/* 3.3 Underline Tabs: 40px row, 1px full-width hairline, 2px accent line   */}
+      {/* Rhythm: 20px below "Part of", 24px below tab row to content               */}
       {/* ========================================================================= */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="bg-muted/60 p-1 rounded-xl w-full sm:w-auto self-start border border-border/60">
-          <TabsTrigger value="overview" className="text-xs gap-1.5 px-3.5 py-1.5 rounded-lg">
-            <Building2 className="h-3.5 w-3.5" />
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-5 space-y-6">
+        <TabsList className="h-[40px] w-full p-0 bg-transparent rounded-none border-b border-border flex items-center justify-start gap-0">
+          <TabsTrigger
+            value="overview"
+            className="h-[40px] px-4 first:pl-0 bg-transparent rounded-none text-sm text-muted-foreground hover:text-foreground data-[state=active]:text-foreground data-[state=active]:font-medium data-[state=active]:shadow-none data-[state=active]:bg-transparent relative transition-colors after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-transparent data-[state=active]:after:bg-primary"
+          >
             Overview
           </TabsTrigger>
 
-          <TabsTrigger value="children" className="text-xs gap-1.5 px-3.5 py-1.5 rounded-lg">
-            <Layers className="h-3.5 w-3.5" />
-            {childMeta.tabLabel} ({childrenList?.length || 0})
+          <TabsTrigger
+            value="children"
+            className="h-[40px] px-4 bg-transparent rounded-none text-sm text-muted-foreground hover:text-foreground data-[state=active]:text-foreground data-[state=active]:font-medium data-[state=active]:shadow-none data-[state=active]:bg-transparent relative transition-colors after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-transparent data-[state=active]:after:bg-primary"
+          >
+            {childMeta.tabLabel}
+            {childrenList && childrenList.length > 0 ? (
+              <span className="ml-1.5 text-[13px] text-muted-foreground/70 font-normal">
+                {childrenList.length}
+              </span>
+            ) : null}
           </TabsTrigger>
 
-          <TabsTrigger value="people" className="text-xs gap-1.5 px-3.5 py-1.5 rounded-lg">
-            <Users className="h-3.5 w-3.5" />
+          <TabsTrigger
+            value="people"
+            className="h-[40px] px-4 bg-transparent rounded-none text-sm text-muted-foreground hover:text-foreground data-[state=active]:text-foreground data-[state=active]:font-medium data-[state=active]:shadow-none data-[state=active]:bg-transparent relative transition-colors after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-transparent data-[state=active]:after:bg-primary"
+          >
             People
+            {((unit as any).peopleCount ?? (unit as any).assignedUserCount ?? 0) > 0 ? (
+              <span className="ml-1.5 text-[13px] text-muted-foreground/70 font-normal">
+                {(unit as any).peopleCount ?? (unit as any).assignedUserCount}
+              </span>
+            ) : null}
           </TabsTrigger>
 
-          <TabsTrigger value="history" className="text-xs gap-1.5 px-3.5 py-1.5 rounded-lg">
-            <History className="h-3.5 w-3.5" />
-            History ({changeLogsData?.total || 0})
+          <TabsTrigger
+            value="history"
+            className="h-[40px] px-4 bg-transparent rounded-none text-sm text-muted-foreground hover:text-foreground data-[state=active]:text-foreground data-[state=active]:font-medium data-[state=active]:shadow-none data-[state=active]:bg-transparent relative transition-colors after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-transparent data-[state=active]:after:bg-primary"
+          >
+            History
+            {(changeLogsData?.total || 0) > 0 ? (
+              <span className="ml-1.5 text-[13px] text-muted-foreground/70 font-normal">
+                {changeLogsData?.total}
+              </span>
+            ) : null}
           </TabsTrigger>
         </TabsList>
 
         {/* ===================================================================== */}
-        {/* Tab 1: Overview (Read-First Definition List per Part 3.4)             */}
+        {/* Tab 1: Overview (Flat Sections, Hairlines per Part 2 & 3.4-3.7)       */}
         {/* ===================================================================== */}
-        <TabsContent value="overview" className="space-y-6 m-0">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left 2 Columns: Definition List */}
-            <Card className="lg:col-span-2 border border-border shadow-xs">
-              <CardHeader className="pb-3 border-b border-border/60">
-                <CardTitle className="text-sm font-bold flex items-center gap-2">
-                  <Building2 className="h-4 w-4 text-primary" />
-                  Key Information
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Operational details and leadership appointments.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-4">
-                <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-xs">
-                  {/* Who's in charge */}
-                  <div className="space-y-1 sm:col-span-2 p-3 rounded-lg bg-muted/20 border border-border/50">
-                    <dt className="text-muted-foreground font-medium text-[11px] uppercase">
-                      Who&apos;s in charge
-                    </dt>
-                    <dd className="font-semibold text-foreground text-sm flex items-center gap-2 pt-0.5">
-                      <div className="h-6 w-6 rounded-full bg-primary/10 text-primary flex items-center justify-center">
-                        <User className="h-3.5 w-3.5" />
-                      </div>
-                      <span>
-                        {unit.head?.displayName || unit.head?.userDisplayName || (
-                          <span className="text-muted-foreground font-normal italic">
-                            No one in charge currently
-                          </span>
-                        )}
-                      </span>
-                      {unit.effectiveFrom && (
-                        <span className="text-xs text-muted-foreground font-normal ml-auto">
-                          Started {String(unit.effectiveFrom).split("T")[0]}
-                        </span>
-                      )}
-                    </dd>
+        <TabsContent value="overview" className="m-0">
+          <div className="grid grid-cols-1 min-[1100px]:grid-cols-[1fr_300px] gap-8 items-start">
+            {/* Left Column: Who's In Charge + Details */}
+            <div className="space-y-8 min-w-0">
+              {/* 3.5 Who's in charge */}
+              <div>
+                <span className="text-[11px] font-semibold tracking-[0.06em] uppercase text-muted-foreground block mb-3">
+                  Who&apos;s in charge
+                </span>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-muted/80 text-muted-foreground flex items-center justify-center text-xs font-medium border border-border/40 shrink-0">
+                    {isHeadAssigned ? (
+                      <span>{getInitials(headName)}</span>
+                    ) : (
+                      <User className="h-4 w-4 text-muted-foreground/60" />
+                    )}
                   </div>
 
-                  {/* Code */}
-                  <div className="space-y-1">
-                    <dt className="text-muted-foreground font-medium">Code</dt>
-                    <dd className="font-mono font-semibold text-foreground text-sm">
-                      {unit.code}
-                    </dd>
+                  <div className="min-w-0 flex-1">
+                    {isHeadAssigned ? (
+                      <div>
+                        <p className="text-[15px] font-medium text-foreground leading-snug">
+                          {headName}
+                        </p>
+                        <p className="text-[13px] text-muted-foreground mt-0.5">
+                          Head · since {formatDisplayDate(effectiveHeadSince)}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="text-[13px] text-muted-foreground font-normal">
+                          No one in charge
+                        </span>
+                        {can(ORG_PERMISSIONS.MANAGE_MANAGERS) && (
+                          <>
+                            <span className="text-muted-foreground/50 text-[13px]">·</span>
+                            <button
+                              type="button"
+                              onClick={() => setActiveTab("people")}
+                              className="text-[13px] text-primary hover:underline font-normal"
+                            >
+                              Assign
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    )}
                   </div>
+                </div>
+              </div>
+
+              {/* 3.6 Details */}
+              <div className="pt-6 border-t border-border">
+                <span className="text-[11px] font-semibold tracking-[0.06em] uppercase text-muted-foreground block mb-3">
+                  Details
+                </span>
+                <dl className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-x-4 gap-y-3 text-[13px]">
+                  {/* Code */}
+                  <dt className="text-muted-foreground font-normal">Code</dt>
+                  <dd className="font-mono text-[13px] font-normal text-foreground">
+                    {unit.code}
+                  </dd>
 
                   {/* Cost Centre */}
-                  <div className="space-y-1">
-                    <dt className="text-muted-foreground font-medium">Cost centre</dt>
-                    <dd className="font-mono text-foreground font-medium">
-                      {unit.costCenterCode || <span className="text-muted-foreground italic">None</span>}
-                    </dd>
-                  </div>
+                  <dt className="text-muted-foreground font-normal">Cost centre</dt>
+                  <dd className="font-mono text-[13px] font-normal text-foreground">
+                    {unit.costCenterCode || "None"}
+                  </dd>
 
                   {/* Part of */}
-                  <div className="space-y-1">
-                    <dt className="text-muted-foreground font-medium">Part of</dt>
-                    <dd className="font-medium text-foreground">
-                      {unit.parentName ? (
-                        <button
-                          type="button"
-                          onClick={() => unit.parentOrgUnitId && onNavigateUnit?.(unit.parentOrgUnitId)}
-                          className="hover:underline text-primary text-left font-semibold inline-flex items-center gap-1"
-                        >
-                          {unit.parentName}
-                          <ChevronRight className="h-3 w-3" />
-                        </button>
-                      ) : (
-                        <span className="text-muted-foreground">DIEZ (Top of organisation)</span>
-                      )}
-                    </dd>
-                  </div>
+                  <dt className="text-muted-foreground font-normal">Part of</dt>
+                  <dd className="text-foreground">
+                    {unit.parentName ? (
+                      <button
+                        type="button"
+                        onClick={() => unit.parentOrgUnitId && onNavigateUnit?.(unit.parentOrgUnitId)}
+                        className="text-foreground hover:text-primary hover:underline font-normal inline-flex items-center gap-1"
+                      >
+                        {unit.parentName}
+                        <ChevronRight className="h-3 w-3 text-muted-foreground" />
+                      </button>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5">
+                        <span className="font-normal text-foreground">DIEZ</span>
+                        <span className="text-[11px] px-1.5 py-0.5 rounded-[4px] bg-muted/60 text-muted-foreground font-normal border border-border/40">
+                          Top level
+                        </span>
+                      </span>
+                    )}
+                  </dd>
 
                   {/* Status */}
-                  <div className="space-y-1">
-                    <dt className="text-muted-foreground font-medium">Status</dt>
-                    <dd className="font-medium text-foreground flex items-center gap-1.5">
+                  <dt className="text-muted-foreground font-normal">Status</dt>
+                  <dd className="text-foreground flex items-center">
+                    <span
+                      className={cn(
+                        "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-normal border",
+                        unit.isActive
+                          ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20"
+                          : "bg-muted text-muted-foreground border-border/50"
+                      )}
+                    >
                       <span
                         className={cn(
-                          "h-2 w-2 rounded-full",
+                          "h-1.5 w-1.5 rounded-full",
                           unit.isActive ? "bg-emerald-500" : "bg-muted-foreground"
                         )}
                       />
-                      <span>{unit.isActive ? "Active" : "Archived"}</span>
-                    </dd>
-                  </div>
+                      {unit.isActive ? "Active" : "Archived"}
+                    </span>
+                  </dd>
 
                   {/* What's inside */}
-                  <div className="space-y-1 sm:col-span-2">
-                    <dt className="text-muted-foreground font-medium">What&apos;s inside</dt>
-                    <dd className="text-muted-foreground font-medium">
-                      {countSentence}
-                    </dd>
-                  </div>
+                  <dt className="text-muted-foreground font-normal">What&apos;s inside</dt>
+                  <dd className="text-foreground font-normal">
+                    {countSentence}
+                  </dd>
                 </dl>
-              </CardContent>
-            </Card>
-            {/* Right Column: Budget Department Card */}
-            <div className="space-y-4">
-              <Card className="border border-border shadow-xs">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                    <Wallet className="h-3.5 w-3.5 text-primary" />
-                    Budget held by
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="text-xs space-y-1">
-                  {isLoadingBudget ? (
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                      Checking who holds the budget...
-                    </div>
-                  ) : budgetOwner ? (
-                    <div>
-                      <p className="font-bold text-foreground">{budgetOwner.name}</p>
-                      <p className="font-mono text-[11px] text-muted-foreground">
-                        {budgetOwner.code} · Cost centre: {budgetOwner.costCenterCode || "None"}
-                      </p>
-                    </div>
-                  ) : (
-                    <p className="text-muted-foreground italic">No budget department assigned.</p>
-                  )}
-                </CardContent>
-              </Card>
+              </div>
+            </div>
 
-              {/* Sign-off Chain Preview */}
-              <Card className="border border-border shadow-xs">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                    <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-                    Sign-off chain
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2 text-xs">
-                  {isLoadingChain ? (
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                      Loading sign-off stages...
-                    </div>
-                  ) : approvalChain && approvalChain.length > 0 ? (
-                    <div className="space-y-1.5">
-                      {approvalChain.map((node, idx) => (
-                        <div key={node.orgUnitId || idx} className="flex items-center justify-between text-[11px] py-1 border-b border-border/40 last:border-none">
-                          <span className="font-medium text-foreground flex items-center gap-1">
-                            <span className="font-mono text-[10px] text-muted-foreground">#{idx + 1}</span>
-                            {node.name}
-                          </span>
-                          <span className="text-muted-foreground text-[10px]">
-                            {node.head?.displayName || "No one in charge"}
-                          </span>
+            {/* Right Column (Aside): Budget Held By + Sign-off Chain */}
+            <div className="space-y-6 pt-6 border-t border-border min-[1100px]:border-t-0 min-[1100px]:pt-0 min-w-0">
+              {/* Budget held by */}
+              <div>
+                <span className="text-[11px] font-semibold tracking-[0.06em] uppercase text-muted-foreground block mb-3">
+                  Budget held by
+                </span>
+                {isLoadingBudget ? (
+                  <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+                    <span>Checking budget holder...</span>
+                  </div>
+                ) : budgetOwner ? (
+                  <div className="space-y-0.5">
+                    <p className="text-[13px] font-medium text-foreground">{budgetOwner.name}</p>
+                    <p className="font-mono text-[13px] font-normal text-muted-foreground">
+                      {budgetOwner.code} · Cost centre: {budgetOwner.costCenterCode || "None"}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-1.5">
+                    <p className="text-[13px] text-muted-foreground">Not assigned</p>
+                    {can(ORG_PERMISSIONS.UPDATE) && (
+                      <button
+                        type="button"
+                        onClick={() => setIsEditOpen(true)}
+                        className="text-[13px] text-primary hover:underline font-normal block"
+                      >
+                        Assign department
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Sign-off chain (Vertical Stepper) */}
+              <div className="pt-6 border-t border-border">
+                <span className="text-[11px] font-semibold tracking-[0.06em] uppercase text-muted-foreground block mb-3">
+                  Sign-off chain
+                </span>
+                {isLoadingChain ? (
+                  <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+                    <span>Loading sign-off stages...</span>
+                  </div>
+                ) : approvalChain && approvalChain.length > 0 ? (
+                  <div className="relative pl-0.5">
+                    {approvalChain.map((node, idx) => {
+                      const isLast = idx === approvalChain.length - 1;
+                      const headPerson = node.head?.displayName;
+                      const hasHead = Boolean(headPerson && headPerson !== "Assigned Head");
+
+                      return (
+                        <div key={node.orgUnitId || idx} className="relative flex items-start gap-3 pb-5 last:pb-0">
+                          {/* Connector Line */}
+                          {!isLast && (
+                            <div className="absolute left-[9.5px] top-[20px] bottom-0 w-[1px] bg-border" />
+                          )}
+
+                          {/* Step Circle */}
+                          <div className="relative z-10 w-5 h-5 rounded-full bg-muted/80 text-[11px] font-mono font-normal flex items-center justify-center text-muted-foreground border border-border/50 shrink-0">
+                            {idx + 1}
+                          </div>
+
+                          {/* Content: Unit name on top line, person beneath */}
+                          <div className="min-w-0 flex-1 -mt-0.5">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-[13px] font-medium text-foreground leading-snug">
+                                {node.name}
+                              </span>
+                              {!hasHead && (
+                                <span
+                                  className="h-1.5 w-1.5 rounded-full bg-amber-500 shrink-0"
+                                  title="No one assigned"
+                                />
+                              )}
+                            </div>
+                            <p className="text-[13px] text-muted-foreground mt-0.5 leading-snug">
+                              {hasHead ? headPerson : "No one in charge"}
+                            </p>
+                          </div>
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-muted-foreground italic">No sign-off route required.</p>
-                  )}
-                </CardContent>
-              </Card>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-[13px] text-muted-foreground">No sign-off route required.</p>
+                )}
+              </div>
             </div>
           </div>
         </TabsContent>
@@ -776,97 +903,91 @@ export function OrgUnitDetailView({
         {/* Tab 4: History (Plain-Language Change Feed per Part 3.4 & Part 2)     */}
         {/* ===================================================================== */}
         <TabsContent value="history" className="space-y-4 m-0">
-          <Card className="border border-border shadow-xs">
-            <CardHeader className="pb-3 border-b border-border/60">
-              <CardTitle className="text-sm font-bold flex items-center gap-2">
-                <History className="h-4 w-4 text-primary" />
-                Change Log
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Plain-language record of reporting changes, appointments, and structure updates.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-4">
-              {isLoadingLogs ? (
-                <div className="p-8 text-center flex flex-col items-center justify-center space-y-2 text-xs text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                  <span>Loading history records...</span>
-                </div>
-              ) : changeLogsData?.data && changeLogsData.data.length > 0 ? (
-                <div className="space-y-3 divide-y divide-border/50">
-                  {changeLogsData.data.map((log: OrgUnitChangeLogDto) => {
-                    const isMove = log.changeType === "MOVED" || log.changeType === "REPARENT";
-                    const oldParent = log.oldValues?.parentName || log.oldValues?.parentOrgUnitId || "DIEZ";
-                    const newParent = log.newValues?.parentName || log.newValues?.parentOrgUnitId || "DIEZ";
-                    const operator = log.performedByDisplayName || log.performedBy || "Administrator";
-                    const formattedDate = log.performedAt
-                      ? new Date(log.performedAt).toLocaleDateString("en-GB", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })
-                      : "Recently";
+          <div className="pb-3 border-b border-border/60">
+            <h3 className="text-sm font-semibold text-foreground">Change Log</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Plain-language record of reporting changes, appointments, and structure updates.
+            </p>
+          </div>
 
-                    // Plain-language sentence description (Part 2 & Part 3.4)
-                    let sentence = `${unit.name} updated — ${operator}, ${formattedDate}`;
-                    if (isMove) {
-                      sentence = `Moved from ${oldParent} to ${newParent} — ${operator}, ${formattedDate}`;
-                    } else if (log.changeType === "MANAGER_ASSIGNED") {
-                      sentence = `Assigned leader — ${operator}, ${formattedDate}`;
-                    } else if (log.changeType === "CREATED") {
-                      sentence = `Created under ${newParent} — ${operator}, ${formattedDate}`;
-                    } else if (log.changeType === "DEACTIVATED") {
-                      sentence = `Archived — ${operator}, ${formattedDate}`;
-                    } else if (log.changeType === "ACTIVATED") {
-                      sentence = `Restored — ${operator}, ${formattedDate}`;
-                    }
+          {isLoadingLogs ? (
+            <div className="py-8 text-center flex flex-col items-center justify-center space-y-2 text-xs text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin text-primary" />
+              <span>Loading history records...</span>
+            </div>
+          ) : changeLogsData?.data && changeLogsData.data.length > 0 ? (
+            <div className="space-y-3 divide-y divide-border/50">
+              {changeLogsData.data.map((log: OrgUnitChangeLogDto) => {
+                const isMove = log.changeType === "MOVED" || log.changeType === "REPARENT";
+                const oldParent = log.oldValues?.parentName || log.oldValues?.parentOrgUnitId || "DIEZ";
+                const newParent = log.newValues?.parentName || log.newValues?.parentOrgUnitId || "DIEZ";
+                const operator = log.performedByDisplayName || log.performedBy || "Administrator";
+                const formattedDate = log.performedAt
+                  ? new Date(log.performedAt).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })
+                  : "Recently";
 
-                    const friendlyTag =
-                      isMove
-                        ? "Move"
-                        : log.changeType === "CREATED"
-                        ? "Created"
-                        : log.changeType === "DEACTIVATED"
-                        ? "Archived"
-                        : log.changeType === "ACTIVATED"
-                        ? "Restored"
-                        : log.changeType === "MANAGER_ASSIGNED"
-                        ? "Leadership"
-                        : "Update";
+                // Plain-language sentence description (Part 2 & Part 3.4)
+                let sentence = `${unit.name} updated — ${operator}, ${formattedDate}`;
+                if (isMove) {
+                  sentence = `Moved from ${oldParent} to ${newParent} — ${operator}, ${formattedDate}`;
+                } else if (log.changeType === "MANAGER_ASSIGNED") {
+                  sentence = `Assigned leader — ${operator}, ${formattedDate}`;
+                } else if (log.changeType === "CREATED") {
+                  sentence = `Created under ${newParent} — ${operator}, ${formattedDate}`;
+                } else if (log.changeType === "DEACTIVATED") {
+                  sentence = `Archived — ${operator}, ${formattedDate}`;
+                } else if (log.changeType === "ACTIVATED") {
+                  sentence = `Restored — ${operator}, ${formattedDate}`;
+                }
 
-                    return (
-                      <div key={log.changeLogId} className="pt-3 first:pt-0 flex flex-col gap-1 text-xs">
-                        <div className="flex items-center justify-between gap-2">
-                          <p className="font-semibold text-foreground leading-snug">
-                            {sentence}
-                          </p>
-                          <span className="text-[11px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full border border-border/50 shrink-0">
-                            {friendlyTag}
-                          </span>
-                        </div>
+                const friendlyTag =
+                  isMove
+                    ? "Move"
+                    : log.changeType === "CREATED"
+                    ? "Created"
+                    : log.changeType === "DEACTIVATED"
+                    ? "Archived"
+                    : log.changeType === "ACTIVATED"
+                    ? "Restored"
+                    : log.changeType === "MANAGER_ASSIGNED"
+                    ? "Leadership"
+                    : "Update";
 
-                        {isMove && log.affectedNodeCount !== undefined && log.affectedNodeCount > 0 && (
-                          <p className="text-[11px] text-muted-foreground">
-                            {log.affectedNodeCount} teams inside moved with it.
-                          </p>
-                        )}
+                return (
+                  <div key={log.changeLogId} className="pt-3 first:pt-0 flex flex-col gap-1 text-xs">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="font-semibold text-foreground leading-snug">
+                        {sentence}
+                      </p>
+                      <span className="text-[11px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full border border-border/50 shrink-0">
+                        {friendlyTag}
+                      </span>
+                    </div>
 
-                        {log.reason && (
-                          <p className="text-[11px] text-muted-foreground italic">
-                            Reason: {log.reason}
-                          </p>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="p-8 text-center text-xs text-muted-foreground">
-                  No history records logged for this {typeName.toLowerCase()} yet.
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                    {isMove && log.affectedNodeCount !== undefined && log.affectedNodeCount > 0 && (
+                      <p className="text-[11px] text-muted-foreground">
+                        {log.affectedNodeCount} teams inside moved with it.
+                      </p>
+                    )}
+
+                    {log.reason && (
+                      <p className="text-[11px] text-muted-foreground">
+                        Reason: {log.reason}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="py-8 text-center text-xs text-muted-foreground">
+              No history records logged for this {typeName.toLowerCase()} yet.
+            </div>
+          )}
         </TabsContent>
       </Tabs>
 

@@ -216,14 +216,14 @@ export default function OrgPrimitivesDemoPage() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Level 1: Organisation */}
+            {/* Level 1: Organization */}
             <div className="p-4 rounded-xl border border-border bg-card space-y-3">
               <div className="flex items-center justify-between">
                 <OrgTypeIcon type="ORGANIZATION" size="lg" />
                 <Badge variant="outline" className="text-[10px] font-mono">Level 1</Badge>
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">Organisation / Holding</p>
+                <p className="text-sm font-semibold text-foreground">Organization / Holding</p>
                 <p className="text-xs text-muted-foreground">Top-level root authority (e.g. DIEZ)</p>
               </div>
               <OrgTypeIcon type="ORGANIZATION" size="sm" showLabel />
@@ -382,7 +382,7 @@ export default function OrgPrimitivesDemoPage() {
                       onClick={() => setSandboxType(t)}
                       className="text-xs h-8"
                     >
-                      {t === "ORG" ? "Organisation" : t === "BU" ? "Business Unit" : t === "DEP" ? "Department" : "Section"}
+                      {t === "ORG" ? "Organization" : t === "BU" ? "Business Unit" : t === "DEP" ? "Department" : "Section"}
                     </Button>
                   ))}
                 </div>

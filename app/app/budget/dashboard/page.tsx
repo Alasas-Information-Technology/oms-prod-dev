@@ -6,7 +6,8 @@ import { RecentBudgetActivities } from "@/components/oms/BudgetTable";
 
 export default function BudgetDashboard() {
     return (
-        <div className="grid auto-rows-min gap-4 md:grid-cols-5">
+        <div className="p-6">
+            <div className="grid auto-rows-min gap-4 md:grid-cols-5">
             <SimpleKpiCard icon="material-symbols:unknown-document-outline" value={1000000} title="Total Budget" description="2026 Budget" />
             <SimpleKpiCard icon="material-symbols:unknown-document-outline" value={950000} title="Allocated Budget" description="amount allocated " />
             <SimpleKpiCard icon="material-symbols:unknown-document-outline" value={620000} title="Committed Budget" description="amount utilized" />
@@ -34,6 +35,7 @@ export default function BudgetDashboard() {
             </div>
 
 
+            </div>
         </div>
     )
 }

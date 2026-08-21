@@ -98,7 +98,7 @@ export function OrgUnitCard({
   // Derive child type word if not provided
   const derivedChildTypeWord =
     childTypeWord ||
-    (displayTypeName === "Organisation" || displayTypeName === "Holding"
+    (displayTypeName === "Organization" || displayTypeName === "Holding"
       ? "business units"
       : displayTypeName === "Business Unit"
       ? "departments"

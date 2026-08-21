@@ -75,7 +75,7 @@ const STEP_LABELS = [
 ];
 
 const TYPE_EXPLANATIONS: Record<string, string> = {
-  ORGANIZATION: "A top-level corporate or holding organisation entity.",
+  ORGANIZATION: "A top-level corporate or holding organization entity.",
   BUSINESS_UNIT: "An executive division that groups multiple functional departments.",
   DEPARTMENT: "A functional department that groups related teams and holds its own budget.",
   SECTION: "An operational team carrying out daily departmental tasks.",
@@ -238,7 +238,7 @@ export function AddOrgUnitWizard({
             Step {step} of 4: {STEP_LABELS[step - 1]}
           </span>
           <span className="text-xs text-muted-foreground">
-            Adding a new organisation unit
+            Adding a new organization unit
           </span>
         </div>
 
@@ -276,7 +276,7 @@ export function AddOrgUnitWizard({
         <div className="space-y-4 pt-2">
           <div className="space-y-1">
             <h3 className="text-base font-bold text-foreground">
-              Where in the organisation should this live?
+              Where in the organization should this live?
             </h3>
             <p className="text-xs text-muted-foreground">
               Choose the parent department or business unit that this team will report to.
@@ -343,7 +343,7 @@ export function AddOrgUnitWizard({
                       </span>
                     </div>
                     <p className="text-xs text-muted-foreground truncate mt-0.5">
-                      {selectedParent.parentName ? `Part of ${selectedParent.parentName}` : "Root Holding Organisation"}
+                      {selectedParent.parentName ? `Part of ${selectedParent.parentName}` : "Root Holding Organization"}
                     </p>
                   </div>
                 </div>
@@ -567,7 +567,7 @@ export function AddOrgUnitWizard({
               <div className="space-y-0.5">
                 <p className="font-semibold">Skipping leadership assignment</p>
                 <p className="text-[11px] text-amber-800 dark:text-amber-300">
-                  If skipped, the card on the organisation chart will show a subtle amber reminder dot until a leader is assigned.
+                  If skipped, the card on the organization chart will show a subtle amber reminder dot until a leader is assigned.
                 </p>
               </div>
             </div>

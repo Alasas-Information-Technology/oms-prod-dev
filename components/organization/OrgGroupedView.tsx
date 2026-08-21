@@ -379,23 +379,21 @@ export function OrgGroupedView({
       </div>
 
       {/* Grouped Data Table */}
-      <div className="rounded-2xl border border-border bg-card shadow-2xs overflow-hidden">
-        <DataTable
-          columns={columns}
-          data={filteredUnits}
-          keyField="orgUnitId"
-          loading={isLoading}
-          onRowClick={(row) => {
-            onSelectUnit?.(row);
-            onOpenDetails?.(row);
-          }}
-          emptyMessage={
-            localSearch || presetFilter !== "all"
-              ? "No organisation units match your current filters."
-              : "No units found in this category."
-          }
-        />
-      </div>
+      <DataTable
+        columns={columns}
+        data={filteredUnits}
+        keyField="orgUnitId"
+        loading={isLoading}
+        onRowClick={(row) => {
+          onSelectUnit?.(row);
+          onOpenDetails?.(row);
+        }}
+        emptyMessage={
+          localSearch || presetFilter !== "all"
+            ? "No organization units match your current filters."
+            : "No units found in this category."
+        }
+      />
     </div>
   );
 }

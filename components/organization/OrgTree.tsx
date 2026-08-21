@@ -580,7 +580,7 @@ export function OrgTree({
           <div>
             <span className="font-bold">Your departments</span>
             <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">
-              You&apos;re seeing the parts of the organisation you work with.
+              You&apos;re seeing the parts of the organization you work with.
             </p>
           </div>
         </div>
@@ -590,13 +590,13 @@ export function OrgTree({
       <div
         ref={scrollContainerRef}
         role="tree"
-        aria-label="Organisation tree"
+        aria-label="Organization tree"
         tabIndex={0}
         className="flex-1 overflow-y-auto p-1.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-primary select-none"
       >
         {/* Loading State: Indented Skeletons (Part 2.7) */}
         {isLoadingRoots && flatVisibleNodes.length === 0 ? (
-          <div className="space-y-2 p-2" aria-label="Loading organisation list...">
+          <div className="space-y-2 p-2" aria-label="Loading organization list...">
             {[0, 1, 1, 2, 2, 3].map((depth, idx) => (
               <div
                 key={idx}
@@ -613,7 +613,7 @@ export function OrgTree({
           /* Error State with Retry (Part 2.7) */
           <div className="p-6 text-center space-y-3">
             <p className="text-xs text-destructive font-medium">
-              Failed to load organisation list.
+              Failed to load organization list.
             </p>
             <Button
               variant="outline"
@@ -628,11 +628,11 @@ export function OrgTree({
         ) : flatVisibleNodes.length === 0 ? (
           /* Empty State (Part 2.7) */
           <div className="p-6 text-center space-y-2">
-            <p className="text-xs font-medium text-foreground">No organisation units available.</p>
+            <p className="text-xs font-medium text-foreground">No organization units available.</p>
             <p className="text-[11px] text-muted-foreground">
               {isScopedFragment
                 ? "No departments or teams found in your view."
-                : "Add the first organisation unit to begin."}
+                : "Add the first organization unit to begin."}
             </p>
           </div>
         ) : isVirtualised ? (

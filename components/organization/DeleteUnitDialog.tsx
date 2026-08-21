@@ -50,7 +50,7 @@ export interface DeleteUnitDialogProps {
  *   - ORG_HAS_CHILDREN: "Remove or move the N sections inside it first."
  *   - ORG_HAS_ASSIGNED_USERS: "N people are still assigned here. Move them first."
  *   - ORG_REFERENCED: "This department has budget records and can't be removed. You can archive it instead."
- *   - ORG_ROOT_PROTECTED: "This is the top of your organisation and can't be removed."
+ *   - ORG_ROOT_PROTECTED: "This is the top of your organization and can't be removed."
  * - Single "Remove [department]" button with NO code typing.
  */
 export function DeleteUnitDialog({
@@ -136,7 +136,7 @@ export function DeleteUnitDialog({
       } else if (errorCode === "ORG_REFERENCED" || errorMsg?.includes("budget") || errorMsg?.includes("reference")) {
         setBlockingError(`This ${typeName.toLowerCase()} has budget records and can't be removed. You can archive it instead.`);
       } else if (errorCode === "ORG_ROOT_PROTECTED") {
-        setBlockingError("This is the top of your organisation and can't be removed.");
+        setBlockingError("This is the top of your organization and can't be removed.");
       } else {
         toast.error(errorMsg || `Failed to remove ${typeName.toLowerCase()}.`);
       }
@@ -167,7 +167,7 @@ export function DeleteUnitDialog({
                 <span>Cannot remove top level</span>
               </div>
               <p className="text-muted-foreground">
-                This is the top of your organisation and can&apos;t be removed.
+                This is the top of your organization and can&apos;t be removed.
               </p>
             </div>
           )}

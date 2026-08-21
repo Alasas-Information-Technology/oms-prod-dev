@@ -19,13 +19,13 @@ export default function OrgUnitDetailPage() {
         <Button asChild variant="ghost" size="sm" className="gap-2 text-xs text-muted-foreground hover:text-foreground">
           <Link href={`/app/administration/master-data/organization?unit=${orgUnitId}`}>
             <ArrowLeft className="h-4 w-4" />
-            Open on Organisation Chart
+            Open on Organization Chart
           </Link>
         </Button>
       </div>
 
       {/* Main Unit Detail View */}
-      <div className="rounded-2xl border border-border bg-card p-6 shadow-xs">
+      <div className="rounded-2xl border border-border bg-card p-0 shadow-xs">
         <OrgUnitDetailView
           unitId={orgUnitId}
           onNavigateUnit={(targetId) => {

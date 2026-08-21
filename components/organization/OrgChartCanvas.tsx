@@ -6,8 +6,6 @@ import {
   ReactFlowProvider,
   useReactFlow,
   MiniMap,
-  Background,
-  BackgroundVariant,
   Node,
   Edge,
   NodeTypes,
@@ -32,7 +30,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { OrgChartNode, CollapsedSiblingsCard } from "./chart";
+import { OrgChartNode, CollapsedSiblingsCard, DottedCanvasGrid } from "./chart";
 import { computeTreeLayout, LayoutOrientation } from "@/lib/org-chart/tree-layout";
 import {
   useOrgUnits,
@@ -57,6 +55,10 @@ export interface OrgChartCanvasProps {
   onAddUnit?: () => void;
   onSwitchToList?: () => void;
   deepLinkUnitId?: string | null;
+  /**
+   * Whether an element is actively being dragged (raises dot grid opacity to 12% per Part 2).
+   */
+  isDragging?: boolean;
   className?: string;
 }
 
@@ -67,9 +69,12 @@ function OrgChartCanvasInner({
   onAddUnit,
   onSwitchToList,
   deepLinkUnitId,
+  isDragging,
   className,
 }: OrgChartCanvasProps) {
   const reactFlowInstance = useReactFlow();
+  const [internalIsDragging, setInternalIsDragging] = React.useState(false);
+  const effectiveIsDragging = isDragging ?? internalIsDragging;
 
   // Layout & Viewport States
   const [orientation, setOrientation] = React.useState<LayoutOrientation>(() => {
@@ -340,22 +345,21 @@ function OrgChartCanvasInner({
     handleShowAllSiblings,
   ]);
 
-  // 7. Auto-center on initial layout or deep link
+  // 7. Auto-center on initial layout, orientation change, or deep link
   const initialFitRef = React.useRef(false);
 
   React.useEffect(() => {
-    if (computedLayout.nodes.length > 0 && !initialFitRef.current) {
-      initialFitRef.current = true;
+    if (computedLayout.nodes.length > 0) {
       const timer = setTimeout(() => {
         try {
-          reactFlowInstance.fitView({ padding: 0.2, duration: 400 });
+          reactFlowInstance.fitView({ padding: 0.15, duration: 400 });
         } catch {
           // Viewport not yet mounted
         }
-      }, 150);
+      }, 100);
       return () => clearTimeout(timer);
     }
-  }, [computedLayout.nodes.length, reactFlowInstance]);
+  }, [computedLayout.nodes.length, orientation, reactFlowInstance]);
 
   // Center on deep-linked node
   React.useEffect(() => {
@@ -467,10 +471,10 @@ function OrgChartCanvasInner({
     <div
       tabIndex={0}
       role="region"
-      aria-label="Organisation Chart Canvas. Use arrow keys to navigate between departments, Enter or Space to open details, Plus/Minus to zoom, Zero to fit view."
+      aria-label="Organization Chart Canvas. Use arrow keys to navigate between departments, Enter or Space to open details, Plus/Minus to zoom, Zero to fit view."
       onKeyDown={handleKeyDown}
       className={cn(
-        "relative w-full h-[680px] min-h-[500px] rounded-2xl border border-border bg-card/60 shadow-xs overflow-hidden select-none outline-none focus-visible:ring-2 focus-visible:ring-primary/40 motion-reduce:transition-none",
+        "relative w-full h-full min-h-[500px] overflow-hidden select-none outline-none focus-visible:ring-2 focus-visible:ring-primary/40 motion-reduce:transition-none",
         className
       )}
     >
@@ -489,7 +493,7 @@ function OrgChartCanvasInner({
       {isScopedFragment && (
         <div className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3.5 py-2 rounded-xl bg-background/90 backdrop-blur-md border border-border shadow-xs text-xs text-muted-foreground animate-in fade-in-50">
           <Info className="h-4 w-4 text-primary shrink-0" />
-          <span>You&apos;re seeing the parts of the organisation you work with.</span>
+          <span>You&apos;re seeing the parts of the organization you work with.</span>
         </div>
       )}
 
@@ -508,7 +512,7 @@ function OrgChartCanvasInner({
           </div>
 
           <span className="text-xs text-muted-foreground font-medium animate-pulse">
-            Loading organisation chart...
+            Loading organization chart...
           </span>
         </div>
       )}
@@ -521,10 +525,10 @@ function OrgChartCanvasInner({
           </div>
           <div className="space-y-1">
             <h3 className="text-sm font-bold text-foreground">
-              Unable to load organisation chart
+              Unable to load organization chart
             </h3>
             <p className="text-xs text-muted-foreground max-w-sm">
-              We encountered a network issue loading the organisation units. Please retry.
+              We encountered a network issue loading the organization units. Please retry.
             </p>
           </div>
           <Button
@@ -547,7 +551,7 @@ function OrgChartCanvasInner({
           </div>
           <div className="space-y-1 max-w-sm">
             <h3 className="text-base font-bold text-foreground">
-              Let&apos;s set up your organisation
+              Let&apos;s set up your organization
             </h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
               No departments or teams have been created yet. Add the first root entity to begin.
@@ -556,7 +560,7 @@ function OrgChartCanvasInner({
           {onAddUnit && (
             <Button size="sm" onClick={onAddUnit} className="gap-2 text-xs">
               <Plus className="h-4 w-4" />
-              Add Organisation
+              Add Organization
             </Button>
           )}
         </div>
@@ -581,13 +585,8 @@ function OrgChartCanvasInner({
         proOptions={{ hideAttribution: true }}
         className="bg-muted/15"
       >
-        <Background
-          color="var(--border)"
-          gap={20}
-          size={1}
-          variant={BackgroundVariant.Dots}
-          className="opacity-40"
-        />
+        {/* Part 2 Dotted Canvas Grid: 1px dots, 24px spacing, --text-primary at 6%/12% opacity, radial edge mask, zoom scaling */}
+        <DottedCanvasGrid isDragging={effectiveIsDragging} />
 
         {/* Minimap (Bottom-Left per Part 3.2) */}
         <MiniMap

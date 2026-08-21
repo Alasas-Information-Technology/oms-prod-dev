@@ -50,6 +50,7 @@ export function AppSignature() {
                         width={80}
                         height={32}
                         priority
+                        style={{ width: "auto", height: "auto" }}
                     />
                 </motion.div>
 

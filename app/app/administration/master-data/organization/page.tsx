@@ -82,7 +82,7 @@ const STORAGE_KEY_VIEW_MODE = "oms_org_view_mode_v2";
 
 export default function OrganizationPage() {
   return (
-    <React.Suspense fallback={<div className="p-6 text-xs text-muted-foreground">Loading organisation...</div>}>
+    <React.Suspense fallback={<div className="p-6 text-xs text-muted-foreground">Loading organization...</div>}>
       <OrganizationPageContent />
     </React.Suspense>
   );
@@ -246,7 +246,7 @@ function OrganizationPageContent() {
       setIsCreateOpen(false);
       refetchUnits();
 
-      const parentName = createParentUnit?.name || "Organisation";
+      const parentName = createParentUnit?.name || "Organization";
       toast.success(`${created.name} added under ${parentName}.`);
 
       // Open detail panel for newly created unit
@@ -276,14 +276,14 @@ function OrganizationPageContent() {
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
-        toast.success("Organisation directory exported successfully.");
+        toast.success("Organization directory exported successfully.");
       }
     } catch (err: any) {
       const status = err?.response?.status || err?.status;
       if (status === 429) {
         toast.error("Export rate limit reached (Tier 7). Please wait a moment before trying again.");
       } else {
-        toast.error("Failed to export organisation data.");
+        toast.error("Failed to export organization data.");
       }
     } finally {
       setIsExporting(false);
@@ -432,7 +432,7 @@ function OrganizationPageContent() {
                 <div className="flex items-center justify-between gap-3">
                   <CardTitle className="text-sm font-semibold flex items-center gap-2">
                     <ListTree className="h-4 w-4 text-primary" />
-                    Organisation List
+                    Organization List
                   </CardTitle>
 
                   <Button
@@ -476,7 +476,7 @@ function OrganizationPageContent() {
 
           <div className="lg:col-span-7">
             {selectedUnitId ? (
-              <Card className="border border-border shadow-2xs p-5 sm:p-6 min-h-[740px]">
+              <Card className="border border-border shadow-2xs p-0 min-h-[740px]">
                 <OrgUnitDetailView
                   unitId={selectedUnitId}
                   onNavigateUnit={(targetId) => setSelectedUnitId(targetId || null)}
@@ -537,11 +537,11 @@ function OrganizationPageContent() {
           className="w-full sm:max-w-2xl p-0 overflow-y-auto border-l border-border bg-background shadow-2xl"
         >
           <SheetHeader className="sr-only">
-            <SheetTitle>Organisation Unit Details</SheetTitle>
+            <SheetTitle>Organization Unit Details</SheetTitle>
             <SheetDescription>Detailed breakdown of reporting lines, teams, and staff.</SheetDescription>
           </SheetHeader>
           {detailPanelUnitId && (
-            <div className="p-6 sm:p-8">
+            <div className="p-0">
               <OrgUnitDetailView
                 unitId={detailPanelUnitId}
                 onNavigateUnit={(targetId) => {
@@ -565,7 +565,7 @@ function OrganizationPageContent() {
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold">Add Organisation Unit</DialogTitle>
+            <DialogTitle className="text-xl font-bold">Add Organization Unit</DialogTitle>
             <DialogDescription className="text-xs">
               Follow the 4-step guided flow to add a department, business unit, or section.
             </DialogDescription>

@@ -98,7 +98,7 @@ export function LoginForm({
 
       <Card className="relative overflow-hidden border-border/50 shadow-xl">
         <a href="#" className="flex items-center gap-2 self-center font-medium mt-8">
-          <Image src={"/c-logo.png"} alt="DIEZ_logo" width={180} height={180} />
+          <Image src={"/c-logo.png"} alt="DIEZ_logo" width={180} height={180} style={{ width: "auto", height: "auto" }} priority />
         </a>
 
         <CardHeader className="text-center">

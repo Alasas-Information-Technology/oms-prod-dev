@@ -10,10 +10,8 @@ export default async function Page() {
   }
 
   return (
-
-    <div className="flex flex-1 flex-col gap-8 p-8 pt-8">
-
-      <div className="grid auto-rows-min gap-8 md:grid-cols-3">
+    <div className="flex flex-1 flex-col gap-4 p-6">
+      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
         <div className="flex flex-col gap-2">
           <p>Hello {user.username}, you are viewing this via SSR!</p>
 

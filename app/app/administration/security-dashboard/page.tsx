@@ -286,7 +286,7 @@ export default function SecurityDashboard() {
       </div>
 
       {/* Tables using Tabs */}
-      <div className="rounded-xl border bg-background p-4 shadow-sm flex flex-col min-h-[500px]">
+      <div className="flex flex-col min-h-[500px]">
         <Tabs defaultValue="failedLogins" className="w-full flex flex-col flex-1">
           <TabsList className="mb-4 self-start">
             <TabsTrigger value="failedLogins">Failed Login Attempts</TabsTrigger>

@@ -83,7 +83,7 @@ export function ArchiveUnitDialog({
           <DialogDescription className="text-xs">
             {isCurrentlyActive
               ? `Hide this ${typeName.toLowerCase()} from everyday use. Its history and past budgets stay.`
-              : `Restore this ${typeName.toLowerCase()} to active status in the organisation.`}
+              : `Restore this ${typeName.toLowerCase()} to active status in the organization.`}
           </DialogDescription>
         </DialogHeader>
 
@@ -92,7 +92,7 @@ export function ArchiveUnitDialog({
             <div className="p-3.5 rounded-xl bg-muted/40 border border-border text-xs space-y-1">
               <p className="font-semibold text-foreground">What happens when archived?</p>
               <ul className="list-disc pl-4 space-y-0.5 text-muted-foreground">
-                <li>The card appears faded on the organisation chart (50% opacity).</li>
+                <li>The card appears faded on the organization chart (50% opacity).</li>
                 <li>Past financial records, budgets, and change history are preserved.</li>
                 <li>You can restore it anytime.</li>
               </ul>

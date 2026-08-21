@@ -224,7 +224,7 @@ export function MoveUnitDialog({
                 toast.success(`${unit.name} restored to original parent.`);
                 onSuccess?.();
               } catch (undoErr: unknown) {
-                toast.error("Could not undo move. The organisation structure was updated.");
+                toast.error("Could not undo move. The organization structure was updated.");
                 onSuccess?.();
               }
             },
