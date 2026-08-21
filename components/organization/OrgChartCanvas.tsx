@@ -5,6 +5,8 @@ import {
   ReactFlow,
   ReactFlowProvider,
   useReactFlow,
+  useNodesState,
+  useEdgesState,
   MiniMap,
   Node,
   Edge,
@@ -25,6 +27,9 @@ import {
   ArrowUpDown,
   ArrowLeftRight,
   Info,
+  Undo2,
+  Redo2,
+  RotateCcw,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -36,6 +41,10 @@ import {
   useOrgUnits,
   useOrgUnitAncestors,
 } from "@/hooks/useOrganization";
+import {
+  useOrgChartLayoutPersistence,
+  NodePositionsMap,
+} from "@/hooks/useOrgChartLayoutPersistence";
 import { orgUnitsApi } from "@/lib/api/organization";
 import { OrgUnitSummaryDto, OrgUnitEntity } from "@/lib/types/organization.types";
 import { cn } from "@/lib/utils";
@@ -56,6 +65,14 @@ export interface OrgChartCanvasProps {
   onSwitchToList?: () => void;
   deepLinkUnitId?: string | null;
   /**
+   * Whether dragging is disabled (e.g. while Move flow, Add flow, or detail panel is open).
+   */
+  isLocked?: boolean;
+  /**
+   * User identifier for persisting personal layout in localStorage per Part 1.2 / Part 5.
+   */
+  userId?: string;
+  /**
    * Whether an element is actively being dragged (raises dot grid opacity to 12% per Part 2).
    */
   isDragging?: boolean;
@@ -69,12 +86,33 @@ function OrgChartCanvasInner({
   onAddUnit,
   onSwitchToList,
   deepLinkUnitId,
+  isLocked = false,
+  userId = "default",
   isDragging,
   className,
 }: OrgChartCanvasProps) {
   const reactFlowInstance = useReactFlow();
   const [internalIsDragging, setInternalIsDragging] = React.useState(false);
+  const [draggedNodeId, setDraggedNodeId] = React.useState<string | null>(null);
   const effectiveIsDragging = isDragging ?? internalIsDragging;
+
+  const isOptionPressedRef = React.useRef(false);
+
+  // Track Alt / Option key for free drag (bypassing snap per Part 1.4)
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.altKey) isOptionPressedRef.current = true;
+    };
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (!e.altKey) isOptionPressedRef.current = false;
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, []);
 
   // Layout & Viewport States
   const [orientation, setOrientation] = React.useState<LayoutOrientation>(() => {
@@ -150,6 +188,29 @@ function OrgChartCanvasInner({
     return [];
   }, [rootUnits, isScopedFragment, allUnitsData]);
 
+  const activeUnitIds = React.useMemo(
+    () => new Set(allUnitsData?.data?.map((u) => u.orgUnitId) || []),
+    [allUnitsData]
+  );
+
+  // 2. Personal Layout Persistence (Part 1.2 & Part 5)
+  const rootUnitId = effectiveRoots[0]?.orgUnitId || "root";
+  const {
+    positions: customPositions,
+    setNodePosition,
+    updatePositions,
+    undo,
+    redo,
+    resetLayout,
+    canUndo,
+    canRedo,
+    hasCustomPositions,
+  } = useOrgChartLayoutPersistence({
+    userId,
+    rootUnitId,
+    activeUnitIds,
+  });
+
   // Persist state changes in sessionStorage
   React.useEffect(() => {
     if (typeof window !== "undefined") {
@@ -174,7 +235,7 @@ function OrgChartCanvasInner({
     }
   }, [expandedIds]);
 
-  // 2. Auto-expand the first two levels on initial mount (Part 3.2 & Part 5)
+  // 3. Auto-expand the first two levels on initial mount (Part 3.2 & Part 5)
   const hasInitializedExpansionRef = React.useRef(false);
 
   React.useEffect(() => {
@@ -207,7 +268,7 @@ function OrgChartCanvasInner({
     }
   }, [effectiveRoots]);
 
-  // 3. Lazy Expansion Toggle Handler
+  // 4. Lazy Expansion Toggle Handler
   const handleToggleExpand = React.useCallback(
     async (unitId: string) => {
       setExpandedIds((prev) => {
@@ -246,7 +307,7 @@ function OrgChartCanvasInner({
     []
   );
 
-  // 4. Show All Siblings Handler
+  // 5. Show All Siblings Handler
   const handleShowAllSiblings = React.useCallback((parentId: string) => {
     setShowAllSiblingsForParents((prev) => {
       const next = new Set(prev);
@@ -255,7 +316,7 @@ function OrgChartCanvasInner({
     });
   }, []);
 
-  // 5. Deep Link Resolution (?unit=<id>)
+  // 6. Deep Link Resolution (?unit=<id>)
   const { data: ancestorPathData } = useOrgUnitAncestors(
     deepLinkUnitId || undefined,
     { enabled: Boolean(deepLinkUnitId) }
@@ -292,9 +353,9 @@ function OrgChartCanvasInner({
     }
   }, [deepLinkUnitId, ancestorPathData]);
 
-  // 6. Compute Layout Nodes & Edges (via d3-hierarchy engine)
+  // 7. Compute Layout Nodes & Edges (with Custom Positions & Part 1.5 Collision Avoidance)
   const computedLayout = React.useMemo(() => {
-    const layout = computeTreeLayout(effectiveRoots, childrenCache, {
+    const rawLayout = computeTreeLayout(effectiveRoots, childrenCache, {
       orientation,
       expandedIds,
       showAllSiblingsForParents,
@@ -302,11 +363,62 @@ function OrgChartCanvasInner({
       siblingThreshold: 12,
     });
 
-    // Attach interaction callbacks to node data
-    const nodesWithHandlers = layout.nodes.map((node) => {
+    const CARD_WIDTH = 240;
+    const CARD_HEIGHT = 160;
+    const GRID_STEP = 24;
+
+    // Placed positions map
+    const placedPositions: Record<string, { x: number; y: number }> = {};
+
+    // First place nodes that have explicit customPositions saved by user
+    for (const node of rawLayout.nodes) {
+      if (customPositions[node.id]) {
+        placedPositions[node.id] = { ...customPositions[node.id] };
+      }
+    }
+
+    // Helper: checks collision with already placed cards
+    const isOverlapping = (x: number, y: number, excludeId: string) => {
+      for (const [id, pos] of Object.entries(placedPositions)) {
+        if (id === excludeId) continue;
+        const overlapX = Math.abs(x - pos.x) < CARD_WIDTH + GRID_STEP;
+        const overlapY = Math.abs(y - pos.y) < CARD_HEIGHT + GRID_STEP;
+        if (overlapX && overlapY) return true;
+      }
+      return false;
+    };
+
+    // Second: place new/expanded nodes at computed auto-layout position
+    // If overlapping, offset by one grid step (24px) until clear (Part 1.5)
+    for (const node of rawLayout.nodes) {
+      if (!placedPositions[node.id]) {
+        let posX = Math.round(node.position.x / GRID_STEP) * GRID_STEP;
+        let posY = Math.round(node.position.y / GRID_STEP) * GRID_STEP;
+
+        let iterations = 0;
+        while (isOverlapping(posX, posY, node.id) && iterations < 50) {
+          if (orientation === "TB") {
+            posY += GRID_STEP;
+          } else {
+            posX += GRID_STEP;
+          }
+          iterations++;
+        }
+
+        placedPositions[node.id] = { x: posX, y: posY };
+      }
+    }
+
+    // Attach interaction callbacks & drag state to node data
+    const nodesWithHandlers = rawLayout.nodes.map((node) => {
+      const pos = placedPositions[node.id] || node.position;
+      const isBeingDragged = draggedNodeId === node.id;
+
       if (node.type === "collapsedSiblingsNode") {
         return {
           ...node,
+          position: pos,
+          draggable: false,
           data: {
             ...node.data,
             orientation,
@@ -317,9 +429,12 @@ function OrgChartCanvasInner({
 
       return {
         ...node,
+        position: pos,
+        draggable: !isLocked,
         data: {
           ...node.data,
           orientation,
+          isDraggingNode: isBeingDragged,
           onSelectUnit,
           onOpenDetails,
           onToggleExpand: handleToggleExpand,
@@ -329,8 +444,8 @@ function OrgChartCanvasInner({
 
     return {
       nodes: nodesWithHandlers,
-      edges: layout.edges,
-      bounds: layout.bounds,
+      edges: rawLayout.edges,
+      bounds: rawLayout.bounds,
     };
   }, [
     effectiveRoots,
@@ -339,15 +454,29 @@ function OrgChartCanvasInner({
     expandedIds,
     showAllSiblingsForParents,
     selectedUnitId,
+    customPositions,
+    draggedNodeId,
+    isLocked,
     onSelectUnit,
     onOpenDetails,
     handleToggleExpand,
     handleShowAllSiblings,
   ]);
 
-  // 7. Auto-center on initial layout, orientation change, or deep link
-  const initialFitRef = React.useRef(false);
+  // Live node & edge states for ReactFlow real-time 60fps drag preview
+  const [nodes, setNodes, onNodesChange] = useNodesState(computedLayout.nodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(computedLayout.edges);
 
+  // Sync computed layout changes into nodes and edges state
+  React.useEffect(() => {
+    setNodes(computedLayout.nodes);
+  }, [computedLayout.nodes, setNodes]);
+
+  React.useEffect(() => {
+    setEdges(computedLayout.edges);
+  }, [computedLayout.edges, setEdges]);
+
+  // 8. Auto-center on initial layout, orientation change, or deep link
   React.useEffect(() => {
     if (computedLayout.nodes.length > 0) {
       const timer = setTimeout(() => {
@@ -382,9 +511,141 @@ function OrgChartCanvasInner({
     }
   }, [deepLinkUnitId, computedLayout.nodes, reactFlowInstance]);
 
-  // 8. Keyboard Navigation for Accessibility (Part 9 & Prompt V3)
+  // 9. Node Drag Handlers (Part 3.1 - 3.3)
+  const handleNodeDragStart = React.useCallback(
+    (_event: MouseEvent | TouchEvent, node: Node) => {
+      if (isLocked) return;
+      setDraggedNodeId(node.id);
+      setInternalIsDragging(true);
+    },
+    [isLocked]
+  );
+
+  // Auto-pan when within 60px of a canvas edge, capped at 8px/frame (Part 3.2)
+  const handleNodeDrag = React.useCallback(
+    (event: MouseEvent | TouchEvent, _node: Node) => {
+      const flowEl = document.querySelector(".react-flow");
+      if (flowEl) {
+        const rect = flowEl.getBoundingClientRect();
+        const EDGE_THRESHOLD = 60;
+        const MAX_PAN_SPEED = 8;
+
+        const clientX = "clientX" in event ? event.clientX : (event.touches?.[0]?.clientX ?? 0);
+        const clientY = "clientY" in event ? event.clientY : (event.touches?.[0]?.clientY ?? 0);
+
+        let panX = 0;
+        let panY = 0;
+
+        if (clientX < rect.left + EDGE_THRESHOLD) {
+          panX = Math.max(
+            -MAX_PAN_SPEED,
+            -((rect.left + EDGE_THRESHOLD - clientX) / EDGE_THRESHOLD) * MAX_PAN_SPEED
+          );
+        } else if (clientX > rect.right - EDGE_THRESHOLD) {
+          panX = Math.min(
+            MAX_PAN_SPEED,
+            ((clientX - (rect.right - EDGE_THRESHOLD)) / EDGE_THRESHOLD) * MAX_PAN_SPEED
+          );
+        }
+
+        if (clientY < rect.top + EDGE_THRESHOLD) {
+          panY = Math.max(
+            -MAX_PAN_SPEED,
+            -((rect.top + EDGE_THRESHOLD - clientY) / EDGE_THRESHOLD) * MAX_PAN_SPEED
+          );
+        } else if (clientY > rect.bottom - EDGE_THRESHOLD) {
+          panY = Math.min(
+            MAX_PAN_SPEED,
+            ((clientY - (rect.bottom - EDGE_THRESHOLD)) / EDGE_THRESHOLD) * MAX_PAN_SPEED
+          );
+        }
+
+        if (panX !== 0 || panY !== 0) {
+          const viewport = reactFlowInstance.getViewport();
+          reactFlowInstance.setViewport({
+            x: viewport.x - panX,
+            y: viewport.y - panY,
+            zoom: viewport.zoom,
+          });
+        }
+      }
+    },
+    [reactFlowInstance]
+  );
+
+  // Snap to 24px grid on release unless Option key is held (Part 3.3)
+  const handleNodeDragStop = React.useCallback(
+    (event: MouseEvent | TouchEvent, node: Node) => {
+      setDraggedNodeId(null);
+      setInternalIsDragging(false);
+
+      const GRID_STEP = 24;
+      const isAltPressed = "altKey" in event ? Boolean(event.altKey) : false;
+      const isFree = isOptionPressedRef.current || isAltPressed;
+
+      const finalX = isFree
+        ? node.position.x
+        : Math.round(node.position.x / GRID_STEP) * GRID_STEP;
+      const finalY = isFree
+        ? node.position.y
+        : Math.round(node.position.y / GRID_STEP) * GRID_STEP;
+
+      setNodePosition(node.id, { x: finalX, y: finalY }, true);
+    },
+    [setNodePosition]
+  );
+
+  // 10. Keyboard Navigation & Shortcuts (Part 3.4, Part 3.5, Part 9)
   const handleKeyDown = React.useCallback(
     (e: React.KeyboardEvent) => {
+      // Undo: Cmd+Z / Ctrl+Z (Part 3.4)
+      if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+        undo();
+        return;
+      }
+
+      // Redo: Cmd+Shift+Z / Ctrl+Shift+Z / Ctrl+Y (Part 3.4)
+      if (
+        ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === "z") ||
+        ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "y")
+      ) {
+        e.preventDefault();
+        redo();
+        return;
+      }
+
+      // Keyboard Nudging (Part 3.5): Shift+arrow = 24px, Option+Shift+arrow = 1px
+      if (
+        selectedUnitId &&
+        (e.key === "ArrowDown" ||
+          e.key === "ArrowUp" ||
+          e.key === "ArrowLeft" ||
+          e.key === "ArrowRight")
+      ) {
+        if (e.shiftKey) {
+          e.preventDefault();
+          const step = e.altKey ? 1 : 24;
+          const currentNode = computedLayout.nodes.find((n) => n.id === selectedUnitId);
+          const currentPos = customPositions[selectedUnitId] ||
+            currentNode?.position || { x: 0, y: 0 };
+
+          let dx = 0;
+          let dy = 0;
+          if (e.key === "ArrowLeft") dx = -step;
+          if (e.key === "ArrowRight") dx = step;
+          if (e.key === "ArrowUp") dy = -step;
+          if (e.key === "ArrowDown") dy = step;
+
+          setNodePosition(
+            selectedUnitId,
+            { x: currentPos.x + dx, y: currentPos.y + dy },
+            true
+          );
+          return;
+        }
+      }
+
       // +/- Zoom Controls
       if (e.key === "+" || e.key === "=") {
         e.preventDefault();
@@ -462,6 +723,10 @@ function OrgChartCanvasInner({
       reactFlowInstance,
       computedLayout.nodes,
       selectedUnitId,
+      customPositions,
+      setNodePosition,
+      undo,
+      redo,
       onSelectUnit,
       onOpenDetails,
     ]
@@ -568,12 +833,19 @@ function OrgChartCanvasInner({
 
       {/* Core Interactive Canvas */}
       <ReactFlow
-        nodes={computedLayout.nodes}
-        edges={computedLayout.edges}
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
         nodeTypes={nodeTypes}
         // Viewport Virtualization & 60fps Optimization (Part 5)
         onlyRenderVisibleElements={true}
-        nodesDraggable={false}
+        nodesDraggable={!isLocked}
+        nodeDragThreshold={4}
+        panActivationKeyCode="Space"
+        onNodeDragStart={handleNodeDragStart}
+        onNodeDrag={handleNodeDrag}
+        onNodeDragStop={handleNodeDragStop}
         nodesConnectable={false}
         elementsSelectable={true}
         zoomOnScroll={true}

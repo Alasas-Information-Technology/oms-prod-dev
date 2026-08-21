@@ -4,11 +4,13 @@ import * as React from "react";
 import { Handle, Position, NodeProps, Node } from "@xyflow/react";
 import { OrgUnitCard } from "@/components/oms/org/OrgUnitCard";
 import { OrgUnitSummaryDto, OrgUnitEntity } from "@/lib/types/organization.types";
+import { cn } from "@/lib/utils";
 
 export interface OrgChartNodeData {
   unit: OrgUnitSummaryDto | OrgUnitEntity;
   isSelected?: boolean;
   isExpanded?: boolean;
+  isDraggingNode?: boolean;
   childCount?: number;
   orientation?: "TB" | "LR";
   onSelectUnit?: (unit: OrgUnitSummaryDto | OrgUnitEntity) => void;
@@ -25,13 +27,16 @@ export type OrgChartNodeType = Node<OrgChartNodeData, "orgUnitNode">;
  * Implements:
  * - Direct Handle anchoring for orthogonal connector lines.
  * - Dynamic Handle positioning based on vertical (TB) vs horizontal (LR) orientation.
+ * - Whole card is drag handle (cursor: grab / grabbing).
+ * - Lift shadow and scale(1.02) during drag per Part 3.2.
  * - Seamless keyboard and mouse interaction delegation.
  */
-export function OrgChartNode({ data, sourcePosition, targetPosition }: NodeProps<OrgChartNodeType>) {
+export function OrgChartNode({ data, sourcePosition, targetPosition, dragging }: NodeProps<OrgChartNodeType>) {
   const {
     unit,
     isSelected = false,
     isExpanded = false,
+    isDraggingNode = false,
     childCount,
     orientation = "TB",
     onSelectUnit,
@@ -42,6 +47,7 @@ export function OrgChartNode({ data, sourcePosition, targetPosition }: NodeProps
   const isVertical = orientation === "TB";
   const targetPos = targetPosition || (isVertical ? Position.Top : Position.Left);
   const sourcePos = sourcePosition || (isVertical ? Position.Bottom : Position.Right);
+  const isActivelyDragged = dragging || isDraggingNode;
 
   if (!unit) return null;
 
@@ -52,7 +58,10 @@ export function OrgChartNode({ data, sourcePosition, targetPosition }: NodeProps
 
   return (
     <div
-      className="relative group cursor-pointer focus:outline-none"
+      className={cn(
+        "relative group cursor-grab active:cursor-grabbing focus:outline-none transition-transform duration-100 ease-out",
+        isActivelyDragged && "scale-[1.02] z-[1000] cursor-grabbing"
+      )}
       onClick={(e) => {
         e.stopPropagation();
         onSelectUnit?.(unit);
@@ -82,6 +91,10 @@ export function OrgChartNode({ data, sourcePosition, targetPosition }: NodeProps
         isSelected={isSelected}
         isExpanded={isExpanded}
         isArchived={!unit.isActive}
+        className={cn(
+          isActivelyDragged &&
+            "shadow-[0_4px_8px_rgba(0,0,0,0.06),0_12px_32px_rgba(0,0,0,0.10)] ring-2 ring-primary/40"
+        )}
         onOpenDetails={(e) => {
           e?.stopPropagation();
           onOpenDetails?.(unit);

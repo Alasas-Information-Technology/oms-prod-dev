@@ -388,6 +388,7 @@ function OrganizationPageContent() {
             }}
             onSwitchToList={() => setViewMode("list")}
             deepLinkUnitId={deepLinkUnitId}
+            isLocked={isCreateOpen || isMoveOpen || isArchiveOpen || isDeleteOpen || isDetailOpen}
             className="h-full w-full rounded-none border-none shadow-none"
           />
         </div>
