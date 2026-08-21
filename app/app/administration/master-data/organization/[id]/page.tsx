@@ -14,28 +14,29 @@ export default function OrgUnitDetailPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto p-4 sm:p-6 pb-20">
-      {/* Back Button Navigation (Preserves tree expansion state in sessionStorage) */}
+      {/* Back Button Navigation */}
       <div className="flex items-center justify-between">
         <Button asChild variant="ghost" size="sm" className="gap-2 text-xs text-muted-foreground hover:text-foreground">
-          <Link href="/app/administration/master-data/organization">
+          <Link href={`/app/administration/master-data/organization?unit=${orgUnitId}`}>
             <ArrowLeft className="h-4 w-4" />
-            Back to Organization Explorer
+            Open on Organisation Chart
           </Link>
         </Button>
       </div>
 
-      {/* Main Unit Detail View with Tabs */}
-      <OrgUnitDetailView
-        unitId={orgUnitId}
-        isPushedRoute={true}
-        onNavigateUnit={(targetId) => {
-          if (!targetId) {
-            router.push("/app/administration/master-data/organization");
-          } else {
-            router.push(`/app/administration/master-data/organization/${targetId}`);
-          }
-        }}
-      />
+      {/* Main Unit Detail View */}
+      <div className="rounded-2xl border border-border bg-card p-6 shadow-xs">
+        <OrgUnitDetailView
+          unitId={orgUnitId}
+          onNavigateUnit={(targetId) => {
+            if (!targetId) {
+              router.push("/app/administration/master-data/organization");
+            } else {
+              router.push(`/app/administration/master-data/organization/${targetId}`);
+            }
+          }}
+        />
+      </div>
     </div>
   );
 }

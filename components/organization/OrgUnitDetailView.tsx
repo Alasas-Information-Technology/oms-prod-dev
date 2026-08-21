@@ -9,34 +9,38 @@ import {
   ChevronRight,
   Edit2,
   ArrowRightLeft,
-  Power,
   Trash2,
-  Crown,
+  Archive,
   Layers,
   Calendar,
-  Mail,
-  Phone,
   Wallet,
-  CheckCircle2,
   Clock,
   History,
   Plus,
   Loader2,
   Users,
-  ExternalLink,
   ShieldCheck,
   Building,
   FolderTree,
-  AlertCircle,
   FileQuestion,
   RefreshCw,
-  GitBranch,
+  MoreHorizontal,
+  User,
+  Crown,
 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -44,13 +48,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { StatusBadge, OMSStatus } from "@/components/oms/StatusBadge";
 import { DataTable, ColumnDef, RowAction } from "@/components/oms/DataTable";
-import { OrgTypeIcon, OrgBreadcrumb, UnitPath, OrgBreadcrumbItem } from "@/components/oms/org";
+import { OrgTypeIcon, UnitPath, OrgBreadcrumbItem } from "@/components/oms/org";
 import { OrgUnitForm } from "@/components/organization/OrgUnitForm";
 import { MoveUnitDialog } from "@/components/organization/MoveUnitDialog";
 import { DeleteUnitDialog } from "@/components/organization/DeleteUnitDialog";
 import { ManagerAssignmentPanel } from "@/components/organization/ManagerAssignmentPanel";
+
 import {
   useOrgUnit,
   useOrgUnitChildren,
@@ -62,7 +66,6 @@ import {
   useCreateOrgUnit,
   useActivateOrgUnit,
   useDeactivateOrgUnit,
-  useAllowedParentTypes,
   useOrgUnitTypes,
 } from "@/hooks/useOrganization";
 import { usePermission } from "@/hooks/usePermission";
@@ -80,12 +83,13 @@ import { cn } from "@/lib/utils";
 export interface OrgUnitDetailViewProps {
   unitId: string;
   onNavigateUnit?: (targetUnitId: string) => void;
-  isPushedRoute?: boolean;
+  onClose?: () => void;
   className?: string;
 }
 
 /**
- * Derives dynamic child tab and sub-unit terminology based on parent unit type.
+ * Derives dynamic child tab and sub-unit terminology based on unit type.
+ * Part 3.4: "Sections" under a department, "Departments" under a business unit.
  */
 function getChildTabMeta(canonicalLevel?: number, typeCode?: string): {
   tabLabel: string;
@@ -93,53 +97,77 @@ function getChildTabMeta(canonicalLevel?: number, typeCode?: string): {
   emptyPrompt: string;
   targetTypeId?: number;
 } {
-  if (typeCode === "ORGANIZATION" || canonicalLevel === 1) {
+  const norm = String(typeCode || "").toUpperCase();
+  if (norm === "ORGANIZATION" || norm === "ORG" || canonicalLevel === 1) {
     return {
       tabLabel: "Business Units",
       singularLabel: "Business Unit",
-      emptyPrompt: "No business units yet. Add an executive division to structure this holding organization.",
+      emptyPrompt: "No business units yet. Add one to group related departments.",
       targetTypeId: 2,
     };
   }
-  if (typeCode === "BUSINESS_UNIT" || canonicalLevel === 2) {
+  if (norm === "BUSINESS_UNIT" || norm === "BU" || canonicalLevel === 2) {
     return {
       tabLabel: "Departments",
       singularLabel: "Department",
-      emptyPrompt: "No departments yet. Add functional departments to assign cost centers and budget owners.",
+      emptyPrompt: "No departments yet. Add one to group related teams and budgets.",
       targetTypeId: 3,
     };
   }
-  if (typeCode === "DEPARTMENT" || canonicalLevel === 3) {
+  if (norm === "DEPARTMENT" || norm === "DEP" || canonicalLevel === 3) {
     return {
       tabLabel: "Sections",
       singularLabel: "Section",
-      emptyPrompt: "No sections yet. Add operational teams beneath this department.",
+      emptyPrompt: "No sections yet. Add one to group this department's teams.",
       targetTypeId: 4,
     };
   }
   return {
-    tabLabel: "Sub-Units",
-    singularLabel: "Sub-Unit",
-    emptyPrompt: "No child units under this unit.",
+    tabLabel: "Teams",
+    singularLabel: "Team",
+    emptyPrompt: "No teams inside this unit yet.",
     targetTypeId: undefined,
   };
 }
 
 /**
- * OrgUnitDetailView — Unit Detail Screen with Tabs.
+ * Formats subordinate counts into a natural plain-language sentence.
+ */
+function formatCountSentence(
+  childCount?: number,
+  childTypeWord?: string,
+  peopleCount?: number
+): string {
+  const parts: string[] = [];
+
+  if (childCount !== undefined && childCount > 0) {
+    parts.push(`${childCount} ${childTypeWord || "units"}`);
+  }
+
+  if (peopleCount !== undefined && peopleCount > 0) {
+    parts.push(`${peopleCount} ${peopleCount === 1 ? "person" : "people"}`);
+  }
+
+  if (parts.length === 0) {
+    return "0 units inside";
+  }
+
+  return parts.join(" · ");
+}
+
+/**
+ * OrgUnitDetailView — Slide-Over Detail Panel for Organization Units.
  *
  * Implements:
- * - Part 3.1 & 3.2: Two-pane and pushed route support, clickable lineage breadcrumb.
- * - Overview tab: Structured definition list (<dl>), read-first, with dialog edit.
- * - Child tab: Dynamic label ("Departments" under BU, "Sections" under Dept).
- * - People tab: Temporal leadership timeline reusing components/oms/Timeline.
- * - History tab: Reverse-chronological OrgUnitChangeLog with old → new parent movement.
- * - Part 2.7: Indented skeleton loading and genuine 404 page for scoped denial (no 403 leaks).
+ * - Part 1: Clean surface rules (white card, neutral borders, mono codes).
+ * - Part 2: Vocabulary compliance (Part of, What's inside, Who's in charge, Archive/Remove).
+ * - Part 3.4: Slide-over anatomy (code chip, panel label, ⋯ menu, dynamic child tab, definition list).
+ * - Part 6.5: Genuine 404 error page, indented skeletons, inviting empty states.
  */
 export function OrgUnitDetailView({
   unitId,
   onNavigateUnit,
-  isPushedRoute = false,
+  onClose,
   className,
 }: OrgUnitDetailViewProps) {
   const router = useRouter();
@@ -151,7 +179,7 @@ export function OrgUnitDetailView({
   const [isDeleteOpen, setIsDeleteOpen] = React.useState(false);
   const [isAddChildOpen, setIsAddChildOpen] = React.useState(false);
 
-  // Queries
+  // Data Queries
   const {
     data: unit,
     isLoading: isLoadingUnit,
@@ -164,7 +192,6 @@ export function OrgUnitDetailView({
   const { data: changeLogsData, isLoading: isLoadingLogs } = useOrgUnitChangeLog(unitId, 1, 50);
   const { data: approvalChain, isLoading: isLoadingChain } = useApprovalChain(unitId);
   const { data: budgetOwner, isLoading: isLoadingBudget } = useBudgetOwner(unitId);
-  const { data: typesList } = useOrgUnitTypes();
 
   // Mutations
   const updateMutation = useUpdateOrgUnit();
@@ -172,70 +199,54 @@ export function OrgUnitDetailView({
   const activateMutation = useActivateOrgUnit();
   const deactivateMutation = useDeactivateOrgUnit();
 
-  // Compute Breadcrumb Lineage Items
-  const breadcrumbItems: OrgBreadcrumbItem[] = React.useMemo(() => {
-    if (!unit) return [];
-    const list: OrgBreadcrumbItem[] = [];
-
-    if (ancestorsList && ancestorsList.length > 0) {
-      ancestorsList.forEach((a) => {
-        list.push({
-          orgUnitId: a.orgUnitId,
-          name: a.name,
-          nameAr: a.nameAr || undefined,
-          code: a.code,
-          typeCode: a.type?.code || a.orgUnitType?.code,
-          href: `/app/administration/master-data/organization/${a.orgUnitId}`,
-        });
-      });
-    }
-
-    list.push({
-      orgUnitId: unit.orgUnitId,
-      name: unit.name,
-      nameAr: unit.nameAr || undefined,
-      code: unit.code,
-      typeCode: unit.type?.code || unit.orgUnitType?.code,
-    });
-
-    return list;
-  }, [unit, ancestorsList]);
-
-  // Derived Child Tab Metadata
+  // Derived metadata
   const typeCode = unit?.type?.code || unit?.orgUnitType?.code;
   const canonicalLevel = unit?.type?.canonicalLevel || unit?.orgUnitType?.canonicalLevel || unit?.depth || 1;
   const childMeta = getChildTabMeta(canonicalLevel, typeCode);
+  const typeName = unit?.type?.name || unit?.orgUnitType?.name || childMeta.singularLabel;
 
-  // Loading State: Skeleton Screen (Part 2.7)
+  // Ancestor Breadcrumb Items
+  const breadcrumbItems: OrgBreadcrumbItem[] = React.useMemo(() => {
+    if (!ancestorsList || ancestorsList.length === 0) return [];
+    return ancestorsList.map((a) => ({
+      orgUnitId: a.orgUnitId,
+      name: a.name,
+      nameAr: a.nameAr || undefined,
+      code: a.code,
+      typeCode: a.type?.code || a.orgUnitType?.code,
+    }));
+  }, [ancestorsList]);
+
+  // Loading State: Skeleton Screen (Part 6.5)
   if (isLoadingUnit) {
     return (
-      <div className={cn("space-y-6 p-6", className)} aria-label="Loading unit details...">
+      <div className={cn("space-y-6 p-6", className)} aria-label="Loading details...">
         <div className="space-y-2">
-          <Skeleton className="h-4 w-64 rounded" />
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-5 w-16 rounded" />
+            <Skeleton className="h-4 w-32 rounded" />
+          </div>
           <div className="flex items-center justify-between pt-2">
             <div className="flex items-center gap-3">
-              <Skeleton className="h-8 w-12 rounded" />
+              <Skeleton className="h-8 w-8 rounded-lg" />
               <Skeleton className="h-7 w-48 rounded" />
             </div>
             <div className="flex gap-2">
-              <Skeleton className="h-8 w-20 rounded" />
-              <Skeleton className="h-8 w-24 rounded" />
+              <Skeleton className="h-8 w-16 rounded" />
+              <Skeleton className="h-8 w-8 rounded" />
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-24 rounded-xl" />
-          ))}
+        <div className="space-y-4 pt-4">
+          <Skeleton className="h-48 rounded-xl" />
+          <Skeleton className="h-32 rounded-xl" />
         </div>
-
-        <Skeleton className="h-96 rounded-xl" />
       </div>
     );
   }
 
-  // Error State / Genuine 404 Page (Part 2.7 & §9.3)
+  // Error State: Genuine 404 (Part 6.5 & Vocabulary: Never say "Scope")
   if (isErrorUnit || !unit) {
     return (
       <div className={cn("p-12 text-center flex flex-col items-center justify-center min-h-[450px] space-y-4 bg-card rounded-2xl border border-border", className)}>
@@ -243,9 +254,9 @@ export function OrgUnitDetailView({
           <FileQuestion className="h-8 w-8 text-muted-foreground/60" />
         </div>
         <div className="space-y-1.5 max-w-md">
-          <h2 className="text-xl font-bold text-foreground">Organization Unit Not Found</h2>
+          <h2 className="text-xl font-bold text-foreground">Department Not Available</h2>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            The requested organization unit does not exist or is not visible within your assigned organizational scope.
+            This department isn&apos;t available or you don&apos;t have access to view it.
           </p>
         </div>
         <div className="flex items-center gap-3 pt-2">
@@ -260,7 +271,7 @@ export function OrgUnitDetailView({
           </Button>
           <Button asChild size="sm" className="text-xs">
             <Link href="/app/administration/master-data/organization">
-              Return to Organization Tree
+              Return to Organisation
             </Link>
           </Button>
         </div>
@@ -271,381 +282,412 @@ export function OrgUnitDetailView({
   const handleUpdateSubmit = async (data: UpdateOrgUnitDto) => {
     try {
       await updateMutation.mutateAsync({ id: unit.orgUnitId, dto: data });
-      toast.success(`Unit ${data.name} updated successfully.`);
+      toast.success(`${data.name} updated successfully.`);
       setIsEditOpen(false);
       refetchUnit();
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to update organization unit.";
+      const errorMsg = err instanceof Error ? err.message : "Failed to update.";
       toast.error(errorMsg);
     }
   };
 
   const handleAddChildSubmit = async (data: CreateOrgUnitDto) => {
     try {
-      await createMutation.mutateAsync({ ...data, parentOrgUnitId: unit.orgUnitId });
-      toast.success(`Sub-unit ${data.name} (${data.code}) created successfully.`);
+      const created = await createMutation.mutateAsync({ ...data, parentOrgUnitId: unit.orgUnitId });
+      toast.success(`${created.name} added under ${unit.name}.`);
       setIsAddChildOpen(false);
+      refetchUnit();
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to create sub-unit.";
+      const errorMsg = err instanceof Error ? err.message : "Failed to add.";
       toast.error(errorMsg);
     }
   };
 
-  const handleToggleActive = async () => {
+  const handleToggleArchive = async () => {
     try {
       if (unit.isActive) {
         await deactivateMutation.mutateAsync({
           id: unit.orgUnitId,
           effectiveTo: new Date().toISOString().split("T")[0],
         });
-        toast.success(`Unit ${unit.name} deactivated.`);
+        toast.success(`${unit.name} archived.`);
       } else {
         await activateMutation.mutateAsync(unit.orgUnitId);
-        toast.success(`Unit ${unit.name} activated.`);
+        toast.success(`${unit.name} restored from archive.`);
       }
       refetchUnit();
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to update unit status.";
+      const errorMsg = err instanceof Error ? err.message : "Failed to update status.";
       toast.error(errorMsg);
     }
   };
 
-  const statusType: OMSStatus = unit.isActive ? "active" : "terminated";
-
-  // Child Units Table Columns
+  // Child Units Table Columns (Part 3.4)
   const childrenColumns: ColumnDef<OrgUnitSummaryDto>[] = [
+    {
+      key: "name",
+      header: "Name",
+      render: (_, row) => (
+        <div
+          className="flex items-center gap-2 cursor-pointer group"
+          onClick={() => onNavigateUnit?.(row.orgUnitId)}
+        >
+          <OrgTypeIcon type={row.orgUnitTypeId} size="xs" />
+          <div className="space-y-0.5 min-w-0">
+            <span className="font-semibold text-xs text-foreground group-hover:text-primary group-hover:underline truncate block">
+              {row.name}
+            </span>
+            {row.nameAr && (
+              <span dir="rtl" lang="ar" className="text-[11px] text-muted-foreground font-arabic truncate block">
+                {row.nameAr}
+              </span>
+            )}
+          </div>
+        </div>
+      ),
+    },
     {
       key: "code",
       header: "Code",
       render: (_, row) => (
-        <span className="font-mono text-xs font-semibold px-2 py-0.5 bg-muted rounded border border-border/40">
+        <span className="font-mono text-xs font-semibold px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border/50">
           {row.code}
         </span>
       ),
     },
     {
-      key: "name",
-      header: "Name",
-      render: (_, row) => (
-        <div className="flex flex-col">
-          <span className="font-medium text-foreground text-xs">{row.name}</span>
-          {row.nameAr && (
-            <span dir="rtl" lang="ar" className="text-[11px] text-muted-foreground font-arabic">
-              {row.nameAr}
-            </span>
-          )}
-        </div>
-      ),
-    },
-    {
-      key: "type",
-      header: "Type",
-      render: (_, row) => (
-        <OrgTypeIcon
-          type={row.type?.code || row.orgUnitType?.code || "DEP"}
-          size="sm"
-          showLabel
-        />
-      ),
-    },
-    {
       key: "head",
-      header: "Primary Head",
+      header: "Who's in charge",
       render: (_, row) =>
         row.head?.displayName || row.head?.userDisplayName ? (
-          <span className="text-xs font-medium text-foreground flex items-center gap-1">
-            <Crown className="h-3 w-3 text-primary" />
-            {row.head.displayName || row.head.userDisplayName}
+          <span className="text-xs font-medium text-foreground flex items-center gap-1.5 truncate">
+            <User className="h-3 w-3 text-muted-foreground" />
+            {row.head?.displayName || row.head?.userDisplayName}
           </span>
         ) : (
-          <span className="text-xs text-muted-foreground italic">—</span>
+          <span className="text-xs text-muted-foreground italic">No one in charge</span>
         ),
     },
     {
-      key: "descendants",
-      header: "Subtree Units",
-      align: "right",
+      key: "counts",
+      header: "What's inside",
       render: (_, row) => (
-        <span className="font-mono text-xs text-right tabular-nums text-muted-foreground">
-          {row.childCount ?? row.descendantCount ?? 0}
+        <span className="text-xs text-muted-foreground">
+          {row.childCount || 0} teams
         </span>
       ),
     },
     {
       key: "status",
       header: "Status",
-      render: (_, row) => <StatusBadge status={row.isActive ? "active" : "terminated"} size="sm" showDot />,
+      render: (_, row) => (
+        <Badge
+          variant={row.isActive ? "default" : "secondary"}
+          className="text-[10px] uppercase font-semibold"
+        >
+          {row.isActive ? "Active" : "Archived"}
+        </Badge>
+      ),
     },
   ];
 
-  const childrenRowActions: RowAction<OrgUnitSummaryDto>[] = [
-    {
-      label: "View Unit Details",
-      icon: <ChevronRight className="h-4 w-4 text-primary" />,
-      onClick: (row) => {
-        if (onNavigateUnit) {
-          onNavigateUnit(row.orgUnitId);
-        } else {
-          router.push(`/app/administration/master-data/organization/${row.orgUnitId}`);
-        }
-      },
-    },
-  ];
+  const totalInsideCount = unit.descendantCount ?? unit.childCount ?? 0;
+  const countSentence = formatCountSentence(
+    unit.childCount,
+    childMeta.tabLabel.toLowerCase(),
+    (unit as any).peopleCount ?? (unit as any).assignedUserCount
+  );
 
   return (
-    <div className={cn("space-y-6 flex flex-col h-full", className)}>
-      {/* Top Clickable Lineage Breadcrumb (Part 1.3 & Prompt U2) */}
-      <div className="pb-2 border-b border-border">
-        <OrgBreadcrumb
-          items={breadcrumbItems}
-          maxVisible={4}
-          showSigils={true}
-          showCodes={true}
-          onSelect={(item) => {
-            if (item.orgUnitId) {
-              if (onNavigateUnit) {
-                onNavigateUnit(item.orgUnitId);
-              } else {
-                router.push(`/app/administration/master-data/organization/${item.orgUnitId}`);
-              }
-            }
-          }}
-        />
-      </div>
+    <div className={cn("space-y-6", className)}>
+      {/* ========================================================================= */}
+      {/* Top Header: Code Chip + Breadcrumb Path + ⋯ Menu + Edit (Part 3.4)         */}
+      {/* ========================================================================= */}
+      <div className="space-y-3 pb-4 border-b border-border/60">
+        {/* Top Meta Line: Code Chip + Panel Label */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded-md bg-muted text-muted-foreground border border-border/50">
+              {unit.code}
+            </span>
+            <span className="text-xs text-muted-foreground font-medium">
+              {typeName} details
+            </span>
+          </div>
 
-      {/* Main Entity Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl bg-card border border-border shadow-xs">
-        <div className="flex items-start gap-3.5">
-          <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20 text-primary shrink-0 mt-0.5">
-            {canonicalLevel === 1 ? (
-              <Building2 className="h-6 w-6" />
-            ) : canonicalLevel === 2 ? (
-              <Building className="h-6 w-6" />
-            ) : (
-              <FolderTree className="h-6 w-6" />
+          <div className="flex items-center gap-2">
+            {/* ⋯ Menu for Destructive Actions (One Click Deep per Part 3.4) */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 w-8 p-0 rounded-lg text-muted-foreground hover:text-foreground"
+                  aria-label="More actions"
+                >
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 p-1">
+                {can(ORG_PERMISSIONS.MOVE) && (
+                  <DropdownMenuItem
+                    onClick={() => setIsMoveOpen(true)}
+                    className="gap-2 text-xs cursor-pointer"
+                  >
+                    <ArrowRightLeft className="h-3.5 w-3.5 text-blue-600" />
+                    <span>Move {typeName.toLowerCase()}</span>
+                  </DropdownMenuItem>
+                )}
+
+                {can(ORG_PERMISSIONS.UPDATE) && (
+                  <DropdownMenuItem
+                    onClick={handleToggleArchive}
+                    className="gap-2 text-xs cursor-pointer"
+                  >
+                    <Archive className="h-3.5 w-3.5 text-amber-600" />
+                    <span>{unit.isActive ? `Archive ${typeName.toLowerCase()}` : `Restore ${typeName.toLowerCase()}`}</span>
+                  </DropdownMenuItem>
+                )}
+
+                {can(ORG_PERMISSIONS.DELETE) && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => setIsDeleteOpen(true)}
+                      className="gap-2 text-xs text-destructive focus:text-destructive cursor-pointer"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      <span>Remove {typeName.toLowerCase()}</span>
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Primary Edit Button */}
+            {can(ORG_PERMISSIONS.UPDATE) && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsEditOpen(true)}
+                className="gap-1.5 text-xs h-8 rounded-lg"
+              >
+                <Edit2 className="h-3.5 w-3.5" />
+                Edit
+              </Button>
             )}
           </div>
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <OrgTypeIcon type={typeCode || "DEP"} size="md" />
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-                {unit.name}
-              </h1>
-              <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-muted text-muted-foreground border border-border/40">
-                {unit.code}
-              </span>
-              <StatusBadge status={statusType} size="sm" showDot />
-            </div>
+        </div>
+
+        {/* Identity Block: Icon + Name + Arabic Name + "Part of" clickable path */}
+        <div className="flex items-start gap-3 pt-1">
+          <OrgTypeIcon type={typeCode || "DEPARTMENT"} size="lg" className="mt-0.5 shrink-0" />
+          <div className="space-y-1 min-w-0 flex-1">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground leading-tight">
+              {unit.name}
+            </h1>
+
             {unit.nameAr && (
               <p dir="rtl" lang="ar" className="text-xs text-muted-foreground font-arabic">
                 {unit.nameAr}
               </p>
             )}
+
+            {/* "Part of" Clickable Lineage Path (Part 3.4) */}
+            <div className="pt-0.5 text-xs text-muted-foreground flex items-center gap-1.5 flex-wrap">
+              <span>Part of</span>
+              {breadcrumbItems.length > 0 ? (
+                <div className="flex items-center gap-1 flex-wrap">
+                  {breadcrumbItems.map((item, idx) => (
+                    <React.Fragment key={item.orgUnitId || idx}>
+                      {idx > 0 && <span className="text-muted-foreground/60">›</span>}
+                      <button
+                        type="button"
+                        onClick={() => item.orgUnitId && onNavigateUnit?.(item.orgUnitId)}
+                        className="font-medium text-foreground hover:text-primary hover:underline transition-colors"
+                      >
+                        {item.name}
+                      </button>
+                    </React.Fragment>
+                  ))}
+                </div>
+              ) : (
+                <span className="font-medium text-foreground">DIEZ (Top of organisation)</span>
+              )}
+            </div>
           </div>
-        </div>
-
-        {/* Header Action CTAs (Gated on can()) */}
-        <div className="flex items-center gap-2 flex-wrap shrink-0">
-          {can(ORG_PERMISSIONS.UPDATE) && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsEditOpen(true)}
-              className="gap-1.5 text-xs h-8"
-            >
-              <Edit2 className="h-3.5 w-3.5" />
-              Edit Unit
-            </Button>
-          )}
-
-          {can(ORG_PERMISSIONS.MOVE) && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsMoveOpen(true)}
-              className="gap-1.5 text-xs h-8"
-            >
-              <ArrowRightLeft className="h-3.5 w-3.5 text-blue-600" />
-              Move Unit
-            </Button>
-          )}
-
-          {can(ORG_PERMISSIONS.CREATE) && (
-            <Button
-              size="sm"
-              onClick={() => setIsAddChildOpen(true)}
-              className="gap-1.5 text-xs h-8"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Add {childMeta.singularLabel}
-            </Button>
-          )}
         </div>
       </div>
 
-      {/* Main Tabs Navigation */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col space-y-4">
+      {/* ========================================================================= */}
+      {/* Detail Tabs (Part 3.4: Overview | Dynamic Child Type | People | History)  */}
+      {/* ========================================================================= */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="bg-muted/60 p-1 rounded-xl w-full sm:w-auto self-start border border-border/60">
-          <TabsTrigger value="overview" className="text-xs gap-1.5 px-3.5 py-1.5">
+          <TabsTrigger value="overview" className="text-xs gap-1.5 px-3.5 py-1.5 rounded-lg">
             <Building2 className="h-3.5 w-3.5" />
             Overview
           </TabsTrigger>
-          <TabsTrigger value="children" className="text-xs gap-1.5 px-3.5 py-1.5">
+
+          <TabsTrigger value="children" className="text-xs gap-1.5 px-3.5 py-1.5 rounded-lg">
             <Layers className="h-3.5 w-3.5" />
             {childMeta.tabLabel} ({childrenList?.length || 0})
           </TabsTrigger>
-          <TabsTrigger value="people" className="text-xs gap-1.5 px-3.5 py-1.5">
+
+          <TabsTrigger value="people" className="text-xs gap-1.5 px-3.5 py-1.5 rounded-lg">
             <Users className="h-3.5 w-3.5" />
-            People & Leadership
+            People
           </TabsTrigger>
-          <TabsTrigger value="history" className="text-xs gap-1.5 px-3.5 py-1.5">
+
+          <TabsTrigger value="history" className="text-xs gap-1.5 px-3.5 py-1.5 rounded-lg">
             <History className="h-3.5 w-3.5" />
             History ({changeLogsData?.total || 0})
           </TabsTrigger>
         </TabsList>
 
         {/* ===================================================================== */}
-        {/* Tab 1: Overview (Read-First Definition List per §3.2) */}
+        {/* Tab 1: Overview (Read-First Definition List per Part 3.4)             */}
         {/* ===================================================================== */}
         <TabsContent value="overview" className="space-y-6 m-0">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left 2 Cols: Definition List */}
+            {/* Left 2 Columns: Definition List */}
             <Card className="lg:col-span-2 border border-border shadow-xs">
               <CardHeader className="pb-3 border-b border-border/60">
                 <CardTitle className="text-sm font-bold flex items-center gap-2">
                   <Building2 className="h-4 w-4 text-primary" />
-                  Organization Unit Metadata
+                  Key Information
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Canonical structure and operational attributes. Read-only view.
+                  Operational details and leadership appointments.
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-4">
                 <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-xs">
-                  <div className="space-y-1">
-                    <dt className="text-muted-foreground font-medium">Type Identifier</dt>
-                    <dd className="flex items-center gap-2 font-semibold text-foreground">
-                      <OrgTypeIcon type={typeCode || "DEP"} size="sm" />
-                      <span>{unit.type?.name || unit.orgUnitType?.name || "Department"}</span>
+                  {/* Who's in charge */}
+                  <div className="space-y-1 sm:col-span-2 p-3 rounded-lg bg-muted/20 border border-border/50">
+                    <dt className="text-muted-foreground font-medium text-[11px] uppercase">
+                      Who&apos;s in charge
+                    </dt>
+                    <dd className="font-semibold text-foreground text-sm flex items-center gap-2 pt-0.5">
+                      <div className="h-6 w-6 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                        <User className="h-3.5 w-3.5" />
+                      </div>
+                      <span>
+                        {unit.head?.displayName || unit.head?.userDisplayName || (
+                          <span className="text-muted-foreground font-normal italic">
+                            No one in charge currently
+                          </span>
+                        )}
+                      </span>
+                      {unit.effectiveFrom && (
+                        <span className="text-xs text-muted-foreground font-normal ml-auto">
+                          Started {String(unit.effectiveFrom).split("T")[0]}
+                        </span>
+                      )}
                     </dd>
                   </div>
 
+                  {/* Code */}
                   <div className="space-y-1">
-                    <dt className="text-muted-foreground font-medium">Short Code</dt>
+                    <dt className="text-muted-foreground font-medium">Code</dt>
                     <dd className="font-mono font-semibold text-foreground text-sm">
                       {unit.code}
                     </dd>
                   </div>
 
+                  {/* Cost Centre */}
                   <div className="space-y-1">
-                    <dt className="text-muted-foreground font-medium">Reports To (Parent)</dt>
+                    <dt className="text-muted-foreground font-medium">Cost centre</dt>
+                    <dd className="font-mono text-foreground font-medium">
+                      {unit.costCenterCode || <span className="text-muted-foreground italic">None</span>}
+                    </dd>
+                  </div>
+
+                  {/* Part of */}
+                  <div className="space-y-1">
+                    <dt className="text-muted-foreground font-medium">Part of</dt>
                     <dd className="font-medium text-foreground">
                       {unit.parentName ? (
                         <button
                           type="button"
                           onClick={() => unit.parentOrgUnitId && onNavigateUnit?.(unit.parentOrgUnitId)}
-                          className="hover:underline text-primary text-left font-semibold"
+                          className="hover:underline text-primary text-left font-semibold inline-flex items-center gap-1"
                         >
-                          {unit.parentName} {unit.parentCode && `(${unit.parentCode})`}
+                          {unit.parentName}
+                          <ChevronRight className="h-3 w-3" />
                         </button>
                       ) : (
-                        <span className="text-muted-foreground italic">Root Holding Company (Level 1)</span>
+                        <span className="text-muted-foreground">DIEZ (Top of organisation)</span>
                       )}
                     </dd>
                   </div>
 
+                  {/* Status */}
                   <div className="space-y-1">
-                    <dt className="text-muted-foreground font-medium">Cost Centre Code</dt>
-                    <dd className="font-mono text-foreground font-medium">
-                      {unit.costCenterCode || <span className="text-muted-foreground italic">Not Assigned</span>}
-                    </dd>
-                  </div>
-
-                  <div className="space-y-1">
-                    <dt className="text-muted-foreground font-medium">Active Primary Head</dt>
+                    <dt className="text-muted-foreground font-medium">Status</dt>
                     <dd className="font-medium text-foreground flex items-center gap-1.5">
-                      <Crown className="h-3.5 w-3.5 text-primary shrink-0" />
-                      <span>
-                        {unit.head?.displayName || unit.head?.userDisplayName || (
-                          <span className="text-muted-foreground italic">No primary head assigned</span>
+                      <span
+                        className={cn(
+                          "h-2 w-2 rounded-full",
+                          unit.isActive ? "bg-emerald-500" : "bg-muted-foreground"
                         )}
-                      </span>
+                      />
+                      <span>{unit.isActive ? "Active" : "Archived"}</span>
                     </dd>
                   </div>
 
-                  <div className="space-y-1">
-                    <dt className="text-muted-foreground font-medium">Effective Tenure</dt>
-                    <dd className="font-medium text-foreground">
-                      {unit.effectiveFrom ? String(unit.effectiveFrom).split("T")[0] : "—"} →{" "}
-                      {unit.effectiveTo ? String(unit.effectiveTo).split("T")[0] : "Present (Ongoing)"}
-                    </dd>
-                  </div>
-
-                  <div className="space-y-1">
-                    <dt className="text-muted-foreground font-medium">Subtree Units Count</dt>
-                    <dd className="font-mono text-foreground font-semibold tabular-nums">
-                      {unit.descendantCount ?? unit.childCount ?? 0} units
-                    </dd>
-                  </div>
-
-                  <div className="space-y-1">
-                    <dt className="text-muted-foreground font-medium">Budget Ownership Capability</dt>
-                    <dd className="font-medium text-foreground">
-                      {unit.allowsBudget ? (
-                        <Badge variant="outline" className="text-[10px] text-emerald-600 border-emerald-500/30">
-                          BUDGET OWNER CAPABLE
-                        </Badge>
-                      ) : (
-                        <span className="text-muted-foreground">Standard Operational Subunit</span>
-                      )}
+                  {/* What's inside */}
+                  <div className="space-y-1 sm:col-span-2">
+                    <dt className="text-muted-foreground font-medium">What&apos;s inside</dt>
+                    <dd className="text-muted-foreground font-medium">
+                      {countSentence}
                     </dd>
                   </div>
                 </dl>
               </CardContent>
             </Card>
 
-            {/* Right 1 Col: Approval Chain & Budget Owner Cards */}
+            {/* Right Column: Budget Department Card */}
             <div className="space-y-4">
-              {/* Budget Ownership Resolution */}
               <Card className="border border-border shadow-xs">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                     <Wallet className="h-3.5 w-3.5 text-primary" />
-                    Budget Owning Department
+                    Budget Department
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="text-xs space-y-1">
                   {isLoadingBudget ? (
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Loader2 className="h-3 w-3 animate-spin" />
-                      Resolving budget owner...
+                      Checking budget department...
                     </div>
                   ) : budgetOwner ? (
                     <div>
                       <p className="font-bold text-foreground">{budgetOwner.name}</p>
                       <p className="font-mono text-[11px] text-muted-foreground">
-                        {budgetOwner.code} · Cost Centre: {budgetOwner.costCenterCode || "None"}
+                        {budgetOwner.code} · Cost centre: {budgetOwner.costCenterCode || "None"}
                       </p>
                     </div>
                   ) : (
-                    <p className="text-muted-foreground italic">No budget owner resolved.</p>
+                    <p className="text-muted-foreground italic">No budget department assigned.</p>
                   )}
                 </CardContent>
               </Card>
 
-              {/* 14-Stage Approval Chain Preview */}
+              {/* Approval Ladder Preview */}
               <Card className="border border-border shadow-xs">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                     <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-                    Hierarchy Escalation Chain
+                    Approval Path
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-xs">
                   {isLoadingChain ? (
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Loader2 className="h-3 w-3 animate-spin" />
-                      Resolving escalation stages...
+                      Loading approval stages...
                     </div>
                   ) : approvalChain && approvalChain.length > 0 ? (
                     <div className="space-y-1.5">
@@ -662,7 +704,7 @@ export function OrgUnitDetailView({
                       ))}
                     </div>
                   ) : (
-                    <p className="text-muted-foreground italic">No escalation path available.</p>
+                    <p className="text-muted-foreground italic">No approval path available.</p>
                   )}
                 </CardContent>
               </Card>
@@ -671,14 +713,14 @@ export function OrgUnitDetailView({
         </TabsContent>
 
         {/* ===================================================================== */}
-        {/* Tab 2: Child Units (Departments / Sections DataTable per §3.2) */}
+        {/* Tab 2: Dynamic Child Type (Departments / Sections Table per Part 3.4) */}
         {/* ===================================================================== */}
         <TabsContent value="children" className="space-y-4 m-0">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h3 className="text-sm font-semibold text-foreground">{childMeta.tabLabel} Directory</h3>
+              <h3 className="text-sm font-semibold text-foreground">{childMeta.tabLabel}</h3>
               <p className="text-xs text-muted-foreground">
-                Direct child organization units reporting to {unit.name}.
+                Teams and divisions inside {unit.name}.
               </p>
             </div>
             {can(ORG_PERMISSIONS.CREATE) && (
@@ -688,7 +730,7 @@ export function OrgUnitDetailView({
                 className="gap-1.5 text-xs h-8"
               >
                 <Plus className="h-3.5 w-3.5" />
-                Add {childMeta.singularLabel}
+                Add {childMeta.singularLabel.toLowerCase()}
               </Button>
             )}
           </div>
@@ -697,7 +739,6 @@ export function OrgUnitDetailView({
             keyField="orgUnitId"
             data={childrenList || []}
             columns={childrenColumns}
-            rowActions={childrenRowActions}
             loading={isLoadingChildren}
             enableSearch={true}
             emptyMessage={childMeta.emptyPrompt}
@@ -705,24 +746,24 @@ export function OrgUnitDetailView({
         </TabsContent>
 
         {/* ===================================================================== */}
-        {/* Tab 3: People & Leadership (Temporal Timeline per Part 2.3) */}
+        {/* Tab 3: People & Leadership Timeline (Part 3.4)                       */}
         {/* ===================================================================== */}
         <TabsContent value="people" className="space-y-4 m-0">
           <ManagerAssignmentPanel orgUnitId={unit.orgUnitId} unitName={unit.name} />
         </TabsContent>
 
         {/* ===================================================================== */}
-        {/* Tab 4: Change History (Audit Log Feed per §3.2) */}
+        {/* Tab 4: History (Plain-Language Change Log Feed per Part 3.4)         */}
         {/* ===================================================================== */}
         <TabsContent value="history" className="space-y-4 m-0">
           <Card className="border border-border shadow-xs">
             <CardHeader className="pb-3 border-b border-border/60">
               <CardTitle className="text-sm font-bold flex items-center gap-2">
                 <History className="h-4 w-4 text-primary" />
-                Forensic Change Log Feed
+                History Log
               </CardTitle>
               <CardDescription className="text-xs">
-                Reverse-chronological record of organizational restructuring events and tenant modifications.
+                Plain-language record of past moves, leadership appointments, and updates.
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-4">
@@ -738,56 +779,58 @@ export function OrgUnitDetailView({
                     const isMove = log.changeType === "MOVED" || log.changeType === "REPARENT";
                     const isManager = log.changeType === "MANAGER_ASSIGNED" || log.changeType === "MANAGER_REMOVED";
 
-                    const oldParent = log.oldValues?.parentName || log.oldValues?.parentOrgUnitId || "Root";
-                    const newParent = log.newValues?.parentName || log.newValues?.parentOrgUnitId || "Root";
+                    const oldParent = log.oldValues?.parentName || log.oldValues?.parentOrgUnitId || "DIEZ";
+                    const newParent = log.newValues?.parentName || log.newValues?.parentOrgUnitId || "DIEZ";
+                    const operator = log.performedByDisplayName || log.performedBy || "Administrator";
+                    const formattedDate = log.performedAt
+                      ? new Date(log.performedAt).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })
+                      : "Recently";
+
+                    // Plain-language sentence description (Part 2 & Part 3.4)
+                    let sentence = `${unit.name} updated — ${operator}, ${formattedDate}`;
+                    if (isMove) {
+                      sentence = `Moved from ${oldParent} to ${newParent} — ${operator}, ${formattedDate}`;
+                    } else if (log.changeType === "MANAGER_ASSIGNED") {
+                      sentence = `Assigned leader — ${operator}, ${formattedDate}`;
+                    } else if (log.changeType === "CREATED") {
+                      sentence = `Created under ${newParent} — ${operator}, ${formattedDate}`;
+                    } else if (log.changeType === "DEACTIVATED") {
+                      sentence = `Archived — ${operator}, ${formattedDate}`;
+                    }
 
                     return (
                       <div key={log.changeLogId} className="pt-3 first:pt-0 flex flex-col gap-1 text-xs">
-                        <div className="flex items-center justify-between flex-wrap gap-2">
-                          <div className="flex items-center gap-2">
-                            <Badge
-                              variant={isMove ? "default" : isManager ? "secondary" : "outline"}
-                              className="font-mono text-[10px] uppercase py-0"
-                            >
-                              {log.changeType}
-                            </Badge>
-                            <span className="font-semibold text-foreground">
-                              {log.changeType === "MOVED"
-                                ? `Unit moved under ${newParent}`
-                                : `${log.changeType} event recorded`}
-                            </span>
-                          </div>
-                          <span className="text-[11px] text-muted-foreground">
-                            {log.performedAt ? new Date(log.performedAt).toLocaleString() : "—"}
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="font-semibold text-foreground leading-snug">
+                            {sentence}
+                          </p>
+                          <span className="font-mono text-[10px] text-muted-foreground shrink-0">
+                            {log.changeType}
                           </span>
                         </div>
 
-                        {/* Movement Blast Radius Info (Part 2.2 & §3.2) */}
-                        {isMove && (
-                          <div className="p-2 rounded bg-muted/40 border border-border/50 text-[11px] space-y-0.5 mt-1 font-mono">
-                            <p>
-                              Lineage change: <span className="text-muted-foreground">{oldParent}</span> →{" "}
-                              <span className="text-primary font-bold">{newParent}</span>
-                            </p>
-                            {log.affectedNodeCount !== undefined && log.affectedNodeCount > 0 && (
-                              <p className="text-muted-foreground">
-                                Subtree affected: {log.affectedNodeCount} descendant unit(s) recalculated.
-                              </p>
-                            )}
-                          </div>
+                        {isMove && log.affectedNodeCount !== undefined && log.affectedNodeCount > 0 && (
+                          <p className="text-[11px] text-muted-foreground">
+                            {log.affectedNodeCount} teams inside moved with it.
+                          </p>
                         )}
 
-                        <div className="flex items-center gap-4 text-[11px] text-muted-foreground mt-0.5">
-                          <span>Operator: {log.performedByDisplayName || log.performedBy || "System Admin"}</span>
-                          {log.reason && <span>Reason: {log.reason}</span>}
-                        </div>
+                        {log.reason && (
+                          <p className="text-[11px] text-muted-foreground italic">
+                            Reason: {log.reason}
+                          </p>
+                        )}
                       </div>
                     );
                   })}
                 </div>
               ) : (
                 <div className="p-8 text-center text-xs text-muted-foreground">
-                  No change history records logged for this organization unit.
+                  No history records logged for this {typeName.toLowerCase()} yet.
                 </div>
               )}
             </CardContent>
@@ -795,13 +838,15 @@ export function OrgUnitDetailView({
         </TabsContent>
       </Tabs>
 
-      {/* Edit Unit Modal Dialog */}
+      {/* ========================================================================= */}
+      {/* Dialogs: Edit, Add, Move, Remove                                         */}
+      {/* ========================================================================= */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold">Edit Organization Unit</DialogTitle>
+            <DialogTitle className="text-xl font-bold">Edit {typeName}</DialogTitle>
             <DialogDescription className="text-xs">
-              Update organization properties for <span className="font-bold text-foreground">{unit.name}</span>.
+              Update properties for <span className="font-bold text-foreground">{unit.name}</span>.
             </DialogDescription>
           </DialogHeader>
           <OrgUnitForm
@@ -813,14 +858,13 @@ export function OrgUnitDetailView({
         </DialogContent>
       </Dialog>
 
-      {/* Add Sub-Unit Modal Dialog */}
       <Dialog open={isAddChildOpen} onOpenChange={setIsAddChildOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">Add {childMeta.singularLabel}</DialogTitle>
             <DialogDescription className="text-xs">
-              Creating a new {childMeta.singularLabel.toLowerCase()} situated directly beneath{" "}
-              <span className="font-bold text-foreground">{unit.name}</span> ({unit.code}).
+              Add a new {childMeta.singularLabel.toLowerCase()} under{" "}
+              <span className="font-bold text-foreground">{unit.name}</span>.
             </DialogDescription>
           </DialogHeader>
           <OrgUnitForm
@@ -833,7 +877,6 @@ export function OrgUnitDetailView({
         </DialogContent>
       </Dialog>
 
-      {/* Move Subtree Modal Dialog */}
       <MoveUnitDialog
         open={isMoveOpen}
         onOpenChange={setIsMoveOpen}
@@ -841,7 +884,6 @@ export function OrgUnitDetailView({
         onSuccess={() => refetchUnit()}
       />
 
-      {/* Delete Unit Modal Dialog */}
       <DeleteUnitDialog
         open={isDeleteOpen}
         onOpenChange={setIsDeleteOpen}
