@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { OrgTypeIcon } from "@/components/oms/org/OrgTypeIcon";
+import { OrgTypeIcon } from "@/components/organization/OrgTypeIcon";
 import { OrgUnitPicker } from "@/components/organization/OrgUnitPicker";
 import {
   useOrgUnits,

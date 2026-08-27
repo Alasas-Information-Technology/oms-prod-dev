@@ -25,6 +25,26 @@ interface UserActivityTimelineProps {
   lockedUntil?: string | null;
 }
 
+function parseSafeDate(d?: string | Date | null): Date {
+  if (!d) return new Date();
+  try {
+    const parsed = new Date(d);
+    return isNaN(parsed.getTime()) ? new Date() : parsed;
+  } catch {
+    return new Date();
+  }
+}
+
+function formatSafeDateTime(d?: string | Date | null): string {
+  if (!d) return "—";
+  try {
+    const parsed = new Date(d);
+    return isNaN(parsed.getTime()) ? "—" : format(parsed, "dd MMM yyyy, HH:mm");
+  } catch {
+    return "—";
+  }
+}
+
 export function UserActivityTimeline({
   userId,
   createdAt,
@@ -32,12 +52,22 @@ export function UserActivityTimeline({
   failedLoginCount = 0,
   lockedUntil,
 }: UserActivityTimelineProps) {
+  const isCurrentlyLocked = React.useMemo(() => {
+    if (!lockedUntil) return false;
+    try {
+      const lockDate = new Date(lockedUntil);
+      return !isNaN(lockDate.getTime()) && lockDate > new Date();
+    } catch {
+      return false;
+    }
+  }, [lockedUntil]);
+
   const events = [
     {
       id: "ev-1",
       title: "Account Created",
       description: "User account created and initial onboarding invitation token dispatched.",
-      timestamp: createdAt ? new Date(createdAt) : new Date(),
+      timestamp: parseSafeDate(createdAt),
       icon: UserCheck,
       color: "text-emerald-500 border-emerald-500",
     },
@@ -47,7 +77,7 @@ export function UserActivityTimeline({
             id: "ev-2",
             title: "Profile / Security Updated",
             description: "Profile attributes, permissions, or security state modified by administrator.",
-            timestamp: new Date(updatedAt),
+            timestamp: parseSafeDate(updatedAt),
             icon: ShieldCheck,
             color: "text-primary border-primary",
           },
@@ -65,12 +95,12 @@ export function UserActivityTimeline({
           },
         ]
       : []),
-    ...(lockedUntil && new Date(lockedUntil) > new Date()
+    ...(isCurrentlyLocked
       ? [
           {
             id: "ev-4",
             title: "Account Temporarily Locked",
-            description: `Locked until ${format(new Date(lockedUntil), "dd MMM yyyy, HH:mm")} per rate-limiting security policy.`,
+            description: `Locked until ${formatSafeDateTime(lockedUntil)} per rate-limiting security policy.`,
             timestamp: new Date(),
             icon: Lock,
             color: "text-rose-500 border-rose-500",
@@ -99,17 +129,21 @@ export function UserActivityTimeline({
                 <div
                   className={`absolute -left-6 top-1 size-5 rounded-full flex items-center justify-center border-2 bg-background ${event.color}`}
                 >
-                  <Icon className="size-2.5" />
+                  <Icon className="size-3" />
                 </div>
-                <div className="p-3.5 rounded-xl border bg-card/60 shadow-xs space-y-1">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-semibold text-sm text-foreground">{event.title}</h4>
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <h4 className="text-sm font-semibold text-foreground">
+                      {event.title}
+                    </h4>
                     <span className="text-xs text-muted-foreground flex items-center gap-1">
                       <Clock className="size-3" />
-                      {format(event.timestamp, "dd MMM yyyy, HH:mm")}
+                      {formatSafeDateTime(event.timestamp)}
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground">{event.description}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {event.description}
+                  </p>
                 </div>
               </div>
             );

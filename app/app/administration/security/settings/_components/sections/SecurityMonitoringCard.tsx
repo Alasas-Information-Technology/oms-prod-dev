@@ -1,4 +1,4 @@
-import { SimpleKpiCard } from "@/components/oms/simple-kpi";
+import { SimpleKpiCard } from "@/components/budget";
 import {
     Card,
     CardContent,

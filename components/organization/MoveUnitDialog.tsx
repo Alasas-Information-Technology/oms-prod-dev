@@ -25,7 +25,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { OrgTypeIcon } from "@/components/oms/org/OrgTypeIcon";
+import { OrgTypeIcon } from "@/components/organization/OrgTypeIcon";
 import { OrgUnitPicker } from "./OrgUnitPicker";
 import {
   useMoveOrgUnit,

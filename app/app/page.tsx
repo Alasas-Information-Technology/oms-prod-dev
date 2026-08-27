@@ -1,6 +1,5 @@
 import { getAuthSession } from "@/app/actions/auth";
-import { BudgetKpiCard } from "@/components/oms/budget-kpi";
-import { SimpleKpiCard } from "@/components/oms/simple-kpi";
+import { BudgetKpiCard, SimpleKpiCard } from "@/components/budget";
 import { Badge } from "@/components/ui/badge";
 export default async function Page() {
   const user = await getAuthSession();

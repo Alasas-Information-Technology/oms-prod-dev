@@ -47,8 +47,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { DataTable, ColumnDef, RowAction } from "@/components/oms/DataTable";
-import { OrgTypeIcon, UnitPath, OrgBreadcrumbItem } from "@/components/oms/org";
+import { DataTable, ColumnDef, RowAction } from "@/components/shared/DataTable";
+import { OrgTypeIcon, UnitPath, OrgBreadcrumbItem } from "@/components/organization";
 import { OrgUnitForm } from "@/components/organization/OrgUnitForm";
 import { AddOrgUnitWizard } from "@/components/organization/AddOrgUnitWizard";
 import { MoveUnitDialog } from "@/components/organization/MoveUnitDialog";

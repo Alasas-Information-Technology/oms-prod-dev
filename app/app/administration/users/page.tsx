@@ -1,12 +1,12 @@
 "use client";
 
-import { ColumnDef, DataTable, RowAction } from "@/components/oms/DataTable";
+import { ColumnDef, DataTable, RowAction } from "@/components/shared/DataTable";
 import {
   RoleChip,
   UserAvatar,
   UserDetailPanel,
-  UserStatusBadge
-} from "@/components/oms/users";
+  UserStatusBadge,
+} from "@/components/users";
 import { OrgUnitPicker } from "@/components/organization/OrgUnitPicker";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -60,19 +60,21 @@ import {
   UserX,
   Users
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import * as React from "react";
 import { toast } from "sonner";
 
-export default function PeopleListPage() {
+function PeopleListPageContent() {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { can } = usePermission();
 
   // Active Tab: "people" | "vendors" | "invite"
   const [activeTab, setActiveTab] = React.useState<"people" | "vendors" | "invite">("people");
 
-  // Selected User for Slide-over Panel (highlighted row)
-  const [selectedUserId, setSelectedUserId] = React.useState<string | null>(null);
+  // Selected User for Slide-over Panel (from query param ?selected={id})
+  const selectedUserId = searchParams.get("selected");
 
   // Search & Filter State
   const [searchInput, setSearchInput] = React.useState("");
@@ -347,8 +349,7 @@ export default function PeopleListPage() {
         label: "View details",
         icon: <Eye className="size-4" />,
         onClick: (row) => {
-          setSelectedUserId(row.userId);
-          router.push(`/app/administration/users/${row.userId}`);
+          router.push(`/app/administration/users/${row.userId}?tab=overview`);
         },
       },
       {
@@ -597,7 +598,13 @@ export default function PeopleListPage() {
           loading={isLoading}
           selectedRowKey={selectedUserId}
           onRowClick={(row) => {
-            setSelectedUserId(row.userId);
+            if (typeof window !== "undefined" && window.innerWidth < 1024) {
+              router.push(`/app/administration/users/${row.userId}?tab=overview`);
+              return;
+            }
+            const params = new URLSearchParams(searchParams.toString());
+            params.set("selected", row.userId);
+            router.push(`${pathname}?${params.toString()}`);
           }}
           emptyMessage="No one matches these filters."
           manualPagination={true}
@@ -613,20 +620,15 @@ export default function PeopleListPage() {
           }}
         />
 
-        {/* 520px Slide-over Person Details Panel (§Part 1, 3.2, 3.3, Part 4) */}
+        {/* 520px Slide-over Person Details Panel (§USER-DRAWER-VS-PAGE Part 3 & Part 4) */}
         <UserDetailPanel
           isOpen={Boolean(selectedUserId)}
           userId={selectedUserId}
-          onClose={() => setSelectedUserId(null)}
-          onOpenPermissionsModal={() => {
-            if (selectedUserId) {
-              router.push(`/app/administration/users/${selectedUserId}?tab=permissions`);
-            }
-          }}
-          onOpenActivityModal={() => {
-            if (selectedUserId) {
-              router.push(`/app/administration/users/${selectedUserId}?tab=activity`);
-            }
+          onClose={() => {
+            const params = new URLSearchParams(searchParams.toString());
+            params.delete("selected");
+            const newQuery = params.toString();
+            router.push(newQuery ? `${pathname}?${newQuery}` : pathname);
           }}
         />
 
@@ -646,5 +648,13 @@ export default function PeopleListPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function PeopleListPage() {
+  return (
+    <React.Suspense fallback={<div className="p-8 text-center text-xs text-muted-foreground">Loading users...</div>}>
+      <PeopleListPageContent />
+    </React.Suspense>
   );
 }

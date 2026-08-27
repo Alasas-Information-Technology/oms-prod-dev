@@ -32,8 +32,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { StatusBadge, OMSStatus } from "@/components/oms/StatusBadge";
-import { OrgTypeIcon, UnitPath } from "@/components/oms/org";
+import { StatusBadge, OMSStatus } from "@/components/shared/StatusBadge";
+import { OrgTypeIcon, UnitPath } from "@/components/organization";
 import {
   useOrgUnits,
   useOrgUnitChildren,

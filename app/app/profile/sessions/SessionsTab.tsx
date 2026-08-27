@@ -2,7 +2,7 @@
 
 import { Icon } from "@iconify/react";
 import { ActiveSession } from "@/lib/types/session.types";
-import { DataTable, ColumnDef, RowAction } from "@/components/oms/DataTable";
+import { DataTable, ColumnDef, RowAction } from "@/components/shared/DataTable";
 import { useConfirm } from "@/hooks/use-confirm";
 
 interface SessionsTabProps {

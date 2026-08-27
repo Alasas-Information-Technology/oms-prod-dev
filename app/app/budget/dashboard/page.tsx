@@ -1,8 +1,10 @@
-import { SimpleKpiCard } from "@/components/oms/simple-kpi";
-import { BudgetDistributionChart } from "@/components/oms/donought"
-import { MonthlyBudgetTrend } from "@/components/oms/MonthlyBudgetTrend";
-import { BudgetKpiCard } from "@/components/oms/budget-kpi";
-import { RecentBudgetActivities } from "@/components/oms/BudgetTable";
+import {
+  SimpleKpiCard,
+  BudgetDistributionChart,
+  MonthlyBudgetTrend,
+  BudgetKpiCard,
+  RecentBudgetActivities,
+} from "@/components/budget";
 
 export default function BudgetDashboard() {
     return (

@@ -1,6 +1,8 @@
-import { SimpleKpiCard } from "@/components/oms/simple-kpi";
-import { DepartmentBudgetBarChart } from "@/components/oms/budget-bar-chart";
-import { DepartmentBudgetTable } from "@/components/oms/department-budget-table";
+import {
+  SimpleKpiCard,
+  DepartmentBudgetBarChart,
+  DepartmentBudgetTable,
+} from "@/components/budget";
 
 export default function DeptBudget() {
   return (

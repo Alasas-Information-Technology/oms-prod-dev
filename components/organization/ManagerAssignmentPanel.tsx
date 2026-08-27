@@ -34,8 +34,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { StatusBadge, OMSStatus } from "@/components/oms/StatusBadge";
-import { Timeline, TimelineItem } from "@/components/oms/Timeline";
+import { StatusBadge, OMSStatus } from "@/components/shared/StatusBadge";
+import { Timeline, TimelineItem } from "@/components/shared/Timeline";
 import {
   useOrgUnitManagers,
   useOrgUnitCurrentHead,

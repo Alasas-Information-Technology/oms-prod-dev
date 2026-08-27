@@ -3,7 +3,7 @@
 import * as React from "react";
 import { usePathname } from "next/navigation";
 import { usePageBar } from "./page-bar-context";
-import { Breadcrumb, BreadcrumbItemData } from "@/components/oms/Breadcrumb";
+import { Breadcrumb, BreadcrumbItemData } from "@/components/shared/Breadcrumb";
 
 const ROUTE_NAME_MAP: Record<string, string> = {
   app: "Home",
@@ -98,7 +98,7 @@ export function AppBreadcrumb() {
       </div>
 
       {/* Right: Page Actions Group (Part 4: exactly 36px tall controls) */}
-      <div className="flex items-center shrink-0 ml-4">
+      <div id="page-bar-actions-slot" className="flex items-center shrink-0 ml-4">
         {actions}
       </div>
     </nav>

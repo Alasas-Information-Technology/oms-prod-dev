@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Breadcrumb } from "@/components/oms/Breadcrumb";
+import { Breadcrumb } from "@/components/shared/Breadcrumb";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

@@ -29,7 +29,7 @@ import {
   SummaryCard,
   SummaryCardRow,
   UserDetailPanel,
-} from "@/components/oms/users";
+} from "@/components/users";
 import {
   ROLE_DEFINITIONS,
   ERROR_MESSAGES,

@@ -55,7 +55,7 @@ import { AddOrgUnitWizard } from "@/components/organization/AddOrgUnitWizard";
 import { MoveUnitDialog } from "@/components/organization/MoveUnitDialog";
 import { ArchiveUnitDialog } from "@/components/organization/ArchiveUnitDialog";
 import { DeleteUnitDialog } from "@/components/organization/DeleteUnitDialog";
-import { OrgTypeIcon, UnitPath } from "@/components/oms/org";
+import { OrgTypeIcon, UnitPath } from "@/components/organization";
 import { PageBarActions } from "@/components/ui/layouts/page-bar-context";
 
 import {

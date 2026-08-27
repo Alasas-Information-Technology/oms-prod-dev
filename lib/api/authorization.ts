@@ -33,6 +33,21 @@ import {
   ChangePasswordDto,
 } from '../types/authorization.types';
 
+/**
+ * Strips null values from DTO payloads before sending to backend.
+ * NestJS class-validator @IsOptional() skips undefined/missing keys,
+ * but @IsDateString() rejects null. This ensures null fields are omitted.
+ */
+function stripNullFields<T extends Record<string, unknown>>(dto: T): T {
+  const cleaned = { ...dto };
+  for (const key of Object.keys(cleaned)) {
+    if (cleaned[key] === null || cleaned[key] === undefined) {
+      delete cleaned[key];
+    }
+  }
+  return cleaned as T;
+}
+
 // =============================================================================
 // 1. Users & Profile API
 // =============================================================================
@@ -233,6 +248,17 @@ export const userCredentialsApi = {
 
 export const userRolesApi = {
   /**
+   * Retrieves all master roles available in the system.
+   */
+  getMasterRoles: async (): Promise<Array<{ roleId: string; roleCode: string; roleName: string; description?: string; isSystemRole: boolean; isActive: boolean }>> => {
+    const response = await api.get('/authorization/roles');
+    const res = response.data;
+    if (Array.isArray(res)) return res;
+    if (Array.isArray(res?.data)) return res.data;
+    return [];
+  },
+
+  /**
    * Retrieves all role assignments for a user.
    */
   getRoles: async (userId: string): Promise<IUserRoleAssignmentDto[]> => {
@@ -249,7 +275,7 @@ export const userRolesApi = {
    * Assigns a role to a user.
    */
   assignRole: async (userId: string, dto: AssignRoleDto): Promise<IUserRoleAssignmentDto> => {
-    const response = await api.post(`/authorization/users/${userId}/roles`, dto);
+    const response = await api.post(`/authorization/users/${userId}/roles`, stripNullFields(dto as unknown as Record<string, unknown>));
     const res = response.data;
     return res?.data ?? res;
   },
@@ -285,7 +311,7 @@ export const userScopesApi = {
    * Assigns an organizational scope to a user.
    */
   assignScope: async (userId: string, dto: AssignScopeDto): Promise<IUserScopeAssignmentDto> => {
-    const response = await api.post(`/authorization/users/${userId}/scopes`, dto);
+    const response = await api.post(`/authorization/users/${userId}/scopes`, stripNullFields(dto as unknown as Record<string, unknown>));
     const res = response.data;
     return res?.data ?? res;
   },
@@ -332,7 +358,7 @@ export const userOverridesApi = {
     userId: string,
     dto: ManageOverrideDto,
   ): Promise<IUserOverrideAssignmentDto> => {
-    const response = await api.post(`/authorization/users/${userId}/overrides`, dto);
+    const response = await api.post(`/authorization/users/${userId}/overrides`, stripNullFields(dto as unknown as Record<string, unknown>));
     return response.data;
   },
 

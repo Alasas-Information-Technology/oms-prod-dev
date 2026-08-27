@@ -32,9 +32,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { StatusBadge } from "@/components/oms/StatusBadge";
-import { DataTable, ColumnDef, RowAction } from "@/components/oms/DataTable";
-import { OrgTypeIcon, UnitPath } from "@/components/oms/org";
+import { StatusBadge } from "@/components/shared/StatusBadge";
+import { DataTable, ColumnDef, RowAction } from "@/components/shared/DataTable";
+import { OrgTypeIcon, UnitPath } from "@/components/organization";
 import {
   useOrgUnits,
   useOrgUnitTypes,

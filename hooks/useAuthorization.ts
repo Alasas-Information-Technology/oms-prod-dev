@@ -465,6 +465,14 @@ export function useRevokeRole(
   });
 }
 
+export function useMasterRoles() {
+  return useQuery({
+    queryKey: ['masterRoles'],
+    queryFn: () => userRolesApi.getMasterRoles(),
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
 // =============================================================================
 // 4. User Organizational Scopes Hooks & Cache Invalidation
 // =============================================================================

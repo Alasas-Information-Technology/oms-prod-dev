@@ -276,7 +276,7 @@ export interface IUserRoleAssignmentDto {
 export interface AssignRoleDto {
   roleId: string;
   effectiveFrom?: string | Date;
-  effectiveTo?: string | Date | null;
+  effectiveTo?: string | Date;
 }
 
 // =============================================================================
@@ -309,7 +309,7 @@ export interface AssignScopeDto {
   departmentId?: string;
   sectionId?: string;
   effectiveFrom?: string | Date;
-  effectiveTo?: string | Date | null;
+  effectiveTo?: string | Date;
 }
 
 export interface ScopeCountResponseDto {
@@ -341,7 +341,7 @@ export interface ManageOverrideDto {
   isGranted: boolean;
   reason: string;
   effectiveFrom?: string | Date;
-  effectiveTo?: string | Date | null;
+  effectiveTo?: string | Date;
 }
 
 // =============================================================================

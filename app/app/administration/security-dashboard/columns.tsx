@@ -1,4 +1,4 @@
-import { ColumnDef } from "@/components/oms/DataTable";
+import { ColumnDef } from "@/components/shared/DataTable";
 import { format } from "date-fns";
 
 export type DashboardSummary = {
