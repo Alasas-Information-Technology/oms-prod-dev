@@ -10,6 +10,7 @@ import { RefreshCcw } from "lucide-react";
 import { Icon } from "@iconify/react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { sessionsApi } from "@/lib/api/sessions";
+import { PageBarActions } from "@/components/ui/layouts/page-bar-context";
 import {
   DashboardSummary,
   RawDashboardResponse,
@@ -161,18 +162,20 @@ export default function SecurityDashboard() {
 
 
   return (
-    <div className="flex flex-col gap-3">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Security Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Enterprise Security Monitoring</p>
-        </div>
-        <Button onClick={loadData} disabled={loading} variant="outline" className="gap-2">
-          <RefreshCcw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+    <div className="p-6 flex flex-col gap-6">
+      <PageBarActions>
+        <Button
+          type="button"
+          onClick={loadData}
+          disabled={loading}
+          variant="outline"
+          size="sm"
+          className="gap-2 h-9 text-xs rounded-lg cursor-pointer"
+        >
+          <RefreshCcw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
           Reload Data
         </Button>
-      </div>
+      </PageBarActions>
 
       {/* KPIs */}
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-6">
@@ -283,7 +286,7 @@ export default function SecurityDashboard() {
       </div>
 
       {/* Tables using Tabs */}
-      <div className="rounded-xl border bg-background p-4 shadow-sm flex flex-col min-h-[500px]">
+      <div className="flex flex-col min-h-[500px]">
         <Tabs defaultValue="failedLogins" className="w-full flex flex-col flex-1">
           <TabsList className="mb-4 self-start">
             <TabsTrigger value="failedLogins">Failed Login Attempts</TabsTrigger>

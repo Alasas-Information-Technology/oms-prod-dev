@@ -1,20 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { SecurityRepository } from "@/lib/repositories/SecurityRepository";
-import { SessionsByRoleUseCase } from "@/lib/use-cases/security-dashboard/chartsUseCase";
-import { authorize } from "@/lib/auth/authorization";
+import { NextRequest } from "next/server";
+import { proxyToBackend } from "@/lib/api/backend-proxy";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-    try {
-        await authorize(request, ["SECURITY.DASHBOARD.VIEW"]);
-        const repository = new SecurityRepository();
-        const useCase = new SessionsByRoleUseCase(repository);
-        const result = await useCase.execute();
-        return NextResponse.json(result);
-    } catch (error) {
-        console.error(error);
-        return NextResponse.json(
-            { message: "Failed to load sessions by role chart data" },
-            { status: 500 }
-        );
-    }
+    return proxyToBackend(request, "/api/v1/internal/security/charts/sessions-by-role");
 }

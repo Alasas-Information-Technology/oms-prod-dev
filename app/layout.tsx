@@ -1,23 +1,23 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Lora, Ubuntu_Mono } from "next/font/google";
+import { Inter, Montserrat, Merriweather } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Providers } from "@/components/providers";
 
-const fontSans = Plus_Jakarta_Sans({
+const fontDisplay = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const fontSans = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 });
 
-const fontSerif = Lora({
+const fontSerif = Merriweather({
   subsets: ["latin"],
   variable: "--font-serif",
-});
-
-const fontMono = Ubuntu_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -36,10 +36,16 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("antialiased", fontSans.variable, fontSerif.variable, "font-sans", fontMono.variable)}
+      className={cn(
+        "h-full antialiased overflow-hidden",
+        fontDisplay.variable,
+        fontSans.variable,
+        fontSerif.variable,
+        "font-sans"
+      )}
       suppressHydrationWarning
     >
-      <body className="min-h-screen flex flex-col">
+      <body className="h-full overflow-hidden bg-background text-foreground">
         <Providers>
           {children}
         </Providers>

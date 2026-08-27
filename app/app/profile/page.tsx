@@ -44,8 +44,7 @@ export default function ProfilePage() {
     : "—";
 
   return (
-    <div className="min-h-screen">
-      <div className="mx-auto py-8">
+    <div className="p-6 max-w-[880px] mx-auto space-y-6">
 
         {/* ── Profile header card ── */}
         <div className="flex items-start justify-between gap-4 mb-6">
@@ -134,8 +133,6 @@ export default function ProfilePage() {
             onRetry={fetchSessions}
           />
         )}
-
-      </div>
     </div>
   );
 }

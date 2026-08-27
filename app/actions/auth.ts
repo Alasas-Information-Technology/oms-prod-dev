@@ -1,7 +1,13 @@
 "use server";
 
+import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { AuthService } from "@/lib/services/AuthService";
+
+const JWT_SECRET = new TextEncoder().encode(
+    process.env.JWT_SECRET || '6000576da50db77526e8258b4b29353405b3d0936678de321cf5c781b29a6b5eca007840ea28c5caddd1ec155174303d0251ab2000d7b4e9f904d419d569e94a'
+);
+const JWT_ISSUER = process.env.JWT_ISSUER || 'OMS';
+const JWT_AUDIENCE = process.env.JWT_AUDIENCE || 'OMS_USERS';
 
 /**
  * Clears both auth cookies.
@@ -47,9 +53,9 @@ export async function serverLogout() {
 }
 
 /**
- * Validates the current access token and returns the user session.
+ * Validates the current access token in-memory and returns the user session.
  * Used by AuthProvider to load user data on mount.
- * Returns null if the token is missing, expired, or invalid.
+ * Returns null if the token is missing or invalid, or 'REFRESH_REQUIRED' if expired.
  */
 export async function getAuthSession() {
   const cookieStore = await cookies();
@@ -62,12 +68,28 @@ export async function getAuthSession() {
   }
 
   try {
-    const authService = new AuthService();
-    // Validate token and fetch fresh user session data
-    const session = await authService.validateToken(token);
-    return session;
-  } catch (error) {
-    console.error("Session validation failed:", error);
+    const { payload } = await jwtVerify(token, JWT_SECRET, {
+      issuer: JWT_ISSUER,
+      audience: JWT_AUDIENCE,
+    });
+
+    const userId = (payload.userId || payload.sub) as string;
+    if (!userId) {
+      if (refreshToken) return "REFRESH_REQUIRED";
+      return null;
+    }
+
+    return {
+      userId,
+      username: (payload.username as string) || '',
+      email: (payload.email as string) || '',
+      userType: (payload.userType as string) || 'INTERNAL',
+      roles: Array.isArray(payload.roles) ? payload.roles : [],
+      permissions: Array.isArray(payload.permissions) ? payload.permissions : [],
+      scopes: Array.isArray(payload.scopes) ? payload.scopes : [],
+      loginSessionId: (payload.loginSessionId as string) || '',
+    };
+  } catch {
     if (refreshToken) return "REFRESH_REQUIRED";
     return null;
   }

@@ -29,7 +29,7 @@ export function ConnectionLines({ nodePositions }: ConnectionLinesProps) {
         <Line
           key={i}
           points={points}
-          color="#7474C1"
+          color="#6366F1"
           lineWidth={1}
           transparent
           opacity={0.2}

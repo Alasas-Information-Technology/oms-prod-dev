@@ -1,15 +1,28 @@
 "use client";
 
+import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "./theme-provider";
-import { ConfirmProvider } from "@/hooks/use-confirm"
+import { ConfirmProvider } from "@/hooks/use-confirm";
 import { TooltipProvider } from "./ui/tooltip";
 
-import { ReactLenis } from 'lenis/react';
-
 export function Providers({ children }: { children: React.ReactNode }) {
+    const [queryClient] = useState(
+        () =>
+            new QueryClient({
+                defaultOptions: {
+                    queries: {
+                        staleTime: 60 * 1000,
+                        refetchOnWindowFocus: false,
+                        retry: 1,
+                    },
+                },
+            })
+    );
+
     return (
-        <ReactLenis root>
+        <QueryClientProvider client={queryClient}>
             <ThemeProvider
                 attribute="class"
                 defaultTheme="system"
@@ -23,6 +36,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
                     </AuthProvider>
                 </TooltipProvider>
             </ThemeProvider>
-        </ReactLenis>
-    )
+        </QueryClientProvider>
+    );
 }
