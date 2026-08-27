@@ -1,16 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { BellRing } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useState } from "react";
 
-import NotificationSheet from "./notification-sheet";
 import { NotificationPanel } from "@/components/oms/NotificationPanel";
+import { Icon } from "@iconify/react";
+import NotificationSheet from "./notification-sheet";
 
 const notifications = [
   {
@@ -55,16 +55,16 @@ export default function NotificationsDrawer() {
             type="button"
             variant="ghost"
             size="icon"
-            className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground rounded-lg cursor-pointer"
+            className="h-8 w-8 p-0 text-white/40 hover:text-white rounded-lg cursor-pointer"
             aria-label="Notifications"
           >
-            <BellRing className="h-[18px] w-[18px]" />
+            <Icon icon="line-md:bell-filled" className="h-4.5 w-4.5" />
           </Button>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent
           align="end"
-          className="w-[420px] p-0 rounded-xl overflow-hidden"
+          className="w-105 p-0 rounded-xl overflow-hidden"
         >
           <NotificationPanel
             notifications={notifications}

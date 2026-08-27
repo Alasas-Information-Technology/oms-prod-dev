@@ -40,7 +40,7 @@ export function WorkforceCore({ isDark }: { isDark?: boolean }) {
       {/* Outer highly refractive liquid frosted glass shell */}
       <Sphere args={[1.2, 64, 64]}>
         <MeshTransmissionMaterial
-          background={new THREE.Color(isDark ? "#000000" : "#EDF4FE")}
+          background={new THREE.Color(isDark ? "#0F1419" : "#FFFFFF")}
           backside
           samples={4}
           transmission={1}
@@ -52,7 +52,7 @@ export function WorkforceCore({ isDark }: { isDark?: boolean }) {
           distortionScale={0.3}
           temporalDistortion={0.15}
           ior={1.45}
-          color="#e0e7ff"
+          color="#E0E7FF"
           resolution={128}
         />
       </Sphere>
@@ -62,7 +62,7 @@ export function WorkforceCore({ isDark }: { isDark?: boolean }) {
         <icosahedronGeometry args={[0.45, 0]} />
         <meshStandardMaterial
           color={isDark ? "#000000" : "#ffffff"}
-          emissive={isDark ? "#4f46e5" : "#7474C1"}
+          emissive={isDark ? "#818CF8" : "#6366F1"}
           emissiveIntensity={isDark ? 1.5 : 2}
           metalness={0.9}
           roughness={0.1}
@@ -74,7 +74,7 @@ export function WorkforceCore({ isDark }: { isDark?: boolean }) {
       <mesh>
         <icosahedronGeometry args={[0.6, 1]} />
         <meshBasicMaterial
-          color="#A6DCE6"
+          color="#059669"
           wireframe
           transparent
           opacity={0.3}
@@ -90,7 +90,7 @@ export function WorkforceCore({ isDark }: { isDark?: boolean }) {
           roughness={0.1}
           thickness={0.1}
           ior={1.5}
-          color="#a5b4fc"
+          color="#A5B4FC"
         />
       </mesh>
 
@@ -103,7 +103,7 @@ export function WorkforceCore({ isDark }: { isDark?: boolean }) {
           roughness={0.15}
           thickness={0.1}
           ior={1.4}
-          color="#7474C1"
+          color="#6366F1"
         />
       </mesh>
 
@@ -112,7 +112,7 @@ export function WorkforceCore({ isDark }: { isDark?: boolean }) {
         position={[0, 0, 1.5]}
         fontSize={0.35}
         fontWeight={800}
-        color={isDark ? "#FFFFFF" : "#000D5A"}
+        color={isDark ? "#FFFFFF" : "#0D47A1"}
         anchorX="center"
         anchorY="middle"
         characters="OMS"

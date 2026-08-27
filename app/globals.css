@@ -5,119 +5,187 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Brand Colors */
-  --background: #EDF4FE;
-  --foreground: #000000;
-  --heading: #000D5A;
-  
-  --card: #FFFFFF;
-  --card-foreground: #000000;
-  
-  --popover: #FFFFFF;
-  --popover-foreground: #000000;
-  
-  --primary: #7474C1;
-  --primary-foreground: #FFFFFF;
-  
-  --secondary: #E2EAF7;
-  --secondary-foreground: #B7D5ED;
-  
-  --muted: #DFE5F0;
-  --muted-foreground: #5B6B83;
-  
-  --accent: #E2EAF7;
-  --accent-foreground: #000D5A;
-  
-  --destructive: #EF4444;
-  --destructive-foreground: #FFFFFF;
-  
-  --border: #D1D9E6;
-  --input: #D1D9E6;
-  --ring: #7474C1;
-  
-  --chart-1: #7474C1;
-  --chart-2: #000D5A;
-  --chart-3: #B7D5ED;
-  --chart-4: #A6DCE6;
-  --chart-5: #3B82F6;
-  
-  --sidebar: #EDF4FE;
-  --sidebar-foreground: #000000;
-  --sidebar-primary: #7474C1;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #E2EAF7;
-  --sidebar-accent-foreground: #000D5A;
-  --sidebar-border: #D1D9E6;
-  --sidebar-ring: #7474C1;
+  /* ===== REDESIGNED COLOR PALETTE ===== */
 
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, sans-serif, system-ui;
-  --font-serif: Merriweather, serif;
+  /* Background Colors - Light Mode (Improved) */
+  --background: #FAFBFC;
+  --background-secondary: #F1F5F9;
+  --background-tertiary: #E8EEF5;
+
+  /* Foreground/Text Colors */
+  --foreground: #0F1419;
+  --foreground-secondary: #475569;
+  --foreground-tertiary: #64748B;
+  --heading: #0F1419;
+
+  /* Card & Popover */
+  --card: #FFFFFF;
+  --card-foreground: #0F1419;
+
+  --popover: #FFFFFF;
+  --popover-foreground: #0F1419;
+
+  /* Brand Colors - Redesigned */
+  /* Primary: Vibrant Indigo (increased contrast from #7474C1) */
+  --primary: #5B5FE1;
+  --primary-foreground: #FFFFFF;
+  --primary-light: #EEF0FF;
+  --primary-dark: #4F46E5;
+
+  /* Secondary: Deep Blue (was redundant, now distinct) */
+  --secondary: #0C3A8F;
+  --secondary-foreground: #FFFFFF;
+  --secondary-light: #E0E8F8;
+
+  /* Accent: Maintains brand personality */
+  --accent: #0C3A8F;
+  --accent-foreground: #FFFFFF;
+
+  /* Muted - Improved */
+  --muted: #E2E8F0;
+  --muted-foreground: #64748B;
+
+  /* Semantic Colors - Improved contrast */
+  --success: #047857;
+  --success-foreground: #FFFFFF;
+  --success-light: #DCFCE7;
+
+  --warning: #C2410C;
+  --warning-foreground: #FFFFFF;
+  --warning-light: #FEFCE8;
+
+  --destructive: #BE123C;
+  --destructive-foreground: #FFFFFF;
+  --destructive-light: #FEE2E2;
+
+  /* Border & Input */
+  --border: #CBD5E1;
+  --input: #F8FAFC;
+  --input-border: #CBD5E1;
+  --ring: #5B5FE1;
+
+  /* Chart Colors - Updated for better contrast */
+  --chart-1: #6366F1;
+  --chart-2: #0D47A1;
+  --chart-3: #059669;
+  --chart-4: #D97706;
+  --chart-5: #DC2626;
+
+  /* Sidebar - Distinct Shade (Light Mode) */
+  --sidebar: #EEF2F9;
+  --sidebar-foreground: #0F1419;
+  --sidebar-primary: #5B5FE1;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #E0E8F8;
+  --sidebar-accent-foreground: #0C3A8F;
+  --sidebar-border: #DBE3F0;
+  --sidebar-ring: #5B5FE1;
+
+  /* Typography - Updated fonts */
+  /* Montserrat for display/headlines */
+  --font-display: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* Inter for body/UI */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-serif: "Merriweather", serif;
   --font-mono: "JetBrains Mono", monospace;
-  
+
   /* Enterprise radii & shadows */
   --radius: 0.75rem;
-  
+
   --shadow-xs: 0px 1px 2px 0px rgba(0,0,0,0.05);
   --shadow-sm: 0px 2px 4px 0px rgba(0,0,0,0.05), 0px 1px 2px -1px rgba(0,0,0,0.05);
   --shadow: 0px 4px 6px -1px rgba(0,0,0,0.05), 0px 2px 4px -2px rgba(0,0,0,0.05);
-  --shadow-md: 0px 10px 15px -3px rgba(0,0,0,0.05), 0px 4px 6px -4px rgba(0,0,0,0.05);
-  --shadow-lg: 0px 20px 25px -5px rgba(0,0,0,0.05), 0px 8px 10px -6px rgba(0,0,0,0.05);
+  --shadow-md: 0px 10px 15px -3px rgba(0,0,0,0.1), 0px 4px 6px -4px rgba(0,0,0,0.05);
+  --shadow-lg: 0px 20px 25px -5px rgba(0,0,0,0.1), 0px 8px 10px -6px rgba(0,0,0,0.05);
   --shadow-xl: 0px 25px 50px -12px rgba(0,0,0,0.1);
-  
+
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 }
 
 .dark {
-  /* OLED Dark Mode */
-  --background: #000000;
-  --foreground: #FFFFFF;
-  --heading: #FFFFFF;
-  
-  --card: #0A0A0A;
-  --card-foreground: #FFFFFF;
-  
-  --popover: #0A0A0A;
-  --popover-foreground: #FFFFFF;
-  
-  --primary: #7474C1;
-  --primary-foreground: #FFFFFF;
-  
-  --secondary: #111111;
-  --secondary-foreground: #B7D5ED;
-  
-  --muted: #1A1A1A;
-  --muted-foreground: #A1A1AA;
-  
-  --accent: #111111;
-  --accent-foreground: #FFFFFF;
-  
-  --destructive: #991B1B;
-  --destructive-foreground: #FFFFFF;
-  
-  --border: #222222;
-  --input: #222222;
-  --ring: #7474C1;
-  
-  --chart-1: #7474C1;
-  --chart-2: #A6DCE6;
-  --chart-3: #B7D5ED;
-  --chart-4: #4A4A8A;
-  --chart-5: #1A1A3A;
-  
-  --sidebar: #050505;
-  --sidebar-foreground: #FFFFFF;
-  --sidebar-primary: #7474C1;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #111111;
-  --sidebar-accent-foreground: #FFFFFF;
-  --sidebar-border: #222222;
-  --sidebar-ring: #7474C1;
+  /* ===== DARK MODE - REDESIGNED ===== */
+
+  /* Background Colors */
+  --background: #0F1419;
+  --background-secondary: #1A1F2E;
+  --background-tertiary: #252D3D;
+
+  /* Foreground/Text Colors */
+  --foreground: #F9FAFB;
+  --foreground-secondary: #D1D5DB;
+  --foreground-tertiary: #9CA3AF;
+  --heading: #F9FAFB;
+
+  /* Card & Popover */
+  --card: #1A1F2E;
+  --card-foreground: #F9FAFB;
+
+  --popover: #1A1F2E;
+  --popover-foreground: #F9FAFB;
+
+  /* Brand Colors - Dark Mode */
+  --primary: #818CF8;
+  --primary-foreground: #0F1419;
+  --primary-light: #312E81;
+  --primary-dark: #A5B4FC;
+
+  --secondary: #42A5F5;
+  --secondary-foreground: #0F1419;
+  --secondary-light: #1A237E;
+
+  /* Accent */
+  --accent: #42A5F5;
+  --accent-foreground: #0F1419;
+
+  /* Muted - Dark Mode */
+  --muted: #252D3D;
+  --muted-foreground: #9CA3AF;
+
+  /* Semantic Colors - Dark Mode */
+  --success: #10B981;
+  --success-foreground: #0F1419;
+  --success-light: #064E3B;
+
+  --warning: #F59E0B;
+  --warning-foreground: #0F1419;
+  --warning-light: #78350F;
+
+  --destructive: #EF4444;
+  --destructive-foreground: #0F1419;
+  --destructive-light: #7F1D1D;
+
+  /* Border & Input */
+  --border: #374151;
+  --input: #252D3D;
+  --input-border: #374151;
+  --ring: #818CF8;
+
+  /* Chart Colors - Dark Mode */
+  --chart-1: #818CF8;
+  --chart-2: #42A5F5;
+  --chart-3: #10B981;
+  --chart-4: #F59E0B;
+  --chart-5: #EF4444;
+
+  /* Sidebar - Dark Mode */
+  --sidebar: #1A1F2E;
+  --sidebar-foreground: #F9FAFB;
+  --sidebar-primary: #818CF8;
+  --sidebar-primary-foreground: #0F1419;
+  --sidebar-accent: #312E81;
+  --sidebar-accent-foreground: #A5B4FC;
+  --sidebar-border: #374151;
+  --sidebar-ring: #818CF8;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-secondary: var(--background-secondary);
+  --color-background-tertiary: var(--background-tertiary);
   --color-foreground: var(--foreground);
+  --color-foreground-secondary: var(--foreground-secondary);
+  --color-foreground-tertiary: var(--foreground-tertiary);
   --color-heading: var(--heading);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -125,24 +193,35 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-light: var(--secondary-light);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-light: var(--success-light);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-light: var(--warning-light);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-light: var(--destructive-light);
   --color-border: var(--border);
   --color-input: var(--input);
+  --color-input-border: var(--input-border);
   --color-ring: var(--ring);
-  
+
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  
+
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -152,6 +231,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
+  --font-display: var(--font-display);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-serif: var(--font-serif);
@@ -169,9 +249,9 @@
   --shadow-md: var(--shadow-md);
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
-  
+
   --animate-shine: shine 2s infinite linear;
-  
+
   @keyframes shine {
     0% { background-position: 0% 0%; }
     50% { background-position: 100% 100%; }
@@ -188,6 +268,8 @@
   }
   body {
     @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
+    font-family: var(--font-sans);
+    line-height: 1.6;
   }
   html {
     scroll-behavior: smooth;
@@ -196,7 +278,101 @@
     overscroll-behavior: none !important;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply text-heading;
+    @apply text-heading font-display font-bold;
+  }
+  h1 {
+    @apply text-4xl tracking-tight;
+  }
+  h2 {
+    @apply text-3xl;
+  }
+  h3 {
+    @apply text-2xl;
+  }
+  h4 {
+    @apply text-xl;
+  }
+  h5 {
+    @apply text-lg;
+  }
+  h6 {
+    @apply text-base;
+  }
+  p {
+    @apply text-base leading-7;
+  }
+  small, .text-sm {
+    @apply text-sm leading-6;
+  }
+
+  /* Focus states for accessibility */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+
+  button:focus-visible {
+    @apply outline-primary outline-offset-2;
+  }
+
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply outline-primary outline-offset-1;
+  }
+
+  /* Better contrast for disabled states */
+  :disabled,
+  [disabled] {
+    @apply opacity-60 cursor-not-allowed;
+  }
+
+  /* Custom Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Light Mode Scrollbar */
+  ::-webkit-scrollbar-thumb {
+    background-color: #CBD5E1;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #94A3B8;
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    background-color: #6B7280;
+  }
+
+  /* Firefox Light Mode */
+  * {
+    scrollbar-color: #CBD5E1 transparent;
+    scrollbar-width: thin;
+  }
+
+  /* Dark Mode Scrollbar */
+  .dark ::-webkit-scrollbar-thumb {
+    background-color: #475569;
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background-color: #64748B;
+  }
+
+  .dark ::-webkit-scrollbar-thumb:active {
+    background-color: #94A3B8;
+  }
+
+  /* Firefox Dark Mode */
+  .dark {
+    scrollbar-color: #475569 transparent;
   }
 }
 
@@ -204,6 +380,19 @@
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
+  display: block;
+}
+
+::view-transition-image-pair(root) {
+  isolation: isolate;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
 }
 
 @utility glass {
@@ -225,8 +414,8 @@
   @apply max-w-[1280px] mx-auto px-6 sm:px-8 lg:px-12;
 }
 @utility enterprise-heading {
-  @apply text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-heading leading-[1.15];
+  @apply text-3xl md:text-4xl lg:text-5xl font-display font-bold tracking-tight text-heading leading-[1.15];
 }
 @utility enterprise-body {
-  @apply text-base md:text-lg text-muted-foreground leading-relaxed;
+  @apply text-base md:text-lg text-foreground-secondary leading-relaxed;
 }

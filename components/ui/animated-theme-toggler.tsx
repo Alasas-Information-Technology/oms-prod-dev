@@ -1,8 +1,8 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { Moon, Sun } from "lucide-react"
 import { flushSync } from "react-dom"
+import { Icon, loadIcons } from "@iconify/react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "./button"
@@ -22,6 +22,13 @@ interface AnimatedThemeTogglerProps extends React.ComponentPropsWithoutRef<"butt
   /** When true, the transition expands from the viewport center instead of the button center. */
   fromCenter?: boolean
 }
+
+const THEME_ICONS = [
+  "line-md:sunny-filled-loop-to-moon-filled-loop-transition",
+  "line-md:moon-filled-to-sunny-filled-loop-transition",
+  "line-md:sunny-filled-loop",
+  "line-md:moon-filled-loop",
+] as const
 
 function polygonCollapsed(cx: number, cy: number, vertexCount: number): string {
   const pairs = Array.from(
@@ -68,7 +75,6 @@ function getThemeTransitionClipPaths(
       return [polygonCollapsed(cx, cy, 3), `polygon(${verts})`]
     }
     case "diamond": {
-      // Slightly larger than the view-transition circle radius so axis-aligned coverage matches the circle reveal.
       const R = maxRadius * Math.SQRT2
       const end = [
         `${cx}px ${cy - R}px`,
@@ -99,7 +105,6 @@ function getThemeTransitionClipPaths(
       return [polygonCollapsed(cx, cy, 4), `polygon(${end})`]
     }
     case "star": {
-      // Small overscan so the last frames never leave a 1px seam before the transition group ends.
       const R = maxRadius * Math.SQRT2 * 1.03
       const innerRatio = 0.42
       const starPolygon = (radius: number) => {
@@ -129,14 +134,21 @@ function getThemeTransitionClipPaths(
 
 export const AnimatedThemeToggler = ({
   className,
-  duration = 400,
+  duration = 500,
   variant,
   fromCenter = false,
   ...props
 }: AnimatedThemeTogglerProps) => {
   const shape = variant ?? "circle"
   const [isDark, setIsDark] = useState(false)
+  const [hasInteracted, setHasInteracted] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
+
+  // Preload animated icons into memory immediately on mount to prevent any animation latency
+  useEffect(() => {
+    loadIcons(THEME_ICONS as unknown as string[])
+  }, [])
 
   useEffect(() => {
     const updateTheme = () => {
@@ -144,6 +156,7 @@ export const AnimatedThemeToggler = ({
     }
 
     updateTheme()
+    setMounted(true)
 
     const observer = new MutationObserver(updateTheme)
     observer.observe(document.documentElement, {
@@ -154,24 +167,21 @@ export const AnimatedThemeToggler = ({
     return () => observer.disconnect()
   }, [])
 
-  const toggleTheme = useCallback(() => {
+  const toggleTheme = useCallback((e?: React.MouseEvent<HTMLButtonElement>) => {
     const button = buttonRef.current
     if (!button) return
 
-    const viewportWidth = window.visualViewport?.width ?? window.innerWidth
-    const viewportHeight = window.visualViewport?.height ?? window.innerHeight
+    setHasInteracted(true)
 
-    let x: number
-    let y: number
-    if (fromCenter) {
-      x = viewportWidth / 2
-      y = viewportHeight / 2
-    } else {
-      const { top, left, width, height } = button.getBoundingClientRect()
-      x = left + width / 2
-      y = top + height / 2
-    }
+    // Strictly calculate the center coordinate of the button in the viewport
+    const rect = button.getBoundingClientRect()
+    const x = rect.width > 0 ? rect.left + rect.width / 2 : (e?.clientX ?? window.innerWidth - 60)
+    const y = rect.height > 0 ? rect.top + rect.height / 2 : (e?.clientY ?? 26)
 
+    const viewportWidth = window.innerWidth
+    const viewportHeight = window.innerHeight
+
+    // Calculate maximum radius to fully cover screen from button origin
     const maxRadius = Math.hypot(
       Math.max(x, viewportWidth - x),
       Math.max(y, viewportHeight - y)
@@ -198,29 +208,9 @@ export const AnimatedThemeToggler = ({
       viewportHeight
     )
 
-    const root = document.documentElement
-    root.dataset.magicuiThemeVt = "active"
-    root.style.setProperty(
-      "--magicui-theme-toggle-vt-duration",
-      `${duration}ms`
-    )
-    // Pin the collapsed clip-path via CSS so Firefox does not paint the new
-    // theme unclipped between snapshot and the ready.then() JS animation.
-    root.style.setProperty("--magicui-theme-vt-clip-from", clipPath[0])
-    const cleanup = () => {
-      delete root.dataset.magicuiThemeVt
-      root.style.removeProperty("--magicui-theme-toggle-vt-duration")
-      root.style.removeProperty("--magicui-theme-vt-clip-from")
-    }
-
     const transition = document.startViewTransition(() => {
       flushSync(applyTheme)
     })
-    if (typeof transition?.finished?.finally === "function") {
-      transition.finished.finally(cleanup)
-    } else {
-      cleanup()
-    }
 
     const ready = transition?.ready
     if (ready && typeof ready.then === "function") {
@@ -231,15 +221,24 @@ export const AnimatedThemeToggler = ({
           },
           {
             duration,
-            // Star: linear avoids easing overshoot that fights polygon interpolation at t→1; VT group duration is synced above.
-            easing: shape === "star" ? "linear" : "ease-in-out",
+            easing: "cubic-bezier(0.4, 0, 0.2, 1)",
             fill: "forwards",
             pseudoElement: "::view-transition-new(root)",
           }
         )
       })
     }
-  }, [shape, fromCenter, duration, isDark])
+  }, [shape, duration, isDark])
+
+
+  // Select appropriate icon based on whether user just triggered a transition or initial mount
+  const iconName = !hasInteracted
+    ? isDark
+      ? "line-md:moon-filled-loop"
+      : "line-md:sunny-filled-loop"
+    : isDark
+      ? "line-md:sunny-filled-loop-to-moon-filled-loop-transition"
+      : "line-md:moon-filled-to-sunny-filled-loop-transition"
 
   return (
     <Button
@@ -248,11 +247,21 @@ export const AnimatedThemeToggler = ({
       size="icon"
       ref={buttonRef}
       onClick={toggleTheme}
-      className={cn("h-8 w-8 p-0 text-muted-foreground hover:text-foreground rounded-lg cursor-pointer", className)}
+      className={cn(
+        "h-8 w-8 p-0 text-white/40! hover:text-white! rounded-lg cursor-pointer hover:bg-accent/50 transition-colors",
+        className
+      )}
       {...props}
     >
-      {isDark ? <Sun className="h-[18px] w-[18px]" /> : <Moon className="h-[18px] w-[18px]" />}
+      {mounted && (
+        <Icon
+          key={isDark ? "theme-dark" : "theme-light"}
+          icon={iconName}
+          className="h-[18px] w-[18px]"
+        />
+      )}
       <span className="sr-only z-30">Toggle theme</span>
     </Button>
   )
 }
+

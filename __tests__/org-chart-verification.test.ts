@@ -11,7 +11,12 @@ describe("Org Chart Canvas - 15 Point Specification Verification", () => {
     depth: 0,
     isActive: true,
     childCount: 2,
-    type: { id: "1", code: "ORGANIZATION", name: "Organization" },
+    sortOrder: 1,
+    effectiveFrom: new Date().toISOString(),
+    rowVersion: "1",
+    head: null,
+    parentOrgUnitId: null,
+    type: { orgUnitTypeId: 1, code: "ORGANIZATION", name: "Organization" },
   };
 
   const mockBu1: OrgUnitSummaryDto = {
@@ -23,7 +28,11 @@ describe("Org Chart Canvas - 15 Point Specification Verification", () => {
     depth: 1,
     isActive: true,
     childCount: 1,
-    type: { id: "2", code: "BUSINESS_UNIT", name: "Business Unit" },
+    sortOrder: 1,
+    effectiveFrom: new Date().toISOString(),
+    rowVersion: "1",
+    head: null,
+    type: { orgUnitTypeId: 2, code: "BUSINESS_UNIT", name: "Business Unit" },
   };
 
   const mockBu2: OrgUnitSummaryDto = {
@@ -35,7 +44,11 @@ describe("Org Chart Canvas - 15 Point Specification Verification", () => {
     depth: 1,
     isActive: true,
     childCount: 0,
-    type: { id: "2", code: "BUSINESS_UNIT", name: "Business Unit" },
+    sortOrder: 2,
+    effectiveFrom: new Date().toISOString(),
+    rowVersion: "1",
+    head: null,
+    type: { orgUnitTypeId: 2, code: "BUSINESS_UNIT", name: "Business Unit" },
   };
 
   const mockDept: OrgUnitSummaryDto = {
@@ -47,7 +60,11 @@ describe("Org Chart Canvas - 15 Point Specification Verification", () => {
     depth: 2,
     isActive: true,
     childCount: 1,
-    type: { id: "3", code: "DEPARTMENT", name: "Department" },
+    sortOrder: 1,
+    effectiveFrom: new Date().toISOString(),
+    rowVersion: "1",
+    head: null,
+    type: { orgUnitTypeId: 3, code: "DEPARTMENT", name: "Department" },
   };
 
   const mockSection: OrgUnitSummaryDto = {
@@ -59,7 +76,11 @@ describe("Org Chart Canvas - 15 Point Specification Verification", () => {
     depth: 3,
     isActive: true,
     childCount: 0,
-    type: { id: "4", code: "SECTION", name: "Section" },
+    sortOrder: 1,
+    effectiveFrom: new Date().toISOString(),
+    rowVersion: "1",
+    head: null,
+    type: { orgUnitTypeId: 4, code: "SECTION", name: "Section" },
   };
 
   const childrenCache = new Map<string, OrgUnitSummaryDto[]>([

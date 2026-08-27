@@ -46,7 +46,7 @@ export function GlobalSearch() {
         onClick={() => setOpen(true)}
         variant="outline"
         size="sm"
-        className="hidden lg:flex w-full max-w-[420px] h-8 px-3 text-xs justify-between items-center bg-muted/40 hover:bg-muted/70 text-muted-foreground border-border/60 rounded-lg transition-colors cursor-pointer"
+        className="hidden lg:flex w-full max-w-105 h-10 px-3 text-xs justify-between items-center bg-muted/30 hover:bg-muted/40 text-white border-border/20! rounded-sm transition-colors cursor-pointer shadow-none"
       >
         <div className="flex items-center gap-2 truncate">
           <Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />

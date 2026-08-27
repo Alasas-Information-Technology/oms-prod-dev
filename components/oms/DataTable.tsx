@@ -63,7 +63,7 @@ export interface RowAction<T = any> {
   separator?: boolean;
 }
 
-interface DataTableProps<T = any> {
+export interface DataTableProps<T = any> {
   columns: ColumnDef<T>[];
   data: T[];
   keyField: string;
@@ -76,7 +76,18 @@ interface DataTableProps<T = any> {
   className?: string;
   compact?: boolean;
   onRowClick?: (row: T) => void;
-  
+  selectedRowKey?: string | null;
+  isRowActive?: (row: T) => boolean;
+
+  // Server-side / Manual Pagination Support
+  manualPagination?: boolean;
+  pageCount?: number;
+  totalCount?: number;
+  pageIndex?: number; // 0-indexed
+  onPageChange?: (page: number) => void; // 1-indexed target page
+  onPageSizeChange?: (pageSize: number) => void;
+  hidePagination?: boolean;
+
   // High-Performance Features
   enableSearch?: boolean;
   searchPlaceholder?: string;
@@ -94,18 +105,27 @@ export function DataTable<T = any>({
   selectable = false,
   onSelectionChange,
   rowActions,
-  pageSize: initialPageSize = 8,
+  pageSize: initialPageSize = 10,
   loading = false,
   emptyMessage = "No records found.",
   className,
   compact = false,
   onRowClick,
+  selectedRowKey,
+  isRowActive,
+  manualPagination = false,
+  pageCount,
+  totalCount,
+  pageIndex,
+  onPageChange,
+  onPageSizeChange,
+  hidePagination = false,
   enableSearch = false,
   searchPlaceholder = "Search records...",
   globalFilterFields,
   enableExport = false,
   exportFilename = "export",
-  pageSizeOptions = [8, 10, 20, 50, 100],
+  pageSizeOptions = [10, 20, 50, 100],
   groupBy,
 }: DataTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -113,22 +133,25 @@ export function DataTable<T = any>({
   const [globalFilter, setGlobalFilter] = useState("");
   const [grouping, setGrouping] = useState<GroupingState>(groupBy || []);
   const [expanded, setExpanded] = useState<ExpandedState>(true);
-  const [pagination, setPagination] = useState({
+  const [internalPagination, setInternalPagination] = useState({
     pageIndex: 0,
     pageSize: initialPageSize,
   });
 
+  const activePageIndex = manualPagination ? (pageIndex ?? 0) : internalPagination.pageIndex;
+  const activePageSize = manualPagination ? (initialPageSize) : internalPagination.pageSize;
+
   // Export to CSV utility (all filtered rows, ignoring pagination)
   const handleExport = (filteredRows: T[]) => {
     if (filteredRows.length === 0) return;
-    
+
     // Headers
     const exportHeaders = columns.map(c => c.header).join(",");
-    
+
     // Rows
     const csvContent = [
       exportHeaders,
-      ...filteredRows.map(row => 
+      ...filteredRows.map(row =>
         columns.map(col => {
           const val = (row as any)[col.key];
           const stringVal = typeof val === "string" ? val : String(val ?? "");
@@ -136,7 +159,7 @@ export function DataTable<T = any>({
         }).join(",")
       )
     ].join("\n");
-    
+
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -156,11 +179,11 @@ export function DataTable<T = any>({
         id: "select",
         header: ({ table }) => (
           <div className="w-10 pl-4 flex items-center justify-center">
-             <Checkbox
-               checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-               onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-               aria-label="Select all"
-             />
+            <Checkbox
+              checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+              onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+              aria-label="Select all"
+            />
           </div>
         ),
         cell: ({ row }) => (
@@ -233,7 +256,7 @@ export function DataTable<T = any>({
   // Custom global filter function that respects globalFilterFields prop
   const customGlobalFilterFn: FilterFn<T> = (row, columnId, filterValue) => {
     const value = filterValue.toLowerCase();
-    
+
     // If fields are explicitly specified, search only those
     if (globalFilterFields && globalFilterFields.length > 0) {
       return globalFilterFields.some((fieldKey) => {
@@ -241,9 +264,9 @@ export function DataTable<T = any>({
         return String(itemValue ?? "").toLowerCase().includes(value);
       });
     }
-    
+
     // Default: search all object values
-    return Object.values((row.original as Record<string, unknown>) || {}).some((val) => 
+    return Object.values((row.original as Record<string, unknown>) || {}).some((val) =>
       String(val ?? "").toLowerCase().includes(value)
     );
   };
@@ -251,11 +274,17 @@ export function DataTable<T = any>({
   const table = useReactTable({
     data,
     columns: finalColumns,
+    manualPagination: Boolean(manualPagination),
+    pageCount: manualPagination ? (pageCount ?? -1) : undefined,
+    rowCount: manualPagination ? totalCount : undefined,
     state: {
       sorting,
       rowSelection,
       globalFilter,
-      pagination,
+      pagination: {
+        pageIndex: activePageIndex,
+        pageSize: activePageSize,
+      },
       grouping,
       expanded,
     },
@@ -263,13 +292,13 @@ export function DataTable<T = any>({
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
-    onPaginationChange: setPagination,
+    onPaginationChange: manualPagination ? undefined : setInternalPagination,
     onGroupingChange: setGrouping,
     onExpandedChange: setExpanded,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    getPaginationRowModel: manualPagination ? undefined : getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
+    getFilteredRowModel: manualPagination ? undefined : getFilteredRowModel(),
     getGroupedRowModel: getGroupedRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     globalFilterFn: customGlobalFilterFn,
@@ -289,7 +318,7 @@ export function DataTable<T = any>({
 
   return (
     <div className={cn("flex flex-col gap-3", className)}>
-      
+
       {/* Top Toolbar */}
       {hasToolbar && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -304,12 +333,12 @@ export function DataTable<T = any>({
               />
             </div>
           ) : <div />}
-          
+
           <div className="flex items-center gap-2 w-full sm:w-auto">
             {enableExport && (
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="h-9 gap-2 shadow-sm"
                 onClick={() => handleExport(table.getFilteredRowModel().rows.map(r => r.original))}
               >
@@ -323,7 +352,7 @@ export function DataTable<T = any>({
 
       {/* Table Container */}
       <div className="rounded-md border border-slate-200 dark:border-slate-800 overflow-hidden bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm glass-card">
-        <Table>
+        <Table className="border-none!">
           <TableHeader className="bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-900/80 border-slate-200 dark:border-slate-800">
@@ -355,8 +384,8 @@ export function DataTable<T = any>({
                               asc: <ChevronUp size={12} className="text-primary" />,
                               desc: <ChevronDown size={12} className="text-primary" />,
                             }[header.column.getIsSorted() as string] ?? (
-                              <ChevronsUpDown size={12} className="opacity-0 group-hover:opacity-60 transition-opacity" />
-                            )}
+                                <ChevronsUpDown size={12} className="opacity-0 group-hover:opacity-60 transition-opacity" />
+                              )}
                           </span>
                         </button>
                       ) : (
@@ -394,17 +423,19 @@ export function DataTable<T = any>({
                   );
                 }
 
-                const isSelected = row.getIsSelected();
+                const rowKeyVal = String((row.original as any)[keyField]);
+                const isActive = (selectedRowKey !== undefined && selectedRowKey !== null && rowKeyVal === String(selectedRowKey)) || (isRowActive?.(row.original) ?? false);
+                const isSelected = row.getIsSelected() || isActive;
                 return (
                   <TableRow
                     key={row.id}
                     data-state={isSelected ? "selected" : undefined}
                     onClick={() => onRowClick?.(row.original)}
                     className={cn(
-                      "border-slate-100 dark:border-slate-800 premium-transition hover:bg-slate-50 dark:hover:bg-slate-800/50 relative hover:z-10 hover:shadow-sm",
+                      "border-slate-100 dark:border-slate-800 premium-transition hover:bg-slate-50 dark:hover:bg-slate-800/50 relative hover:z-10 hover:shadow-xs",
                       onRowClick && "cursor-pointer",
                       idx % 2 === 1 && !isSelected && "bg-slate-50/40 dark:bg-slate-900/10",
-                      isSelected && "bg-blue-50/60 dark:bg-blue-950/30"
+                      isSelected && "bg-primary/10 dark:bg-primary/20 border-primary/40 font-medium"
                     )}
                   >
                     {row.getVisibleCells().map((cell) => {
@@ -441,14 +472,20 @@ export function DataTable<T = any>({
         </Table>
 
         {/* Footer Pagination Info */}
-        {(table.getPageCount() > 1 || pageSizeOptions.length > 1) && (
+        {!hidePagination && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-2.5 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
               {pageSizeOptions.length > 1 && (
                 <select
-                  value={table.getState().pagination.pageSize}
+                  value={activePageSize}
                   onChange={e => {
-                    table.setPageSize(Number(e.target.value))
+                    const newSize = Number(e.target.value);
+                    if (manualPagination) {
+                      onPageSizeChange?.(newSize);
+                    } else {
+                      table.setPageSize(newSize);
+                      setInternalPagination(p => ({ ...p, pageSize: newSize, pageIndex: 0 }));
+                    }
                   }}
                   className="h-8 px-2 rounded-md border border-input bg-white dark:bg-slate-900 dark:text-slate-200 dark:border-slate-800 text-xs shadow-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer"
                 >
@@ -460,59 +497,98 @@ export function DataTable<T = any>({
                 </select>
               )}
               <div className="text-xs text-muted-foreground text-center sm:text-left">
-                Showing {table.getFilteredRowModel().rows.length === 0 ? 0 : table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}–
-                {Math.min((table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize, table.getFilteredRowModel().rows.length)} of{" "}
-                {table.getFilteredRowModel().rows.length} records
+                Showing {(() => {
+                  const totalRows = manualPagination
+                    ? (totalCount ?? data.length)
+                    : (table.getFilteredRowModel()?.rows?.length ?? data.length);
+                  if (totalRows === 0) return "0–0 of 0";
+                  const start = activePageIndex * activePageSize + 1;
+                  const end = Math.min((activePageIndex + 1) * activePageSize, totalRows);
+                  return `${start}–${end} of ${totalRows}`;
+                })()} records
                 {Object.keys(rowSelection).length > 0 && (
                   <span className="ml-2 text-primary font-medium">({Object.keys(rowSelection).length} selected)</span>
                 )}
               </div>
             </div>
             <div className="flex items-center gap-1 w-full sm:w-auto justify-center sm:justify-end">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                className="size-7 p-0 rounded"
-              >
-                <ChevronLeft size={14} />
-              </Button>
-              
-              {Array.from({ length: table.getPageCount() }).map((_, i) => {
-                const currentPage = table.getState().pagination.pageIndex;
-                if (
-                  i === 0 || 
-                  i === table.getPageCount() - 1 || 
-                  (i >= currentPage - 1 && i <= currentPage + 1)
-                ) {
-                  return (
-                    <Button
-                      key={i}
-                      variant={i === currentPage ? "default" : "ghost"}
-                      size="sm"
-                      onClick={() => table.setPageIndex(i)}
-                      className="size-7 p-0 text-xs rounded"
-                    >
-                      {i + 1}
-                    </Button>
-                  );
-                }
-                if (i === currentPage - 2 || i === currentPage + 2) {
-                  return <span key={i} className="px-1 text-slate-400">...</span>;
-                }
-                return null;
-              })}
+              {(() => {
+                const totalRows = manualPagination
+                  ? (totalCount ?? data.length)
+                  : (table.getFilteredRowModel()?.rows?.length ?? data.length);
+                const totalPgs = manualPagination
+                  ? (pageCount ?? Math.max(1, Math.ceil(totalRows / activePageSize)))
+                  : Math.max(1, table.getPageCount());
+                const currentPage = activePageIndex;
+                const canPrev = activePageIndex > 0;
+                const canNext = activePageIndex < totalPgs - 1;
 
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                className="size-7 p-0 rounded"
-              >
-                <ChevronRight size={14} />
-              </Button>
+                return (
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        if (manualPagination) {
+                          onPageChange?.(Math.max(1, activePageIndex));
+                        } else {
+                          table.previousPage();
+                        }
+                      }}
+                      disabled={!canPrev}
+                      className="size-7 p-0 rounded"
+                    >
+                      <ChevronLeft size={14} />
+                    </Button>
+
+                    {Array.from({ length: totalPgs }).map((_, i) => {
+                      if (
+                        i === 0 ||
+                        i === totalPgs - 1 ||
+                        (i >= currentPage - 1 && i <= currentPage + 1)
+                      ) {
+                        return (
+                          <Button
+                            key={i}
+                            variant={i === currentPage ? "default" : "ghost"}
+                            size="sm"
+                            onClick={() => {
+                              if (manualPagination) {
+                                onPageChange?.(i + 1);
+                              } else {
+                                table.setPageIndex(i);
+                              }
+                            }}
+                            className="size-7 p-0 text-xs rounded"
+                          >
+                            {i + 1}
+                          </Button>
+                        );
+                      }
+                      if (i === currentPage - 2 || i === currentPage + 2) {
+                        return <span key={i} className="px-1 text-slate-400">...</span>;
+                      }
+                      return null;
+                    })}
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        if (manualPagination) {
+                          onPageChange?.(activePageIndex + 2);
+                        } else {
+                          table.nextPage();
+                        }
+                      }}
+                      disabled={!canNext}
+                      className="size-7 p-0 rounded"
+                    >
+                      <ChevronRight size={14} />
+                    </Button>
+                  </>
+                );
+              })()}
             </div>
           </div>
         )}

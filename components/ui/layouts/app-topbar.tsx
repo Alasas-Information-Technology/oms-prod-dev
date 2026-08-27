@@ -8,12 +8,15 @@ import Notification from "./notification-dropdown";
 import { useSidebar } from "../sidebar";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Separator } from "../separator";
+
 
 export function AppTopbar() {
     const { toggleSidebar } = useSidebar();
 
     return (
-        <header className="h-12 md:h-[52px] shrink-0 fixed top-0 left-0 right-0 z-30 flex items-center px-4 bg-secondary/80 backdrop-blur-md border-b border-border/50">
+        <header className="h-12 md:h-13 shrink-0 fixed top-0 left-0 right-0 z-30 flex items-center px-4 bg-secondary/80 backdrop-blur-md border-b border-border/50">
+
             {/* Left section: Sidebar toggle + Logo */}
             <div className="flex items-center gap-0">
                 {/* Sidebar toggle: 32px hit area */}
@@ -24,7 +27,7 @@ export function AppTopbar() {
                     onClick={toggleSidebar}
                     aria-label="Toggle sidebar"
                 >
-                    <Menu className="h-[18px] w-[18px]" />
+                    <Menu className="h-4.5 w-4.5" />
                 </Button>
 
                 {/* Logo: always visible */}
@@ -34,14 +37,15 @@ export function AppTopbar() {
             </div>
 
             {/* Center section: Search (420px max, centered) */}
-            <div className="flex-1 flex justify-center px-4">
-                <div className="w-full max-w-[420px]">
+            <div className="flex-1 flex px-31">
+                <div className="w-full max-w-105">
                     <GlobalSearch />
                 </div>
             </div>
 
             {/* Right section: Utilities + Avatar */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-4">
+
                 {/* Notification: 32px hit area, 18px glyph */}
                 <Notification />
 
@@ -51,6 +55,7 @@ export function AppTopbar() {
                 {/* Avatar: 28px */}
                 <AccountDropdown />
             </div>
+
         </header>
     )
 }

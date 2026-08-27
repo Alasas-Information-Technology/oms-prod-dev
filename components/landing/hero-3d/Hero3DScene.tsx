@@ -65,9 +65,9 @@ function SceneContent({ isDark }: { isDark: boolean }) {
       {/* Elevated Lighting Setup - adapts to dark mode */}
       <ambientLight intensity={isDark ? 0.3 : 0.15} />
       <directionalLight position={[10, 10, 5]} intensity={isDark ? 1 : 2} color="#ffffff" castShadow />
-      <directionalLight position={[-10, -10, -5]} intensity={isDark ? 0.8 : 1.5} color={isDark ? "#818cf8" : "#4f46e5"} />
-      <pointLight position={[0, -2, 5]} intensity={isDark ? 0.5 : 1} color="#e0e7ff" distance={15} />
-      <pointLight position={[0, 0, 0]} intensity={isDark ? 2 : 1.5} color={isDark ? "#a5b4fc" : "#7474C1"} distance={5} />
+      <directionalLight position={[-10, -10, -5]} intensity={isDark ? 0.8 : 1.5} color={isDark ? "#818CF8" : "#6366F1"} />
+      <pointLight position={[0, -2, 5]} intensity={isDark ? 0.5 : 1} color="#E0E7FF" distance={15} />
+      <pointLight position={[0, 0, 0]} intensity={isDark ? 2 : 1.5} color={isDark ? "#A5B4FC" : "#6366F1"} distance={5} />
 
       {/* Premium Studio Environment for rich reflections */}
       <Environment preset="studio" environmentIntensity={isDark ? 0.8 : 1.5} />
