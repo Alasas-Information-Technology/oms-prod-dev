@@ -53,7 +53,7 @@ export default function OrgPrimitivesDemoPage() {
   ];
 
   return (
-    <div className="space-y-8 p-6 max-w-7xl mx-auto pb-24">
+    <div className="space-y-8 p-6 pb-24">
       {/* Header Banner */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl bg-card border border-border shadow-xs">
         <div>

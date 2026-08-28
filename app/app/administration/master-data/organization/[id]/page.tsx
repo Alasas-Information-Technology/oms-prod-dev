@@ -13,7 +13,7 @@ export default function OrgUnitDetailPage() {
   const orgUnitId = params.id as string;
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto p-4 sm:p-6 pb-20">
+    <div className="space-y-6 p-6 pb-20">
       {/* Back Button Navigation */}
       <div className="flex items-center justify-between">
         <Button asChild variant="ghost" size="sm" className="gap-2 text-xs text-muted-foreground hover:text-foreground">

@@ -396,7 +396,7 @@ function OrganizationPageContent() {
 
       {/* Container for Non-Canvas Views (List & Grouped: 24px padding per Part 7) */}
       {viewMode !== "chart" && (
-        <div className="p-6 max-w-[1600px] mx-auto space-y-6">
+        <div className="p-6 space-y-6">
           {/* Mobile list view recommendation banner (Prompt V9) */}
           {isMobile && !dismissedMobileNotice && (
             <div className="bg-muted/40 border border-border/70 rounded-xl px-3.5 py-2.5 text-xs flex items-center justify-between text-muted-foreground gap-3">

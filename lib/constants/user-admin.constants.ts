@@ -364,6 +364,11 @@ export const PERMISSION_CAPABILITIES: Record<string, PermissionCapability> = {
   'BUDGET.APPROVE': { code: 'BUDGET.APPROVE', name: 'Approve budget expenditures', area: 'Budget' },
   'BUDGET.LOCK': { code: 'BUDGET.LOCK', name: 'Lock and finalize departmental budgets', area: 'Budget' },
   'BUDGET.REALLOCATE': { code: 'BUDGET.REALLOCATE', name: 'Transfer budget between departments', area: 'Budget' },
+  'BUDGET.UPLOAD': { code: 'BUDGET.UPLOAD', name: 'Upload annual baseline departmental budget', area: 'Budget' },
+  'BUDGET.PERIOD.MANAGE': { code: 'BUDGET.PERIOD.MANAGE', name: 'Manage, amend, close, and reopen financial periods', area: 'Budget' },
+  'BUDGET.AMEND': { code: 'BUDGET.AMEND', name: 'Raise budget amendment and reallocation requests', area: 'Budget' },
+  'BUDGET.RECONCILE': { code: 'BUDGET.RECONCILE', name: 'Process Oracle system-of-record reconciliation exceptions', area: 'Budget' },
+  'BUDGET.EXPORT': { code: 'BUDGET.EXPORT', name: 'Export audit statements and ledger reports', area: 'Budget' },
 
   // Candidates & Workforce
   'CANDIDATE.VIEW': { code: 'CANDIDATE.VIEW', name: 'Review applicant profiles and resumes', area: 'Candidates' },

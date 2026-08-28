@@ -8,6 +8,10 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
+    DropdownMenuSub,
+    DropdownMenuSubTrigger,
+    DropdownMenuSubContent,
+    DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/AuthContext";
 import { usePermission } from "@/hooks/usePermission";
@@ -19,6 +23,12 @@ import {
     ShieldCheck,
     SlidersHorizontal,
     UserRound,
+    Sparkles,
+    Coins,
+    Users,
+    Building2,
+    Layers,
+    Palette,
     type LucideIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -32,6 +42,8 @@ const ICON_THEMES = {
     emerald: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600/40 group-hover:text-white!",
     indigo: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-600/40 group-hover:text-white!",
     rose: "bg-rose-500/10 text-rose-600 dark:text-rose-400 group-hover:bg-rose-600/40 group-hover:text-white!",
+    amber: "bg-amber-500/10 text-amber-600 dark:text-amber-400 group-hover:bg-amber-600/40 group-hover:text-white!",
+    purple: "bg-purple-500/10 text-purple-600 dark:text-purple-400 group-hover:bg-purple-600/40 group-hover:text-white!",
 } as const;
 
 // ─── Helper Functions ───────────────────────────────────────────────────────
@@ -90,7 +102,6 @@ export const AccountTrigger = React.forwardRef<HTMLButtonElement, AccountTrigger
 
 AccountTrigger.displayName = "AccountTrigger";
 
-
 interface AccountHeaderProps {
     displayName: string;
     displayEmail: string;
@@ -117,8 +128,8 @@ export function AccountHeader({
             </div>
 
             <div className="flex flex-col min-w-0 flex-1">
-                <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-semibold text-foreground truncate max-w-[130px]">
+                <div className="flex items-center justify-between gap-1.5">
+                    <span className="text-xs font-semibold text-foreground truncate" title={displayName}>
                         {displayName}
                     </span>
                     <span className="shrink-0 px-1.5 py-0.2 rounded-full text-[9px] font-semibold bg-primary/10 text-primary border border-primary/20 uppercase tracking-wide">
@@ -157,26 +168,26 @@ export function AccountMenuItem({
             className="group flex items-center justify-between px-2.5 py-2 rounded-md text-xs font-medium cursor-pointer transition-all duration-150 hover:bg-primary/20! focus:bg-primary/10!"
             onClick={onClick}
         >
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2.5 min-w-0">
                 <div
                     className={cn(
-                        "flex items-center justify-center size-7 rounded-lg transition-colors duration-150",
-                        ICON_THEMES[iconTheme]
+                        "flex items-center justify-center size-7 rounded-lg transition-colors duration-150 shrink-0",
+                        ICON_THEMES[iconTheme] || ICON_THEMES.primary
                     )}
                 >
                     <Icon className="size-3.5" />
                 </div>
-                <div className="flex flex-col text-left">
-                    <span className="text-foreground group-hover:text-foreground font-medium">
+                <div className="flex flex-col text-left min-w-0">
+                    <span className="text-foreground group-hover:text-foreground font-medium truncate">
                         {title}
                     </span>
-                    <span className="text-[10px] text-muted-foreground">{subtitle}</span>
+                    <span className="text-[10px] text-muted-foreground truncate">{subtitle}</span>
                 </div>
             </div>
             {badge ? (
                 badge
             ) : showChevron ? (
-                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all duration-150" />
+                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all duration-150 shrink-0 ml-2" />
             ) : null}
         </DropdownMenuItem>
     );
@@ -199,7 +210,7 @@ export function AccountLogoutItem({ isLoggingOut, onLogout }: AccountLogoutItemP
             )}
             onClick={onLogout}
         >
-            <div className="flex items-center justify-center size-7 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 group-hover:bg-rose-600 group-hover:text-white transition-colors duration-150">
+            <div className="flex items-center justify-center size-7 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 group-hover:bg-rose-600 group-hover:text-white transition-colors duration-150 shrink-0">
                 {isLoggingOut ? (
                     <Loader2 className="size-3.5 animate-spin" />
                 ) : (
@@ -233,12 +244,29 @@ export function AccountDropdown({ trigger, defaultOpen, align = "end" }: Props) 
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const [open, setOpen] = useState(defaultOpen || false);
 
-    // Derived display values
-    const displayName = user?.username
-        ? user.username.charAt(0).toUpperCase() + user.username.slice(1)
-        : "User Account";
+    // Helper to format a friendly name from email when username/fullName are absent
+    const deriveNameFromEmail = (email?: string) => {
+        if (!email) return "Administrator";
+        const localPart = email.split("@")[0];
+        return localPart
+            .split(/[\._\-]+/)
+            .filter(Boolean)
+            .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+            .join(" ");
+    };
+
+    // Derived display values synced with User Profile
+    const displayName =
+        user?.fullName ||
+        (user?.username && user.username.trim()
+            ? user.username.charAt(0).toUpperCase() + user.username.slice(1)
+            : deriveNameFromEmail(user?.email));
     const displayEmail = user?.email || "user@diez.ae";
-    const userRole = user?.roles?.[0] || user?.userType || "Internal";
+    const rawRole = user?.roles?.[0] || user?.userType || "Internal";
+    const userRole = rawRole
+        .split("_")
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join(" ");
     const initials = getInitials(displayName, displayEmail);
     const isVendor = user?.userType === "VENDOR";
 
@@ -278,7 +306,7 @@ export function AccountDropdown({ trigger, defaultOpen, align = "end" }: Props) 
                 align={align}
                 sideOffset={8}
                 className={cn(
-                    "w-76 p-1.5 rounded-lg bg-popover! border border-border/70 shadow-2xl shadow-black/50 dark:shadow-black/40",
+                    "w-80 p-1.5 rounded-lg bg-popover! border border-border/70 shadow-2xl shadow-black/50 dark:shadow-black/40",
                     "origin-top-right transition-all duration-200 ease-out"
                 )}
             >
@@ -326,6 +354,83 @@ export function AccountDropdown({ trigger, defaultOpen, align = "end" }: Props) 
 
                 <DropdownMenuSeparator className="my-1.5 bg-border/50" />
 
+                {/* ── Primitives & Demos Submenu Section ── */}
+                <DropdownMenuGroup className="space-y-0.5">
+                    <DropdownMenuSub>
+                        <DropdownMenuSubTrigger className="group flex items-center justify-between px-2.5 py-2 rounded-md text-xs font-medium cursor-pointer transition-all duration-150 hover:bg-amber-500/15! focus:bg-amber-500/10!">
+                            <div className="flex items-center gap-2.5 min-w-0">
+                                <div className="flex items-center justify-center size-7 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 group-hover:bg-amber-600 group-hover:text-white transition-colors duration-150 shrink-0">
+                                    <Sparkles className="size-3.5" />
+                                </div>
+                                <div className="flex flex-col text-left min-w-0">
+                                    <span className="text-foreground group-hover:text-foreground font-medium truncate">
+                                        Primitives & UI Demos
+                                    </span>
+                                    <span className="text-[10px] text-muted-foreground truncate">
+                                        Component living showcases
+                                    </span>
+                                </div>
+                            </div>
+                            <span className="ml-auto mr-1.5 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                                Demo
+                            </span>
+                        </DropdownMenuSubTrigger>
+
+                        <DropdownMenuSubContent
+                            sideOffset={8}
+                            className="w-76 p-1.5 rounded-lg bg-popover! border border-border/70 shadow-2xl shadow-black/50 dark:shadow-black/40 space-y-0.5"
+                        >
+                            <DropdownMenuLabel className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                                Living Primitives Showcases
+                            </DropdownMenuLabel>
+
+                            <AccountMenuItem
+                                icon={Coins}
+                                title="Budget Primitives"
+                                subtitle="Money, KPIs & fund state bar"
+                                iconTheme="amber"
+                                onClick={() => handleNavigate("/app/budget/primitives-demo")}
+                            />
+
+                            <AccountMenuItem
+                                icon={Users}
+                                title="User Admin Primitives"
+                                subtitle="Role options, badges & drawer"
+                                iconTheme="indigo"
+                                onClick={() => handleNavigate("/app/administration/users/primitives-demo")}
+                            />
+
+                            <AccountMenuItem
+                                icon={Building2}
+                                title="Org Tree Primitives"
+                                subtitle="Hierarchy canvas & unit picker"
+                                iconTheme="emerald"
+                                onClick={() => handleNavigate("/app/administration/master-data/org-primitives-demo")}
+                            />
+
+                            <AccountMenuItem
+                                icon={Layers}
+                                title="Page Bar & Actions"
+                                subtitle="Sticky bar & portal actions"
+                                iconTheme="primary"
+                                onClick={() => handleNavigate("/app/administration/master-data/breadcrumb-demo")}
+                            />
+
+                            <DropdownMenuSeparator className="my-1 bg-border/50" />
+
+                            <AccountMenuItem
+                                icon={Palette}
+                                title="Design System Gallery"
+                                subtitle="Tokens, typography & components"
+                                iconTheme="purple"
+                                onClick={() => handleNavigate("/design-system")}
+                            />
+                        </DropdownMenuSubContent>
+                    </DropdownMenuSub>
+                </DropdownMenuGroup>
+
+                <DropdownMenuSeparator className="my-1.5 bg-border/50" />
+
                 {/* ── Sign Out Action ── */}
                 <AccountLogoutItem
                     isLoggingOut={isLoggingOut}
@@ -337,5 +442,3 @@ export function AccountDropdown({ trigger, defaultOpen, align = "end" }: Props) 
 }
 
 export default AccountDropdown;
-
-

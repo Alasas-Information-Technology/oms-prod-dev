@@ -107,7 +107,7 @@ const navGroups: NavGroup[] = [
         title: "Budget Management",
         icon: Wallet,
         items: [
-          { title: "Dashboard", url: "/app/budget/dashboard" },
+          { title: "Control Center", url: "/app/budget" },
           { title: "Department Budgets", url: "/app/budget/dept-budget" },
           { title: "Vendor Allocations", url: "/app/budget/vendor-allocations" },
         ],

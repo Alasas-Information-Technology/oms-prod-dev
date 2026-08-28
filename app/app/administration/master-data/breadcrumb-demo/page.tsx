@@ -32,7 +32,7 @@ export default function BreadcrumbDemoPage() {
   };
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto space-y-8 pb-24">
+    <div className="p-6 space-y-8 pb-24">
       <PageBarActions>
         <Badge variant="secondary" className="gap-1.5 font-mono text-xs h-9 px-3">
           <Type className="h-3.5 w-3.5 text-primary" />

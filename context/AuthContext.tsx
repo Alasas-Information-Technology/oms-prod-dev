@@ -34,6 +34,8 @@ interface AuthContextType {
   fetchUser: () => Promise<void>;
 
   refreshSession: () => Promise<void>;
+
+  updateUserProfile: (profile: Partial<UserSession>) => void;
 }
 
 const AuthContext =
@@ -114,16 +116,28 @@ export function AuthProvider({
         const sessionResult =
           await getAuthSession();
 
+        const mergeProfile = (baseSession: UserSession | null) => {
+          if (!baseSession) return null;
+          let overrides = {};
+          try {
+            if (typeof window !== "undefined") {
+              const cached = localStorage.getItem("oms_user_profile");
+              if (cached) overrides = JSON.parse(cached);
+            }
+          } catch {}
+          return { ...baseSession, ...overrides };
+        };
+
         if (sessionResult === "REFRESH_REQUIRED") {
           try {
             await refreshSession();
             const newSession = await getAuthSession();
-            setUser(newSession !== "REFRESH_REQUIRED" ? newSession : null);
+            setUser(mergeProfile(newSession !== "REFRESH_REQUIRED" ? newSession : null));
           } catch {
             setUser(null);
           }
         } else {
-          setUser(sessionResult);
+          setUser(mergeProfile(sessionResult));
         }
 
       } catch (err) {
@@ -352,6 +366,19 @@ export function AuthProvider({
 
 
 
+  const updateUserProfile = (profileData: Partial<UserSession>) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const updated = { ...prev, ...profileData };
+      try {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("oms_user_profile", JSON.stringify(profileData));
+        }
+      } catch {}
+      return updated;
+    });
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -366,6 +393,8 @@ export function AuthProvider({
         fetchUser,
 
         refreshSession,
+
+        updateUserProfile,
       }}
     >
       {children}

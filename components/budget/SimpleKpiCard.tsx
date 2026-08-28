@@ -16,6 +16,12 @@ export type GenericKpiCardProps = {
   color?: string;
   bg?: string;
   className?: string;
+  /** Whether the value represents a monetary currency amount (default: false) */
+  isCurrency?: boolean;
+  /** Optional custom prefix (e.g. "AED", "$", "+") */
+  prefix?: string;
+  /** Optional custom suffix (e.g. "%", "users") */
+  suffix?: string;
 };
 
 function Shimmer({ className }: { className?: string }) {
@@ -45,6 +51,9 @@ export function SimpleKpiCard({
   color,
   bg,
   className,
+  isCurrency = false,
+  prefix,
+  suffix,
 }: GenericKpiCardProps) {
   const [loading, setLoading] = useState(true);
 
@@ -55,6 +64,9 @@ export function SimpleKpiCard({
 
     return () => clearTimeout(timer);
   }, []);
+
+  const effectivePrefix = prefix !== undefined ? prefix : isCurrency ? "AED " : "";
+  const formattedValue = formatCompactNumber(value);
 
   return (
     <Card
@@ -106,7 +118,9 @@ export function SimpleKpiCard({
       <div className="space-y-1">
         <div className="flex items-baseline gap-2">
           <span className="text-2xl font-bold tracking-tight">
-            AED {formatCompactNumber(value)}
+            {effectivePrefix}
+            {formattedValue}
+            {suffix ? ` ${suffix}` : ""}
           </span>
         </div>
         {description && (

@@ -21,6 +21,7 @@ export interface OrgUnitPickerProps {
   disabled?: boolean;
   filterByType?: number | number[];
   filterType?: number | number[];
+  parentOrgUnitId?: string | null;
   allowsBudgetOnly?: boolean;
   allowsRequisitionOnly?: boolean;
   excludeUnitId?: string;
@@ -35,6 +36,7 @@ export function OrgUnitPicker({
   disabled = false,
   filterByType,
   filterType,
+  parentOrgUnitId,
   allowsBudgetOnly = false,
   allowsRequisitionOnly = false,
   excludeUnitId,
@@ -81,9 +83,12 @@ export function OrgUnitPicker({
         const type = uTypeId ? typesMap.get(uTypeId) : undefined;
         if (!type?.allowsRequisition && !unit.allowsRequisition) return false;
       }
+      if (parentOrgUnitId && unit.parentOrgUnitId !== parentOrgUnitId) {
+        return false;
+      }
       return true;
     });
-  }, [unitsData, excludeUnitId, effectiveFilterType, allowsBudgetOnly, allowsRequisitionOnly, typesMap]);
+  }, [unitsData, excludeUnitId, effectiveFilterType, parentOrgUnitId, allowsBudgetOnly, allowsRequisitionOnly, typesMap]);
 
   const selectedUnit = React.useMemo(() => {
     if (!value) return null;

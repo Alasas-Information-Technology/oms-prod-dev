@@ -645,7 +645,7 @@ function UserDetailPageContent() {
   // Loading and Error states
   if (isUserLoading) {
     return (
-      <div className="p-8 max-w-6xl mx-auto space-y-6">
+      <div className="p-6 space-y-6">
         <div className="h-44 rounded-2xl bg-card/60 border border-border/60 animate-pulse" />
         <div className="h-12 w-96 rounded-xl bg-card/60 border border-border/60 animate-pulse" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -706,7 +706,7 @@ function UserDetailPageContent() {
   const canRevokeSessions = can("USER.UPDATE") || can("USER.DEACTIVATE");
 
   return (
-    <div className="p-6 md:p-8 max-w-6xl w-full mx-auto space-y-6 animate-in fade-in-50 duration-200">
+    <div className="p-6 space-y-6 animate-in fade-in-50 duration-200">
       {/* Action Injection into Shell Page Bar */}
       <PageBarActions>
         <div className="flex items-center gap-2">
@@ -1546,7 +1546,7 @@ export default function UserDetailPage() {
   return (
     <React.Suspense
       fallback={
-        <div className="p-8 max-w-6xl mx-auto space-y-6 animate-pulse">
+        <div className="p-6 space-y-6 animate-pulse">
           <div className="h-44 rounded-2xl bg-card/60 border border-border/60" />
           <div className="h-12 w-96 rounded-xl bg-card/60 border border-border/60" />
         </div>

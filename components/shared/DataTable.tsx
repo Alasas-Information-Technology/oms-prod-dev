@@ -431,9 +431,17 @@ export function DataTable<T = any>({
                     key={row.id}
                     data-state={isSelected ? "selected" : undefined}
                     onClick={() => onRowClick?.(row.original)}
+                    tabIndex={onRowClick ? 0 : undefined}
+                    onKeyDown={onRowClick ? (e: React.KeyboardEvent) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        onRowClick(row.original);
+                      }
+                    } : undefined}
+                    role={onRowClick ? "button" : undefined}
                     className={cn(
                       "border-slate-100 dark:border-slate-800 premium-transition hover:bg-slate-50 dark:hover:bg-slate-800/50 relative hover:z-10 hover:shadow-xs",
-                      onRowClick && "cursor-pointer",
+                      onRowClick && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
                       idx % 2 === 1 && !isSelected && "bg-slate-50/40 dark:bg-slate-900/10",
                       isSelected && "bg-primary/10 dark:bg-primary/20 border-primary/40 font-medium"
                     )}

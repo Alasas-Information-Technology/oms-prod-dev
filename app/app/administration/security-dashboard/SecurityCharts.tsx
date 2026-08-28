@@ -86,8 +86,8 @@ export function SocPanel({ recentEvents }: { recentEvents: RawSecurityEvent[] })
   const socEvents = useMemo(() => recentEvents.slice(0, 20).map(event => {
     const type = event.EventType;
     let style = { badge: "bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-300 border-blue-200 dark:border-blue-500/30", dot: "text-blue-500", label: type, Icon: KeyRound };
-    
-    if (type === "REFRESH_TOKEN_REPLAY") 
+
+    if (type === "REFRESH_TOKEN_REPLAY")
       style = { badge: "bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-300 border-red-200 dark:border-red-500/30 animate-pulse", dot: "text-red-600", label: "REPLAY ATTEMPT", Icon: ShieldAlert };
     else if (["ACCOUNT_LOCKED", "FAILED_LOGIN_LIMIT_EXCEEDED", "ACCOUNT_LOCKOUT"].includes(type))
       style = { badge: "bg-orange-100 text-orange-800 dark:bg-orange-500/20 dark:text-orange-300 border-orange-200 dark:border-orange-500/30", dot: "text-orange-500", label: "ACCOUNT LOCKED", Icon: ShieldBan };
@@ -123,9 +123,13 @@ export function SocPanel({ recentEvents }: { recentEvents: RawSecurityEvent[] })
               {socEvents.map((event, idx) => (
                 <div key={event.SecurityEventID || idx} className="p-4 hover:bg-muted/30 transition-colors">
                   <div className="flex gap-3 text-sm">
-                    <div className={`shrink-0 mt-0.5 p-1.5 rounded-md border ${event.badge} bg-opacity-50`}>
-                      <event.Icon className={`w-4 h-4 ${event.dot}`} />
+
+                    <div className="flex items-start justify-center">
+                      <div className={`shrink-0 mt-0.5 p-1.5 rounded-md border ${event.badge} bg-opacity-50`}>
+                        <event.Icon className={`w-4 h-4! ${event.dot}`} />
+                      </div>
                     </div>
+
                     <div className="space-y-1 flex-1 min-w-0">
                       <div className="flex justify-between items-center gap-2">
                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${event.badge}`}>{event.label}</span>
@@ -177,7 +181,7 @@ export function FailedLoginsChart({ chartsData }: ChartsDataProps) {
 }
 
 const EVENT_LABELS: Record<string, string> = {
-  LOGIN_SUCCESS: "Login Success", LOGIN_FAILED: "Login Failed", ACCOUNT_LOCKED: "Account Locked", 
+  LOGIN_SUCCESS: "Login Success", LOGIN_FAILED: "Login Failed", ACCOUNT_LOCKED: "Account Locked",
   ACCOUNT_LOCKOUT: "Account Locked", SESSION_REVOKED: "Session Revoked", REFRESH_TOKEN_REPLAY: "Replay Detect",
   REFRESH_TOKEN_ROTATED: "Token Rotated", SESSION_CREATED: "Session Created", REFRESH_TOKEN_REVOKED: "Token Revoked",
   LOGOUT: "Logout", ADMIN_LOGIN: "Admin Login", USER_UPDATED: "User Updated", USER_CREATED: "User Created",
