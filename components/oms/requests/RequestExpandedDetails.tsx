@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
 import { RequestLifecycleStepper } from "./RequestLifecycleStepper";
+import { RequestApprovalRouteSummary } from "@/components/oms/approvals";
 import { OmsRequest } from "./request.types";
 
 interface RequestExpandedDetailsProps {
@@ -163,6 +164,14 @@ export function RequestExpandedDetails({
         <p className="mt-2 whitespace-normal break-words text-sm leading-6 text-foreground-secondary">
           {request.justification}
         </p>
+      </div>
+
+      <div className="mt-5">
+        <RequestApprovalRouteSummary
+          requestId={request.requestId}
+          currentStageName={request.currentStage}
+          currentOwnerName={request.currentOwner}
+        />
       </div>
     </div>
   );

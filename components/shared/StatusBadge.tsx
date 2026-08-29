@@ -38,6 +38,7 @@ interface StatusBadgeProps {
   className?: string;
   showDot?: boolean;
   size?: "sm" | "md";
+  label?: string; // <--- ADDED Optional label override
 }
 
 export function StatusBadge({
@@ -45,6 +46,7 @@ export function StatusBadge({
   className,
   showDot = true,
   size = "md",
+  label, // <--- ADDED
 }: StatusBadgeProps) {
   const config = STATUS_CONFIG[status] ?? {
     label: status,
@@ -71,7 +73,7 @@ export function StatusBadge({
           className={cn("w-1.5 h-1.5 rounded-full shrink-0", config.dotColor)}
         />
       )}
-      {config.label}
+      {label ?? config.label}
     </span>
   );
 }
