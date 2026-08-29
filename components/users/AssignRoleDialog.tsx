@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useAssignRole } from "@/hooks/useAuthorization";
+import { useAssignRole, useMasterRoles } from "@/hooks/useAuthorization";
+import { ROLE_DEFINITIONS, getRoleDisplayName, getRoleExplanation } from "@/lib/constants/user-admin.constants";
 import { toast } from "sonner";
-import { Shield, Calendar, Clock } from "lucide-react";
+import { Shield, Clock, Calendar, CheckCircle2 } from "lucide-react";
 
 interface AssignRoleDialogProps {
   open: boolean;
@@ -16,15 +17,6 @@ interface AssignRoleDialogProps {
   userId: string;
   userName?: string;
 }
-
-const AVAILABLE_ROLES = [
-  { roleId: "3053433E-F36B-1410-85ED-009A959FB301", code: "SYSTEM_ADMIN", name: "System Administrator", desc: "Full administrative access across all modules" },
-  { roleId: "3053433E-F36B-1410-85ED-009A959FB302", code: "ORG_ADMIN", name: "Organization Administrator", desc: "Manages structure, departments, and hierarchies" },
-  { roleId: "3053433E-F36B-1410-85ED-009A959FB303", code: "PROCUREMENT_BUYER", name: "Procurement Buyer", desc: "Creates purchase requests and RFQs" },
-  { roleId: "3053433E-F36B-1410-85ED-009A959FB304", code: "FINANCE_ANALYST", name: "Finance Analyst", desc: "Reviews budgets, allocations, and expenditures" },
-  { roleId: "3053433E-F36B-1410-85ED-009A959FB305", code: "DEPARTMENT_HEAD", name: "Department Head", desc: "Approves requisitions and manages department scopes" },
-  { roleId: "3053433E-F36B-1410-85ED-009A959FB306", code: "AUDITOR", name: "Compliance Auditor", desc: "Read-only compliance audit trail across all domains" },
-];
 
 export function AssignRoleDialog({
   open,
@@ -36,7 +28,32 @@ export function AssignRoleDialog({
   const [effectiveFrom, setEffectiveFrom] = React.useState<string>("");
   const [effectiveTo, setEffectiveTo] = React.useState<string>("");
 
+  const { data: masterRoles } = useMasterRoles();
   const assignMutation = useAssignRole();
+
+  const availableRoles = React.useMemo(() => {
+    if (masterRoles && masterRoles.length > 0) {
+      return masterRoles
+        .filter((r) => !r.roleCode.startsWith("VENDOR"))
+        .map((r) => ({
+          roleId: r.roleId,
+          code: r.roleCode,
+          name: r.roleName || getRoleDisplayName(r.roleCode),
+          desc: r.description || getRoleExplanation(r.roleCode),
+        }));
+    }
+    return [
+      { roleId: "HOD", code: "HOD", name: "Head of Department", desc: "Approves requisitions and manages department scopes" },
+      { roleId: "LINE_MANAGER", code: "LINE_MANAGER", name: "Line Manager", desc: "Supervises direct team members" },
+      { roleId: "REQUESTOR", code: "REQUESTOR", name: "Requestor", desc: "Submits operational requisitions and resource requests" },
+      { roleId: "HR", code: "HR", name: "Human Resources", desc: "Manages candidate onboarding and review" },
+      { roleId: "FINANCE", code: "FINANCE", name: "Finance Officer", desc: "Reviews budget allocations and tracks expenditures" },
+      { roleId: "PROCUREMENT", code: "PROCUREMENT", name: "Procurement Specialist", desc: "Coordinates vendor sourcing and purchasing" },
+      { roleId: "AUDITOR", code: "AUDITOR", name: "Compliance Auditor", desc: "Read-only compliance audit trail across all domains" },
+      { roleId: "ORG_ADMIN", code: "ORG_ADMIN", name: "Organization Administrator", desc: "Manages structure, departments, and hierarchies" },
+      { roleId: "SYSTEM_ADMIN", code: "SYSTEM_ADMIN", name: "System Administrator", desc: "Full administrative access across all modules" },
+    ];
+  }, [masterRoles]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +68,7 @@ export function AssignRoleDialog({
         dto: {
           roleId: selectedRoleId,
           effectiveFrom: effectiveFrom ? new Date(effectiveFrom).toISOString() : new Date().toISOString(),
-          effectiveTo: effectiveTo ? new Date(effectiveTo).toISOString() : null,
+          ...(effectiveTo ? { effectiveTo: new Date(effectiveTo).toISOString() } : {}),
         },
       });
 
@@ -87,7 +104,7 @@ export function AssignRoleDialog({
                 <SelectValue placeholder="Choose a role..." />
               </SelectTrigger>
               <SelectContent>
-                {AVAILABLE_ROLES.map((r) => (
+                {availableRoles.map((r) => (
                   <SelectItem key={r.roleId} value={r.roleId}>
                     <div className="flex flex-col text-left py-0.5">
                       <span className="font-semibold text-sm">{r.name}</span>

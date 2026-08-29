@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Breadcrumb } from "@/components/oms/Breadcrumb";
+import { Breadcrumb } from "@/components/shared/Breadcrumb";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,7 @@ export default function BreadcrumbDemoPage() {
   };
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto space-y-8 pb-24">
+    <div className="p-6 space-y-8 pb-24">
       <PageBarActions>
         <Badge variant="secondary" className="gap-1.5 font-mono text-xs h-9 px-3">
           <Type className="h-3.5 w-3.5 text-primary" />
@@ -41,9 +41,9 @@ export default function BreadcrumbDemoPage() {
       </PageBarActions>
 
       {/* Intro Overview Banner */}
-      <div className="rounded-2xl bg-linear-to-r from-primary/10 via-primary/5 to-transparent p-6 border border-primary/20">
+      <div className="rounded-md bg-linear-to-r from-primary/10 via-primary/5 to-transparent p-6 border border-primary/20">
         <div className="flex items-start gap-4">
-          <div className="p-3 bg-primary/10 text-primary rounded-xl shrink-0">
+          <div className="p-3 bg-primary/10 text-primary rounded-md shrink-0">
             <Sparkles className="h-6 w-6" />
           </div>
           <div>
@@ -77,7 +77,7 @@ export default function BreadcrumbDemoPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-5 space-y-3">
-            <div className="p-4 rounded-xl bg-card border border-border/80 flex items-center">
+            <div className="p-4 rounded-md bg-card border border-border/80 flex items-center">
               <Breadcrumb
                 items={[
                   { label: "Administration", href: "/app/administration" },
@@ -106,7 +106,7 @@ export default function BreadcrumbDemoPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-5 space-y-3">
-            <div className="p-4 rounded-xl bg-card border border-border/80 flex items-center">
+            <div className="p-4 rounded-md bg-card border border-border/80 flex items-center">
               <Breadcrumb
                 items={[
                   { label: "Administration", href: "/app/administration" },
@@ -136,7 +136,7 @@ export default function BreadcrumbDemoPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-5 space-y-3">
-            <div className="p-4 rounded-xl bg-card border border-border/80 flex items-center">
+            <div className="p-4 rounded-md bg-card border border-border/80 flex items-center">
               <Breadcrumb
                 items={[
                   { label: "Administration", href: "/app/administration" },
@@ -167,7 +167,7 @@ export default function BreadcrumbDemoPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-5 space-y-3">
-            <div className="p-4 rounded-xl bg-card border border-border/80 flex items-center">
+            <div className="p-4 rounded-md bg-card border border-border/80 flex items-center">
               <Breadcrumb
                 items={[
                   { label: "Administration", href: "/app/administration" },
@@ -201,7 +201,7 @@ export default function BreadcrumbDemoPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-5 space-y-3">
-            <div className="p-4 rounded-xl bg-card border border-border/80 flex items-center">
+            <div className="p-4 rounded-md bg-card border border-border/80 flex items-center">
               <Breadcrumb
                 items={[
                   { label: "Administration", href: "/app/administration" },
@@ -234,7 +234,7 @@ export default function BreadcrumbDemoPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-5 space-y-3">
-            <div className="p-4 rounded-xl bg-card border border-border/80 flex items-center">
+            <div className="p-4 rounded-md bg-card border border-border/80 flex items-center">
               <Breadcrumb
                 items={[
                   { label: "Organization", href: "/app/administration/master-data/organization" },
@@ -266,7 +266,7 @@ export default function BreadcrumbDemoPage() {
             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Live Breadcrumb Preview ({customCrumbs.length} Levels)
             </span>
-            <div className="p-5 rounded-2xl bg-card border-2 border-primary/20 shadow-xs flex items-center min-h-[64px]">
+            <div className="p-5 rounded-md bg-card border-2 border-primary/20 shadow-xs flex items-center min-h-[64px]">
               <Breadcrumb items={customCrumbs} />
             </div>
           </div>
@@ -280,13 +280,13 @@ export default function BreadcrumbDemoPage() {
               onKeyDown={(e) => {
                 if (e.key === "Enter") addCrumb();
               }}
-              className="h-10 text-xs rounded-xl"
+              className="h-10 text-xs rounded-md"
             />
             <Button
               type="button"
               onClick={addCrumb}
               disabled={!newCrumbInput.trim()}
-              className="h-10 px-4 text-xs font-semibold gap-1.5 shrink-0 rounded-xl cursor-pointer w-full sm:w-auto"
+              className="h-10 px-4 text-xs font-semibold gap-1.5 shrink-0 rounded-md cursor-pointer w-full sm:w-auto"
             >
               <Plus className="h-4 w-4" />
               Add Crumb

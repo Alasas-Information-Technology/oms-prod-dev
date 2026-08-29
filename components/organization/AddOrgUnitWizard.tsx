@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { OrgTypeIcon } from "@/components/oms/org/OrgTypeIcon";
+import { OrgTypeIcon } from "@/components/organization/OrgTypeIcon";
 import { OrgUnitPicker } from "@/components/organization/OrgUnitPicker";
 import {
   useOrgUnits,
@@ -324,7 +324,7 @@ export function AddOrgUnitWizard({
 
             {/* Parent Card Preview */}
             {selectedParent && !isTopLevel && (
-              <div className="p-4 rounded-xl border border-border bg-card shadow-2xs space-y-2 mt-3 animate-in fade-in-50">
+              <div className="p-4 rounded-md border border-border bg-card shadow-2xs space-y-2 mt-3 animate-in fade-in-50">
                 <span className="text-[11px] font-semibold text-muted-foreground uppercase">
                   Selected Parent Preview
                 </span>
@@ -387,7 +387,7 @@ export function AddOrgUnitWizard({
                   tabIndex={0}
                   onClick={() => setSelectedTypeId(type.orgUnitTypeId)}
                   className={cn(
-                    "p-4 rounded-xl border text-left cursor-pointer transition-all duration-150 relative space-y-2 select-none group",
+                    "p-4 rounded-md border text-left cursor-pointer transition-all duration-150 relative space-y-2 select-none group",
                     isSelected
                       ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-xs"
                       : "border-border hover:border-border/80 hover:bg-muted/30"
@@ -562,7 +562,7 @@ export function AddOrgUnitWizard({
             </div>
 
             {/* Skippable Reminder Note */}
-            <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-2.5">
+            <div className="p-3.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-2.5">
               <Crown className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
               <div className="space-y-0.5">
                 <p className="font-semibold">Skipping leadership assignment</p>

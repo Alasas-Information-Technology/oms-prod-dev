@@ -94,7 +94,7 @@ export function AddOverrideDialog({
               <button
                 type="button"
                 onClick={() => setIsGranted(true)}
-                className={`p-3 rounded-xl border flex items-center gap-2.5 transition-all text-left ${
+                className={`p-3 rounded-md border flex items-center gap-2.5 transition-all text-left ${
                   isGranted
                     ? "bg-emerald-500/10 border-emerald-500 text-emerald-700 dark:text-emerald-300 ring-2 ring-emerald-500/20"
                     : "bg-card border-border hover:bg-muted/50"
@@ -110,7 +110,7 @@ export function AddOverrideDialog({
               <button
                 type="button"
                 onClick={() => setIsGranted(false)}
-                className={`p-3 rounded-xl border flex items-center gap-2.5 transition-all text-left ${
+                className={`p-3 rounded-md border flex items-center gap-2.5 transition-all text-left ${
                   !isGranted
                     ? "bg-rose-500/10 border-rose-500 text-rose-700 dark:text-rose-300 ring-2 ring-rose-500/20"
                     : "bg-card border-border hover:bg-muted/50"

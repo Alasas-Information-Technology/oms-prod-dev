@@ -90,7 +90,7 @@ export function UserRolesTimeline({
       </CardHeader>
       <CardContent>
         {sortedRoles.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-10 text-center border rounded-xl border-dashed bg-muted/20">
+          <div className="flex flex-col items-center justify-center py-10 text-center border rounded-md border-dashed bg-muted/20">
             <Shield className="size-10 text-muted-foreground/50 mb-3" />
             <p className="text-sm font-medium text-foreground">No roles currently assigned</p>
             <p className="text-xs text-muted-foreground mt-1 max-w-sm">
@@ -135,7 +135,7 @@ export function UserRolesTimeline({
 
                   {/* Card Content */}
                   <div
-                    className={`p-4 rounded-xl border transition-all ${
+                    className={`p-4 rounded-md border transition-all ${
                       isFutureDated
                         ? "bg-amber-500/5 border-amber-500/30 shadow-xs"
                         : isCurrentlyActive

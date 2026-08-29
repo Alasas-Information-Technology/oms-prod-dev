@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 
-import { NotificationPanel } from "@/components/oms/NotificationPanel";
+import { NotificationPanel } from "@/components/shared/NotificationPanel";
 import { Icon } from "@iconify/react";
 import NotificationSheet from "./notification-sheet";
 
@@ -64,7 +64,7 @@ export default function NotificationsDrawer() {
 
         <DropdownMenuContent
           align="end"
-          className="w-105 p-0 rounded-xl overflow-hidden"
+          className="w-105 p-0 rounded-md overflow-hidden"
         >
           <NotificationPanel
             notifications={notifications}

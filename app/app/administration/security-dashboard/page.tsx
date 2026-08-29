@@ -1,9 +1,10 @@
 "use client";
 
+import * as React from "react";
 import { useEffect, useState } from "react";
-import { SimpleKpiCard } from "@/components/oms/simple-kpi";
+import { SimpleKpiCard } from "@/components/budget";
 import { securityApi } from "@/lib/api/security";
-import { DataTable, RowAction } from "@/components/oms/DataTable";
+import { DataTable, RowAction } from "@/components/shared/DataTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { RefreshCcw } from "lucide-react";
@@ -58,7 +59,7 @@ export default function SecurityDashboard() {
 
   const handleTerminateSession = async (loginSessionId: string) => {
     // Optimistic update
-    setData((prev) => {
+    setData((prev: RawDashboardResponse | null) => {
       if (!prev) return prev;
       return {
         ...prev,
@@ -68,7 +69,7 @@ export default function SecurityDashboard() {
             activeSessions: Math.max(0, (prev.summary.activeSessions || 0) - 1),
           }
           : prev.summary,
-        activeSessions: prev.activeSessions?.filter((s) => s.LoginSessionID !== loginSessionId)
+        activeSessions: prev.activeSessions?.filter((s: RawActiveSession) => s.LoginSessionID !== loginSessionId)
       };
     });
     try {

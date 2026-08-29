@@ -1,5 +1,5 @@
 "use client";
-import { NotificationPanel } from "@/components/oms/NotificationPanel";
+import { NotificationPanel } from "@/components/shared/NotificationPanel";
 import {
   Sheet,
   SheetContent,

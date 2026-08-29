@@ -23,6 +23,12 @@ export interface UserSession {
     scopes: UserScope[];
 
     loginSessionId: string;
+    fullName?: string;
+    phone?: string;
+    location?: string;
+    department?: string;
+    employeeId?: string;
+    avatarUrl?: string;
 }
 
 export interface User {

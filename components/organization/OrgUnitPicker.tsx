@@ -20,6 +20,8 @@ export interface OrgUnitPickerProps {
   placeholder?: string;
   disabled?: boolean;
   filterByType?: number | number[];
+  filterType?: number | number[];
+  parentOrgUnitId?: string | null;
   allowsBudgetOnly?: boolean;
   allowsRequisitionOnly?: boolean;
   excludeUnitId?: string;
@@ -33,12 +35,15 @@ export function OrgUnitPicker({
   placeholder = "Search and choose a department or team...",
   disabled = false,
   filterByType,
+  filterType,
+  parentOrgUnitId,
   allowsBudgetOnly = false,
   allowsRequisitionOnly = false,
   excludeUnitId,
   className,
   clearable = true,
 }: OrgUnitPickerProps) {
+  const effectiveFilterType = filterByType ?? filterType;
   const [open, setOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
 
@@ -64,8 +69,8 @@ export function OrgUnitPicker({
         return false;
       }
       const uTypeId = unit.orgUnitTypeId ?? unit.type?.orgUnitTypeId ?? unit.orgUnitType?.orgUnitTypeId;
-      if (filterByType) {
-        const allowedTypes = Array.isArray(filterByType) ? filterByType : [filterByType];
+      if (effectiveFilterType) {
+        const allowedTypes = Array.isArray(effectiveFilterType) ? effectiveFilterType : [effectiveFilterType];
         if (!uTypeId || !allowedTypes.includes(uTypeId)) {
           return false;
         }
@@ -78,9 +83,12 @@ export function OrgUnitPicker({
         const type = uTypeId ? typesMap.get(uTypeId) : undefined;
         if (!type?.allowsRequisition && !unit.allowsRequisition) return false;
       }
+      if (parentOrgUnitId && unit.parentOrgUnitId !== parentOrgUnitId) {
+        return false;
+      }
       return true;
     });
-  }, [unitsData, excludeUnitId, filterByType, allowsBudgetOnly, allowsRequisitionOnly, typesMap]);
+  }, [unitsData, excludeUnitId, effectiveFilterType, parentOrgUnitId, allowsBudgetOnly, allowsRequisitionOnly, typesMap]);
 
   const selectedUnit = React.useMemo(() => {
     if (!value) return null;

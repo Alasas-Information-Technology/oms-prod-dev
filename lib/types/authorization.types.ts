@@ -45,6 +45,7 @@ export const USER_PERMISSIONS = {
   UNLOCK: 'USER.UNLOCK',
   INVITE: 'USER.INVITE',
   RESET_PASSWORD: 'USER.RESET_PASSWORD',
+  FORCE_PASSWORD_CHANGE: 'USER.FORCE_PASSWORD_CHANGE',
   ROLE_ASSIGN: 'USER.ROLE.ASSIGN',
   SCOPE_ASSIGN: 'USER.SCOPE.ASSIGN',
   OVERRIDE_MANAGE: 'USER.OVERRIDE.MANAGE',
@@ -276,7 +277,7 @@ export interface IUserRoleAssignmentDto {
 export interface AssignRoleDto {
   roleId: string;
   effectiveFrom?: string | Date;
-  effectiveTo?: string | Date | null;
+  effectiveTo?: string | Date;
 }
 
 // =============================================================================
@@ -309,7 +310,7 @@ export interface AssignScopeDto {
   departmentId?: string;
   sectionId?: string;
   effectiveFrom?: string | Date;
-  effectiveTo?: string | Date | null;
+  effectiveTo?: string | Date;
 }
 
 export interface ScopeCountResponseDto {
@@ -341,7 +342,7 @@ export interface ManageOverrideDto {
   isGranted: boolean;
   reason: string;
   effectiveFrom?: string | Date;
-  effectiveTo?: string | Date | null;
+  effectiveTo?: string | Date;
 }
 
 // =============================================================================
@@ -494,6 +495,10 @@ export interface ChangePasswordDto {
   oldPassword?: string;
   newPassword: string;
   confirmPassword?: string;
+}
+
+export interface ForceChangePasswordDto {
+  newPassword: string;
 }
 
 // Backward compatibility authorization check types

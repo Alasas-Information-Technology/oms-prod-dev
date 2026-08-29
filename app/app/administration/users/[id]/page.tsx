@@ -1,489 +1,1130 @@
 "use client";
 
-import * as React from "react";
-import { useParams, useRouter } from "next/navigation";
 import {
-  Users,
-  ArrowLeft,
-  UserCheck,
-  UserX,
-  Lock,
-  Unlock,
-  Mail,
-  RotateCcw,
-  Edit,
-  Building2,
-  Shield,
-  Key,
-  Calendar,
-  Activity,
-  Layers,
-  Sparkles,
-  Phone,
-  Briefcase,
-  Hash,
-  Clock,
-  Trash2,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import {
-  useUserDetail,
-  useEffectivePermissions,
-  useUserRoles,
-  useUserScopes,
-  useUserDelegations,
-  useDeactivateUser,
-  useReactivateUser,
-  useUnlockUser,
-  useInviteUser,
-  useResetPassword,
-} from "@/hooks/useAuthorization";
-import { usePermission } from "@/hooks/usePermission";
-import { UserStatusBadge, computeUserStatus } from "@/components/users/UserStatusBadge";
-import { UserRolesTimeline } from "@/components/users/UserRolesTimeline";
-import { UserScopeCoverageCard } from "@/components/users/UserScopeCoverageCard";
-import { UserPermissionsList } from "@/components/users/UserPermissionsList";
-import { UserDelegationsPanel } from "@/components/users/UserDelegationsPanel";
-import { UserActivityTimeline } from "@/components/users/UserActivityTimeline";
-import { AssignRoleDialog } from "@/components/users/AssignRoleDialog";
-import { AssignScopeDialog } from "@/components/users/AssignScopeDialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { PageBarActions, usePageBarDispatch } from "@/components/ui/layouts/page-bar-context";
 import { AddOverrideDialog } from "@/components/users/AddOverrideDialog";
 import { CreateDelegationDialog } from "@/components/users/CreateDelegationDialog";
 import { EditUserDialog } from "@/components/users/EditUserDialog";
+import { ForceChangePasswordDialog } from "@/components/users/ForceChangePasswordDialog";
+import { UserActivityTimeline } from "@/components/users/UserActivityTimeline";
+import { UserDelegationsPanel } from "@/components/users/UserDelegationsPanel";
+import { UserPanelCard, UserPanelRow } from "@/components/users/UserPanelCard";
+import { UserPermissionsList } from "@/components/users/UserPermissionsList";
+import { UserProfileCard } from "@/components/users/UserProfileCard";
+import { StagedRoleState, UserRolesSection } from "@/components/users/UserRolesSection";
+import { StagedScopeState, UserScopeSection } from "@/components/users/UserScopeSection";
+import { computeUserStatus } from "@/components/users/UserStatusBadge";
+import {
+  useAssignRole,
+  useAssignScope,
+  useDeactivateUser,
+  useEffectivePermissions,
+  useInviteUser,
+  useReactivateUser,
+  useResetPassword,
+  useRevokeRole,
+  useRevokeScope,
+  useRevokeUserSessions,
+  useUnlockUser,
+  useUserDelegations,
+  useUserDetail,
+  useUserRoles,
+  useUserScopes,
+  useUserSessions,
+} from "@/hooks/useAuthorization";
+import { usePermission } from "@/hooks/usePermission";
+import {
+  getPlainErrorMessage,
+  SCOPE_LEVEL_DEFINITIONS
+} from "@/lib/constants/user-admin.constants";
+import {
+  IDelegationDto,
+  IUserRoleAssignmentDto,
+  IUserScopeAssignmentDto,
+} from "@/lib/types/authorization.types";
+import { format, formatDistanceToNow } from "date-fns";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  ChevronRight,
+  Edit,
+  Lock,
+  LogOut,
+  RotateCcw,
+  Save,
+  Users
+} from "lucide-react";
+import Link from "next/link";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import * as React from "react";
 import { toast } from "sonner";
-import { format } from "date-fns";
 
-export default function UserDetailPage() {
+const EMPTY_ROLES: IUserRoleAssignmentDto[] = [];
+const EMPTY_SCOPES: IUserScopeAssignmentDto[] = [];
+const EMPTY_ARRAY: any[] = [];
+
+type TabKey = "overview" | "roles" | "access" | "permissions" | "delegations" | "activity";
+
+function UserDetailPageContent() {
   const params = useParams();
   const userId = params?.id as string;
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { can } = usePermission();
+  const { setCustomCrumbs } = usePageBarDispatch();
 
-  const [activeTab, setActiveTab] = React.useState<string>("overview");
+  // Tab State & Deep Linking (§Part 3 & Part 5)
+  const tabParam = searchParams.get("tab");
+  const activeTab: TabKey = React.useMemo(() => {
+    if (!tabParam) return "overview";
+    if (tabParam === "scope" || tabParam === "access") return "access";
+    if (tabParam === "roles") return "roles";
+    if (tabParam === "permissions") return "permissions";
+    if (tabParam === "delegations") return "delegations";
+    if (tabParam === "activity") return "activity";
+    return "overview";
+  }, [tabParam]);
 
   // Modal Dialog States
   const [isEditOpen, setIsEditOpen] = React.useState(false);
-  const [isAssignRoleOpen, setIsAssignRoleOpen] = React.useState(false);
-  const [isAssignScopeOpen, setIsAssignScopeOpen] = React.useState(false);
   const [isAddOverrideOpen, setIsAddOverrideOpen] = React.useState(false);
   const [isCreateDelegationOpen, setIsCreateDelegationOpen] = React.useState(false);
+  const [isForceChangePasswordOpen, setIsForceChangePasswordOpen] = React.useState(false);
+  const [copiedField, setCopiedField] = React.useState<string | null>(null);
+
+  // Immediate Action Dialogs (Moved into UserProfileCard, only keeping unused state references to not break existing callbacks for now, will clean up)
+  const [showDeactivateConfirm, setShowDeactivateConfirm] = React.useState(false);
+  const [showResetPasswordConfirm, setShowResetPasswordConfirm] = React.useState(false);
+
+  // Tab Transition Guard State (§Part 5)
+  const [pendingTabTransition, setPendingTabTransition] = React.useState<TabKey | null>(null);
+  const [showTabUnsavedModal, setShowTabUnsavedModal] = React.useState(false);
+  const [showDangerousRoleModal, setShowDangerousRoleModal] = React.useState(false);
+  const [isSaving, setIsSaving] = React.useState(false);
 
   // Queries
-  const { data: user, isLoading: isUserLoading } = useUserDetail(userId);
-  const { data: effectivePerms, isLoading: isPermsLoading } = useEffectivePermissions(userId);
-  const { data: rolesData = [] } = useUserRoles(userId);
-  const { data: scopesData = [] } = useUserScopes(userId);
-  const { data: delegationsData = [] } = useUserDelegations(userId);
+  const {
+    data: user,
+    isLoading: isUserLoading,
+    isError: isUserError,
+    refetch: refetchUser,
+  } = useUserDetail(userId);
 
-  const roles = Array.isArray(rolesData) ? rolesData : (rolesData as any)?.data || [];
-  const scopes = Array.isArray(scopesData) ? scopesData : (scopesData as any)?.data || [];
-  const delegations = Array.isArray(delegationsData) ? delegationsData : (delegationsData as any)?.data || [];
+  const { data: serverRolesData, refetch: refetchRoles } = useUserRoles(userId);
+  const serverRoles: IUserRoleAssignmentDto[] = Array.isArray(serverRolesData)
+    ? serverRolesData
+    : Array.isArray((serverRolesData as any)?.data)
+      ? (serverRolesData as any).data
+      : EMPTY_ROLES;
 
-  // Lifecycle Mutations
+  const { data: serverScopesData, refetch: refetchScopes } = useUserScopes(userId);
+  const serverScopes: IUserScopeAssignmentDto[] = Array.isArray(serverScopesData)
+    ? serverScopesData
+    : Array.isArray((serverScopesData as any)?.data)
+      ? (serverScopesData as any).data
+      : EMPTY_SCOPES;
+
+  const { data: effectivePerms, isLoading: isPermsLoading, refetch: refetchPerms } =
+    useEffectivePermissions(userId);
+  const { data: delegationsData, refetch: refetchDelegations } = useUserDelegations(userId);
+  const delegations: IDelegationDto[] = Array.isArray(delegationsData)
+    ? delegationsData
+    : Array.isArray((delegationsData as any)?.data)
+      ? (delegationsData as any).data
+      : EMPTY_ARRAY;
+
+  const { data: sessionsData } = useUserSessions(userId, {
+    enabled: Boolean(userId) && (can("USER.UPDATE") || can("USER.DEACTIVATE")),
+  });
+  const sessions = Array.isArray(sessionsData)
+    ? sessionsData
+    : Array.isArray((sessionsData as any)?.data)
+      ? (sessionsData as any).data
+      : EMPTY_ARRAY;
+  const activeSessionCount = sessions.length;
+
+  const displayName = user
+    ? user.profile?.displayName ||
+    `${user.profile?.firstName || ""} ${user.profile?.lastName || ""}`.trim() ||
+    user.username
+    : "User Details";
+
+  // Sync breadcrumb with application shell PageBar (§Part 2, 4, 5 of APP-SHELL-SPEC)
+  React.useEffect(() => {
+    if (user) {
+      setCustomCrumbs([
+        { label: "Administration", href: "/app/administration/users" },
+        { label: "Users", href: `/app/administration/users?selected=${userId}` },
+        { label: displayName, isCurrent: true },
+      ]);
+    }
+    return () => setCustomCrumbs(null);
+  }, [user?.userId, userId, displayName, setCustomCrumbs]);
+
+  // Staged Roles State (§Part 3.5 & Part 5)
+  const [stagedRoles, setStagedRoles] = React.useState<Map<string, StagedRoleState>>(new Map());
+
+  // Staged Scope State (§Part 3.6 & Part 5)
+  const [stagedScope, setStagedScope] = React.useState<StagedScopeState>({
+    levelCode: "SELF_ONLY",
+    scopeDefinitionId: "",
+    orgUnitId: null,
+    orgUnitName: null,
+  });
+
+  // Sync server data to staged state
+  React.useEffect(() => {
+    if (!serverRolesData) return;
+    const rolesList: IUserRoleAssignmentDto[] = Array.isArray(serverRolesData)
+      ? serverRolesData
+      : Array.isArray((serverRolesData as any)?.data)
+        ? (serverRolesData as any).data
+        : [];
+
+    const map = new Map<string, StagedRoleState>();
+    rolesList.forEach((r) => {
+      if (r.isActive !== false) {
+        map.set(r.roleCode, {
+          roleCode: r.roleCode,
+          roleId: r.roleId,
+          isAssigned: true,
+          effectiveFrom: r.effectiveFrom,
+          effectiveTo: r.effectiveTo || undefined,
+        });
+      }
+    });
+    setStagedRoles(map);
+  }, [serverRolesData]);
+
+  React.useEffect(() => {
+    if (!serverScopesData) return;
+    const scopesList: IUserScopeAssignmentDto[] = Array.isArray(serverScopesData)
+      ? serverScopesData
+      : Array.isArray((serverScopesData as any)?.data)
+        ? (serverScopesData as any).data
+        : [];
+
+    const activeScope = scopesList.find((s) => s.isActive !== false);
+    if (activeScope) {
+      const code = (activeScope.scopeCode || "").toUpperCase();
+      let levelCode: StagedScopeState["levelCode"] = "SELF_ONLY";
+      if (code === "GLOBAL" || code === "ORGANIZATION") levelCode = "GLOBAL";
+      else if (code === "BUSINESS_UNIT") levelCode = "BUSINESS_UNIT";
+      else if (code === "DEPARTMENT") levelCode = "DEPARTMENT";
+      else if (code === "SECTION") levelCode = "SECTION";
+
+      const def = SCOPE_LEVEL_DEFINITIONS.find((l) => l.code === levelCode);
+
+      setStagedScope({
+        levelCode,
+        scopeDefinitionId: activeScope.scopeDefinitionId || def?.scopeDefinitionId || "",
+        orgUnitId:
+          activeScope.orgUnitId ||
+          activeScope.departmentId ||
+          activeScope.businessUnitId ||
+          activeScope.sectionId ||
+          null,
+        orgUnitName: activeScope.orgUnitName || null,
+      });
+    } else {
+      setStagedScope({
+        levelCode: "SELF_ONLY",
+        scopeDefinitionId: "",
+        orgUnitId: null,
+        orgUnitName: null,
+      });
+    }
+  }, [serverScopesData]);
+
+  // Dirty State Computations (§Part 5)
+  const isRolesDirty = React.useMemo(() => {
+    const serverActive = serverRoles.filter((r) => r.isActive !== false);
+    const stagedActive = Array.from(stagedRoles.values()).filter((r) => r.isAssigned);
+
+    if (serverActive.length !== stagedActive.length) return true;
+
+    for (const staged of stagedActive) {
+      const found = serverActive.find((s) => s.roleCode === staged.roleCode);
+      if (!found) return true;
+      if (staged.effectiveFrom !== found.effectiveFrom) return true;
+      if (staged.effectiveTo !== (found.effectiveTo || undefined)) return true;
+    }
+    return false;
+  }, [serverRoles, stagedRoles]);
+
+  const isScopeDirty = React.useMemo(() => {
+    const activeServerScope = serverScopes.find((s) => s.isActive !== false);
+    if (!activeServerScope && stagedScope.levelCode === "SELF_ONLY") return false;
+    if (!activeServerScope && stagedScope.levelCode !== "SELF_ONLY") return true;
+    if (activeServerScope && stagedScope.levelCode === "SELF_ONLY") return true;
+
+    if (activeServerScope) {
+      const serverCode = activeServerScope.scopeCode.toUpperCase();
+      let serverLevel: StagedScopeState["levelCode"] = "SELF_ONLY";
+      if (serverCode === "GLOBAL" || serverCode === "ORGANIZATION") serverLevel = "GLOBAL";
+      else if (serverCode === "BUSINESS_UNIT") serverLevel = "BUSINESS_UNIT";
+      else if (serverCode === "DEPARTMENT") serverLevel = "DEPARTMENT";
+      else if (serverCode === "SECTION") serverLevel = "SECTION";
+
+      if (serverLevel !== stagedScope.levelCode) return true;
+      const serverOrgUnitId =
+        activeServerScope.orgUnitId ||
+        activeServerScope.departmentId ||
+        activeServerScope.businessUnitId ||
+        activeServerScope.sectionId ||
+        null;
+      if (serverOrgUnitId !== (stagedScope.orgUnitId || null)) return true;
+    }
+    return false;
+  }, [serverScopes, stagedScope]);
+
+  // Current Active Tab Dirty Status
+  const isCurrentTabDirty = (activeTab === "roles" && isRolesDirty) || (activeTab === "access" && isScopeDirty);
+
+  // Derived metrics with hooks (must be unconditionally called before early returns)
+  const permissionsCount = React.useMemo(() => {
+    if (!effectivePerms) return 0;
+    if (Array.isArray((effectivePerms as any).permissions)) return (effectivePerms as any).permissions.length;
+    if (Array.isArray(effectivePerms)) return (effectivePerms as any).length;
+    if (Array.isArray((effectivePerms as any).data)) return (effectivePerms as any).data.length;
+    return 0;
+  }, [effectivePerms]);
+
+  const invitationSentDate = React.useMemo(() => {
+    if (!user?.createdAt) return null;
+    try {
+      const parsed = new Date(user.createdAt);
+      return !isNaN(parsed.getTime())
+        ? formatDistanceToNow(parsed, { addSuffix: true })
+        : null;
+    } catch {
+      return null;
+    }
+  }, [user?.createdAt]);
+
+  // Mutations
   const deactivateMutation = useDeactivateUser();
   const reactivateMutation = useReactivateUser();
   const unlockMutation = useUnlockUser();
   const inviteMutation = useInviteUser();
   const resetPasswordMutation = useResetPassword();
+  const revokeSessionsMutation = useRevokeUserSessions();
+  const assignRoleMutation = useAssignRole();
+  const revokeRoleMutation = useRevokeRole();
+  const assignScopeMutation = useAssignScope();
+  const revokeScopeMutation = useRevokeScope();
 
-  const status = user ? computeUserStatus(user) : "ACTIVE";
+  // Tab switching with unsaved changes guard (§Part 5)
+  const navigateToTab = (newTab: TabKey) => {
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.set("tab", newTab);
+    router.replace(`/app/administration/users/${userId}?${nextParams.toString()}`, { scroll: false });
+  };
 
-  const handleDeactivate = async () => {
-    if (!user) return;
-    try {
-      await deactivateMutation.mutateAsync(userId);
-      toast.success(`User [${user.username}] deactivated.`);
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.message || "Failed to deactivate");
+  const handleTabChange = (targetTab: string) => {
+    const newTab = (targetTab === "scope" ? "access" : targetTab) as TabKey;
+    if (newTab === activeTab) return;
+
+    if (isCurrentTabDirty) {
+      setPendingTabTransition(newTab);
+      setShowTabUnsavedModal(true);
+    } else {
+      navigateToTab(newTab);
     }
   };
 
-  const handleReactivate = async () => {
-    if (!user) return;
+  // Revert / Discard current tab changes
+  const handleDiscardCurrentTab = () => {
+    if (activeTab === "roles") {
+      const map = new Map<string, StagedRoleState>();
+      serverRoles.forEach((r) => {
+        if (r.isActive !== false) {
+          map.set(r.roleCode, {
+            roleCode: r.roleCode,
+            roleId: r.roleId,
+            isAssigned: true,
+            effectiveFrom: r.effectiveFrom,
+            effectiveTo: r.effectiveTo || undefined,
+          });
+        }
+      });
+      setStagedRoles(map);
+    } else if (activeTab === "access") {
+      const activeScope = serverScopes.find((s) => s.isActive !== false);
+      if (activeScope) {
+        const code = activeScope.scopeCode.toUpperCase();
+        let levelCode: StagedScopeState["levelCode"] = "SELF_ONLY";
+        if (code === "GLOBAL" || code === "ORGANIZATION") levelCode = "GLOBAL";
+        else if (code === "BUSINESS_UNIT") levelCode = "BUSINESS_UNIT";
+        else if (code === "DEPARTMENT") levelCode = "DEPARTMENT";
+        else if (code === "SECTION") levelCode = "SECTION";
+
+        const def = SCOPE_LEVEL_DEFINITIONS.find((l) => l.code === levelCode);
+
+        setStagedScope({
+          levelCode,
+          scopeDefinitionId: activeScope.scopeDefinitionId || def?.scopeDefinitionId || "",
+          orgUnitId:
+            activeScope.orgUnitId ||
+            activeScope.departmentId ||
+            activeScope.businessUnitId ||
+            activeScope.sectionId ||
+            null,
+          orgUnitName: activeScope.orgUnitName || null,
+        });
+      } else {
+        setStagedScope({
+          levelCode: "SELF_ONLY",
+          scopeDefinitionId: "",
+          orgUnitId: null,
+          orgUnitName: null,
+        });
+      }
+    }
+  };
+
+  // Staged Role Updates
+  const handleToggleRole = (roleCode: string, roleId: string) => {
+    setStagedRoles((prev) => {
+      const next = new Map(prev);
+      const existing = next.get(roleCode);
+      if (existing && existing.isAssigned) {
+        next.set(roleCode, { ...existing, isAssigned: false });
+      } else {
+        next.set(roleCode, {
+          roleCode,
+          roleId,
+          isAssigned: true,
+          effectiveFrom: existing?.effectiveFrom,
+          effectiveTo: existing?.effectiveTo,
+        });
+      }
+      return next;
+    });
+  };
+
+  const handleUpdateRoleDates = (
+    roleCode: string,
+    roleId: string,
+    effectiveFrom?: string,
+    effectiveTo?: string
+  ) => {
+    setStagedRoles((prev) => {
+      const next = new Map(prev);
+      const existing = next.get(roleCode);
+      next.set(roleCode, {
+        roleCode,
+        roleId,
+        isAssigned: existing ? existing.isAssigned : true,
+        effectiveFrom,
+        effectiveTo,
+      });
+      return next;
+    });
+  };
+
+  // Save current tab modifications (§Part 5)
+  const handleSaveCurrentTab = async () => {
+    if (!userId) return;
+
+    if (activeTab === "roles") {
+      const activeCount = Array.from(stagedRoles.values()).filter((r) => r.isAssigned).length;
+      if (activeCount === 0 && serverRoles.filter((r) => r.isActive !== false).length > 0) {
+        setShowDangerousRoleModal(true);
+        return;
+      }
+    }
+
+    await executeSave();
+  };
+
+  const executeSave = async () => {
+    setIsSaving(true);
     try {
-      await reactivateMutation.mutateAsync(userId);
-      toast.success(`User [${user.username}] reactivated.`);
+      if (activeTab === "roles") {
+        const serverMap = new Map(serverRoles.map((r) => [r.roleCode, r]));
+
+        for (const [code, staged] of Array.from(stagedRoles.entries())) {
+          const serverRole = serverMap.get(code);
+
+          if (staged.isAssigned) {
+            const needsUpdate =
+              !serverRole ||
+              serverRole.isActive === false ||
+              serverRole.effectiveFrom !== staged.effectiveFrom ||
+              (serverRole.effectiveTo || undefined) !== staged.effectiveTo;
+
+            if (needsUpdate) {
+              await assignRoleMutation.mutateAsync({
+                userId,
+                dto: {
+                  roleId: staged.roleId,
+                  effectiveFrom: staged.effectiveFrom,
+                  effectiveTo: staged.effectiveTo,
+                },
+              });
+            }
+          } else if (serverRole && serverRole.isActive !== false) {
+            await revokeRoleMutation.mutateAsync({
+              userId,
+              roleId: serverRole.roleId,
+            });
+          }
+        }
+
+        toast.success("Roles updated successfully.");
+        await Promise.all([refetchRoles(), refetchPerms(), refetchUser()]);
+      } else if (activeTab === "access") {
+        if (stagedScope.levelCode === "SELF_ONLY") {
+          for (const s of serverScopes.filter((s) => s.isActive !== false)) {
+            await revokeScopeMutation.mutateAsync({
+              userId,
+              scopeId: s.userOrganizationScopeId,
+            });
+          }
+        } else {
+          await assignScopeMutation.mutateAsync({
+            userId,
+            dto: {
+              scopeDefinitionId: stagedScope.scopeDefinitionId,
+              orgUnitId: stagedScope.orgUnitId || undefined,
+            },
+          });
+
+          for (const s of serverScopes.filter((s) => s.isActive !== false)) {
+            if (
+              s.scopeDefinitionId !== stagedScope.scopeDefinitionId ||
+              s.orgUnitId !== stagedScope.orgUnitId
+            ) {
+              await revokeScopeMutation.mutateAsync({
+                userId,
+                scopeId: s.userOrganizationScopeId,
+              });
+            }
+          }
+        }
+
+        toast.success("Organizational visibility updated successfully.");
+        await Promise.all([refetchScopes(), refetchPerms(), refetchUser()]);
+      }
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.message || "Failed to reactivate");
+      const errorCode = err?.response?.data?.code || err?.code;
+      const msg = getPlainErrorMessage(errorCode, err?.response?.data?.message || err?.message);
+      toast.error(msg);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Immediate Action Handlers (Overview Tab)
+  const handleToggleActive = async (checked: boolean) => {
+    if (!checked) {
+      setShowDeactivateConfirm(true);
+    } else {
+      try {
+        await reactivateMutation.mutateAsync(userId);
+        toast.success(`Access turned on for ${displayName}.`);
+        refetchUser();
+      } catch (err: any) {
+        const errorCode = err?.response?.data?.code || err?.code;
+        toast.error(getPlainErrorMessage(errorCode, err?.response?.data?.message || err?.message));
+      }
+    }
+  };
+
+  const handleConfirmDeactivate = async () => {
+    try {
+      setShowDeactivateConfirm(false);
+      await deactivateMutation.mutateAsync(userId);
+      toast.success(`Access turned off for ${displayName}.`);
+      refetchUser();
+    } catch (err: any) {
+      const errorCode = err?.response?.data?.code || err?.code;
+      toast.error(getPlainErrorMessage(errorCode, err?.response?.data?.message || err?.message));
     }
   };
 
   const handleUnlock = async () => {
-    if (!user) return;
     try {
       await unlockMutation.mutateAsync(userId);
-      toast.success(`Account for [${user.username}] unlocked.`);
+      toast.success(`Account unlocked for ${displayName}.`);
+      refetchUser();
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.message || "Failed to unlock");
+      const errorCode = err?.response?.data?.code || err?.code;
+      toast.error(getPlainErrorMessage(errorCode, err?.response?.data?.message || err?.message));
     }
   };
 
   const handleResendInvite = async () => {
-    if (!user) return;
     try {
       await inviteMutation.mutateAsync({ id: userId, resend: true });
-      toast.success(`Onboarding invitation re-sent for [${user.username}].`);
+      toast.success(`Onboarding invitation re-sent to ${user?.email}.`);
+      refetchUser();
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.message || "Failed to resend invite");
+      const errorCode = err?.response?.data?.code || err?.code;
+      toast.error(getPlainErrorMessage(errorCode, err?.response?.data?.message || err?.message));
     }
   };
 
-  const handleResetPassword = async () => {
-    if (!user) return;
+  const handleConfirmResetPassword = async () => {
     try {
+      setShowResetPasswordConfirm(false);
       await resetPasswordMutation.mutateAsync(userId);
-      toast.success(`Password reset link dispatched to [${user.email}].`);
+      toast.success(`Password reset invitation sent to ${user?.email}.`);
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.message || "Failed to dispatch reset link");
+      const errorCode = err?.response?.data?.code || err?.code;
+      toast.error(getPlainErrorMessage(errorCode, err?.response?.data?.message || err?.message));
     }
   };
 
+  const handleConfirmSignOutAll = async () => {
+    try {
+      await revokeSessionsMutation.mutateAsync(userId);
+      toast.success(`Signed out everywhere for ${displayName}.`);
+    } catch (err: any) {
+      const errorCode = err?.response?.data?.code || err?.code;
+      toast.error(getPlainErrorMessage(errorCode, err?.response?.data?.message || err?.message));
+    }
+  };
+
+  const copyToClipboard = (text: string, fieldName: string) => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setCopiedField(fieldName);
+      toast.success(`Copied ${fieldName} to clipboard`);
+      setTimeout(() => setCopiedField(null), 2000);
+    }
+  };
+
+  // Loading and Error states
   if (isUserLoading) {
     return (
-      <div className="p-8 text-center text-sm text-muted-foreground">
-        Loading user account details...
+      <div className="p-6 space-y-6">
+        <div className="h-44 rounded-md bg-card/60 border border-border/60 animate-pulse" />
+        <div className="h-12 w-96 rounded-md bg-card/60 border border-border/60 animate-pulse" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="h-64 rounded-md bg-card/60 border border-border/60 animate-pulse" />
+          <div className="h-64 rounded-md bg-card/60 border border-border/60 animate-pulse" />
+        </div>
       </div>
     );
   }
 
-  if (!user) {
+  // Out-of-scope / Not Found: Renders genuine not-found per Requirement 8
+  if (isUserError || !user) {
     return (
-      <div className="p-8 max-w-lg mx-auto text-center space-y-4">
-        <h2 className="text-xl font-bold text-foreground">User Not Found</h2>
-        <p className="text-sm text-muted-foreground">
-          The requested user account does not exist or has been deleted.
-        </p>
-        <Button onClick={() => router.push("/app/administration/users")}>
-          Back to Users List
+      <div className="p-16 max-w-md mx-auto text-center space-y-5">
+        <div className="size-16 rounded-md bg-muted/60 border border-border/80 flex items-center justify-center text-muted-foreground mx-auto shadow-xs">
+          <Users className="size-8 text-muted-foreground/70" />
+        </div>
+        <div className="space-y-1.5">
+          <h2 className="text-xl font-bold font-display text-foreground">Person not found</h2>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            The requested account could not be found or is no longer available in the organizational directory.
+          </p>
+        </div>
+        <Button asChild variant="outline" size="sm" className="gap-2 text-xs rounded-md h-9">
+          <Link href="/app/administration/users">
+            <ArrowLeft className="size-3.5" />
+            Back to people list
+          </Link>
         </Button>
       </div>
     );
   }
 
   const initials =
-    (user.profile?.firstName?.[0] || "") +
-    (user.profile?.lastName?.[0] || "") ||
+    (user.profile?.firstName?.[0] || "") + (user.profile?.lastName?.[0] || "") ||
     user.username.substring(0, 2).toUpperCase();
 
+  const userStatus = computeUserStatus(user);
+  const isLocked = userStatus === "LOCKED";
+  const isInvited = userStatus === "INVITED";
+  const isActive = Boolean(user.isActive);
+
+  const activeRoleList = serverRoles.filter((r) => r.isActive !== false);
+  const primaryRoleCode = activeRoleList[0]?.roleCode || user.roles?.[0];
+  const activeRolesCount = activeRoleList.length;
+
+  const activeScopeList = serverScopes.filter((s) => s.isActive !== false);
+  const primaryScope = activeScopeList[0];
+  const activeScopesCount = activeScopeList.length;
+
+  const activeDelegationsList = delegations.filter((d: IDelegationDto) => d.isActive);
+  const delegationsCount = activeDelegationsList.length;
+
+  const canManageActive = can("USER.DEACTIVATE") || can("USER.REACTIVATE");
+  const canUnlock = can("USER.UNLOCK");
+  const canInvite = can("USER.INVITE");
+  const canResetPassword = can("USER.RESET_PASSWORD");
+  const canRevokeSessions = can("USER.UPDATE") || can("USER.DEACTIVATE");
+
   return (
-    <div className="p-6 space-y-6 w-full">
-      {/* Navigation Breadcrumb & Back */}
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        <button
-          onClick={() => router.push("/app/administration/users")}
-          className="flex items-center gap-1 hover:text-foreground transition-colors"
-        >
-          <ArrowLeft className="size-3.5" />
-          <span>Users</span>
-        </button>
-        <span>/</span>
-        <span className="text-foreground font-medium">{user.username}</span>
-      </div>
-
-      {/* User Header Profile Card */}
-      <div className="p-6 rounded-2xl border bg-card shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex items-center gap-4">
-          <Avatar className="size-16 border-2 border-primary/20 shadow-xs">
-            <AvatarFallback className="text-xl font-bold bg-primary/10 text-primary">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
-          <div className="space-y-1">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="text-2xl font-bold tracking-tight text-foreground">
-                {user.profile?.displayName || user.username}
-              </h1>
-              <UserStatusBadge user={user} />
-              <Badge
+    <div className="p-6 space-y-6 animate-in fade-in-50 duration-200">
+      {/* Action Injection into Shell Page Bar */}
+      <PageBarActions>
+        <div className="flex items-center gap-2">
+          {/* Staged Tab Dirty Actions */}
+          {isCurrentTabDirty && (
+            <div className="flex items-center gap-2 animate-in fade-in-50">
+              <Button
+                type="button"
                 variant="outline"
-                className={
-                  user.userType === "VENDOR"
-                    ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20 text-xs font-semibold"
-                    : "bg-muted text-foreground text-xs font-medium"
-                }
+                size="sm"
+                onClick={handleDiscardCurrentTab}
+                disabled={isSaving}
+                className="h-9 text-xs rounded-md cursor-pointer"
               >
-                {user.userType}
-              </Badge>
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={handleSaveCurrentTab}
+                disabled={isSaving}
+                className="h-9 text-xs rounded-md shadow-xs gap-1.5 font-semibold cursor-pointer"
+              >
+                <Save className="size-3.5" />
+                {isSaving ? "Saving..." : "Save changes"}
+              </Button>
             </div>
-            <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
-              <span className="font-mono">@{user.username}</span>
-              <span>•</span>
-              <span className="font-mono">{user.email}</span>
-              {user.profile?.employeeId && (
-                <>
-                  <span>•</span>
-                  <span>ID: {user.profile.employeeId}</span>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
+          )}
 
-        {/* Header Action Controls */}
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Edit Profile */}
           {can("USER.UPDATE") && (
             <Button
+              type="button"
               variant="outline"
               size="sm"
               onClick={() => setIsEditOpen(true)}
-              className="gap-1.5"
+              className="h-9 text-xs rounded-md gap-1.5 cursor-pointer font-medium"
             >
-              <Edit className="size-4" />
-              Edit Profile
-            </Button>
-          )}
-
-          {/* Unlock Action if Locked */}
-          {status === "LOCKED" && can("USER.UNLOCK") && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleUnlock}
-              className="gap-1.5 text-rose-600 border-rose-200 hover:bg-rose-50"
-            >
-              <Unlock className="size-4" />
-              Unlock Account
-            </Button>
-          )}
-
-          {/* Resend Invitation if Invited */}
-          {status === "INVITED" && can("USER.INVITE") && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleResendInvite}
-              className="gap-1.5 text-sky-600 border-sky-200 hover:bg-sky-50"
-            >
-              <Mail className="size-4" />
-              Resend Invitation
-            </Button>
-          )}
-
-          {/* Reset Password */}
-          {can("USER.RESET_PASSWORD") && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleResetPassword}
-              className="gap-1.5"
-            >
-              <RotateCcw className="size-4" />
-              Reset Password
-            </Button>
-          )}
-
-          {/* Deactivate / Reactivate */}
-          {user.isActive && can("USER.DEACTIVATE") && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleDeactivate}
-              className="gap-1.5 text-rose-600 hover:bg-rose-50"
-            >
-              <UserX className="size-4" />
-              Deactivate
-            </Button>
-          )}
-
-          {!user.isActive && can("USER.REACTIVATE") && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleReactivate}
-              className="gap-1.5 text-emerald-600 hover:bg-emerald-50"
-            >
-              <UserCheck className="size-4" />
-              Reactivate
+              <Edit className="size-3.5 text-muted-foreground" />
+              Edit profile
             </Button>
           )}
         </div>
+      </PageBarActions>
+
+      {/* Main Grid Layout (Part 1) */}
+      <div className="grid grid-cols-1 min-[1100px]:grid-cols-[340px_1fr] gap-6 items-start">
+        {/* Left Column: Profile Card */}
+        <UserProfileCard
+          user={user}
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+          counts={{
+            roles: activeRolesCount,
+            access: activeScopesCount,
+            permissions: permissionsCount,
+            delegations: delegationsCount,
+            sessions: activeSessionCount,
+          }}
+          primaryRoleCode={primaryRoleCode}
+          onDeactivate={handleConfirmDeactivate}
+          onResetPassword={handleConfirmResetPassword}
+          onForceChangePassword={() => setIsForceChangePasswordOpen(true)}
+          onSignOutAll={handleConfirmSignOutAll}
+        />
+
+        {/* Right Column: Tab Content */}
+        <div className="min-w-0">
+          <div className="space-y-6">
+
+
+            {/* Tab 1: Overview */}
+            {activeTab === "overview" && (
+              <div className="space-y-6 animate-in fade-in-30">
+
+                {/* Recent Activity */}
+                <UserPanelCard
+                  title="Recent activity"
+                  headerAction={
+                    <button
+                      type="button"
+                      className="text-primary hover:underline text-[13px] font-medium flex items-center gap-1"
+                      onClick={() => handleTabChange("activity")}
+                    >
+                      See all <ChevronRight className="size-3" />
+                    </button>
+                  }
+                >
+                  <UserPanelRow>
+                    <div className="flex items-center gap-3">
+                      <span className="w-[120px] text-muted-foreground font-medium shrink-0">
+                        {user.createdAt ? format(new Date(user.createdAt), "d MMM yyyy") : "—"}
+                      </span>
+                      <span className="text-foreground">Account created</span>
+                    </div>
+                  </UserPanelRow>
+                  {user.updatedAt && user.updatedAt !== user.createdAt && (
+                    <UserPanelRow>
+                      <div className="flex items-center gap-3">
+                        <span className="w-[120px] text-muted-foreground font-medium shrink-0">
+                          {format(new Date(user.updatedAt), "d MMM yyyy")}
+                        </span>
+                        <span className="text-foreground">Profile or security settings updated</span>
+                      </div>
+                    </UserPanelRow>
+                  )}
+                  {!!user.failedLoginCount && user.failedLoginCount > 0 && (
+                    <UserPanelRow>
+                      <div className="flex items-center gap-3 text-rose-600">
+                        <span className="w-[120px] text-rose-600/70 font-medium shrink-0">
+                          Recent
+                        </span>
+                        <span className="font-medium">Failed sign-in attempt</span>
+                      </div>
+                    </UserPanelRow>
+                  )}
+                </UserPanelCard>
+
+                {/* Account */}
+                <UserPanelCard title="Account">
+                  <UserPanelRow>
+                    <span className="text-muted-foreground w-1/3">Status</span>
+                    <div className="w-2/3 flex items-center gap-2">
+                      {computeUserStatus(user) === "ACTIVE" && <span className="flex items-center gap-2 font-medium"><span className="size-2 rounded-full bg-emerald-500" />Active</span>}
+                      {computeUserStatus(user) === "LOCKED" && <span className="flex items-center gap-2 font-medium text-rose-600"><span className="size-2 rounded-full bg-rose-500" />Locked out</span>}
+                      {computeUserStatus(user) === "INVITED" && <span className="flex items-center gap-2 font-medium text-sky-600"><span className="size-2 rounded-full bg-sky-500" />Hasn&apos;t signed in yet</span>}
+                      {computeUserStatus(user) === "INACTIVE" && <span className="flex items-center gap-2 font-medium text-muted-foreground"><span className="size-2 rounded-full bg-muted-foreground" />Access turned off</span>}
+                    </div>
+                  </UserPanelRow>
+                  <UserPanelRow>
+                    <span className="text-muted-foreground w-1/3">Last signed in</span>
+                    <span className="w-2/3 text-foreground font-medium">
+                      Never
+                    </span>
+                  </UserPanelRow>
+                  <UserPanelRow>
+                    <span className="text-muted-foreground w-1/3">Invitation</span>
+                    <span className="w-2/3 text-foreground font-medium">
+                      {user.createdAt ? `Sent ${format(new Date(user.createdAt), "d MMM yyyy")}` : "—"}
+                    </span>
+                  </UserPanelRow>
+                  {computeUserStatus(user) === "LOCKED" && (
+                    <UserPanelRow className="bg-rose-50/50 dark:bg-rose-950/20 border-t-0 shadow-[inset_0_1px_0_theme(colors.rose.200)] dark:shadow-[inset_0_1px_0_theme(colors.rose.900/60)]">
+                      <span className="text-rose-700 dark:text-rose-400 w-1/3 font-medium">Lockout state</span>
+                      <span className="w-2/3 font-medium flex items-center gap-2 text-rose-700 dark:text-rose-400">
+                        <Lock className="size-3.5" />
+                        Locked after {user.failedLoginCount || 5} failed sign-in attempts
+                        {canManageActive && (
+                          <button
+                            type="button"
+                            onClick={handleUnlock}
+                            disabled={unlockMutation.isPending}
+                            className="ml-auto underline hover:no-underline text-rose-600 dark:text-rose-400 cursor-pointer disabled:opacity-50"
+                          >
+                            {unlockMutation.isPending ? "Unlocking..." : "Unlock account"}
+                          </button>
+                        )}
+                      </span>
+                    </UserPanelRow>
+                  )}
+                </UserPanelCard>
+
+                {/* Details */}
+                <UserPanelCard
+                  title="Details"
+                  headerAction={
+                    can("USER.UPDATE") ? (
+                      <button
+                        type="button"
+                        className="text-primary hover:underline text-[13px] font-medium flex items-center gap-1 cursor-pointer"
+                        onClick={() => setIsEditOpen(true)}
+                      >
+                        <Edit className="size-3" /> Edit
+                      </button>
+                    ) : null
+                  }
+                >
+                  <UserPanelRow>
+                    <span className="text-muted-foreground w-1/3">Full Name</span>
+                    <span className="w-2/3 text-foreground font-medium">{displayName}</span>
+                  </UserPanelRow>
+                  <UserPanelRow>
+                    <span className="text-muted-foreground w-1/3">Username</span>
+                    <span className="w-2/3 text-foreground font-medium font-mono">@{user.username}</span>
+                  </UserPanelRow>
+                  <UserPanelRow>
+                    <span className="text-muted-foreground w-1/3">Email</span>
+                    <span className="w-2/3 text-foreground font-medium font-mono">{user.email}</span>
+                  </UserPanelRow>
+                  <UserPanelRow>
+                    <span className="text-muted-foreground w-1/3">Job Title</span>
+                    <span className="w-2/3 text-foreground font-medium">{user.profile?.jobTitle || "—"}</span>
+                  </UserPanelRow>
+                  <UserPanelRow>
+                    <span className="text-muted-foreground w-1/3">Department</span>
+                    <span className="w-2/3 text-foreground font-medium">{user.profile?.departmentName || "—"}</span>
+                  </UserPanelRow>
+                  <UserPanelRow>
+                    <span className="text-muted-foreground w-1/3">User Type</span>
+                    <span className="w-2/3 text-foreground font-medium flex items-center gap-2">
+                      {user.userType === "VENDOR" ? (
+                        <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-300">Vendor</Badge>
+                      ) : (
+                        "Staff"
+                      )}
+                    </span>
+                  </UserPanelRow>
+                </UserPanelCard>
+              </div>
+            )}
+
+            {/* Tab 2: Roles (§Part 3.5) */}
+            {user.userType !== "VENDOR" && activeTab === "roles" && (
+              <div className="space-y-6 animate-in fade-in-30">
+                <Card className="border-border/70 shadow-xs bg-card/80 backdrop-blur-sm rounded-md">
+                  <CardContent className="pt-6">
+                    <UserRolesSection
+                      user={user}
+                      serverRoles={serverRoles}
+                      stagedRoles={stagedRoles}
+                      onToggleRole={handleToggleRole}
+                      onUpdateRoleDates={handleUpdateRoleDates}
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            {/* Tab 3: Access (§Part 3.6 — "What they can see") */}
+            {user.userType !== "VENDOR" && activeTab === "access" && (
+              <div className="space-y-6 animate-in fade-in-30">
+                <Card className="border-border/70 shadow-xs bg-card/80 backdrop-blur-sm rounded-md">
+                  <CardContent className="pt-6">
+                    <UserScopeSection
+                      user={user}
+                      serverScopes={serverScopes}
+                      stagedScope={stagedScope}
+                      onChangeScope={setStagedScope}
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            {/* Tab 4: Permissions (§Part 3.7 — Full Audit View) */}
+            {activeTab === "permissions" && (
+              <div className="space-y-6 animate-in fade-in-30">
+                <UserPermissionsList
+                  userId={userId}
+                  effectiveData={effectivePerms}
+                  isLoading={isPermsLoading}
+                  onOpenOverrideDialog={() => setIsAddOverrideOpen(true)}
+                />
+              </div>
+            )}
+
+            {/* Tab 5: Standing in (§Part 3.8) */}
+            {activeTab === "delegations" && (
+              <div className="space-y-6 animate-in fade-in-30">
+                <UserDelegationsPanel
+                  userId={userId}
+                  userName={displayName}
+                  delegations={delegations}
+                  onOpenCreateDialog={() => setIsCreateDelegationOpen(true)}
+                />
+              </div>
+            )}
+
+            {/* Tab 6: Activity */}
+            {activeTab === "activity" && (
+              <div className="space-y-6 animate-in fade-in-30">
+                <UserActivityTimeline
+                  userId={userId}
+                  createdAt={user.createdAt}
+                  updatedAt={user.updatedAt}
+                  failedLoginCount={user.failedLoginCount}
+                  lockedUntil={user.lockedUntil}
+                />
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* 6 Detail Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="bg-muted p-1 rounded-xl border flex flex-wrap gap-1">
-          <TabsTrigger value="overview" className="text-xs gap-1.5 rounded-lg font-medium">
-            <Users className="size-3.5" />
-            Overview
-          </TabsTrigger>
-          <TabsTrigger value="roles" className="text-xs gap-1.5 rounded-lg font-medium">
-            <Shield className="size-3.5" />
-            Roles ({roles.length})
-          </TabsTrigger>
-          <TabsTrigger value="scope" className="text-xs gap-1.5 rounded-lg font-medium">
-            <Building2 className="size-3.5" />
-            Scope ({scopes.length})
-          </TabsTrigger>
-          <TabsTrigger value="permissions" className="text-xs gap-1.5 rounded-lg font-medium">
-            <Key className="size-3.5" />
-            What They Can Do ({effectivePerms?.permissions?.length || 0})
-          </TabsTrigger>
-          <TabsTrigger value="delegations" className="text-xs gap-1.5 rounded-lg font-medium">
-            <Calendar className="size-3.5" />
-            Delegations ({delegations.length})
-          </TabsTrigger>
-          <TabsTrigger value="activity" className="text-xs gap-1.5 rounded-lg font-medium">
-            <Activity className="size-3.5" />
-            Activity Trail
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Tab 1: Overview */}
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Personal & Profile Info */}
-            <Card className="border-border/60 shadow-xs">
-              <CardHeader>
-                <CardTitle className="text-base font-semibold">User Details</CardTitle>
-                <CardDescription>Primary profile and contact attributes.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3 text-xs">
-                <div className="flex justify-between py-1.5 border-b">
-                  <span className="text-muted-foreground">Full Name:</span>
-                  <span className="font-semibold text-foreground">
-                    {user.profile?.displayName || `${user.profile?.firstName || ""} ${user.profile?.lastName || ""}`.trim() || "—"}
-                  </span>
-                </div>
-                <div className="flex justify-between py-1.5 border-b">
-                  <span className="text-muted-foreground">Username:</span>
-                  <span className="font-mono text-foreground font-medium">@{user.username}</span>
-                </div>
-                <div className="flex justify-between py-1.5 border-b">
-                  <span className="text-muted-foreground">Email:</span>
-                  <span className="font-mono text-foreground font-medium">{user.email}</span>
-                </div>
-                <div className="flex justify-between py-1.5 border-b">
-                  <span className="text-muted-foreground">Job Title:</span>
-                  <span className="text-foreground font-medium">{user.profile?.jobTitle || "—"}</span>
-                </div>
-                <div className="flex justify-between py-1.5 border-b">
-                  <span className="text-muted-foreground">Phone Number:</span>
-                  <span className="text-foreground font-medium">{user.profile?.phoneNumber || "—"}</span>
-                </div>
-                <div className="flex justify-between py-1.5">
-                  <span className="text-muted-foreground">Employee ID:</span>
-                  <span className="font-mono text-foreground font-medium">{user.profile?.employeeId || "—"}</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Organization Placement */}
-            <Card className="border-border/60 shadow-xs">
-              <CardHeader>
-                <CardTitle className="text-base font-semibold">Organizational Placement</CardTitle>
-                <CardDescription>Department and business unit hierarchy.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3 text-xs">
-                <div className="flex justify-between py-1.5 border-b">
-                  <span className="text-muted-foreground">Organization:</span>
-                  <span className="text-foreground font-medium">{user.profile?.organizationName || "Dubai Integrated Economic Zones"}</span>
-                </div>
-                <div className="flex justify-between py-1.5 border-b">
-                  <span className="text-muted-foreground">Business Unit:</span>
-                  <span className="text-foreground font-medium">{user.profile?.businessUnitName || "—"}</span>
-                </div>
-                <div className="flex justify-between py-1.5 border-b">
-                  <span className="text-muted-foreground">Department:</span>
-                  <span className="text-foreground font-semibold">{user.profile?.departmentName || "—"}</span>
-                </div>
-                <div className="flex justify-between py-1.5">
-                  <span className="text-muted-foreground">Section / Sub-team:</span>
-                  <span className="text-foreground font-medium">{user.profile?.sectionName || "—"}</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        {/* Tab 2: Roles (Timeline) */}
-        <TabsContent value="roles">
-          <UserRolesTimeline
-            userId={userId}
-            roles={roles}
-            onOpenAssignDialog={() => setIsAssignRoleOpen(true)}
+      {/* Confirmation & Modal Dialogs */}
+      {user && (
+        <>
+          <EditUserDialog open={isEditOpen} onOpenChange={setIsEditOpen} user={user} />
+          <ForceChangePasswordDialog
+            open={isForceChangePasswordOpen}
+            onOpenChange={setIsForceChangePasswordOpen}
+            user={user}
           />
-        </TabsContent>
+        </>
+      )}
 
-        {/* Tab 3: Scope (OrgUnitPicker + Feedback) */}
-        <TabsContent value="scope">
-          <UserScopeCoverageCard
-            userId={userId}
-            scopes={scopes}
-            onOpenAssignDialog={() => setIsAssignScopeOpen(true)}
-          />
-        </TabsContent>
-
-        {/* Tab 4: Permissions ("What they can do") */}
-        <TabsContent value="permissions">
-          <UserPermissionsList
-            userId={userId}
-            effectiveData={effectivePerms}
-            isLoading={isPermsLoading}
-            onOpenOverrideDialog={() => setIsAddOverrideOpen(true)}
-          />
-        </TabsContent>
-
-        {/* Tab 5: Delegations */}
-        <TabsContent value="delegations">
-          <UserDelegationsPanel
-            userId={userId}
-            userName={user.profile?.displayName || user.username}
-            delegations={delegations}
-            onOpenCreateDialog={() => setIsCreateDelegationOpen(true)}
-          />
-        </TabsContent>
-
-        {/* Tab 6: Activity Trail */}
-        <TabsContent value="activity">
-          <UserActivityTimeline
-            userId={userId}
-            createdAt={user.createdAt}
-            updatedAt={user.updatedAt}
-            failedLoginCount={user.failedLoginCount}
-            lockedUntil={user.lockedUntil}
-          />
-        </TabsContent>
-      </Tabs>
-
-      {/* Modals & Dialogs */}
-      <EditUserDialog
-        open={isEditOpen}
-        onOpenChange={setIsEditOpen}
-        user={user}
-      />
-
-      <AssignRoleDialog
-        open={isAssignRoleOpen}
-        onOpenChange={setIsAssignRoleOpen}
-        userId={userId}
-        userName={user.profile?.displayName || user.username}
-      />
-
-      <AssignScopeDialog
-        open={isAssignScopeOpen}
-        onOpenChange={setIsAssignScopeOpen}
-        userId={userId}
-        userName={user.profile?.displayName || user.username}
-      />
-
+      {/* Special Access Override Dialog */}
       <AddOverrideDialog
         open={isAddOverrideOpen}
         onOpenChange={setIsAddOverrideOpen}
         userId={userId}
-        userName={user.profile?.displayName || user.username}
+        userName={displayName}
       />
 
+      {/* Create Standing-in Arrangement Dialog */}
       <CreateDelegationDialog
         open={isCreateDelegationOpen}
         onOpenChange={setIsCreateDelegationOpen}
         fromUserId={userId}
-        fromUserName={user.profile?.displayName || user.username}
+        fromUserName={displayName}
       />
+
+      {/* Confirmation Dialog: Turn off access */}
+      <AlertDialog open={showDeactivateConfirm} onOpenChange={setShowDeactivateConfirm}>
+        <AlertDialogContent className="rounded-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-rose-600 font-display">
+              <AlertTriangle className="size-5 text-rose-600" />
+              Turn off access for {displayName}?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-foreground leading-relaxed">
+              They&apos;ll be signed out immediately and won&apos;t be able to sign in.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-md">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDeactivate}
+              className="bg-rose-600 hover:bg-rose-700 text-white shadow-xs rounded-md"
+            >
+              Turn off access
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Confirmation Dialog: Ask to set new password */}
+      <AlertDialog open={showResetPasswordConfirm} onOpenChange={setShowResetPasswordConfirm}>
+        <AlertDialogContent className="rounded-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 font-display">
+              <RotateCcw className="size-5 text-primary" />
+              Ask them to set a new password?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="leading-relaxed">
+              We&apos;ll send an email to <strong className="text-foreground">{user.email}</strong> with a secure link to establish a new password. Administrators never set or see user passwords.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-md">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmResetPassword} className="shadow-xs rounded-md">
+              Send password link
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+
+
+      {/* Unsaved Tab Transition Modal (§Part 5) */}
+      <AlertDialog open={showTabUnsavedModal} onOpenChange={setShowTabUnsavedModal}>
+        <AlertDialogContent className="rounded-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-display">
+              Save your changes to {activeTab === "roles" ? "roles" : "access"} first?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="leading-relaxed">
+              You have unsaved changes on the current tab. If you leave without saving, your changes will be discarded.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowTabUnsavedModal(false);
+                setPendingTabTransition(null);
+              }}
+              className="rounded-md"
+            >
+              Stay
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                handleDiscardCurrentTab();
+                setShowTabUnsavedModal(false);
+                if (pendingTabTransition) {
+                  navigateToTab(pendingTabTransition);
+                  setPendingTabTransition(null);
+                }
+              }}
+              className="text-rose-600 hover:text-rose-700 rounded-md"
+            >
+              Discard changes
+            </Button>
+            <Button
+              onClick={async () => {
+                setShowTabUnsavedModal(false);
+                await executeSave();
+                if (pendingTabTransition) {
+                  navigateToTab(pendingTabTransition);
+                  setPendingTabTransition(null);
+                }
+              }}
+              className="shadow-xs rounded-md"
+            >
+              Save changes
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Dangerous Changes Confirmation Modal (§Part 4 & 5) */}
+      <AlertDialog open={showDangerousRoleModal} onOpenChange={setShowDangerousRoleModal}>
+        <AlertDialogContent className="rounded-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-rose-600 font-display">
+              <AlertTriangle className="size-5 text-rose-600" />
+              Remove all roles for {displayName}?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-foreground leading-relaxed">
+              You are removing all assigned roles from <strong className="text-foreground">{displayName}</strong>. They will be able to sign in but will have no operational capabilities until a role is granted.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-md">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                setShowDangerousRoleModal(false);
+                await executeSave();
+              }}
+              className="bg-rose-600 hover:bg-rose-700 text-white shadow-xs rounded-md"
+            >
+              Confirm and remove roles
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
+  );
+}
+
+export default function UserDetailPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="p-6 space-y-6 animate-pulse">
+          <div className="h-44 rounded-md bg-card/60 border border-border/60" />
+          <div className="h-12 w-96 rounded-md bg-card/60 border border-border/60" />
+        </div>
+      }
+    >
+      <UserDetailPageContent />
+    </React.Suspense>
   );
 }

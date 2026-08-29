@@ -72,7 +72,7 @@ export function ImplementationJourney() {
           <motion.div
             key={i}
             variants={itemVariants}
-            className="bg-card border border-border/60 rounded-2xl p-8 relative hover:shadow-lg hover:-translate-y-1 hover:border-primary/20 transition-all duration-300 ease-out"
+            className="bg-card border border-border/60 rounded-md p-8 relative hover:shadow-lg hover:-translate-y-1 hover:border-primary/20 transition-all duration-300 ease-out"
           >
             <div className="text-xs font-bold uppercase tracking-widest text-primary mb-4 flex items-center justify-between">
               {item.phase}

@@ -109,7 +109,7 @@ export function ProcessJourney() {
                       w-full md:w-[calc(50%-2rem)] pl-16 md:pl-0
                       ${isEven ? 'md:pr-10 md:text-right' : 'md:pl-10 text-left'}
                     `}>
-                      <div className="bg-card border border-border/60 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+                      <div className="bg-card border border-border/60 rounded-md p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
                         <h3 className="text-lg font-bold text-heading mb-1">{step.title}</h3>
                         <p className="text-sm text-muted-foreground">{step.description}</p>
                       </div>

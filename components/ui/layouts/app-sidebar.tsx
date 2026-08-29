@@ -107,7 +107,7 @@ const navGroups: NavGroup[] = [
         title: "Budget Management",
         icon: Wallet,
         items: [
-          { title: "Dashboard", url: "/app/budget/dashboard" },
+          { title: "Control Center", url: "/app/budget" },
           { title: "Department Budgets", url: "/app/budget/dept-budget" },
           { title: "Vendor Allocations", url: "/app/budget/vendor-allocations" },
         ],
@@ -205,7 +205,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar
       collapsible="icon"
-      className="border-r border-border/50 bg-sidebar select-none w-[240px] data-[state=collapsed]:w-[56px]"
+      className="border-r border-border/50 bg-sidebar select-none w-[240px] data-[state=collapsed]:w-[56px] print:hidden"
       {...props}
     >
       <SidebarContent className="pt-2 pb-6 px-0 overflow-y-auto">

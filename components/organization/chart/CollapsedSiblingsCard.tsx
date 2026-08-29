@@ -57,7 +57,7 @@ export function CollapsedSiblingsCard({ data, targetPosition }: NodeProps<Collap
       }}
       aria-label={`Show ${collapsedCount} more ${childTypeWord}`}
       className={cn(
-        "relative flex flex-col items-center justify-center w-[240px] h-[140px] rounded-xl border-2 border-dashed border-border/80 bg-muted/20 hover:bg-muted/50 hover:border-primary/60 transition-all duration-150 cursor-pointer p-4 text-center select-none group",
+        "relative flex flex-col items-center justify-center w-[240px] h-[140px] rounded-md border-2 border-dashed border-border/80 bg-muted/20 hover:bg-muted/50 hover:border-primary/60 transition-all duration-150 cursor-pointer p-4 text-center select-none group",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
       )}
     >

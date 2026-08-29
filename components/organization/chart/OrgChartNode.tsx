@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Handle, Position, NodeProps, Node } from "@xyflow/react";
-import { OrgUnitCard } from "@/components/oms/org/OrgUnitCard";
+import { OrgUnitCard } from "@/components/organization/OrgUnitCard";
 import { OrgUnitSummaryDto, OrgUnitEntity } from "@/lib/types/organization.types";
 import { cn } from "@/lib/utils";
 

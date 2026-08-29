@@ -10,7 +10,7 @@ export function AccountDetailsCard({ profile, onChangePassword }: AccountDetails
     return (
         <div className="flex flex-col gap-4 w-72 shrink-0">
             {/* Account Details */}
-            <div className="bg-card text-card-foreground rounded-xl border border-border px-5 py-5">
+            <div className="bg-card text-card-foreground rounded-md border border-border px-5 py-5">
                 <h3 className="text-sm font-semibold text-foreground mb-4">Account Details</h3>
                 <div className="space-y-3">
                     <div className="flex justify-between items-center">
@@ -34,7 +34,7 @@ export function AccountDetailsCard({ profile, onChangePassword }: AccountDetails
             </div>
 
             {/* Security */}
-            <div className="bg-accent/30 rounded-xl border border-border px-5 py-4">
+            <div className="bg-accent/30 rounded-md border border-border px-5 py-4">
                 <div className="flex items-center gap-2 mb-2">
                     <Icon icon="mdi:lock" className="w-4 h-4 text-muted-foreground" />
                     <h3 className="text-sm font-semibold text-foreground">Security</h3>

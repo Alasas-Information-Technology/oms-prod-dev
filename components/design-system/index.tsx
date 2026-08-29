@@ -33,16 +33,15 @@ import {
     Dialog, DialogContent, DialogHeader, DialogTitle,
     DialogTrigger, DialogFooter, DialogDescription,
 } from "@/components/ui/dialog";
-import { StatusBadge, type OMSStatus } from "@/components/oms/StatusBadge";
-import { MultiSelect } from "@/components/oms/MultiSelect";
-import { DatePickerField } from "@/components/oms/DatePickerField";
-import { DataTable, type ColumnDef } from "@/components/oms/DataTable";
-import { Timeline, type TimelineItem } from "@/components/oms/Timeline";
-import { ApprovalWorkflow, type ApprovalStep } from "@/components/oms/ApprovalWorkflow";
-import { NotificationPanel, type Notification } from "@/components/oms/NotificationPanel";
+import { StatusBadge, type OMSStatus } from "@/components/shared/StatusBadge";
+import { MultiSelect } from "@/components/shared/MultiSelect";
+import { DatePickerField } from "@/components/shared/DatePickerField";
+import { DataTable, type ColumnDef } from "@/components/shared/DataTable";
+import { Timeline, type TimelineItem } from "@/components/shared/Timeline";
+import { ApprovalWorkflow, type ApprovalStep } from "@/components/shared/ApprovalWorkflow";
+import { NotificationPanel, type Notification } from "@/components/shared/NotificationPanel";
 import { cn } from "@/components/ui/utils";
-import { SimpleKpiCard } from "../oms/simple-kpi";
-import { BudgetKpiCard } from "../oms/budget-kpi";
+import { SimpleKpiCard, BudgetKpiCard } from "@/components/budget";
 import { formatCompactNumber } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
