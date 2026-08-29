@@ -1,16 +1,21 @@
 "use client";
 
 import * as React from "react";
-
+import Link from "next/link";
 import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   ChevronUp,
   ChevronsUpDown,
+  Clock3,
+  CircleAlert,
+  ShieldCheck,
+  CheckCircle2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 import {
   Select,
@@ -30,6 +35,7 @@ import {
 } from "@/components/ui/table";
 
 import { cn } from "@/components/ui/utils";
+import { formatAmount } from "@/lib/money";
 
 import { RequestExpandedDetails } from "./RequestExpandedDetails";
 import { RequestStatusBadge } from "./RequestStatusBadge";
@@ -43,7 +49,8 @@ type SortKey =
   | "currentStage"
   | "currentOwner"
   | "budget"
-  | "updatedAt";
+  | "updatedAt"
+  | "sla";
 
 interface SortState {
   key: SortKey;
@@ -53,37 +60,19 @@ interface SortState {
 interface RequestsTableProps {
   requests: OmsRequest[];
   expandedRequestId: string | null;
-  onExpandedRequestChange: (
-    requestId: string | null
-  ) => void;
+  onExpandedRequestChange: (requestId: string | null) => void;
+  isNeedsActionTab?: boolean;
+  currentUserId?: string;
 }
 
-const currencyFormatter =
-  new Intl.NumberFormat("en-AE", {
-    style: "currency",
-    currency: "AED",
-    maximumFractionDigits: 0,
-  });
-
-function compareValues(
-  a: string | number,
-  b: string | number
-) {
-  if (
-    typeof a === "number" &&
-    typeof b === "number"
-  ) {
+function compareValues(a: any, b: any) {
+  if (typeof a === "number" && typeof b === "number") {
     return a - b;
   }
-
-  return String(a).localeCompare(
-    String(b),
-    "en",
-    {
-      numeric: true,
-      sensitivity: "base",
-    }
-  );
+  return String(a ?? "").localeCompare(String(b ?? ""), "en", {
+    numeric: true,
+    sensitivity: "base",
+  });
 }
 
 function SortableHeader({
@@ -99,8 +88,7 @@ function SortableHeader({
   onSort: (key: SortKey) => void;
   align?: "left" | "center" | "right";
 }) {
-  const isActive =
-    sort.key === sortKey;
+  const isActive = sort.key === sortKey;
 
   return (
     <button
@@ -108,16 +96,11 @@ function SortableHeader({
       onClick={() => onSort(sortKey)}
       className={cn(
         "inline-flex w-full items-center gap-1 whitespace-normal text-xs font-semibold uppercase leading-4 tracking-wider text-slate-500 hover:text-foreground",
-
-        align === "center" &&
-          "justify-center",
-
-        align === "right" &&
-          "justify-end"
+        align === "center" && "justify-center",
+        align === "right" && "justify-end"
       )}
     >
       {label}
-
       {isActive ? (
         sort.direction === "asc" ? (
           <ChevronUp className="size-3 text-primary" />
@@ -135,68 +118,67 @@ export function RequestsTable({
   requests,
   expandedRequestId,
   onExpandedRequestChange,
+  isNeedsActionTab = false,
+  currentUserId = "u-101",
 }: RequestsTableProps) {
-  const [sort, setSort] =
-    React.useState<SortState>({
-      key: "updatedAt",
-      direction: "desc",
-    });
+  // Part 3: Default sort on Needs My Action: SLA urgency, then oldest first
+  const [sort, setSort] = React.useState<SortState>(() =>
+    isNeedsActionTab
+      ? { key: "sla", direction: "asc" }
+      : { key: "updatedAt", direction: "desc" }
+  );
 
-  const [pageIndex, setPageIndex] =
-    React.useState(0);
+  React.useEffect(() => {
+    if (isNeedsActionTab) {
+      setSort({ key: "sla", direction: "asc" });
+    }
+  }, [isNeedsActionTab]);
 
-  const [pageSize, setPageSize] =
-    React.useState(5);
+  const [pageIndex, setPageIndex] = React.useState(0);
+  const [pageSize, setPageSize] = React.useState(5);
 
-  const sortedRequests =
-    React.useMemo(() => {
-      return [...requests].sort(
-        (requestA, requestB) => {
-          const result =
-            compareValues(
-              requestA[sort.key],
-              requestB[sort.key]
-            );
+  const sortedRequests = React.useMemo(() => {
+    return [...requests].sort((requestA, requestB) => {
+      if (sort.key === "sla") {
+        // Breached items first, then lowest daysRemaining, then fallback to updatedAt asc
+        const slaA = requestA.sla;
+        const slaB = requestB.sla;
 
-          return sort.direction === "asc"
-            ? result
-            : -result;
+        if (slaA && !slaB) return -1;
+        if (!slaA && slaB) return 1;
+        if (slaA && slaB) {
+          if (slaA.breached && !slaB.breached) return -1;
+          if (!slaA.breached && slaB.breached) return 1;
+          if (slaA.daysRemaining !== slaB.daysRemaining) {
+            return sort.direction === "asc"
+              ? slaA.daysRemaining - slaB.daysRemaining
+              : slaB.daysRemaining - slaA.daysRemaining;
+          }
         }
+        // Fallback: oldest first on Needs My Action
+        return requestA.updatedAt.localeCompare(requestB.updatedAt);
+      }
+
+      const result = compareValues(
+        requestA[sort.key as keyof OmsRequest],
+        requestB[sort.key as keyof OmsRequest]
       );
-    }, [requests, sort]);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(
-      sortedRequests.length / pageSize
-    )
-  );
+      return sort.direction === "asc" ? result : -result;
+    });
+  }, [requests, sort]);
 
-  const safePageIndex = Math.min(
-    pageIndex,
-    totalPages - 1
-  );
+  const totalPages = Math.max(1, Math.ceil(sortedRequests.length / pageSize));
+  const safePageIndex = Math.min(pageIndex, totalPages - 1);
+  const startIndex = safePageIndex * pageSize;
+  const visibleRequests = sortedRequests.slice(startIndex, startIndex + pageSize);
 
-  const startIndex =
-    safePageIndex * pageSize;
-
-  const visibleRequests =
-    sortedRequests.slice(
-      startIndex,
-      startIndex + pageSize
-    );
-
-  const changeSort = (
-    key: SortKey
-  ) => {
+  const changeSort = (key: SortKey) => {
     setSort((current) =>
       current.key === key
         ? {
             key,
-            direction:
-              current.direction === "asc"
-                ? "desc"
-                : "asc",
+            direction: current.direction === "asc" ? "desc" : "asc",
           }
         : {
             key,
@@ -205,38 +187,30 @@ export function RequestsTable({
     );
   };
 
-  const toggleExpanded = (
-    requestId: string
-  ) => {
-    onExpandedRequestChange(
-      expandedRequestId === requestId
-        ? null
-        : requestId
-    );
+  const toggleExpanded = (requestId: string) => {
+    onExpandedRequestChange(expandedRequestId === requestId ? null : requestId);
   };
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-white shadow-xs">
+    <div className="overflow-hidden rounded-lg border border-border bg-white shadow-xs">
       <Table className="w-full table-fixed border-none">
         <colgroup>
           <col className="w-[3%]" />
+          <col className="w-[12%]" />
+          <col className="w-[18%]" />
+          <col className="w-[6%]" />
+          <col className="w-[12%]" />
           <col className="w-[11%]" />
-          <col className="w-[16%]" />
-          <col className="w-[7%]" />
-          <col className="w-[13%]" />
           <col className="w-[11%]" />
-          <col className="w-[13%]" />
           <col className="w-[10%]" />
           <col className="w-[7%]" />
-          <col className="w-[9%]" />
+          <col className="w-[10%]" />
         </colgroup>
 
         <TableHeader className="border-b border-border bg-slate-50/80">
           <TableRow className="hover:bg-slate-50/80">
             <TableHead className="w-10 px-2">
-              <span className="sr-only">
-                Expand request
-              </span>
+              <span className="sr-only">Expand request</span>
             </TableHead>
 
             <TableHead className="px-2 py-3">
@@ -259,7 +233,7 @@ export function RequestsTable({
 
             <TableHead className="px-2 py-3 text-center">
               <SortableHeader
-                label="Resources"
+                label="Qty"
                 sortKey="resources"
                 sort={sort}
                 onSort={changeSort}
@@ -269,7 +243,7 @@ export function RequestsTable({
 
             <TableHead className="px-2 py-3">
               <SortableHeader
-                label="Actual Status"
+                label="Status / SLA"
                 sortKey="actualStatus"
                 sort={sort}
                 onSort={changeSort}
@@ -313,7 +287,7 @@ export function RequestsTable({
               />
             </TableHead>
 
-            <TableHead className="whitespace-normal px-2 py-3 text-xs font-semibold uppercase leading-4 tracking-wider text-slate-500">
+            <TableHead className="whitespace-normal px-2 py-3 text-xs font-semibold uppercase leading-4 tracking-wider text-slate-500 text-right">
               Next Action
             </TableHead>
           </TableRow>
@@ -324,171 +298,248 @@ export function RequestsTable({
             <TableRow>
               <TableCell
                 colSpan={10}
-                className="h-32 text-center text-sm text-muted-foreground"
+                className="h-44 text-center py-10"
               >
-                No requests match the
-                current filters.
+                <div className="flex flex-col items-center justify-center gap-2">
+                  <div className="size-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-1">
+                    <CheckCircle2 className="size-5" />
+                  </div>
+                  <p className="text-sm font-semibold text-foreground">
+                    {isNeedsActionTab
+                      ? "Nothing waiting on you."
+                      : "No requests match the current filters."}
+                  </p>
+                  <p className="text-xs text-muted-foreground max-w-sm">
+                    {isNeedsActionTab
+                      ? "All your assigned tasks and requisitions are up to date."
+                      : "Try adjusting your search criteria or resetting active filters."}
+                  </p>
+                </div>
               </TableCell>
             </TableRow>
           ) : (
-            visibleRequests.map(
-              (request, index) => {
-                const isExpanded =
-                  expandedRequestId ===
-                  request.requestId;
+            visibleRequests.map((request, index) => {
+              const isExpanded = expandedRequestId === request.requestId;
 
-                return (
-                  <React.Fragment
-                    key={request.id}
-                  >
-                    <TableRow
-                      aria-expanded={
-                        isExpanded
+              // SLA calculations
+              const sla = request.sla;
+              let slaColor = "text-emerald-700 bg-emerald-50 border-emerald-200";
+              let slaIcon = <Clock3 className="size-3" />;
+
+              if (sla) {
+                if (sla.breached || sla.daysRemaining < 3) {
+                  slaColor = "text-red-700 bg-red-50 border-red-200";
+                  slaIcon = <CircleAlert className="size-3" />;
+                } else if (sla.daysRemaining <= 7) {
+                  slaColor = "text-amber-700 bg-amber-50 border-amber-200";
+                }
+              }
+
+              // Role Queue & Assignment Status
+              const isRoleQueue = request.assignment?.mode === "ROLE_QUEUE";
+              const isClaimedByMe = request.assignment?.claimedBy?.id === currentUserId;
+              const isClaimedByOther = request.assignment?.claimedBy && !isClaimedByMe;
+
+              return (
+                <React.Fragment key={request.id}>
+                  <TableRow
+                    aria-expanded={isExpanded}
+                    tabIndex={0}
+                    onKeyDown={(event) => {
+                      if (
+                        event.target === event.currentTarget &&
+                        (event.key === "Enter" || event.key === " ")
+                      ) {
+                        event.preventDefault();
+                        toggleExpanded(request.requestId);
                       }
-                      tabIndex={0}
-                      onKeyDown={(
-                        event
-                      ) => {
-                        if (
-                          event.target ===
-                            event.currentTarget &&
-                          (event.key ===
-                            "Enter" ||
-                            event.key ===
-                              " ")
-                        ) {
-                          event.preventDefault();
-
-                          toggleExpanded(
-                            request.requestId
-                          );
+                    }}
+                    onDoubleClick={(event) => {
+                      const target = event.target as HTMLElement;
+                      if (
+                        target.closest(
+                          "button, a, input, select, textarea, [role='menuitem']"
+                        )
+                      ) {
+                        return;
+                      }
+                      toggleExpanded(request.requestId);
+                    }}
+                    className={cn(
+                      "cursor-pointer border-slate-100 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/60",
+                      index % 2 === 1 && "bg-slate-50/40",
+                      isExpanded && "bg-primary/5"
+                    )}
+                  >
+                    <TableCell className="px-2 py-2">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="size-7 rounded-lg text-muted-foreground"
+                        aria-label={
+                          isExpanded
+                            ? `Collapse ${request.requestId}`
+                            : `Expand ${request.requestId}`
                         }
-                      }}
-                      onDoubleClick={(
-                        event
-                      ) => {
-                        const target =
-                          event.target as HTMLElement;
+                        onClick={() => toggleExpanded(request.requestId)}
+                      >
+                        {isExpanded ? (
+                          <ChevronDown className="size-4" />
+                        ) : (
+                          <ChevronRight className="size-4" />
+                        )}
+                      </Button>
+                    </TableCell>
 
-                        if (
-                          target.closest(
-                            "button, a, input, select, textarea, [role='menuitem']"
-                          )
-                        ) {
-                          return;
-                        }
-
-                        toggleExpanded(
-                          request.requestId
-                        );
-                      }}
-                      className={cn(
-                        "cursor-pointer border-slate-100 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/60",
-
-                        index % 2 === 1 &&
-                          "bg-slate-50/40",
-
-                        isExpanded &&
-                          "bg-primary/5"
-                      )}
-                    >
-                      <TableCell className="px-2 py-2">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="size-7 rounded-lg text-muted-foreground"
-                          aria-label={
-                            isExpanded
-                              ? `Collapse ${request.requestId}`
-                              : `Expand ${request.requestId}`
-                          }
-                          onClick={() =>
-                            toggleExpanded(
-                              request.requestId
-                            )
-                          }
-                        >
-                          {isExpanded ? (
-                            <ChevronDown className="size-4" />
-                          ) : (
-                            <ChevronRight className="size-4" />
-                          )}
-                        </Button>
-                      </TableCell>
-
-                      <TableCell className="px-3 py-3">
+                    <TableCell className="px-3 py-3">
+                      <div className="flex flex-col gap-1">
                         <span className="whitespace-nowrap font-mono text-xs font-semibold text-secondary">
                           {request.requestId}
                         </span>
-                      </TableCell>
+                        {request.actingFor && (
+                          <Badge
+                            variant="outline"
+                            className="text-[9px] font-semibold bg-indigo-50 text-indigo-700 border-indigo-200 w-max px-1.5 py-0"
+                          >
+                            Acting for {request.actingFor.name}
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
 
-                      <TableCell className="whitespace-normal break-words px-2 py-3 text-sm font-medium leading-5 text-foreground">
-                        {request.position}
-                      </TableCell>
+                    <TableCell className="whitespace-normal break-words px-2 py-3 text-sm font-medium leading-5 text-foreground">
+                      {request.position}
+                    </TableCell>
 
-                      <TableCell className="px-3 py-3 text-center text-sm">
-                        {request.resources}
-                      </TableCell>
+                    <TableCell className="px-3 py-3 text-center text-sm font-medium">
+                      {request.resources}
+                    </TableCell>
 
-                      <TableCell className="whitespace-normal px-2 py-3">
+                    <TableCell className="whitespace-normal px-2 py-3">
+                      <div className="flex flex-col gap-1.5">
                         <RequestStatusBadge
-                          status={
-                            request.actualStatus
-                          }
+                          status={request.actualStatus}
                           className="max-w-full whitespace-normal text-center leading-4"
                         />
-                      </TableCell>
-
-                      <TableCell className="whitespace-normal break-words px-2 py-3 text-sm leading-5">
-                        {request.currentStage}
-                      </TableCell>
-
-                      <TableCell className="whitespace-normal break-words px-2 py-3 text-sm leading-5">
-                        {request.currentOwner}
-                      </TableCell>
-
-                      <TableCell className="px-3 py-3 text-right text-sm font-semibold">
-                        {currencyFormatter.format(
-                          request.budget
+                        {/* SLA Indicator per Part 3 */}
+                        {sla && (
+                          <Badge
+                            variant="outline"
+                            className={cn(
+                              "gap-1 font-medium text-[10px] w-max py-0.5 px-1.5",
+                              slaColor
+                            )}
+                          >
+                            {slaIcon}
+                            <span>
+                              {sla.breached
+                                ? "Breached"
+                                : `${sla.daysRemaining}d left`}
+                            </span>
+                          </Badge>
                         )}
-                      </TableCell>
+                      </div>
+                    </TableCell>
 
-                      <TableCell className="whitespace-nowrap px-3 py-3 text-sm text-muted-foreground">
-                        {request.updatedLabel}
-                      </TableCell>
+                    <TableCell className="whitespace-normal break-words px-2 py-3 text-sm leading-5">
+                      {request.currentStage}
+                    </TableCell>
 
-                      <TableCell className="whitespace-normal px-2 py-3">
-                        <Button
-                          size="sm"
-                          className="h-auto min-h-8 w-full whitespace-normal rounded-lg px-2 py-1 text-xs leading-4"
-                          onClick={() =>
-                            onExpandedRequestChange(
-                              request.requestId
+                    <TableCell className="whitespace-normal break-words px-2 py-3 text-sm leading-5">
+                      {request.currentOwner}
+                    </TableCell>
+
+                    {/* Money column: exact via lib/money.ts, tabular-nums */}
+                    <TableCell className="px-3 py-3 text-right text-sm font-semibold tabular-nums">
+                      AED {formatAmount(request.budget * 100)}
+                    </TableCell>
+
+                    <TableCell className="whitespace-nowrap px-3 py-3 text-sm text-muted-foreground">
+                      {request.updatedLabel}
+                    </TableCell>
+
+                    {/* Next Action Column: Part 3 Reuse */}
+                    <TableCell className="whitespace-normal px-2 py-3">
+                      <div className="flex items-center justify-end gap-1.5">
+                        {request.actionType === "APPROVE" ? (
+                          isRoleQueue ? (
+                            isClaimedByMe ? (
+                              <div className="flex items-center gap-1.5">
+                                <Link
+                                  href={`/app/requests/${
+                                    request.approvalTaskId || request.requestId
+                                  }?action=approve`}
+                                >
+                                  <Button
+                                    size="sm"
+                                    className="h-8 rounded-lg px-2.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
+                                  >
+                                    Review & approve
+                                  </Button>
+                                </Link>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="h-8 rounded-lg px-2 text-xs"
+                                >
+                                  Release
+                                </Button>
+                              </div>
+                            ) : isClaimedByOther ? (
+                              <Badge
+                                variant="outline"
+                                className="bg-slate-50 text-slate-600 text-xs py-1"
+                              >
+                                Claimed by {request.assignment?.claimedBy?.name}
+                              </Badge>
+                            ) : (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 rounded-lg px-3 text-xs font-semibold border-primary/30 text-primary hover:bg-primary/5"
+                              >
+                                Claim
+                              </Button>
                             )
-                          }
-                        >
-                          {request.nextAction}
-                        </Button>
+                          ) : (
+                            <Link
+                              href={`/app/requests/${
+                                request.approvalTaskId || request.requestId
+                              }?action=approve`}
+                            >
+                              <Button
+                                size="sm"
+                                className="h-8 rounded-lg px-3 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
+                              >
+                                Review & approve
+                              </Button>
+                            </Link>
+                          )
+                        ) : (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 rounded-lg px-2.5 text-xs font-medium"
+                            onClick={() => toggleExpanded(request.requestId)}
+                          >
+                            {request.nextAction}
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+
+                  {isExpanded && (
+                    <TableRow className="border-primary/20 hover:bg-white">
+                      <TableCell colSpan={10} className="whitespace-normal p-0">
+                        <RequestExpandedDetails request={request} />
                       </TableCell>
                     </TableRow>
-
-                    {isExpanded && (
-                      <TableRow className="border-primary/20 hover:bg-white">
-                        <TableCell
-                          colSpan={10}
-                          className="whitespace-normal p-0"
-                        >
-                          <RequestExpandedDetails
-                            request={request}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </React.Fragment>
-                );
-              }
-            )
+                  )}
+                </React.Fragment>
+              );
+            })
           )}
         </TableBody>
       </Table>
@@ -498,10 +549,7 @@ export function RequestsTable({
           <Select
             value={String(pageSize)}
             onValueChange={(value) => {
-              setPageSize(
-                Number(value)
-              );
-
+              setPageSize(Number(value));
               setPageIndex(0);
             }}
           >
@@ -510,95 +558,42 @@ export function RequestsTable({
             </SelectTrigger>
 
             <SelectContent>
-              <SelectItem value="5">
-                Show 5 rows
-              </SelectItem>
-
-              <SelectItem value="10">
-                Show 10 rows
-              </SelectItem>
-
-              <SelectItem value="20">
-                Show 20 rows
-              </SelectItem>
+              <SelectItem value="5">Show 5 rows</SelectItem>
+              <SelectItem value="10">Show 10 rows</SelectItem>
+              <SelectItem value="20">Show 20 rows</SelectItem>
             </SelectContent>
           </Select>
 
           <p className="text-xs text-muted-foreground">
-            Showing{" "}
-            {sortedRequests.length ===
-            0
-              ? "0–0 of 0"
-              : `${startIndex + 1}–${Math.min(
-                  startIndex +
-                    pageSize,
-                  sortedRequests.length
-                )} of ${
-                  sortedRequests.length
-                }`}{" "}
-            requests
+            Showing {sortedRequests.length === 0 ? 0 : startIndex + 1}–
+            {Math.min(startIndex + pageSize, sortedRequests.length)} of{" "}
+            {sortedRequests.length} requests
           </p>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           <Button
-            variant="ghost"
+            type="button"
+            variant="outline"
             size="sm"
-            className="size-7 rounded p-0"
-            disabled={
-              safePageIndex === 0
-            }
-            onClick={() =>
-              setPageIndex(
-                Math.max(
-                  0,
-                  safePageIndex - 1
-                )
-              )
-            }
-            aria-label="Previous page"
+            className="h-8 w-8 p-0"
+            disabled={safePageIndex === 0}
+            onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
           >
             <ChevronLeft className="size-4" />
           </Button>
 
-          {Array.from({
-            length: totalPages,
-          }).map((_, index) => (
-            <Button
-              key={index}
-              variant={
-                index ===
-                safePageIndex
-                  ? "default"
-                  : "ghost"
-              }
-              size="sm"
-              className="size-7 rounded p-0 text-xs"
-              onClick={() =>
-                setPageIndex(index)
-              }
-            >
-              {index + 1}
-            </Button>
-          ))}
+          <span className="text-xs text-muted-foreground">
+            Page {safePageIndex + 1} of {totalPages}
+          </span>
 
           <Button
-            variant="ghost"
+            type="button"
+            variant="outline"
             size="sm"
-            className="size-7 rounded p-0"
-            disabled={
-              safePageIndex >=
-              totalPages - 1
-            }
-            onClick={() =>
-              setPageIndex(
-                Math.min(
-                  totalPages - 1,
-                  safePageIndex + 1
-                )
-              )
-            }
-            aria-label="Next page"
+            className="h-8 w-8 p-0"
+            disabled={safePageIndex >= totalPages - 1}
+            onClick={() => setPageIndex((p) => Math.min(totalPages - 1, p + 1))}
           >
             <ChevronRight className="size-4" />
           </Button>

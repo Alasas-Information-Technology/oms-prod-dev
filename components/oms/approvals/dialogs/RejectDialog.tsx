@@ -110,7 +110,7 @@ export function RejectDialog({
 
         <div className="space-y-4 py-2">
           {/* Explicit Final Warning Banner */}
-          <div className="p-4 rounded-xl border border-red-300 bg-red-50 text-xs text-red-950 flex items-start gap-3">
+          <div className="p-4 rounded-lg border border-red-300 bg-red-50 text-xs text-red-950 flex items-start gap-3">
             <AlertTriangle className="size-5 text-red-600 shrink-0 mt-0.5" />
             <div className="flex flex-col gap-1 leading-relaxed">
               <span className="font-bold text-red-900 uppercase tracking-wide text-[11px]">

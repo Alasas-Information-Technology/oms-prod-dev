@@ -123,7 +123,7 @@ export function RequestFilters({
   ].filter(Boolean).length;
 
   return (
-    <Card className="gap-4 rounded-xl bg-white p-4 shadow-xs hover:translate-y-0">
+    <Card className="gap-4 rounded-lg bg-white p-4 shadow-xs hover:translate-y-0">
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(250px,1.5fr)_repeat(4,minmax(160px,1fr))]">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />

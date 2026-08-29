@@ -83,7 +83,7 @@ export function ApproveDialog({
 
         <div className="space-y-4 py-2">
           {/* Money Restatement Banner */}
-          <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 flex flex-col gap-2">
+          <div className="p-4 rounded-lg border border-emerald-200 bg-emerald-50/50 flex flex-col gap-2">
             <div className="text-xs font-medium text-emerald-900">
               Financial Impact Confirmation:
             </div>
@@ -117,32 +117,51 @@ export function ApproveDialog({
 
           {/* Error Banner with Specific Part 3.7 Messages */}
           {error && (
-            <div className="p-3.5 rounded-lg border border-red-200 bg-red-50 text-xs text-red-900 flex items-start gap-2.5">
-              <AlertCircle className="size-4 text-red-600 shrink-0 mt-0.5" />
-              <div className="flex flex-col gap-1">
-                <span className="font-semibold">
-                  {error.code === "APPROVAL_BUDGET_CHANGED" && "Budget Changed"}
-                  {error.code === "APPROVAL_ALREADY_DECIDED" && "Already Decided"}
-                  {error.code === "APPROVAL_NOT_ASSIGNED" && "Assignment Changed"}
-                  {error.code === "APPROVAL_SELF" && "Segregation of Duties Violation"}
-                  {error.code === "APPROVAL_PERIOD_CLOSED" && "Period Closed"}
-                  {error.code === "APPROVAL_PREFLIGHT_FAILED" && "Preflight Checks Failed"}
-                  {!error.code.startsWith("APPROVAL_") && "Approval Failed"}
-                </span>
-                <span className="leading-relaxed">
-                  {error.code === "APPROVAL_BUDGET_CHANGED"
-                    ? "The available budget changed while you were reviewing. Here are the current figures. Please review again before approving."
-                    : error.code === "APPROVAL_ALREADY_DECIDED"
-                    ? `Already approved by ${error.decidedBy || "another approver"}.`
-                    : error.code === "APPROVAL_NOT_ASSIGNED"
-                    ? `This is no longer waiting on you. It moved to ${error.movedTo || "another stage"}.`
-                    : error.code === "APPROVAL_SELF"
-                    ? "You can't approve a request you raised."
-                    : error.code === "APPROVAL_PERIOD_CLOSED"
-                    ? "The budget period closed. Reopen it before approving."
-                    : error.message}
-                </span>
+            <div className="p-3.5 rounded-lg border border-red-200 bg-red-50 text-xs text-red-900 flex flex-col gap-2">
+              <div className="flex items-start gap-2.5">
+                <AlertCircle className="size-4 text-red-600 shrink-0 mt-0.5" />
+                <div className="flex flex-col gap-1">
+                  <span className="font-semibold">
+                    {error.code === "APPROVAL_BUDGET_CHANGED" && "Budget Changed"}
+                    {error.code === "APPROVAL_ALREADY_DECIDED" && "Already Decided"}
+                    {error.code === "APPROVAL_NOT_ASSIGNED" && "Assignment Changed"}
+                    {error.code === "APPROVAL_SELF" && "Segregation of Duties Violation"}
+                    {error.code === "APPROVAL_PERIOD_CLOSED" && "Period Closed"}
+                    {error.code === "APPROVAL_PREFLIGHT_FAILED" && "Preflight Checks Failed"}
+                    {!error.code.startsWith("APPROVAL_") && "Approval Failed"}
+                  </span>
+                  <span className="leading-relaxed">
+                    {error.code === "APPROVAL_BUDGET_CHANGED"
+                      ? "The available budget changed while you were reviewing. Here are the updated figures. Please review again before submitting."
+                      : error.code === "APPROVAL_ALREADY_DECIDED"
+                      ? `Already approved by ${error.decidedBy || "another approver"}.`
+                      : error.code === "APPROVAL_NOT_ASSIGNED"
+                      ? `This is no longer waiting on you. It moved to ${error.movedTo || "another stage"}.`
+                      : error.code === "APPROVAL_SELF"
+                      ? "You can't approve a request you raised."
+                      : error.code === "APPROVAL_PERIOD_CLOSED"
+                      ? "The budget period closed. Reopen it before approving."
+                      : error.message}
+                  </span>
+                </div>
               </div>
+
+              {error.code === "APPROVAL_BUDGET_CHANGED" && error.newImpact && (
+                <div className="mt-1 p-2.5 rounded bg-white border border-red-200 text-[11px] grid grid-cols-2 gap-2 text-foreground">
+                  <div>
+                    <span className="text-muted-foreground">New Available Before:</span>{" "}
+                    <strong className="tabular-nums font-semibold">
+                      {error.newImpact.currency} {formatAmount(error.newImpact.availableBefore)}
+                    </strong>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">New Remaining After:</span>{" "}
+                    <strong className="tabular-nums font-semibold">
+                      {error.newImpact.currency} {formatAmount(error.newImpact.remainingAfter)}
+                    </strong>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

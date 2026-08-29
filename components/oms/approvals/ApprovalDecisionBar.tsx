@@ -40,13 +40,13 @@ export function ApprovalDecisionBar({
     if (onSuccess) {
       onSuccess();
     } else {
-      router.push("/app/approvals");
+      router.push("/app/requests?tab=needs-my-action");
     }
   };
 
   return (
     <ApprovalGuard taskDetail={detail}>
-      <div className="sticky bottom-0 z-20 -mx-6 -mb-6 p-5 bg-card/95 backdrop-blur-md border-t border-border/80 rounded-b-xl shadow-lg flex flex-col gap-3">
+      <div className="sticky bottom-0 z-20 -mx-6 -mb-6 p-5 bg-card/95 backdrop-blur-md border-t border-border/80 rounded-b-lg shadow-lg flex flex-col gap-3">
         {/* Audit Trail Note */}
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
           <History className="size-3.5 text-muted-foreground/70 shrink-0" />

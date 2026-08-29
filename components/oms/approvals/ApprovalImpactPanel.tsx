@@ -27,7 +27,7 @@ export function ApprovalImpactPanel({ impact }: ApprovalImpactPanelProps) {
   return (
     <div className="flex flex-col gap-6">
       {/* 1. Budget Validation */}
-      <div className="p-5 rounded-xl border border-border/40 bg-card shadow-sm flex flex-col gap-5">
+      <div className="p-5 rounded-lg border border-border/40 bg-card shadow-sm flex flex-col gap-5">
         <div className="flex items-start justify-between">
           <div>
             <h3 className="font-semibold text-foreground">Budget Validation</h3>
@@ -95,7 +95,7 @@ export function ApprovalImpactPanel({ impact }: ApprovalImpactPanelProps) {
       </div>
 
       {/* 2. Budget Allocation */}
-      <div className="p-5 rounded-xl border border-border/40 bg-card shadow-sm flex flex-col gap-4">
+      <div className="p-5 rounded-lg border border-border/40 bg-card shadow-sm flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h3 className="font-semibold text-foreground">Budget Allocation</h3>
           <div
@@ -154,7 +154,7 @@ export function ApprovalImpactPanel({ impact }: ApprovalImpactPanelProps) {
 
       {/* 3. Fund State on Approval */}
       {impact.fundStateTransition && (
-        <div className="p-5 rounded-xl border border-indigo-200/50 bg-indigo-50/30 flex flex-col gap-4">
+        <div className="p-5 rounded-lg border border-indigo-200/50 bg-indigo-50/30 flex flex-col gap-4">
           <div className="flex items-center gap-2 text-indigo-900 font-semibold">
             <Lock className="size-4 text-indigo-500" />
             <h3 className="text-sm">Fund State on Approval</h3>

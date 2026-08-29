@@ -156,7 +156,7 @@ export function RequestExpandedDetails({
         />
       </div>
 
-      <div className="mt-5 rounded-xl border border-border/70 bg-background p-4">
+      <div className="mt-5 rounded-lg border border-border/70 bg-background p-4">
         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
           Business justification
         </p>

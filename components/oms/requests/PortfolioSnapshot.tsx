@@ -38,11 +38,11 @@ function SnapshotCard({
   attention?: boolean;
 }) {
   return (
-    <Card className="gap-0 rounded-xl bg-white p-4 shadow-xs hover:translate-y-0">
+    <Card className="gap-0 rounded-lg bg-white p-4 shadow-xs hover:translate-y-0">
       <div className="flex items-center gap-3">
         <span
           className={cn(
-            "flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary",
+            "flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary",
             attention &&
               "bg-warning-light text-warning"
           )}

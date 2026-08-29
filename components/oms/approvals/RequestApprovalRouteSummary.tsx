@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/navigation";
+import Link from "next/link";
 import { ApprovalRouteStepper } from "./ApprovalRouteStepper";
 import { ApprovalStage } from "@/lib/types/approval.types";
 import { Clock3, ArrowRight, ShieldCheck } from "lucide-react";
@@ -37,35 +37,43 @@ export function RequestApprovalRouteSummary({
   const formattedDate = assignedAt ? format(new Date(assignedAt), "d MMM") : "";
 
   return (
-    <div className="rounded-xl border border-border/70 bg-card/60 p-4 sm:p-5 flex flex-col gap-4">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-border/40 pb-3">
-        <div className="flex items-center gap-2">
-          <ShieldCheck className="size-4 text-primary" />
-          <span className="text-sm font-semibold text-foreground">
-            Governance & Approval Route
-          </span>
+    <div className="rounded-lg border border-border/70 bg-card p-5 shadow-xs flex flex-col gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-border/50 pb-3.5">
+        <div className="flex items-center gap-2.5">
+          <div className="size-7 rounded-md bg-primary/10 text-primary flex items-center justify-center">
+            <ShieldCheck className="size-4" />
+          </div>
+          <div>
+            <h4 className="text-sm font-semibold text-foreground tracking-tight">
+              Governance & Approval Route
+            </h4>
+            <p className="text-[11px] text-muted-foreground">
+              Real-time multi-stage approval authorization track
+            </p>
+          </div>
         </div>
-        <a
-          href={`/app/approvals/${approvalDetailTaskId}`}
-          className="text-xs font-semibold text-primary hover:underline flex items-center gap-1 shrink-0"
+
+        <Link
+          href={`/app/requests/${requestId || approvalDetailTaskId}`}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 transition-colors shrink-0"
         >
-          <span>View Read-Only Approval Detail</span>
+          <span>View Request & Governance Detail</span>
           <ArrowRight className="size-3.5" />
-        </a>
+        </Link>
       </div>
 
       {/* Read-Only Status Banner */}
-      <div className="p-3 rounded-lg bg-muted/50 border border-border/60 text-xs text-foreground font-medium flex items-center gap-2">
+      <div className="p-3 rounded-md bg-muted/40 border border-border/60 text-xs text-foreground font-medium flex items-center gap-2.5">
         <Clock3 className="size-4 text-muted-foreground shrink-0" />
         <span>
-          Awaiting {currentStage?.label || currentStageName} — {assignee}
+          Awaiting <strong className="font-semibold text-foreground">{currentStage?.label || currentStageName}</strong> — {assignee}
           {formattedDate ? `, since ${formattedDate}` : ""}.
         </span>
       </div>
 
-      {/* Embedded Route Stepper */}
-      <div className="pt-1">
-        <ApprovalRouteStepper route={route} />
+      {/* Embedded Route Stepper with Full Width */}
+      <div className="pt-2 w-full px-1 sm:px-2">
+        <ApprovalRouteStepper route={route} className="w-full" />
       </div>
     </div>
   );

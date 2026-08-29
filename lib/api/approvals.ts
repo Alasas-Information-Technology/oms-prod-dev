@@ -59,7 +59,14 @@ export const approvalsApi = {
     await new Promise((resolve) => setTimeout(resolve, 600));
 
     // Map URL id to the exact fixture
-    const key = taskId as keyof typeof MOCK_APPROVAL_FIXTURES;
+    const idMap: Record<string, keyof typeof MOCK_APPROVAL_FIXTURES> = {
+      "OMS-2026-0148": "baseline",
+      "OMS-2026-0146": "delegated",
+      "OMS-2026-0144": "roleQueue",
+      "OMS-2026-0139": "fourStepRoute",
+      "OMS-2026-0140": "failingPreflight",
+    };
+    const key = (idMap[taskId] || taskId) as keyof typeof MOCK_APPROVAL_FIXTURES;
     const detail = MOCK_APPROVAL_FIXTURES[key] as ApprovalTaskDetail | undefined;
 
     if (!detail) {

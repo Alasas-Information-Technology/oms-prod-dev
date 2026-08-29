@@ -61,7 +61,7 @@ export function ApprovalDetailShell({
       {/* 1. Header: Breadcrumb acts as page title per APP-SHELL-SPEC.md */}
       <PageBarBreadcrumbs
         crumbs={[
-          { label: "My Approvals", href: "/app/approvals" },
+          { label: "OMS Requests", href: "/app/requests?tab=needs-my-action" },
           { label: task.title, isCurrent: true },
         ]}
       />

@@ -100,7 +100,7 @@ export function SendBackDialog({
 
         <div className="space-y-4 py-2">
           {/* Informational Notice */}
-          <div className="p-3.5 rounded-xl border border-amber-200 bg-amber-50/60 flex items-start gap-2.5 text-xs text-amber-950">
+          <div className="p-3.5 rounded-lg border border-amber-200 bg-amber-50/60 flex items-start gap-2.5 text-xs text-amber-950">
             <Info className="size-4 text-amber-600 shrink-0 mt-0.5" />
             <span>
               Sending this request back returns it to the selected stage for revision.
