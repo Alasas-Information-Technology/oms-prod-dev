@@ -399,7 +399,7 @@ function OrganizationPageContent() {
         <div className="p-6 space-y-6">
           {/* Mobile list view recommendation banner (Prompt V9) */}
           {isMobile && !dismissedMobileNotice && (
-            <div className="bg-muted/40 border border-border/70 rounded-xl px-3.5 py-2.5 text-xs flex items-center justify-between text-muted-foreground gap-3">
+            <div className="bg-muted/40 border border-border/70 rounded-md px-3.5 py-2.5 text-xs flex items-center justify-between text-muted-foreground gap-3">
               <span>Showing list view on smaller screens for easier navigation.</span>
               <div className="flex items-center gap-2 shrink-0">
                 <Button
@@ -564,7 +564,7 @@ function OrganizationPageContent() {
       {/* Modal Dialogs: Add (4-step wizard), Move (3-step), Archive, Remove        */}
       {/* ========================================================================= */}
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-2xl">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-md">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">Add Organization Unit</DialogTitle>
             <DialogDescription className="text-xs">

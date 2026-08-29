@@ -294,7 +294,7 @@ export function OrgGroupedView({
   return (
     <div className={cn("space-y-4", className)}>
       {/* Top Filter Controls Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-card border border-border shadow-2xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-md bg-card border border-border shadow-2xs">
         {/* Type Category Tabs */}
         <Tabs value={activeTypeTab} onValueChange={setActiveTypeTab} className="w-full sm:w-auto">
           <TabsList className="h-9 p-1 bg-muted/60">
@@ -320,7 +320,7 @@ export function OrgGroupedView({
             placeholder="Search within group..."
             value={localSearch}
             onChange={(e) => setLocalSearch(e.target.value)}
-            className="pl-8 h-9 text-xs rounded-xl bg-background"
+            className="pl-8 h-9 text-xs rounded-md bg-background"
           />
         </div>
       </div>

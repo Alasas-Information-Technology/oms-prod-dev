@@ -127,13 +127,13 @@ function FlexisCard({ model, onClick }: { model: any; onClick: () => void }) {
       onClick={onClick}
       whileHover={{ y: -4 }}
       transition={{ duration: 0.3, ease: "easeOut" as any }}
-      className="bg-card border border-border/60 rounded-2xl p-8 cursor-pointer overflow-hidden relative group hover:shadow-xl hover:shadow-primary/5 hover:border-primary/30 h-full flex flex-col"
+      className="bg-card border border-border/60 rounded-md p-8 cursor-pointer overflow-hidden relative group hover:shadow-xl hover:shadow-primary/5 hover:border-primary/30 h-full flex flex-col"
     >
       {/* Background Gradient Accent */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors duration-500" />
       
       <div className="flex items-start justify-between relative z-10 mb-6">
-        <div className="w-16 h-16 rounded-2xl bg-secondary/50 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+        <div className="w-16 h-16 rounded-md bg-secondary/50 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors duration-300">
           <span className="text-3xl font-bold text-primary group-hover:text-white transition-colors">
             {model.id}
           </span>
@@ -184,12 +184,12 @@ function FlexisModal({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ duration: 0.25, ease: "easeOut" as any }}
-        className="relative w-full h-full md:h-auto md:max-h-[90vh] md:max-w-4xl bg-card border-border md:rounded-3xl shadow-2xl flex flex-col overflow-hidden"
+        className="relative w-full h-full md:h-auto md:max-h-[90vh] md:max-w-4xl bg-card border-border md:rounded-md shadow-2xl flex flex-col overflow-hidden"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-6 border-b border-border/40 bg-secondary/20">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-white">
+            <div className="w-12 h-12 rounded-md bg-primary flex items-center justify-center text-white">
               <span className="text-2xl font-bold">{model.id}</span>
             </div>
             <div>
@@ -219,7 +219,7 @@ function FlexisModal({
                   <span className="w-4 h-px bg-border"></span>
                   Ideal For
                 </h4>
-                <p className="text-base text-foreground bg-secondary/30 p-4 rounded-xl border border-border/40">
+                <p className="text-base text-foreground bg-secondary/30 p-4 rounded-md border border-border/40">
                   {model.idealFor}
                 </p>
               </div>

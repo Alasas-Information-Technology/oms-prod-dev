@@ -25,7 +25,7 @@ export default function OrgUnitDetailPage() {
       </div>
 
       {/* Main Unit Detail View */}
-      <div className="rounded-2xl border border-border bg-card p-0 shadow-xs">
+      <div className="rounded-md border border-border bg-card p-0 shadow-xs">
         <OrgUnitDetailView
           unitId={orgUnitId}
           onNavigateUnit={(targetId) => {

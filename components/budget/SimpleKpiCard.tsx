@@ -71,7 +71,7 @@ export function SimpleKpiCard({
   return (
     <Card
       className={cn(
-        "relative rounded-xl p-5 shadow-sm overflow-hidden flex flex-col justify-between border-none",
+        "relative rounded-md p-5 shadow-sm overflow-hidden flex flex-col justify-between border-none",
         className
       )}
     >

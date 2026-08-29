@@ -76,9 +76,9 @@ export function EditUserDialog({
           profile: {
             firstName: firstName.trim(),
             lastName: lastName.trim(),
-            jobTitle: jobTitle.trim() || undefined,
-            phoneNumber: phoneNumber.trim() || undefined,
-            departmentId: department?.orgUnitId || undefined,
+            jobTitle: jobTitle.trim() || null,
+            phoneNumber: phoneNumber.trim() || null,
+            departmentId: department ? department.orgUnitId : null,
           },
         },
       });

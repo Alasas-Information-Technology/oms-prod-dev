@@ -11,9 +11,7 @@ import {
   BudgetFilterValues,
   BudgetLinesTable,
   BudgetRequestsSection,
-  PeriodGovernancePanel,
-  FundMovementsPanel,
-  SafeguardsPanel,
+  SelectedLinePanel,
   UploadBudgetDialog,
   ManagePeriodDialog,
   PeriodClosedNotice,
@@ -36,8 +34,9 @@ function BudgetControlCenterContent() {
   const [page, setPage] = React.useState<number>(1);
   const [pageSize, setPageSize] = React.useState<number>(10);
 
-  // Single-Row Selection State (Drives Fund movements panel §2.1)
-  const [selectedLineId, setSelectedLineId] = React.useState<string | null>("line-cs-dig-002");
+  // Single-Row Selection State — persisted in ?line= URL param (shareable + back-button safe)
+  const initialLineId = searchParams.get("line") || null;
+  const [selectedLineId, setSelectedLineId] = React.useState<string | null>(initialLineId);
 
   // Filter Row State initialized from URL search params
   const [filters, setFilters] = React.useState<BudgetFilterValues>({
@@ -47,15 +46,41 @@ function BudgetControlCenterContent() {
     search: searchParams.get("q") || searchParams.get("search") || undefined,
   });
 
-  // Keep URL query params synchronized with active filters (Shareable & Back-button safe per Part 5.4)
+  // Sync state with URL if user navigates via browser back/forward
+  React.useEffect(() => {
+    const lineInUrl = searchParams.get("line");
+    if (lineInUrl !== selectedLineId) {
+      setSelectedLineId(lineInUrl);
+    }
+    
+    const periodInUrl = searchParams.get("period") || "period-fy26";
+    if (periodInUrl !== selectedPeriod) {
+      setSelectedPeriod(periodInUrl);
+    }
+
+    setFilters(prev => {
+      const org = searchParams.get("org") || undefined;
+      const bu = searchParams.get("bu") || undefined;
+      const dept = searchParams.get("dept") || undefined;
+      const q = searchParams.get("q") || searchParams.get("search") || undefined;
+      
+      if (prev.orgUnitId !== org || prev.businessUnitId !== bu || prev.departmentId !== dept || prev.search !== q) {
+        return { orgUnitId: org, businessUnitId: bu, departmentId: dept, search: q };
+      }
+      return prev;
+    });
+  }, [searchParams]); // selectedLineId & selectedPeriod removed from deps intentionally to avoid circular sync
+
+  // Keep URL query params synchronized with active filters + line selection
   const updateUrlParams = React.useCallback(
-    (newFilters: BudgetFilterValues, period: string) => {
+    (newFilters: BudgetFilterValues, period: string, lineId?: string | null) => {
       const params = new URLSearchParams();
       if (period && period !== "period-fy26") params.set("period", period);
       if (newFilters.orgUnitId) params.set("org", newFilters.orgUnitId);
       if (newFilters.businessUnitId) params.set("bu", newFilters.businessUnitId);
       if (newFilters.departmentId) params.set("dept", newFilters.departmentId);
       if (newFilters.search) params.set("q", newFilters.search);
+      if (lineId) params.set("line", lineId);
 
       const queryString = params.toString();
       const targetUrl = queryString ? `${pathname}?${queryString}` : pathname;
@@ -67,8 +92,10 @@ function BudgetControlCenterContent() {
   const handleFilterChange = React.useCallback(
     (newFilters: BudgetFilterValues) => {
       setFilters(newFilters);
-      setPage(1); // Reset to first page on filter change
-      updateUrlParams(newFilters, selectedPeriod);
+      setPage(1);
+      // Changing a filter clears line selection (BL3.4)
+      setSelectedLineId(null);
+      updateUrlParams(newFilters, selectedPeriod, null);
     },
     [selectedPeriod, updateUrlParams]
   );
@@ -76,10 +103,24 @@ function BudgetControlCenterContent() {
   const handlePeriodChange = React.useCallback(
     (newPeriod: string) => {
       setSelectedPeriod(newPeriod);
-      updateUrlParams(filters, newPeriod);
+      updateUrlParams(filters, newPeriod, selectedLineId);
     },
-    [filters, updateUrlParams]
+    [filters, selectedLineId, updateUrlParams]
   );
+
+  const handleSelectLine = React.useCallback(
+    (line: IBudgetLineDto) => {
+      const newId = line.id;
+      setSelectedLineId(newId);
+      updateUrlParams(filters, selectedPeriod, newId);
+    },
+    [filters, selectedPeriod, updateUrlParams]
+  );
+
+  const handleClearSelection = React.useCallback(() => {
+    setSelectedLineId(null);
+    updateUrlParams(filters, selectedPeriod, null);
+  }, [filters, selectedPeriod, updateUrlParams]);
 
   // Modal Dialog States
   const [uploadDialogOpen, setUploadDialogOpen] = React.useState(false);
@@ -185,7 +226,7 @@ function BudgetControlCenterContent() {
             pageSize={pageSize}
             isLoading={isLinesLoading}
             selectedLineId={selectedLineId}
-            onSelectLine={(line: IBudgetLineDto) => setSelectedLineId(line.id)}
+            onSelectLine={handleSelectLine}
             onPageChange={(newPage) => setPage(newPage)}
             onPageSizeChange={(newSize) => {
               setPageSize(newSize);
@@ -200,23 +241,15 @@ function BudgetControlCenterContent() {
           />
         </div>
 
-        {/* Right Column: Period Governance, Fund Movements (driven by selection), Safeguards */}
-        <div className="space-y-6 min-w-0">
-          <PeriodGovernancePanel
-            periodData={periodData}
-            isLoading={isPeriodLoading}
-            onOpenManagePeriodDialog={() => setManagePeriodDialogOpen(true)}
-          />
-
-          <FundMovementsPanel
-            selectedLineId={selectedLineId}
-            selectedLineCode={selectedLine?.code}
-            selectedLineName={selectedLine?.name}
-            departmentId={filters.departmentId}
-          />
-
-          <SafeguardsPanel />
-        </div>
+        {/* Right Column: Selected Line Detail Panel — spec Part 3, grid 1fr 420px */}
+        <SelectedLinePanel
+          selectedLine={selectedLine}
+          periodData={periodData}
+          periodId={selectedPeriod}
+          departmentId={filters.departmentId}
+          onOpenManagePeriodDialog={() => setManagePeriodDialogOpen(true)}
+          onClose={handleClearSelection}
+        />
       </div>
 
       {/* ── Dialog Modals ── */}
@@ -230,6 +263,8 @@ function BudgetControlCenterContent() {
         open={managePeriodDialogOpen}
         onOpenChange={setManagePeriodDialogOpen}
         periodData={periodData}
+        affectedLinesCount={linesData?.meta?.totalItems ?? 12}
+        openRequestsCount={7}
       />
     </div>
   );
@@ -242,11 +277,11 @@ export default function BudgetControlCenterPage() {
         <div className="p-6 space-y-6">
           <div className="grid grid-cols-5 gap-4">
             {[1, 2, 3, 4, 5].map((i) => (
-              <Skeleton key={i} className="h-28 rounded-2xl" />
+              <Skeleton key={i} className="h-28 rounded-md" />
             ))}
           </div>
-          <Skeleton className="h-24 rounded-2xl" />
-          <Skeleton className="h-16 rounded-2xl" />
+          <Skeleton className="h-24 rounded-md" />
+          <Skeleton className="h-16 rounded-md" />
         </div>
       }
     >

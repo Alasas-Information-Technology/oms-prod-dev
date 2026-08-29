@@ -91,7 +91,7 @@ export function OrgUnitCard({
         }
       }}
       className={cn(
-        "group relative flex flex-col justify-between w-[280px] p-4 rounded-xl border bg-card text-card-foreground shadow-sm transition-all select-none cursor-pointer",
+        "group relative flex flex-col justify-between w-[280px] p-4 rounded-md border bg-card text-card-foreground shadow-sm transition-all select-none cursor-pointer",
         "hover:shadow-md hover:border-primary/50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
         isSelected && "border-primary ring-2 ring-primary/20 shadow-md bg-primary/[0.02]",
         isArchived && "opacity-60 bg-muted/30 border-dashed border-border/80",

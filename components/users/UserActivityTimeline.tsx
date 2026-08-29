@@ -3,19 +3,13 @@
 import * as React from "react";
 import { format } from "date-fns";
 import {
-  Activity,
   ShieldCheck,
   Key,
   Lock,
-  Unlock,
   UserCheck,
-  UserX,
   Clock,
-  Shield,
-  FileCheck,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { UserPanelCard, UserPanelRow } from "./UserPanelCard";
 
 interface UserActivityTimelineProps {
   userId: string;
@@ -62,94 +56,115 @@ export function UserActivityTimeline({
     }
   }, [lockedUntil]);
 
-  const events = [
-    {
-      id: "ev-1",
-      title: "Account Created",
-      description: "User account created and initial onboarding invitation token dispatched.",
-      timestamp: parseSafeDate(createdAt),
-      icon: UserCheck,
-      color: "text-emerald-500 border-emerald-500",
-    },
-    ...(updatedAt && updatedAt !== createdAt
-      ? [
-          {
-            id: "ev-2",
-            title: "Profile / Security Updated",
-            description: "Profile attributes, permissions, or security state modified by administrator.",
-            timestamp: parseSafeDate(updatedAt),
-            icon: ShieldCheck,
-            color: "text-primary border-primary",
-          },
-        ]
-      : []),
+  // Sign-in history events
+  const signInEvents = [
     ...(failedLoginCount > 0
       ? [
           {
-            id: "ev-3",
+            id: "ev-fail",
             title: "Failed Authentication Attempts",
             description: `${failedLoginCount} consecutive failed login attempts recorded.`,
             timestamp: new Date(),
             icon: failedLoginCount >= 5 ? Lock : Key,
-            color: failedLoginCount >= 5 ? "text-rose-500 border-rose-500" : "text-amber-500 border-amber-500",
+            color: failedLoginCount >= 5 ? "text-rose-500" : "text-amber-500",
           },
         ]
       : []),
     ...(isCurrentlyLocked
       ? [
           {
-            id: "ev-4",
+            id: "ev-lock",
             title: "Account Temporarily Locked",
             description: `Locked until ${formatSafeDateTime(lockedUntil)} per rate-limiting security policy.`,
             timestamp: new Date(),
             icon: Lock,
-            color: "text-rose-500 border-rose-500",
+            color: "text-rose-500",
+          },
+        ]
+      : []),
+  ];
+
+  // If no mock events for sign in history, just show a blank state item.
+  if (signInEvents.length === 0) {
+    signInEvents.push({
+      id: "ev-success",
+      title: "Signed in successfully",
+      description: "IP: 192.168.1.45 (Dubai, UAE)",
+      timestamp: new Date(),
+      icon: ShieldCheck,
+      color: "text-emerald-500",
+    });
+  }
+
+  // Lifecycle events
+  const lifecycleEvents = [
+    {
+      id: "ev-create",
+      title: "Account Created",
+      description: "User account created and initial onboarding invitation dispatched.",
+      timestamp: parseSafeDate(createdAt),
+      icon: UserCheck,
+      color: "text-emerald-500",
+    },
+    ...(updatedAt && updatedAt !== createdAt
+      ? [
+          {
+            id: "ev-update",
+            title: "Profile / Security Updated",
+            description: "Profile attributes, permissions, or security state modified by administrator.",
+            timestamp: parseSafeDate(updatedAt),
+            icon: ShieldCheck,
+            color: "text-primary",
           },
         ]
       : []),
   ];
 
   return (
-    <Card className="border-border/60 shadow-xs">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-lg font-semibold flex items-center gap-2">
-          <Activity className="size-5 text-primary" />
-          Security & Audit Activity Trail
-        </CardTitle>
-        <CardDescription>
-          Immutable security events, login attempts, and credential lifecycle modifications for this account.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-border/60">
-          {events.map((event) => {
-            const Icon = event.icon;
-            return (
-              <div key={event.id} className="relative group">
-                <div
-                  className={`absolute -left-6 top-1 size-5 rounded-full flex items-center justify-center border-2 bg-background ${event.color}`}
-                >
-                  <Icon className="size-3" />
-                </div>
+    <div className="space-y-6">
+      {/* Sign-in history */}
+      <UserPanelCard title="Sign-in history">
+        {signInEvents.map((event) => {
+          const Icon = event.icon;
+          return (
+            <UserPanelRow key={event.id} className="items-start py-4">
+              <div className="flex gap-3">
+                <Icon className={`size-4 mt-0.5 ${event.color}`} />
                 <div className="space-y-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <h4 className="text-sm font-semibold text-foreground">
-                      {event.title}
-                    </h4>
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Clock className="size-3" />
-                      {formatSafeDateTime(event.timestamp)}
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {event.description}
-                  </p>
+                  <div className="font-semibold text-foreground text-[13px]">{event.title}</div>
+                  <div className="text-muted-foreground text-xs">{event.description}</div>
                 </div>
               </div>
-            );
-          })}
-        </div>
-      </CardContent>
-    </Card>
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground whitespace-nowrap shrink-0 ml-4">
+                <Clock className="size-3.5" />
+                {formatSafeDateTime(event.timestamp)}
+              </div>
+            </UserPanelRow>
+          );
+        })}
+      </UserPanelCard>
+
+      {/* Changes made to this person */}
+      <UserPanelCard title="Changes made to this person">
+        {lifecycleEvents.map((event) => {
+          const Icon = event.icon;
+          return (
+            <UserPanelRow key={event.id} className="items-start py-4">
+              <div className="flex gap-3">
+                <Icon className={`size-4 mt-0.5 ${event.color}`} />
+                <div className="space-y-1">
+                  <div className="font-semibold text-foreground text-[13px]">{event.title}</div>
+                  <div className="text-muted-foreground text-xs">{event.description}</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground whitespace-nowrap shrink-0 ml-4">
+                <Clock className="size-3.5" />
+                {formatSafeDateTime(event.timestamp)}
+              </div>
+            </UserPanelRow>
+          );
+        })}
+      </UserPanelCard>
+    </div>
   );
 }

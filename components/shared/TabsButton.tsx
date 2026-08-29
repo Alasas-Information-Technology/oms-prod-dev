@@ -30,7 +30,7 @@ export function TabsButton<T extends string = string>({
     >
       <TabsPrimitive.List
         className={cn(
-          "inline-flex items-center gap-1 rounded-xl bg-muted p-1",
+          "inline-flex items-center gap-1 rounded-md bg-muted p-1",
           className
         )}
       >

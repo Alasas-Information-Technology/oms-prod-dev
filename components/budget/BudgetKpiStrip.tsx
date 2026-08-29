@@ -33,7 +33,7 @@ export function BudgetKpiStrip({
         {Array.from({ length: 5 }).map((_, i) => (
           <div
             key={i}
-            className="p-4 rounded-2xl border border-border/60 bg-card/60 space-y-3 shadow-2xs"
+            className="p-4 rounded-md border border-border/60 bg-card/60 space-y-3 shadow-2xs"
           >
             <div className="flex items-center justify-between">
               <Skeleton className="h-4 w-24 rounded-md" />

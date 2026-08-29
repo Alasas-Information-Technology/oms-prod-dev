@@ -3,6 +3,7 @@ export * from "./AssignRoleDialog";
 export * from "./AssignScopeDialog";
 export * from "./CreateDelegationDialog";
 export * from "./EditUserDialog";
+export * from "./ForceChangePasswordDialog";
 export * from "./RoleChip";
 export * from "./RoleOption";
 export * from "./SummaryCard";

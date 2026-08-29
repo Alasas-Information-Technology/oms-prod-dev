@@ -185,7 +185,7 @@ export function SessionsTab({
     // ── Error state ───────────────────────────────────────────────────────────
     if (!loading && error) {
         return (
-            <div className="bg-card text-card-foreground rounded-xl border border-border flex flex-col items-center justify-center py-16 gap-3">
+            <div className="bg-card text-card-foreground rounded-md border border-border flex flex-col items-center justify-center py-16 gap-3">
                 <Icon icon="mdi:alert-circle-outline" className="w-8 h-8 text-destructive/60" />
                 <p className="text-sm text-muted-foreground">{error}</p>
                 <button

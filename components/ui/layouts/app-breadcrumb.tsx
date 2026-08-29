@@ -90,7 +90,7 @@ export function AppBreadcrumb() {
   return (
     <nav
       aria-label="Page Bar"
-      className="h-[56px] sticky top-0 z-10 flex items-center justify-between px-6 bg-background border-b border-border/50 shrink-0 select-none"
+      className="h-[56px] sticky print:static print:border-none top-0 z-10 flex items-center justify-between px-6 bg-background border-b border-border/50 shrink-0 select-none"
     >
       {/* Left: Breadcrumb as Page Title (Part 5) */}
       <div className="min-w-0 max-w-[65%]">

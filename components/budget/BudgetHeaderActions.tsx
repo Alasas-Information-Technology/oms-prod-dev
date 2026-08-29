@@ -72,13 +72,13 @@ export function BudgetHeaderActions({
             <Button
               variant="outline"
               size="sm"
-              className="h-9 px-3 gap-1.5 text-xs font-semibold rounded-xl bg-background/80 hover:bg-background border-border/70 shadow-2xs cursor-pointer"
+              className="h-9 px-3 gap-1.5 text-xs font-semibold rounded-md bg-background/80 hover:bg-background border-border/70 shadow-2xs cursor-pointer"
             >
               <span className="font-mono">{currentPeriodMeta.code}</span>
               <ChevronDown className="size-3.5 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 p-1 rounded-xl shadow-lg border-border/70">
+          <DropdownMenuContent align="end" className="w-56 p-1 rounded-md shadow-lg border-border/70">
             <DropdownMenuLabel className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground px-2 py-1">
               Financial Periods
             </DropdownMenuLabel>
@@ -146,7 +146,7 @@ export function BudgetHeaderActions({
                   size="sm"
                   disabled={isClosed}
                   onClick={onOpenUploadDialog}
-                  className="h-9 px-3 gap-1.5 text-xs font-semibold rounded-xl bg-background/80 hover:bg-background border-border/70 shadow-2xs transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="h-9 px-3 gap-1.5 text-xs font-semibold rounded-md bg-background/80 hover:bg-background border-border/70 shadow-2xs transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Upload className="size-3.5 text-muted-foreground" />
                   <span>Upload budget</span>
@@ -168,7 +168,7 @@ export function BudgetHeaderActions({
           variant="default"
           size="sm"
           onClick={onOpenManagePeriodDialog}
-          className="h-9 px-3.5 gap-1.5 text-xs font-semibold rounded-xl shadow-xs transition-all cursor-pointer"
+          className="h-9 px-3.5 gap-1.5 text-xs font-semibold rounded-md shadow-xs transition-all cursor-pointer"
         >
           <CalendarCog className="size-3.5" />
           <span>Manage period</span>

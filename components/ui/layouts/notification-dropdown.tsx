@@ -64,7 +64,7 @@ export default function NotificationsDrawer() {
 
         <DropdownMenuContent
           align="end"
-          className="w-105 p-0 rounded-xl overflow-hidden"
+          className="w-105 p-0 rounded-md overflow-hidden"
         >
           <NotificationPanel
             notifications={notifications}

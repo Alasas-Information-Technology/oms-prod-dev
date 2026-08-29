@@ -29,6 +29,7 @@ import {
   InvitationDispatchResultDto,
   InvitationValidationResultDto,
   AcceptInvitationDto,
+  ForceChangePasswordDto,
   PasswordResetRequestResultDto,
   ChangePasswordDto,
 } from '../types/authorization.types';
@@ -149,6 +150,14 @@ export const usersApi = {
    */
   reactivateUser: async (id: string): Promise<ApiSuccessResponse> => {
     const response = await api.post(`/authorization/users/${id}/reactivate`);
+    return response.data;
+  },
+
+  /**
+   * Forcibly changes the password for a user.
+   */
+  forceChangePassword: async (id: string, dto: ForceChangePasswordDto): Promise<ApiSuccessResponse> => {
+    const response = await api.post(`/authorization/users/${id}/force-password`, dto);
     return response.data;
   },
 

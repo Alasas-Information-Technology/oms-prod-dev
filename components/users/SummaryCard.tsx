@@ -31,7 +31,7 @@ export function SummaryCard({
   const content = (
     <div
       className={cn(
-        "group relative flex items-center justify-between p-3.5 rounded-xl border border-border/80 bg-card/60 hover:bg-muted/40 transition-all text-left w-full shadow-2xs",
+        "group relative flex items-center justify-between p-3.5 rounded-md border border-border/80 bg-card/60 hover:bg-muted/40 transition-all text-left w-full shadow-2xs",
         (onClick || href) && "cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         className
       )}

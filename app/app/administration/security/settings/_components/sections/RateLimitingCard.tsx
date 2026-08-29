@@ -92,7 +92,7 @@ export function RateLimitingCard() {
 
   return (
     <>
-      <Card className="rounded-2xl border-border/70 bg-card/70 backdrop-blur-xs shadow-xs">
+      <Card className="rounded-md border-border/70 bg-card/70 backdrop-blur-xs shadow-xs">
         <CardHeader className="pb-4 border-b border-border/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -112,7 +112,7 @@ export function RateLimitingCard() {
               variant="outline"
               size="sm"
               onClick={() => setIsEditorOpen(true)}
-              className="h-8 px-3 text-xs gap-1.5 rounded-xl font-semibold cursor-pointer"
+              className="h-8 px-3 text-xs gap-1.5 rounded-md font-semibold cursor-pointer"
             >
               <Sliders className="size-3.5 text-muted-foreground" />
               <span>Configure Thresholds</span>
@@ -121,7 +121,7 @@ export function RateLimitingCard() {
         </CardHeader>
 
         <CardContent className="pt-6 space-y-4">
-          <div className="rounded-xl border border-border/70 overflow-hidden bg-background/50">
+          <div className="rounded-md border border-border/70 overflow-hidden bg-background/50">
             <Table>
               <TableHeader className="bg-muted/40">
                 <TableRow>
@@ -169,9 +169,9 @@ export function RateLimitingCard() {
 
       {/* ── Interactive Rate Limit Editor Dialog ── */}
       <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-        <DialogContent className="sm:max-w-lg rounded-2xl p-6">
+        <DialogContent className="sm:max-w-lg rounded-md p-6">
           <DialogHeader className="space-y-2">
-            <div className="size-10 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+            <div className="size-10 rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
               <Sliders className="size-5" />
             </div>
             <DialogTitle className="text-lg font-bold font-display">
@@ -189,7 +189,7 @@ export function RateLimitingCard() {
                 variant={selectedPreset === "strict" ? "default" : "outline"}
                 size="sm"
                 onClick={() => applyPreset("strict")}
-                className="h-14 flex-col gap-1 rounded-xl text-xs"
+                className="h-14 flex-col gap-1 rounded-md text-xs"
               >
                 <Shield className="size-4" />
                 <span>Strict Gov Tier</span>
@@ -200,7 +200,7 @@ export function RateLimitingCard() {
                 variant={selectedPreset === "balanced" ? "default" : "outline"}
                 size="sm"
                 onClick={() => applyPreset("balanced")}
-                className="h-14 flex-col gap-1 rounded-xl text-xs"
+                className="h-14 flex-col gap-1 rounded-md text-xs"
               >
                 <CheckCircle2 className="size-4" />
                 <span>Balanced Default</span>
@@ -211,14 +211,14 @@ export function RateLimitingCard() {
                 variant={selectedPreset === "dev" ? "default" : "outline"}
                 size="sm"
                 onClick={() => applyPreset("dev")}
-                className="h-14 flex-col gap-1 rounded-xl text-xs"
+                className="h-14 flex-col gap-1 rounded-md text-xs"
               >
                 <Gauge className="size-4" />
                 <span>High-Throughput</span>
               </Button>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-muted/40 border border-border/60 text-xs text-muted-foreground space-y-1.5">
+            <div className="p-3.5 rounded-md bg-muted/40 border border-border/60 text-xs text-muted-foreground space-y-1.5">
               <div className="flex items-center gap-1.5 font-semibold text-foreground">
                 <Info className="size-3.5 text-primary" />
                 <span>Selected Profile: {selectedPreset === "strict" ? "Strict Government Compliance" : selectedPreset === "balanced" ? "Standard Balanced Protection" : "High-Throughput Load"}</span>
@@ -234,7 +234,7 @@ export function RateLimitingCard() {
               variant="outline"
               size="sm"
               onClick={() => setIsEditorOpen(false)}
-              className="rounded-xl text-xs h-9"
+              className="rounded-md text-xs h-9"
             >
               Cancel
             </Button>
@@ -242,7 +242,7 @@ export function RateLimitingCard() {
               variant="default"
               size="sm"
               onClick={handleSaveThresholds}
-              className="rounded-xl text-xs h-9 font-semibold"
+              className="rounded-md text-xs h-9 font-semibold"
             >
               Apply Thresholds
             </Button>

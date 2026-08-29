@@ -27,7 +27,7 @@ function InfoField({ icon, label, value, note }: InfoFieldProps) {
 
 export function PersonalInfoCard({ profile }: PersonalInfoCardProps) {
     return (
-        <div className="bg-card text-card-foreground rounded-xl border border-border px-6 py-5 flex-1">
+        <div className="bg-card text-card-foreground rounded-md border border-border px-6 py-5 flex-1">
             <h3 className="text-sm font-semibold text-foreground mb-5">Personal Information</h3>
             <div className="grid grid-cols-2 gap-x-8 gap-y-5">
                 <InfoField

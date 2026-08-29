@@ -40,7 +40,7 @@ export function DepartmentBudgetTable() {
   );
 
   return (
-    <div className="rounded-xl border bg-background p-4 shadow-sm">
+    <div className="rounded-md border bg-background p-4 shadow-sm">
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="font-semibold text-lg">Department Budgets</h3>

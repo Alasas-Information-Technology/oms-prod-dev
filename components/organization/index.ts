@@ -13,3 +13,4 @@ export * from "./OrgUnitDetailView";
 export * from "./OrgUnitForm";
 export * from "./OrgUnitPicker";
 export * from "./UnitPath";
+export * from "./OrgTreePicker";

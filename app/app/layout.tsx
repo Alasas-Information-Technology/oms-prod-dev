@@ -24,13 +24,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <AppTopbar />
 
           {/* Shell container: h-screen, scroll-locked, offset for fixed global bar (Part 8) */}
-          <div className="h-screen pt-12 md:pt-13 flex flex-col overflow-hidden w-full">
+          <div className="h-screen pt-12 md:pt-13 flex flex-col overflow-hidden w-full print:h-auto print:pt-0 print:overflow-visible">
 
             {/* Sidebar + Content Column */}
-            <div className="flex flex-1 min-h-0 overflow-hidden w-full">
+            <div className="flex flex-1 min-h-0 overflow-hidden w-full print:overflow-visible">
               <AppSidebar />
 
-              <SidebarInset className="flex flex-1 min-h-0 flex-col overflow-hidden min-w-0 bg-background">
+              <SidebarInset className="flex flex-1 min-h-0 flex-col overflow-hidden min-w-0 bg-background print:overflow-visible">
 
                 {/* Page bar: 56px sticky directly beneath global bar (Part 4) */}
                 <AppBreadcrumb />
@@ -39,7 +39,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <div
                   id="main-content"
                   tabIndex={-1}
-                  className="flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden focus:outline-none"
+                  className="flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden focus:outline-none print:overflow-visible"
                 >
                   {children}
                 </div>

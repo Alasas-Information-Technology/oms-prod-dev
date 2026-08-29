@@ -51,7 +51,7 @@ const activities = [
 
 export function RecentBudgetActivities() {
   return (
-    <div className="rounded-xl border bg-background p-4 shadow-sm w-full">
+    <div className="rounded-md border bg-background p-4 shadow-sm w-full">
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h3 className="font-semibold text-lg">

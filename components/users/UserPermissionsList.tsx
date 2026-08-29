@@ -5,17 +5,11 @@ import {
   Key,
   Search,
   Plus,
-  CheckCircle2,
-  XCircle,
   Printer,
-  Shield,
-  Sparkles,
-  Lock,
+  XCircle,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
   EffectivePermissionsResponse,
   EffectivePermissionItem,
@@ -28,6 +22,7 @@ import {
 } from "@/lib/constants/user-admin.constants";
 import { usePermission } from "@/hooks/usePermission";
 import { format } from "date-fns";
+import { UserPanelCard, UserPanelRow } from "@/components/users/UserPanelCard";
 
 interface UserPermissionsListProps {
   userId: string;
@@ -40,7 +35,7 @@ function safeFormatDate(d?: string | Date | null): string {
   if (!d) return "";
   try {
     const parsed = new Date(d);
-    return isNaN(parsed.getTime()) ? "" : format(parsed, "d MMM yyyy");
+    return isNaN(parsed.getTime()) ? "" : format(parsed, "d MMM"); // Spec says "30 Sept"
   } catch {
     return "";
   }
@@ -121,12 +116,12 @@ export function UserPermissionsList({
   // Filter items based on search and source
   const filteredActiveGroups = React.useMemo(() => {
     const result: Array<{ area: string; items: EffectivePermissionItem[] }> = [];
-
     const searchLower = searchTerm.toLowerCase();
 
     groupedActivePermissions.forEach((items, area) => {
       const filtered = items.filter((item) => {
         const plainName = getPermissionPlainName(item.code).toLowerCase();
+        // Search matches against plain name or area. Permission code is removed from UI but still searchable just in case.
         const codeLower = item.code.toLowerCase();
         const areaLower = area.toLowerCase();
 
@@ -190,13 +185,14 @@ export function UserPermissionsList({
     if (item.source === "ROLE_INHERITED") {
       return item.via
         ? `From ${getRoleDisplayName(item.via)}, which includes ${getPermissionPlainName(item.code)}`
-        : "Inherited through assigned role hierarchy";
+        : "From inherited roles";
     }
     if (item.source === "OVERRIDE_GRANT") {
       const reason = item.reason ? ` — '${item.reason}'` : "";
       const dateStr = safeFormatDate(item.until);
       const expiry = dateStr ? `. Ends ${dateStr}` : "";
-      return `Special access granted${reason}${expiry}`;
+      const granter = item.via ? `Given directly by ${item.via}` : "Given directly";
+      return `${granter}${reason}${expiry}`;
     }
     if (item.source === "DELEGATION") {
       const delegator = item.via ? ` for ${item.via}` : "";
@@ -218,65 +214,51 @@ export function UserPermissionsList({
   };
 
   return (
-    <Card className="border-border/60 shadow-xs print:border-none print:shadow-none">
-      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4">
-        <div>
-          <CardTitle className="text-lg font-semibold flex items-center gap-2">
-            <Key className="size-5 text-primary" />
-            Permissions
-          </CardTitle>
-          <CardDescription>
-            Live evaluation of all operational permissions with source attribution and security audit trails.
-          </CardDescription>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0 print:hidden">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handlePrint}
-            className="gap-1.5 text-xs h-9"
-          >
-            <Printer className="size-3.5" />
-            Print audit
-          </Button>
-
-          {can("USER.OVERRIDE.MANAGE") && onOpenOverrideDialog && (
-            <Button
-              type="button"
-              onClick={onOpenOverrideDialog}
-              size="sm"
-              className="gap-1.5 text-xs h-9 shadow-xs"
-            >
-              <Plus className="size-3.5" />
-              Special access
+    <div className="space-y-6 animate-in fade-in-50">
+      {/* Header & Controls */}
+      <div className="flex flex-col gap-4 print:hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 className="text-[17px] font-semibold font-display flex items-center gap-2 text-foreground tracking-tight">
+              <Key className="size-5 text-primary" />
+              Permissions
+            </h3>
+            <p className="text-[13px] text-muted-foreground mt-1 max-w-xl leading-relaxed">
+              Live evaluation of all operational permissions with source attribution and security audit trails.
+            </p>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <Button type="button" variant="outline" size="sm" onClick={handlePrint} className="h-9 text-xs">
+              <Printer className="size-3.5 mr-2" />
+              Print audit
             </Button>
-          )}
+            {can("USER.OVERRIDE.MANAGE") && onOpenOverrideDialog && (
+              <Button type="button" onClick={onOpenOverrideDialog} size="sm" className="h-9 text-xs shadow-xs">
+                <Plus className="size-3.5 mr-2" />
+                Special access
+              </Button>
+            )}
+          </div>
         </div>
-      </CardHeader>
 
-      <CardContent className="space-y-5">
-        {/* Search & Source Filter Toolbar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 print:hidden">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
-              placeholder="Search capabilities or permission code (e.g. approve, budget, REQUISITION)..."
+              placeholder="Search capabilities (e.g. approve, budget)..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 h-9 text-xs bg-background"
+              className="pl-9 h-9 text-[13px] bg-card border-border/60 shadow-xs"
             />
           </div>
 
-          {/* Source Filter Tabs */}
-          <div className="flex items-center gap-1 bg-muted p-1 rounded-lg border text-xs">
+          <div className="flex items-center gap-1 bg-muted/60 p-1 rounded-lg border border-border/50 text-[13px]">
             <button
               type="button"
               onClick={() => setFilterSource("ALL")}
-              className={`px-2.5 py-1 rounded-md transition-all font-medium ${
+              className={`px-3 py-1.5 rounded-md transition-all font-medium ${
                 filterSource === "ALL"
-                  ? "bg-background text-foreground shadow-xs"
+                  ? "bg-card text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -285,9 +267,9 @@ export function UserPermissionsList({
             <button
               type="button"
               onClick={() => setFilterSource("ROLE")}
-              className={`px-2.5 py-1 rounded-md transition-all font-medium ${
+              className={`px-3 py-1.5 rounded-md transition-all font-medium ${
                 filterSource === "ROLE"
-                  ? "bg-background text-foreground shadow-xs"
+                  ? "bg-card text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -296,9 +278,9 @@ export function UserPermissionsList({
             <button
               type="button"
               onClick={() => setFilterSource("OVERRIDE")}
-              className={`px-2.5 py-1 rounded-md transition-all font-medium ${
+              className={`px-3 py-1.5 rounded-md transition-all font-medium ${
                 filterSource === "OVERRIDE"
-                  ? "bg-background text-foreground shadow-xs"
+                  ? "bg-card text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -307,9 +289,9 @@ export function UserPermissionsList({
             <button
               type="button"
               onClick={() => setFilterSource("DELEGATION")}
-              className={`px-2.5 py-1 rounded-md transition-all font-medium ${
+              className={`px-3 py-1.5 rounded-md transition-all font-medium ${
                 filterSource === "DELEGATION"
-                  ? "bg-background text-foreground shadow-xs"
+                  ? "bg-card text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -317,154 +299,74 @@ export function UserPermissionsList({
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Content */}
-        {isLoading ? (
-          <div className="py-12 text-center text-xs text-muted-foreground">
-            Evaluating effective capabilities and attribution...
-          </div>
-        ) : filteredActiveGroups.length === 0 && filteredRevoked.length === 0 ? (
-          <div className="py-10 text-center border rounded-xl border-dashed bg-muted/20">
-            <Key className="size-8 text-muted-foreground/50 mx-auto mb-2" />
-            <p className="text-sm font-medium text-foreground">No capabilities found</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Try adjusting your search query or filter source.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {/* Active Permissions by Area (§Part 3.7) */}
-            {filteredActiveGroups.map(({ area, items }) => (
-              <div key={area} className="border border-border/80 rounded-xl p-4 bg-card/60 space-y-3 shadow-2xs">
-                <div className="flex items-center justify-between border-b pb-2">
-                  <h4 className="font-semibold text-xs text-foreground uppercase tracking-wider flex items-center gap-2">
-                    <span className="size-2 rounded-full bg-primary" />
-                    {area}
-                  </h4>
-                  <span className="text-xs text-muted-foreground">
-                    {items.length} {items.length === 1 ? "capability" : "capabilities"}
-                  </span>
-                </div>
+      {/* Content */}
+      {isLoading ? (
+        <div className="py-12 text-center text-[13px] text-muted-foreground">
+          Evaluating effective capabilities and attribution...
+        </div>
+      ) : filteredActiveGroups.length === 0 && filteredRevoked.length === 0 ? (
+        <div className="py-12 text-center border border-dashed border-border/60 rounded-xl bg-muted/20">
+          <Key className="size-8 text-muted-foreground/30 mx-auto mb-3" />
+          <p className="text-[14px] font-medium text-foreground">No capabilities found</p>
+          <p className="text-[13px] text-muted-foreground mt-1">
+            Try adjusting your search query or filter source.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-6 print:space-y-4">
+          {filteredActiveGroups.map(({ area, items }) => (
+            <UserPanelCard key={area} title={area}>
+              {items.map((item) => {
+                const plainName = getPermissionPlainName(item.code);
+                const sourceText = formatSourceAttribution(item);
 
-                <div className="divide-y divide-border/40">
-                  {items.map((item) => {
-                    const plainName = getPermissionPlainName(item.code);
-                    const sourceText = formatSourceAttribution(item);
+                return (
+                  <UserPanelRow key={item.code} className="flex-col items-start sm:flex-row sm:items-center gap-2 py-3">
+                    <div className="w-full sm:w-[45%] pr-4 flex items-center gap-2">
+                      <span className="font-medium text-foreground leading-snug break-words">
+                        {plainName}
+                      </span>
+                    </div>
+                    <div className="w-full sm:w-[55%] text-left sm:text-right">
+                      <span className="text-muted-foreground text-[13px] leading-snug">
+                        {sourceText}
+                      </span>
+                    </div>
+                  </UserPanelRow>
+                );
+              })}
+            </UserPanelCard>
+          ))}
 
-                    return (
-                      <div
-                        key={item.code}
-                        className="py-2.5 px-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-muted/30 rounded-lg transition-colors"
-                      >
-                        <div className="space-y-0.5 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle2 className="size-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                            <span className="font-semibold text-xs text-foreground">
-                              {plainName}
-                            </span>
-                            <span className="text-[11px] font-mono text-muted-foreground">
-                              ({item.code})
-                            </span>
-                          </div>
-                          <p className="text-[11px] text-muted-foreground pl-5.5">
-                            {sourceText}
-                          </p>
-                        </div>
-
-                        {/* Tag Badge */}
-                        <div className="shrink-0 pl-5.5 sm:pl-0">
-                          {item.source === "OVERRIDE_GRANT" ? (
-                            <Badge
-                              variant="outline"
-                              className="text-[10px] bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20"
-                            >
-                              Special access
-                            </Badge>
-                          ) : item.source === "DELEGATION" ? (
-                            <Badge
-                              variant="outline"
-                              className="text-[10px] bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20"
-                            >
-                              Standing in
-                            </Badge>
-                          ) : item.source === "ROLE_INHERITED" ? (
-                            <Badge
-                              variant="secondary"
-                              className="text-[10px] text-muted-foreground font-normal"
-                            >
-                              Inherited
-                            </Badge>
-                          ) : (
-                            <Badge
-                              variant="secondary"
-                              className="text-[10px] text-muted-foreground font-normal"
-                            >
-                              Role
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-
-            {/* Blocked / Revoked Permissions Section (§Part 3.7) */}
-            {filteredRevoked.length > 0 && (
-              <div className="border border-rose-200 bg-rose-50/40 dark:border-rose-900/60 dark:bg-rose-950/20 rounded-xl p-4 space-y-3 shadow-2xs">
-                <div className="flex items-center justify-between border-b border-rose-200 dark:border-rose-900/60 pb-2">
-                  <h4 className="font-semibold text-xs text-rose-800 dark:text-rose-300 uppercase tracking-wider flex items-center gap-2">
-                    <XCircle className="size-3.5 text-rose-600 dark:text-rose-400" />
-                    Blocked & Revoked Permissions
-                  </h4>
-                  <span className="text-xs text-rose-700/80 dark:text-rose-400">
-                    {filteredRevoked.length} blocked
-                  </span>
-                </div>
-
-                <div className="divide-y divide-rose-200/50 dark:divide-rose-900/40">
-                  {filteredRevoked.map((r) => {
-                    const plainName = getPermissionPlainName(r.code);
-                    return (
-                      <div
-                        key={r.code}
-                        className="py-2.5 px-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
-                      >
-                        <div className="space-y-0.5 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <XCircle className="size-3.5 text-rose-500 shrink-0" />
-                            <span className="font-semibold text-xs text-foreground line-through opacity-75">
-                              {plainName}
-                            </span>
-                            <span className="text-[11px] font-mono text-muted-foreground line-through opacity-75">
-                              ({r.code})
-                            </span>
-                          </div>
-                          {r.reason && (
-                            <p className="text-[11px] text-rose-700 dark:text-rose-400 italic pl-5.5">
-                              Blocked: {r.reason}
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="shrink-0 pl-5.5 sm:pl-0">
-                          <Badge
-                            variant="outline"
-                            className="text-[10px] bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/30"
-                          >
-                            Revoked Override
-                          </Badge>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+          {filteredRevoked.length > 0 && (
+            <UserPanelCard
+              title="Blocked Permissions"
+              className="border-rose-200 bg-rose-50/30 dark:border-rose-900/40 dark:bg-rose-950/20"
+            >
+              {filteredRevoked.map((r) => {
+                const plainName = getPermissionPlainName(r.code);
+                return (
+                  <UserPanelRow key={r.code} className="flex-col items-start sm:flex-row sm:items-center gap-2 py-3 border-rose-200/50 dark:border-rose-900/40">
+                    <div className="w-full sm:w-[45%] pr-4 flex items-center gap-2">
+                      <XCircle className="size-4 text-rose-500 shrink-0 hidden sm:block" />
+                      <span className="font-medium text-foreground line-through opacity-75 leading-snug break-words">
+                        {plainName}
+                      </span>
+                    </div>
+                    <div className="w-full sm:w-[55%] text-left sm:text-right">
+                      <span className="text-rose-700 dark:text-rose-400 text-[13px] italic leading-snug">
+                        Blocked{r.reason ? `: ${r.reason}` : ""}
+                      </span>
+                    </div>
+                  </UserPanelRow>
+                );
+              })}
+            </UserPanelCard>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

@@ -108,7 +108,7 @@ export function Breadcrumb({
                         …
                       </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="min-w-[180px] p-1 rounded-xl shadow-lg border border-border">
+                    <DropdownMenuContent align="start" className="min-w-[180px] p-1 rounded-md shadow-lg border border-border">
                       {hiddenCrumbs.map((hCrumb, hIdx) => (
                         <DropdownMenuItem key={hCrumb.label + hIdx} asChild className="rounded-lg text-xs cursor-pointer">
                           {hCrumb.href ? (

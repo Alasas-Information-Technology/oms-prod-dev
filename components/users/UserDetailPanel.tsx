@@ -283,11 +283,11 @@ export function UserDetailPanel({
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
         {isUserLoading || !user ? (
           <div className="space-y-4">
-            <Skeleton className="h-12 w-full rounded-xl" />
-            <Skeleton className="h-14 w-full rounded-xl" />
-            <Skeleton className="h-14 w-full rounded-xl" />
-            <Skeleton className="h-14 w-full rounded-xl" />
-            <Skeleton className="h-14 w-full rounded-xl" />
+            <Skeleton className="h-12 w-full rounded-md" />
+            <Skeleton className="h-14 w-full rounded-md" />
+            <Skeleton className="h-14 w-full rounded-md" />
+            <Skeleton className="h-14 w-full rounded-md" />
+            <Skeleton className="h-14 w-full rounded-md" />
           </div>
         ) : (
           <>
@@ -295,7 +295,7 @@ export function UserDetailPanel({
             <div className="space-y-3">
               {/* Account active Toggle */}
               {canManageActive && (
-                <div className="flex items-center justify-between p-3.5 rounded-xl border border-border/80 bg-card shadow-2xs">
+                <div className="flex items-center justify-between p-3.5 rounded-md border border-border/80 bg-card shadow-2xs">
                   <div className="space-y-0.5">
                     <Label
                       htmlFor="drawer-account-active"
@@ -320,7 +320,7 @@ export function UserDetailPanel({
 
               {/* Locked out Alert Row */}
               {isLocked && canUnlock && (
-                <div className="p-3.5 rounded-xl border border-rose-200 bg-rose-50/80 dark:border-rose-900/60 dark:bg-rose-950/30 flex items-center justify-between gap-3 text-xs animate-in fade-in-50 shadow-2xs">
+                <div className="p-3.5 rounded-md border border-rose-200 bg-rose-50/80 dark:border-rose-900/60 dark:bg-rose-950/30 flex items-center justify-between gap-3 text-xs animate-in fade-in-50 shadow-2xs">
                   <div className="flex items-start gap-2.5">
                     <Lock className="size-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
                     <div className="space-y-0.5">
@@ -348,7 +348,7 @@ export function UserDetailPanel({
 
               {/* Hasn't signed in yet Alert Row */}
               {isInvited && canInvite && (
-                <div className="p-3.5 rounded-xl border border-sky-200 bg-sky-50/80 dark:border-sky-900/60 dark:bg-sky-950/30 flex items-center justify-between gap-3 text-xs animate-in fade-in-50 shadow-2xs">
+                <div className="p-3.5 rounded-md border border-sky-200 bg-sky-50/80 dark:border-sky-900/60 dark:bg-sky-950/30 flex items-center justify-between gap-3 text-xs animate-in fade-in-50 shadow-2xs">
                   <div className="flex items-start gap-2.5">
                     <Mail className="size-4 text-sky-600 dark:text-sky-400 shrink-0 mt-0.5" />
                     <div className="space-y-0.5">

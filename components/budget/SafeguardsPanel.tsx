@@ -74,7 +74,7 @@ export function SafeguardsPanel({
   const lastSyncFormatted = "5 Aug 2026, 08:30";
 
   return (
-    <div className={cn("p-6 rounded-xl border border-border/40 bg-card space-y-4", className)}>
+    <div className={cn("p-6 rounded-md border border-border/40 bg-card space-y-4", className)}>
       {/* Panel Header */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">

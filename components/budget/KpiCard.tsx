@@ -57,7 +57,7 @@ export function KpiCard({
     <Card
       data-slot="budget-kpi-card"
       className={cn(
-        "relative overflow-hidden p-5 rounded-xl border transition-all duration-200",
+        "relative overflow-hidden p-5 rounded-md border transition-all duration-200",
         isTotal
           ? "border-primary/20 bg-primary/5 shadow-none"
           : "border-border/40 bg-card shadow-none hover:shadow-sm",

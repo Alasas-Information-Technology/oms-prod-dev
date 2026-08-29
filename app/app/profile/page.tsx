@@ -41,7 +41,7 @@ function Initials({ name }: { name: string }) {
       ? parts[0][0] + parts[parts.length - 1][0]
       : parts[0].slice(0, 2);
   return (
-    <div className="w-20 h-20 rounded-2xl bg-linear-to-br from-primary to-primary/80 text-primary-foreground flex items-center justify-center text-2xl font-bold shrink-0 select-none shadow-md">
+    <div className="w-20 h-20 rounded-md bg-linear-to-br from-primary to-primary/80 text-primary-foreground flex items-center justify-center text-2xl font-bold shrink-0 select-none shadow-md">
       {letters.toUpperCase()}
     </div>
   );
@@ -99,7 +99,7 @@ export default function ProfilePage() {
   return (
     <div className="p-6 space-y-6 animate-in fade-in-50 duration-200">
       {/* ── Profile header card ── */}
-      <div className="p-6 rounded-2xl border border-border/70 bg-card/60 backdrop-blur-xs shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="p-6 rounded-md border border-border/70 bg-card/60 backdrop-blur-xs shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
         {/* Left: avatar + info */}
         <div className="flex items-center gap-5">
           <Initials name={fullName} />
@@ -157,7 +157,7 @@ export default function ProfilePage() {
             variant="outline"
             size="sm"
             onClick={() => setIsChangePasswordOpen(true)}
-            className="rounded-xl text-xs h-9 gap-1.5 font-semibold cursor-pointer"
+            className="rounded-md text-xs h-9 gap-1.5 font-semibold cursor-pointer"
           >
             <KeyRound className="size-3.5 text-muted-foreground" />
             <span>Change Password</span>
@@ -167,7 +167,7 @@ export default function ProfilePage() {
             variant="default"
             size="sm"
             onClick={() => setIsEditProfileOpen(true)}
-            className="rounded-xl text-xs h-9 gap-1.5 font-semibold cursor-pointer shadow-xs"
+            className="rounded-md text-xs h-9 gap-1.5 font-semibold cursor-pointer shadow-xs"
           >
             <Pencil className="size-3.5" />
             <span>Edit Profile</span>
@@ -206,9 +206,9 @@ export default function ProfilePage() {
 
       {/* ── Edit Profile Dialog ── */}
       <Dialog open={isEditProfileOpen} onOpenChange={setIsEditProfileOpen}>
-        <DialogContent className="sm:max-w-lg rounded-2xl p-6">
+        <DialogContent className="sm:max-w-lg rounded-md p-6">
           <DialogHeader className="space-y-2">
-            <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <div className="size-10 rounded-md bg-primary/10 text-primary flex items-center justify-center">
               <Pencil className="size-5" />
             </div>
             <DialogTitle className="text-lg font-bold font-display">
@@ -226,7 +226,7 @@ export default function ProfilePage() {
                 type="text"
                 value={editForm.fullName}
                 onChange={(e) => setEditForm({ ...editForm, fullName: e.target.value })}
-                className="text-xs h-9 rounded-xl"
+                className="text-xs h-9 rounded-md"
                 placeholder="e.g. Nabil Al-Rashidi"
               />
             </div>
@@ -238,7 +238,7 @@ export default function ProfilePage() {
                   type="text"
                   value={editForm.phone}
                   onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                  className="text-xs h-9 rounded-xl"
+                  className="text-xs h-9 rounded-md"
                   placeholder="+971 50 123 4567"
                 />
               </div>
@@ -249,7 +249,7 @@ export default function ProfilePage() {
                   type="text"
                   value={editForm.department}
                   onChange={(e) => setEditForm({ ...editForm, department: e.target.value })}
-                  className="text-xs h-9 rounded-xl"
+                  className="text-xs h-9 rounded-md"
                   placeholder="Operations Management"
                 />
               </div>
@@ -261,7 +261,7 @@ export default function ProfilePage() {
                 type="text"
                 value={editForm.location}
                 onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
-                className="text-xs h-9 rounded-xl"
+                className="text-xs h-9 rounded-md"
                 placeholder="Dubai Integrated Economic Zones (DIEZ), UAE"
               />
             </div>
@@ -272,7 +272,7 @@ export default function ProfilePage() {
                 type="text"
                 value={editForm.employeeId}
                 onChange={(e) => setEditForm({ ...editForm, employeeId: e.target.value })}
-                className="text-xs h-9 rounded-xl font-mono"
+                className="text-xs h-9 rounded-md font-mono"
                 placeholder="DEZ-2024-0087"
               />
             </div>
@@ -283,7 +283,7 @@ export default function ProfilePage() {
               variant="outline"
               size="sm"
               onClick={() => setIsEditProfileOpen(false)}
-              className="rounded-xl text-xs h-9"
+              className="rounded-md text-xs h-9"
             >
               Cancel
             </Button>
@@ -291,7 +291,7 @@ export default function ProfilePage() {
               variant="default"
               size="sm"
               onClick={() => handleSaveProfile(editForm)}
-              className="rounded-xl text-xs h-9 font-semibold"
+              className="rounded-md text-xs h-9 font-semibold"
             >
               Save Profile
             </Button>
@@ -301,9 +301,9 @@ export default function ProfilePage() {
 
       {/* ── Change Password Dialog ── */}
       <Dialog open={isChangePasswordOpen} onOpenChange={setIsChangePasswordOpen}>
-        <DialogContent className="sm:max-w-md rounded-2xl p-6">
+        <DialogContent className="sm:max-w-md rounded-md p-6">
           <DialogHeader className="space-y-2">
-            <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <div className="size-10 rounded-md bg-primary/10 text-primary flex items-center justify-center">
               <KeyRound className="size-5" />
             </div>
             <DialogTitle className="text-lg font-bold font-display">
@@ -321,7 +321,7 @@ export default function ProfilePage() {
                 type="password"
                 value={passwordForm.currentPassword}
                 onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
-                className="text-xs h-9 rounded-xl"
+                className="text-xs h-9 rounded-md"
               />
             </div>
 
@@ -331,7 +331,7 @@ export default function ProfilePage() {
                 type="password"
                 value={passwordForm.newPassword}
                 onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-                className="text-xs h-9 rounded-xl"
+                className="text-xs h-9 rounded-md"
               />
             </div>
 
@@ -341,7 +341,7 @@ export default function ProfilePage() {
                 type="password"
                 value={passwordForm.confirmPassword}
                 onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
-                className="text-xs h-9 rounded-xl"
+                className="text-xs h-9 rounded-md"
               />
             </div>
           </div>
@@ -351,7 +351,7 @@ export default function ProfilePage() {
               variant="outline"
               size="sm"
               onClick={() => setIsChangePasswordOpen(false)}
-              className="rounded-xl text-xs h-9"
+              className="rounded-md text-xs h-9"
             >
               Cancel
             </Button>
@@ -360,7 +360,7 @@ export default function ProfilePage() {
               size="sm"
               disabled={!passwordForm.currentPassword || !passwordForm.newPassword || passwordForm.newPassword !== passwordForm.confirmPassword}
               onClick={() => handleSavePassword(passwordForm.currentPassword, passwordForm.newPassword)}
-              className="rounded-xl text-xs h-9 font-semibold"
+              className="rounded-md text-xs h-9 font-semibold"
             >
               Update Password
             </Button>

@@ -1,54 +1,5 @@
 "use client";
 
-import * as React from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import {
-  Users,
-  ArrowLeft,
-  UserCheck,
-  UserX,
-  Lock,
-  Unlock,
-  Mail,
-  RotateCcw,
-  Edit,
-  Building2,
-  Shield,
-  Key,
-  Calendar,
-  Activity,
-  LogOut,
-  Save,
-  AlertTriangle,
-  ExternalLink,
-  Plus,
-  Clock,
-  Sparkles,
-  Copy,
-  Check,
-  Phone,
-  Briefcase,
-  Hash,
-  Layers,
-  ChevronRight,
-  ShieldCheck,
-  UserCog,
-  History,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -59,50 +10,66 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { PageBarActions, usePageBarDispatch } from "@/components/ui/layouts/page-bar-context";
-import {
-  useUserDetail,
-  useEffectivePermissions,
-  useUserRoles,
-  useUserScopes,
-  useUserDelegations,
-  useUserSessions,
-  useDeactivateUser,
-  useReactivateUser,
-  useUnlockUser,
-  useInviteUser,
-  useResetPassword,
-  useRevokeUserSessions,
-  useAssignRole,
-  useRevokeRole,
-  useAssignScope,
-  useRevokeScope,
-} from "@/hooks/useAuthorization";
-import { usePermission } from "@/hooks/usePermission";
-import { UserStatusBadge, computeUserStatus } from "@/components/users/UserStatusBadge";
-import { RoleChip } from "@/components/users/RoleChip";
-import { UserRolesSection, StagedRoleState } from "@/components/users/UserRolesSection";
-import { UserScopeSection, StagedScopeState } from "@/components/users/UserScopeSection";
-import { UserPermissionsList } from "@/components/users/UserPermissionsList";
-import { UserDelegationsPanel } from "@/components/users/UserDelegationsPanel";
-import { UserActivityTimeline } from "@/components/users/UserActivityTimeline";
 import { AddOverrideDialog } from "@/components/users/AddOverrideDialog";
 import { CreateDelegationDialog } from "@/components/users/CreateDelegationDialog";
 import { EditUserDialog } from "@/components/users/EditUserDialog";
+import { ForceChangePasswordDialog } from "@/components/users/ForceChangePasswordDialog";
+import { UserActivityTimeline } from "@/components/users/UserActivityTimeline";
+import { UserDelegationsPanel } from "@/components/users/UserDelegationsPanel";
+import { UserPanelCard, UserPanelRow } from "@/components/users/UserPanelCard";
+import { UserPermissionsList } from "@/components/users/UserPermissionsList";
+import { UserProfileCard } from "@/components/users/UserProfileCard";
+import { StagedRoleState, UserRolesSection } from "@/components/users/UserRolesSection";
+import { StagedScopeState, UserScopeSection } from "@/components/users/UserScopeSection";
+import { computeUserStatus } from "@/components/users/UserStatusBadge";
+import {
+  useAssignRole,
+  useAssignScope,
+  useDeactivateUser,
+  useEffectivePermissions,
+  useInviteUser,
+  useReactivateUser,
+  useResetPassword,
+  useRevokeRole,
+  useRevokeScope,
+  useRevokeUserSessions,
+  useUnlockUser,
+  useUserDelegations,
+  useUserDetail,
+  useUserRoles,
+  useUserScopes,
+  useUserSessions,
+} from "@/hooks/useAuthorization";
+import { usePermission } from "@/hooks/usePermission";
 import {
   getPlainErrorMessage,
-  getRoleDisplayName,
-  getRoleExplanation,
-  getScopeLevelDisplayName,
-  SCOPE_LEVEL_DEFINITIONS,
+  SCOPE_LEVEL_DEFINITIONS
 } from "@/lib/constants/user-admin.constants";
 import {
+  IDelegationDto,
   IUserRoleAssignmentDto,
   IUserScopeAssignmentDto,
-  IDelegationDto,
 } from "@/lib/types/authorization.types";
-import { toast } from "sonner";
 import { format, formatDistanceToNow } from "date-fns";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  ChevronRight,
+  Edit,
+  Lock,
+  LogOut,
+  RotateCcw,
+  Save,
+  Users
+} from "lucide-react";
+import Link from "next/link";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import * as React from "react";
+import { toast } from "sonner";
 
 const EMPTY_ROLES: IUserRoleAssignmentDto[] = [];
 const EMPTY_SCOPES: IUserScopeAssignmentDto[] = [];
@@ -134,12 +101,12 @@ function UserDetailPageContent() {
   const [isEditOpen, setIsEditOpen] = React.useState(false);
   const [isAddOverrideOpen, setIsAddOverrideOpen] = React.useState(false);
   const [isCreateDelegationOpen, setIsCreateDelegationOpen] = React.useState(false);
+  const [isForceChangePasswordOpen, setIsForceChangePasswordOpen] = React.useState(false);
   const [copiedField, setCopiedField] = React.useState<string | null>(null);
 
-  // Immediate Action Dialogs
+  // Immediate Action Dialogs (Moved into UserProfileCard, only keeping unused state references to not break existing callbacks for now, will clean up)
   const [showDeactivateConfirm, setShowDeactivateConfirm] = React.useState(false);
   const [showResetPasswordConfirm, setShowResetPasswordConfirm] = React.useState(false);
-  const [showSignOutAllConfirm, setShowSignOutAllConfirm] = React.useState(false);
 
   // Tab Transition Guard State (§Part 5)
   const [pendingTabTransition, setPendingTabTransition] = React.useState<TabKey | null>(null);
@@ -190,8 +157,8 @@ function UserDetailPageContent() {
 
   const displayName = user
     ? user.profile?.displayName ||
-      `${user.profile?.firstName || ""} ${user.profile?.lastName || ""}`.trim() ||
-      user.username
+    `${user.profile?.firstName || ""} ${user.profile?.lastName || ""}`.trim() ||
+    user.username
     : "User Details";
 
   // Sync breadcrumb with application shell PageBar (§Part 2, 4, 5 of APP-SHELL-SPEC)
@@ -624,7 +591,6 @@ function UserDetailPageContent() {
 
   const handleConfirmSignOutAll = async () => {
     try {
-      setShowSignOutAllConfirm(false);
       await revokeSessionsMutation.mutateAsync(userId);
       toast.success(`Signed out everywhere for ${displayName}.`);
     } catch (err: any) {
@@ -646,11 +612,11 @@ function UserDetailPageContent() {
   if (isUserLoading) {
     return (
       <div className="p-6 space-y-6">
-        <div className="h-44 rounded-2xl bg-card/60 border border-border/60 animate-pulse" />
-        <div className="h-12 w-96 rounded-xl bg-card/60 border border-border/60 animate-pulse" />
+        <div className="h-44 rounded-md bg-card/60 border border-border/60 animate-pulse" />
+        <div className="h-12 w-96 rounded-md bg-card/60 border border-border/60 animate-pulse" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="h-64 rounded-2xl bg-card/60 border border-border/60 animate-pulse" />
-          <div className="h-64 rounded-2xl bg-card/60 border border-border/60 animate-pulse" />
+          <div className="h-64 rounded-md bg-card/60 border border-border/60 animate-pulse" />
+          <div className="h-64 rounded-md bg-card/60 border border-border/60 animate-pulse" />
         </div>
       </div>
     );
@@ -660,7 +626,7 @@ function UserDetailPageContent() {
   if (isUserError || !user) {
     return (
       <div className="p-16 max-w-md mx-auto text-center space-y-5">
-        <div className="size-16 rounded-2xl bg-muted/60 border border-border/80 flex items-center justify-center text-muted-foreground mx-auto shadow-xs">
+        <div className="size-16 rounded-md bg-muted/60 border border-border/80 flex items-center justify-center text-muted-foreground mx-auto shadow-xs">
           <Users className="size-8 text-muted-foreground/70" />
         </div>
         <div className="space-y-1.5">
@@ -669,7 +635,7 @@ function UserDetailPageContent() {
             The requested account could not be found or is no longer available in the organizational directory.
           </p>
         </div>
-        <Button asChild variant="outline" size="sm" className="gap-2 text-xs rounded-xl h-9">
+        <Button asChild variant="outline" size="sm" className="gap-2 text-xs rounded-md h-9">
           <Link href="/app/administration/users">
             <ArrowLeft className="size-3.5" />
             Back to people list
@@ -719,7 +685,7 @@ function UserDetailPageContent() {
                 size="sm"
                 onClick={handleDiscardCurrentTab}
                 disabled={isSaving}
-                className="h-9 text-xs rounded-xl cursor-pointer"
+                className="h-9 text-xs rounded-md cursor-pointer"
               >
                 Cancel
               </Button>
@@ -728,7 +694,7 @@ function UserDetailPageContent() {
                 size="sm"
                 onClick={handleSaveCurrentTab}
                 disabled={isSaving}
-                className="h-9 text-xs rounded-xl shadow-xs gap-1.5 font-semibold cursor-pointer"
+                className="h-9 text-xs rounded-md shadow-xs gap-1.5 font-semibold cursor-pointer"
               >
                 <Save className="size-3.5" />
                 {isSaving ? "Saving..." : "Save changes"}
@@ -742,7 +708,7 @@ function UserDetailPageContent() {
               variant="outline"
               size="sm"
               onClick={() => setIsEditOpen(true)}
-              className="h-9 text-xs rounded-xl gap-1.5 cursor-pointer font-medium"
+              className="h-9 text-xs rounded-md gap-1.5 cursor-pointer font-medium"
             >
               <Edit className="size-3.5 text-muted-foreground" />
               Edit profile
@@ -751,628 +717,256 @@ function UserDetailPageContent() {
         </div>
       </PageBarActions>
 
-      {/* Hero Identity Banner Block */}
-      <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-b from-card/90 via-card/60 to-background/80 p-6 md:p-7 shadow-xs backdrop-blur-sm">
-        {/* Subtle decorative glow */}
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-72 h-72 rounded-full bg-primary/5 blur-3xl pointer-events-none" />
+      {/* Main Grid Layout (Part 1) */}
+      <div className="grid grid-cols-1 min-[1100px]:grid-cols-[340px_1fr] gap-6 items-start">
+        {/* Left Column: Profile Card */}
+        <UserProfileCard
+          user={user}
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+          counts={{
+            roles: activeRolesCount,
+            access: activeScopesCount,
+            permissions: permissionsCount,
+            delegations: delegationsCount,
+            sessions: activeSessionCount,
+          }}
+          primaryRoleCode={primaryRoleCode}
+          onDeactivate={handleConfirmDeactivate}
+          onResetPassword={handleConfirmResetPassword}
+          onForceChangePassword={() => setIsForceChangePasswordOpen(true)}
+          onSignOutAll={handleConfirmSignOutAll}
+        />
 
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-start md:items-center gap-5 min-w-0">
-            {/* Avatar with status beacon */}
-            <div className="relative shrink-0">
-              <Avatar className="size-16 border-2 border-primary/20 shadow-sm ring-4 ring-primary/5">
-                <AvatarFallback className="text-xl font-bold bg-primary/10 text-primary font-display">
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
-              <span
-                className={`absolute bottom-0 right-0 size-3.5 rounded-full border-2 border-card shadow-xs ${
-                  isActive
-                    ? "bg-emerald-500"
-                    : isLocked
-                    ? "bg-rose-500"
-                    : isInvited
-                    ? "bg-sky-500"
-                    : "bg-zinc-400"
-                }`}
-                title={userStatus}
-              />
-            </div>
+        {/* Right Column: Tab Content */}
+        <div className="min-w-0">
+          <div className="space-y-6">
 
-            <div className="space-y-2 min-w-0">
-              {/* Title & Badges */}
-              <div className="flex flex-wrap items-center gap-2.5">
-                <h1 className="text-2xl font-bold tracking-tight text-foreground font-display truncate">
-                  {displayName}
-                </h1>
-                {primaryRoleCode && <RoleChip roleCode={primaryRoleCode} />}
-                <UserStatusBadge user={user} />
-                <Badge
-                  variant="outline"
-                  className={
-                    user.userType === "VENDOR"
-                      ? "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/30 text-xs font-semibold rounded-lg"
-                      : "bg-muted/70 text-muted-foreground text-xs font-medium rounded-lg"
+
+            {/* Tab 1: Overview */}
+            {activeTab === "overview" && (
+              <div className="space-y-6 animate-in fade-in-30">
+
+                {/* Recent Activity */}
+                <UserPanelCard
+                  title="Recent activity"
+                  headerAction={
+                    <button
+                      type="button"
+                      className="text-primary hover:underline text-[13px] font-medium flex items-center gap-1"
+                      onClick={() => handleTabChange("activity")}
+                    >
+                      See all <ChevronRight className="size-3" />
+                    </button>
                   }
                 >
-                  {user.userType === "VENDOR" ? "Vendor" : "Staff"}
-                </Badge>
-              </div>
-
-              {/* Contact & Placement Metadata Chips */}
-              <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1.5 text-xs text-muted-foreground">
-                <div className="flex items-center gap-1.5 font-mono">
-                  <Mail className="size-3.5 text-muted-foreground/70" />
-                  <span className="text-foreground/90">{user.email}</span>
-                  <button
-                    type="button"
-                    onClick={() => copyToClipboard(user.email, "email")}
-                    className="hover:text-foreground p-0.5 text-muted-foreground/60 transition-colors"
-                    title="Copy email"
-                  >
-                    {copiedField === "email" ? (
-                      <Check className="size-3 text-emerald-500" />
-                    ) : (
-                      <Copy className="size-3" />
-                    )}
-                  </button>
-                </div>
-
-                <span className="text-muted-foreground/30">•</span>
-
-                <div className="flex items-center gap-1.5 font-mono text-muted-foreground">
-                  <span>@{user.username}</span>
-                </div>
-
-                {user.profile?.employeeId && (
-                  <>
-                    <span className="text-muted-foreground/30">•</span>
-                    <div className="flex items-center gap-1.5 font-mono">
-                      <Hash className="size-3.5 text-muted-foreground/70" />
-                      <span>{user.profile.employeeId}</span>
-                    </div>
-                  </>
-                )}
-
-                {user.profile?.departmentName && (
-                  <>
-                    <span className="text-muted-foreground/30">•</span>
-                    <div className="flex items-center gap-1.5">
-                      <Building2 className="size-3.5 text-muted-foreground/70" />
-                      <span className="text-foreground/80 font-medium">
-                        {user.profile.departmentName}
+                  <UserPanelRow>
+                    <div className="flex items-center gap-3">
+                      <span className="w-[120px] text-muted-foreground font-medium shrink-0">
+                        {user.createdAt ? format(new Date(user.createdAt), "d MMM yyyy") : "—"}
                       </span>
+                      <span className="text-foreground">Account created</span>
                     </div>
-                  </>
-                )}
+                  </UserPanelRow>
+                  {user.updatedAt && user.updatedAt !== user.createdAt && (
+                    <UserPanelRow>
+                      <div className="flex items-center gap-3">
+                        <span className="w-[120px] text-muted-foreground font-medium shrink-0">
+                          {format(new Date(user.updatedAt), "d MMM yyyy")}
+                        </span>
+                        <span className="text-foreground">Profile or security settings updated</span>
+                      </div>
+                    </UserPanelRow>
+                  )}
+                  {!!user.failedLoginCount && user.failedLoginCount > 0 && (
+                    <UserPanelRow>
+                      <div className="flex items-center gap-3 text-rose-600">
+                        <span className="w-[120px] text-rose-600/70 font-medium shrink-0">
+                          Recent
+                        </span>
+                        <span className="font-medium">Failed sign-in attempt</span>
+                      </div>
+                    </UserPanelRow>
+                  )}
+                </UserPanelCard>
+
+                {/* Account */}
+                <UserPanelCard title="Account">
+                  <UserPanelRow>
+                    <span className="text-muted-foreground w-1/3">Status</span>
+                    <div className="w-2/3 flex items-center gap-2">
+                      {computeUserStatus(user) === "ACTIVE" && <span className="flex items-center gap-2 font-medium"><span className="size-2 rounded-full bg-emerald-500" />Active</span>}
+                      {computeUserStatus(user) === "LOCKED" && <span className="flex items-center gap-2 font-medium text-rose-600"><span className="size-2 rounded-full bg-rose-500" />Locked out</span>}
+                      {computeUserStatus(user) === "INVITED" && <span className="flex items-center gap-2 font-medium text-sky-600"><span className="size-2 rounded-full bg-sky-500" />Hasn&apos;t signed in yet</span>}
+                      {computeUserStatus(user) === "INACTIVE" && <span className="flex items-center gap-2 font-medium text-muted-foreground"><span className="size-2 rounded-full bg-muted-foreground" />Access turned off</span>}
+                    </div>
+                  </UserPanelRow>
+                  <UserPanelRow>
+                    <span className="text-muted-foreground w-1/3">Last signed in</span>
+                    <span className="w-2/3 text-foreground font-medium">
+                      Never
+                    </span>
+                  </UserPanelRow>
+                  <UserPanelRow>
+                    <span className="text-muted-foreground w-1/3">Invitation</span>
+                    <span className="w-2/3 text-foreground font-medium">
+                      {user.createdAt ? `Sent ${format(new Date(user.createdAt), "d MMM yyyy")}` : "—"}
+                    </span>
+                  </UserPanelRow>
+                  {computeUserStatus(user) === "LOCKED" && (
+                    <UserPanelRow className="bg-rose-50/50 dark:bg-rose-950/20 border-t-0 shadow-[inset_0_1px_0_theme(colors.rose.200)] dark:shadow-[inset_0_1px_0_theme(colors.rose.900/60)]">
+                      <span className="text-rose-700 dark:text-rose-400 w-1/3 font-medium">Lockout state</span>
+                      <span className="w-2/3 font-medium flex items-center gap-2 text-rose-700 dark:text-rose-400">
+                        <Lock className="size-3.5" />
+                        Locked after {user.failedLoginCount || 5} failed sign-in attempts
+                        {canManageActive && (
+                          <button
+                            type="button"
+                            onClick={handleUnlock}
+                            disabled={unlockMutation.isPending}
+                            className="ml-auto underline hover:no-underline text-rose-600 dark:text-rose-400 cursor-pointer disabled:opacity-50"
+                          >
+                            {unlockMutation.isPending ? "Unlocking..." : "Unlock account"}
+                          </button>
+                        )}
+                      </span>
+                    </UserPanelRow>
+                  )}
+                </UserPanelCard>
+
+                {/* Details */}
+                <UserPanelCard
+                  title="Details"
+                  headerAction={
+                    can("USER.UPDATE") ? (
+                      <button
+                        type="button"
+                        className="text-primary hover:underline text-[13px] font-medium flex items-center gap-1 cursor-pointer"
+                        onClick={() => setIsEditOpen(true)}
+                      >
+                        <Edit className="size-3" /> Edit
+                      </button>
+                    ) : null
+                  }
+                >
+                  <UserPanelRow>
+                    <span className="text-muted-foreground w-1/3">Full Name</span>
+                    <span className="w-2/3 text-foreground font-medium">{displayName}</span>
+                  </UserPanelRow>
+                  <UserPanelRow>
+                    <span className="text-muted-foreground w-1/3">Username</span>
+                    <span className="w-2/3 text-foreground font-medium font-mono">@{user.username}</span>
+                  </UserPanelRow>
+                  <UserPanelRow>
+                    <span className="text-muted-foreground w-1/3">Email</span>
+                    <span className="w-2/3 text-foreground font-medium font-mono">{user.email}</span>
+                  </UserPanelRow>
+                  <UserPanelRow>
+                    <span className="text-muted-foreground w-1/3">Job Title</span>
+                    <span className="w-2/3 text-foreground font-medium">{user.profile?.jobTitle || "—"}</span>
+                  </UserPanelRow>
+                  <UserPanelRow>
+                    <span className="text-muted-foreground w-1/3">Department</span>
+                    <span className="w-2/3 text-foreground font-medium">{user.profile?.departmentName || "—"}</span>
+                  </UserPanelRow>
+                  <UserPanelRow>
+                    <span className="text-muted-foreground w-1/3">User Type</span>
+                    <span className="w-2/3 text-foreground font-medium flex items-center gap-2">
+                      {user.userType === "VENDOR" ? (
+                        <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-300">Vendor</Badge>
+                      ) : (
+                        "Staff"
+                      )}
+                    </span>
+                  </UserPanelRow>
+                </UserPanelCard>
               </div>
-            </div>
-          </div>
-        </div>
+            )}
 
-        {/* Quick KPI Overview Bar */}
-        <div className="mt-6 pt-4 border-t border-border/50 grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-3.5 rounded-xl bg-background/50 border border-border/50 space-y-1 shadow-2xs hover:bg-background/80 transition-colors">
-            <div className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
-              <Shield className="size-3.5 text-primary" />
-              <span>Roles</span>
-            </div>
-            <div className="text-sm font-semibold text-foreground truncate">
-              {activeRolesCount === 0 ? (
-                <span className="text-amber-600 dark:text-amber-400 font-normal">No role assigned</span>
-              ) : (
-                <span>
-                  {getRoleDisplayName(primaryRoleCode || "ROLE")}
-                  {activeRolesCount > 1 && ` +${activeRolesCount - 1}`}
-                </span>
-              )}
-            </div>
-          </div>
+            {/* Tab 2: Roles (§Part 3.5) */}
+            {user.userType !== "VENDOR" && activeTab === "roles" && (
+              <div className="space-y-6 animate-in fade-in-30">
+                <Card className="border-border/70 shadow-xs bg-card/80 backdrop-blur-sm rounded-md">
+                  <CardContent className="pt-6">
+                    <UserRolesSection
+                      user={user}
+                      serverRoles={serverRoles}
+                      stagedRoles={stagedRoles}
+                      onToggleRole={handleToggleRole}
+                      onUpdateRoleDates={handleUpdateRoleDates}
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+            )}
 
-          <div className="p-3.5 rounded-xl bg-background/50 border border-border/50 space-y-1 shadow-2xs hover:bg-background/80 transition-colors">
-            <div className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
-              <Building2 className="size-3.5 text-primary" />
-              <span>Access Scope</span>
-            </div>
-            <div className="text-sm font-semibold text-foreground truncate">
-              {getScopeLevelDisplayName(primaryScope?.scopeCode)}
-            </div>
-          </div>
+            {/* Tab 3: Access (§Part 3.6 — "What they can see") */}
+            {user.userType !== "VENDOR" && activeTab === "access" && (
+              <div className="space-y-6 animate-in fade-in-30">
+                <Card className="border-border/70 shadow-xs bg-card/80 backdrop-blur-sm rounded-md">
+                  <CardContent className="pt-6">
+                    <UserScopeSection
+                      user={user}
+                      serverScopes={serverScopes}
+                      stagedScope={stagedScope}
+                      onChangeScope={setStagedScope}
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+            )}
 
-          <div className="p-3.5 rounded-xl bg-background/50 border border-border/50 space-y-1 shadow-2xs hover:bg-background/80 transition-colors">
-            <div className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
-              <Key className="size-3.5 text-primary" />
-              <span>Permissions</span>
-            </div>
-            <div className="text-sm font-semibold text-foreground">
-              {permissionsCount} {permissionsCount === 1 ? "permission" : "permissions"}
-            </div>
-          </div>
+            {/* Tab 4: Permissions (§Part 3.7 — Full Audit View) */}
+            {activeTab === "permissions" && (
+              <div className="space-y-6 animate-in fade-in-30">
+                <UserPermissionsList
+                  userId={userId}
+                  effectiveData={effectivePerms}
+                  isLoading={isPermsLoading}
+                  onOpenOverrideDialog={() => setIsAddOverrideOpen(true)}
+                />
+              </div>
+            )}
 
-          <div className="p-3.5 rounded-xl bg-background/50 border border-border/50 space-y-1 shadow-2xs hover:bg-background/80 transition-colors">
-            <div className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
-              <Users className="size-3.5 text-primary" />
-              <span>Delegations</span>
-            </div>
-            <div className="text-sm font-semibold text-foreground">
-              {delegationsCount > 0 ? (
-                <span className="text-emerald-600 dark:text-emerald-400 font-medium">
-                  {delegationsCount} active arrangement{delegationsCount !== 1 ? "s" : ""}
-                </span>
-              ) : (
-                <span className="text-muted-foreground font-normal">Direct authority only</span>
-              )}
-            </div>
+            {/* Tab 5: Standing in (§Part 3.8) */}
+            {activeTab === "delegations" && (
+              <div className="space-y-6 animate-in fade-in-30">
+                <UserDelegationsPanel
+                  userId={userId}
+                  userName={displayName}
+                  delegations={delegations}
+                  onOpenCreateDialog={() => setIsCreateDelegationOpen(true)}
+                />
+              </div>
+            )}
+
+            {/* Tab 6: Activity */}
+            {activeTab === "activity" && (
+              <div className="space-y-6 animate-in fade-in-30">
+                <UserActivityTimeline
+                  userId={userId}
+                  createdAt={user.createdAt}
+                  updatedAt={user.updatedAt}
+                  failedLoginCount={user.failedLoginCount}
+                  lockedUntil={user.lockedUntil}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Modern Underline Tabs Navigation */}
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-        <TabsList className="w-full justify-start rounded-none border-b border-border/80 bg-transparent p-0 h-auto gap-7 flex-wrap">
-          <TabsTrigger
-            value="overview"
-            className="group rounded-none border-b-2 border-transparent px-1 pb-3 pt-2 text-sm font-medium text-muted-foreground hover:text-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none bg-transparent shadow-none transition-all flex items-center gap-2 cursor-pointer"
-          >
-            <UserCog className="size-4" />
-            <span>Overview</span>
-          </TabsTrigger>
-
-          {user.userType !== "VENDOR" && (
-            <TabsTrigger
-              value="roles"
-              className="group rounded-none border-b-2 border-transparent px-1 pb-3 pt-2 text-sm font-medium text-muted-foreground hover:text-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none bg-transparent shadow-none transition-all flex items-center gap-2 cursor-pointer"
-            >
-              <Shield className="size-4" />
-              <span>Roles</span>
-              <span className="text-[11px] font-mono px-1.5 py-0.5 rounded-full bg-muted group-data-[state=active]:bg-primary/10 group-data-[state=active]:text-primary text-muted-foreground font-semibold">
-                {activeRolesCount}
-              </span>
-            </TabsTrigger>
-          )}
-
-          {user.userType !== "VENDOR" && (
-            <TabsTrigger
-              value="access"
-              className="group rounded-none border-b-2 border-transparent px-1 pb-3 pt-2 text-sm font-medium text-muted-foreground hover:text-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none bg-transparent shadow-none transition-all flex items-center gap-2 cursor-pointer"
-            >
-              <Building2 className="size-4" />
-              <span>Access Scope</span>
-              <span className="text-[11px] font-mono px-1.5 py-0.5 rounded-full bg-muted group-data-[state=active]:bg-primary/10 group-data-[state=active]:text-primary text-muted-foreground font-semibold">
-                {activeScopesCount}
-              </span>
-            </TabsTrigger>
-          )}
-
-          <TabsTrigger
-            value="permissions"
-            className="group rounded-none border-b-2 border-transparent px-1 pb-3 pt-2 text-sm font-medium text-muted-foreground hover:text-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none bg-transparent shadow-none transition-all flex items-center gap-2 cursor-pointer"
-          >
-            <Key className="size-4" />
-            <span>Permissions</span>
-            <span className="text-[11px] font-mono px-1.5 py-0.5 rounded-full bg-muted group-data-[state=active]:bg-primary/10 group-data-[state=active]:text-primary text-muted-foreground font-semibold">
-              {permissionsCount}
-            </span>
-          </TabsTrigger>
-
-          <TabsTrigger
-            value="delegations"
-            className="group rounded-none border-b-2 border-transparent px-1 pb-3 pt-2 text-sm font-medium text-muted-foreground hover:text-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none bg-transparent shadow-none transition-all flex items-center gap-2 cursor-pointer"
-          >
-            <Users className="size-4" />
-            <span>Delegations</span>
-            {delegationsCount > 0 && (
-              <span className="text-[11px] font-mono px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold">
-                {delegationsCount}
-              </span>
-            )}
-          </TabsTrigger>
-
-          <TabsTrigger
-            value="activity"
-            className="group rounded-none border-b-2 border-transparent px-1 pb-3 pt-2 text-sm font-medium text-muted-foreground hover:text-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none bg-transparent shadow-none transition-all flex items-center gap-2 cursor-pointer"
-          >
-            <Activity className="size-4" />
-            <span>Activity</span>
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Tab 1: Overview (Bento Grid) */}
-        <TabsContent value="overview" className="space-y-6 animate-in fade-in-30">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Bento Card 1: Personal & Contact Profile */}
-            <Card className="border-border/70 shadow-xs bg-card/80 backdrop-blur-sm rounded-2xl">
-              <CardHeader className="pb-3.5 border-b border-border/50">
-                <CardTitle className="text-base font-semibold font-display flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <UserCog className="size-4 text-primary" />
-                    <span>Personal Profile</span>
-                  </div>
-                  {can("USER.UPDATE") && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setIsEditOpen(true)}
-                      className="h-7 text-xs px-2.5 gap-1.5 text-muted-foreground hover:text-foreground rounded-lg"
-                    >
-                      <Edit className="size-3" />
-                      Edit
-                    </Button>
-                  )}
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Identity attributes and contact information.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-4 space-y-3.5 text-xs">
-                <div className="flex items-center justify-between py-1.5 border-b border-border/30">
-                  <span className="text-muted-foreground flex items-center gap-2">
-                    <UserCog className="size-3.5 text-muted-foreground/70" />
-                    Full Name
-                  </span>
-                  <span className="font-semibold text-foreground">{displayName}</span>
-                </div>
-
-                <div className="flex items-center justify-between py-1.5 border-b border-border/30">
-                  <span className="text-muted-foreground flex items-center gap-2">
-                    <Hash className="size-3.5 text-muted-foreground/70" />
-                    Username
-                  </span>
-                  <span className="font-mono text-foreground font-medium">@{user.username}</span>
-                </div>
-
-                <div className="flex items-center justify-between py-1.5 border-b border-border/30">
-                  <span className="text-muted-foreground flex items-center gap-2">
-                    <Mail className="size-3.5 text-muted-foreground/70" />
-                    Email Address
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-foreground font-medium">{user.email}</span>
-                    <button
-                      type="button"
-                      onClick={() => copyToClipboard(user.email, "email")}
-                      className="hover:text-foreground text-muted-foreground/60 transition-colors"
-                      title="Copy email"
-                    >
-                      {copiedField === "email" ? (
-                        <Check className="size-3 text-emerald-500" />
-                      ) : (
-                        <Copy className="size-3" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between py-1.5 border-b border-border/30">
-                  <span className="text-muted-foreground flex items-center gap-2">
-                    <Briefcase className="size-3.5 text-muted-foreground/70" />
-                    Job Title
-                  </span>
-                  <span className="text-foreground font-medium">{user.profile?.jobTitle || "—"}</span>
-                </div>
-
-                <div className="flex items-center justify-between py-1.5 border-b border-border/30">
-                  <span className="text-muted-foreground flex items-center gap-2">
-                    <Phone className="size-3.5 text-muted-foreground/70" />
-                    Phone Number
-                  </span>
-                  <span className="text-foreground font-medium">{user.profile?.phoneNumber || "—"}</span>
-                </div>
-
-                <div className="flex items-center justify-between py-1.5">
-                  <span className="text-muted-foreground flex items-center gap-2">
-                    <Hash className="size-3.5 text-muted-foreground/70" />
-                    Employee ID
-                  </span>
-                  <span className="font-mono text-foreground font-medium">{user.profile?.employeeId || "—"}</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Bento Card 2: Organizational Tree Placement */}
-            <Card className="border-border/70 shadow-xs bg-card/80 backdrop-blur-sm rounded-2xl">
-              <CardHeader className="pb-3.5 border-b border-border/50">
-                <CardTitle className="text-base font-semibold font-display flex items-center gap-2.5">
-                  <Building2 className="size-4 text-primary" />
-                  <span>Organizational Placement</span>
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Position within the corporate hierarchy.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-5 space-y-4 text-xs">
-                {/* Visual Tree Connector */}
-                <div className="relative pl-6 space-y-4 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-border/60">
-                  {/* Org */}
-                  <div className="relative flex items-center justify-between">
-                    <div className="absolute -left-6 size-5 rounded-full bg-card border-2 border-primary/40 flex items-center justify-center">
-                      <span className="size-1.5 rounded-full bg-primary" />
-                    </div>
-                    <div>
-                      <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
-                        Organization
-                      </p>
-                      <p className="text-sm font-semibold text-foreground">
-                        {user.profile?.organizationName || "Dubai Integrated Economic Zones"}
-                      </p>
-                    </div>
-                    <Badge variant="outline" className="text-[10px] bg-muted/40 font-mono">
-                      DIEZ
-                    </Badge>
-                  </div>
-
-                  {/* Business Unit */}
-                  <div className="relative flex items-center justify-between">
-                    <div className="absolute -left-6 size-5 rounded-full bg-card border-2 border-border flex items-center justify-center">
-                      <span className="size-1.5 rounded-full bg-muted-foreground" />
-                    </div>
-                    <div>
-                      <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
-                        Business Unit
-                      </p>
-                      <p className="text-xs font-medium text-foreground">
-                        {user.profile?.businessUnitName || "—"}
-                      </p>
-                    </div>
-                    <Badge variant="outline" className="text-[10px] bg-muted/40 font-mono">
-                      BU
-                    </Badge>
-                  </div>
-
-                  {/* Department */}
-                  <div className="relative flex items-center justify-between">
-                    <div className="absolute -left-6 size-5 rounded-full bg-card border-2 border-primary flex items-center justify-center">
-                      <span className="size-1.5 rounded-full bg-primary" />
-                    </div>
-                    <div>
-                      <p className="text-[11px] uppercase tracking-wider text-primary font-semibold">
-                        Department
-                      </p>
-                      <p className="text-sm font-bold text-foreground">
-                        {user.profile?.departmentName || "—"}
-                      </p>
-                    </div>
-                    <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/30 font-mono">
-                      Dept
-                    </Badge>
-                  </div>
-
-                  {/* Section */}
-                  <div className="relative flex items-center justify-between">
-                    <div className="absolute -left-6 size-5 rounded-full bg-card border-2 border-border flex items-center justify-center">
-                      <span className="size-1.5 rounded-full bg-muted-foreground" />
-                    </div>
-                    <div>
-                      <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
-                        Section / Sub-team
-                      </p>
-                      <p className="text-xs font-medium text-foreground">
-                        {user.profile?.sectionName || "—"}
-                      </p>
-                    </div>
-                    <Badge variant="outline" className="text-[10px] bg-muted/40 font-mono">
-                      Section
-                    </Badge>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Bento Card 3: Security & Credentials Command */}
-          <Card className="border-border/70 shadow-xs bg-card/80 backdrop-blur-sm rounded-2xl">
-            <CardHeader className="pb-3.5 border-b border-border/50">
-              <CardTitle className="text-base font-semibold font-display flex items-center gap-2.5">
-                <ShieldCheck className="size-4 text-primary" />
-                <span>Security & Credentials</span>
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Manage sign-in status, lockout security, and active sessions.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-4 space-y-4">
-              {/* Account active Toggle Card */}
-              {canManageActive && (
-                <div className="p-4 rounded-xl border border-border/70 bg-background/60 flex items-center justify-between gap-4 shadow-2xs">
-                  <div className="space-y-1">
-                    <Label
-                      htmlFor="detail-account-active"
-                      className="font-semibold text-sm text-foreground cursor-pointer flex items-center gap-2"
-                    >
-                      <span>Account Active</span>
-                      {isActive ? (
-                        <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px]">
-                          Active
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border-zinc-500/20 text-[10px]">
-                          Turned off
-                        </Badge>
-                      )}
-                    </Label>
-                    <p className="text-xs text-muted-foreground">
-                      {isActive
-                        ? "This person can sign in and exercise their assigned operational capabilities."
-                        : "Access is turned off. This person cannot sign in."}
-                    </p>
-                  </div>
-                  <Switch
-                    id="detail-account-active"
-                    checked={isActive}
-                    onCheckedChange={handleToggleActive}
-                    disabled={deactivateMutation.isPending || reactivateMutation.isPending}
-                    className="cursor-pointer"
-                  />
-                </div>
-              )}
-
-              {/* Locked out alert */}
-              {isLocked && canUnlock && (
-                <div className="p-4 rounded-xl border border-rose-200 bg-rose-50/90 dark:border-rose-900/60 dark:bg-rose-950/30 flex items-center justify-between gap-3 shadow-2xs animate-in fade-in-50">
-                  <div className="flex items-start gap-3">
-                    <div className="size-8 rounded-lg bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center shrink-0 text-rose-600 dark:text-rose-400">
-                      <Lock className="size-4" />
-                    </div>
-                    <div className="space-y-0.5">
-                      <div className="font-semibold text-xs text-rose-900 dark:text-rose-200">
-                        Locked out
-                      </div>
-                      <p className="text-xs text-rose-800/90 dark:text-rose-400">
-                        Locked after {user.failedLoginCount || 5} failed sign-in attempts.
-                      </p>
-                    </div>
-                  </div>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleUnlock}
-                    disabled={unlockMutation.isPending}
-                    className="border-rose-300 text-rose-700 hover:bg-rose-100 dark:border-rose-800 dark:text-rose-300 dark:hover:bg-rose-900/50 text-xs h-8 shrink-0 gap-1.5 rounded-xl cursor-pointer"
-                  >
-                    <Unlock className="size-3.5" />
-                    {unlockMutation.isPending ? "Unlocking..." : "Unlock account"}
-                  </Button>
-                </div>
-              )}
-
-              {/* Hasn't signed in yet alert */}
-              {isInvited && canInvite && (
-                <div className="p-4 rounded-xl border border-sky-200 bg-sky-50/90 dark:border-sky-900/60 dark:bg-sky-950/30 flex items-center justify-between gap-3 shadow-2xs animate-in fade-in-50">
-                  <div className="flex items-start gap-3">
-                    <div className="size-8 rounded-lg bg-sky-100 dark:bg-sky-900/50 flex items-center justify-center shrink-0 text-sky-600 dark:text-sky-400">
-                      <Mail className="size-4" />
-                    </div>
-                    <div className="space-y-0.5">
-                      <div className="font-semibold text-xs text-sky-900 dark:text-sky-200">
-                        Hasn&apos;t signed in yet
-                      </div>
-                      <p className="text-xs text-sky-800/90 dark:text-sky-400">
-                        {invitationSentDate
-                          ? `Invitation sent ${invitationSentDate}.`
-                          : "Onboarding invitation has been dispatched to corporate email."}
-                      </p>
-                    </div>
-                  </div>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleResendInvite}
-                    disabled={inviteMutation.isPending}
-                    className="border-sky-300 text-sky-700 hover:bg-sky-100 dark:border-sky-800 dark:text-sky-300 dark:hover:bg-sky-900/50 text-xs h-8 shrink-0 gap-1.5 rounded-xl cursor-pointer"
-                  >
-                    <Mail className="size-3.5" />
-                    {inviteMutation.isPending ? "Sending..." : "Resend invitation"}
-                  </Button>
-                </div>
-              )}
-
-              {/* Action Buttons Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                {canResetPassword && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowResetPasswordConfirm(true)}
-                    disabled={resetPasswordMutation.isPending}
-                    className="w-full justify-start text-xs h-10 gap-2.5 text-foreground font-normal hover:bg-muted/80 rounded-xl cursor-pointer border-border/70"
-                  >
-                    <RotateCcw className="size-4 text-muted-foreground shrink-0" />
-                    <span>Ask them to set a new password</span>
-                  </Button>
-                )}
-
-                {canRevokeSessions && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowSignOutAllConfirm(true)}
-                    disabled={revokeSessionsMutation.isPending}
-                    className="w-full justify-start text-xs h-10 gap-2.5 text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30 border-border/70 font-normal rounded-xl cursor-pointer"
-                  >
-                    <LogOut className="size-4 shrink-0" />
-                    <span>
-                      Sign them out everywhere
-                      {activeSessionCount > 0 && ` (${activeSessionCount})`}
-                    </span>
-                  </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Tab 2: Roles (§Part 3.5) */}
-        {user.userType !== "VENDOR" && (
-          <TabsContent value="roles" className="space-y-6 animate-in fade-in-30">
-            <Card className="border-border/70 shadow-xs bg-card/80 backdrop-blur-sm rounded-2xl">
-              <CardContent className="pt-6">
-                <UserRolesSection
-                  user={user}
-                  serverRoles={serverRoles}
-                  stagedRoles={stagedRoles}
-                  onToggleRole={handleToggleRole}
-                  onUpdateRoleDates={handleUpdateRoleDates}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        )}
-
-        {/* Tab 3: Access (§Part 3.6 — "What they can see") */}
-        {user.userType !== "VENDOR" && (
-          <TabsContent value="access" className="space-y-6 animate-in fade-in-30">
-            <Card className="border-border/70 shadow-xs bg-card/80 backdrop-blur-sm rounded-2xl">
-              <CardContent className="pt-6">
-                <UserScopeSection
-                  user={user}
-                  serverScopes={serverScopes}
-                  stagedScope={stagedScope}
-                  onChangeScope={setStagedScope}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        )}
-
-        {/* Tab 4: What they can do (§Part 3.7 — Full Audit View) */}
-        <TabsContent value="permissions" className="space-y-6 animate-in fade-in-30">
-          <UserPermissionsList
-            userId={userId}
-            effectiveData={effectivePerms}
-            isLoading={isPermsLoading}
-            onOpenOverrideDialog={() => setIsAddOverrideOpen(true)}
+      {/* Confirmation & Modal Dialogs */}
+      {user && (
+        <>
+          <EditUserDialog open={isEditOpen} onOpenChange={setIsEditOpen} user={user} />
+          <ForceChangePasswordDialog
+            open={isForceChangePasswordOpen}
+            onOpenChange={setIsForceChangePasswordOpen}
+            user={user}
           />
-        </TabsContent>
-
-        {/* Tab 5: Standing in (§Part 3.8) */}
-        <TabsContent value="delegations" className="space-y-6 animate-in fade-in-30">
-          <UserDelegationsPanel
-            userId={userId}
-            userName={displayName}
-            delegations={delegations}
-            onOpenCreateDialog={() => setIsCreateDelegationOpen(true)}
-          />
-        </TabsContent>
-
-        {/* Tab 6: Activity */}
-        <TabsContent value="activity" className="space-y-6 animate-in fade-in-30">
-          <UserActivityTimeline
-            userId={userId}
-            createdAt={user.createdAt}
-            updatedAt={user.updatedAt}
-            failedLoginCount={user.failedLoginCount}
-            lockedUntil={user.lockedUntil}
-          />
-        </TabsContent>
-      </Tabs>
-
-      {/* Edit Profile Dialog */}
-      <EditUserDialog open={isEditOpen} onOpenChange={setIsEditOpen} user={user} />
+        </>
+      )}
 
       {/* Special Access Override Dialog */}
       <AddOverrideDialog
@@ -1392,7 +986,7 @@ function UserDetailPageContent() {
 
       {/* Confirmation Dialog: Turn off access */}
       <AlertDialog open={showDeactivateConfirm} onOpenChange={setShowDeactivateConfirm}>
-        <AlertDialogContent className="rounded-2xl">
+        <AlertDialogContent className="rounded-md">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2 text-rose-600 font-display">
               <AlertTriangle className="size-5 text-rose-600" />
@@ -1403,10 +997,10 @@ function UserDetailPageContent() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-md">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDeactivate}
-              className="bg-rose-600 hover:bg-rose-700 text-white shadow-xs rounded-xl"
+              className="bg-rose-600 hover:bg-rose-700 text-white shadow-xs rounded-md"
             >
               Turn off access
             </AlertDialogAction>
@@ -1416,7 +1010,7 @@ function UserDetailPageContent() {
 
       {/* Confirmation Dialog: Ask to set new password */}
       <AlertDialog open={showResetPasswordConfirm} onOpenChange={setShowResetPasswordConfirm}>
-        <AlertDialogContent className="rounded-2xl">
+        <AlertDialogContent className="rounded-md">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2 font-display">
               <RotateCcw className="size-5 text-primary" />
@@ -1427,41 +1021,19 @@ function UserDetailPageContent() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmResetPassword} className="shadow-xs rounded-xl">
+            <AlertDialogCancel className="rounded-md">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmResetPassword} className="shadow-xs rounded-md">
               Send password link
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Confirmation Dialog: Sign out everywhere */}
-      <AlertDialog open={showSignOutAllConfirm} onOpenChange={setShowSignOutAllConfirm}>
-        <AlertDialogContent className="rounded-2xl">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2 text-rose-600 font-display">
-              <LogOut className="size-5 text-rose-600" />
-              Sign them out everywhere?
-            </AlertDialogTitle>
-            <AlertDialogDescription className="leading-relaxed">
-              This will immediately invalidate all active sessions across browsers and devices for <strong className="text-foreground">{displayName}</strong>. They will need to sign in again.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmSignOutAll}
-              className="bg-rose-600 hover:bg-rose-700 text-white shadow-xs rounded-xl"
-            >
-              Sign out everywhere
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+
 
       {/* Unsaved Tab Transition Modal (§Part 5) */}
       <AlertDialog open={showTabUnsavedModal} onOpenChange={setShowTabUnsavedModal}>
-        <AlertDialogContent className="rounded-2xl">
+        <AlertDialogContent className="rounded-md">
           <AlertDialogHeader>
             <AlertDialogTitle className="font-display">
               Save your changes to {activeTab === "roles" ? "roles" : "access"} first?
@@ -1477,7 +1049,7 @@ function UserDetailPageContent() {
                 setShowTabUnsavedModal(false);
                 setPendingTabTransition(null);
               }}
-              className="rounded-xl"
+              className="rounded-md"
             >
               Stay
             </Button>
@@ -1491,7 +1063,7 @@ function UserDetailPageContent() {
                   setPendingTabTransition(null);
                 }
               }}
-              className="text-rose-600 hover:text-rose-700 rounded-xl"
+              className="text-rose-600 hover:text-rose-700 rounded-md"
             >
               Discard changes
             </Button>
@@ -1504,7 +1076,7 @@ function UserDetailPageContent() {
                   setPendingTabTransition(null);
                 }
               }}
-              className="shadow-xs rounded-xl"
+              className="shadow-xs rounded-md"
             >
               Save changes
             </Button>
@@ -1514,7 +1086,7 @@ function UserDetailPageContent() {
 
       {/* Dangerous Changes Confirmation Modal (§Part 4 & 5) */}
       <AlertDialog open={showDangerousRoleModal} onOpenChange={setShowDangerousRoleModal}>
-        <AlertDialogContent className="rounded-2xl">
+        <AlertDialogContent className="rounded-md">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2 text-rose-600 font-display">
               <AlertTriangle className="size-5 text-rose-600" />
@@ -1525,13 +1097,13 @@ function UserDetailPageContent() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-md">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={async () => {
                 setShowDangerousRoleModal(false);
                 await executeSave();
               }}
-              className="bg-rose-600 hover:bg-rose-700 text-white shadow-xs rounded-xl"
+              className="bg-rose-600 hover:bg-rose-700 text-white shadow-xs rounded-md"
             >
               Confirm and remove roles
             </AlertDialogAction>
@@ -1547,8 +1119,8 @@ export default function UserDetailPage() {
     <React.Suspense
       fallback={
         <div className="p-6 space-y-6 animate-pulse">
-          <div className="h-44 rounded-2xl bg-card/60 border border-border/60" />
-          <div className="h-12 w-96 rounded-xl bg-card/60 border border-border/60" />
+          <div className="h-44 rounded-md bg-card/60 border border-border/60" />
+          <div className="h-12 w-96 rounded-md bg-card/60 border border-border/60" />
         </div>
       }
     >

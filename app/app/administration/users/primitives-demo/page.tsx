@@ -114,7 +114,7 @@ export default function UserPrimitivesDemoPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-xl bg-muted/30 border">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-md bg-muted/30 border">
               <div className="space-y-1">
                 <span className="text-xs text-muted-foreground font-medium block">Active</span>
                 <UserStatusBadge status="ACTIVE" />
@@ -166,7 +166,7 @@ export default function UserPrimitivesDemoPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="p-4 rounded-xl bg-muted/30 border space-y-4">
+            <div className="p-4 rounded-md bg-muted/30 border space-y-4">
               {/* Size 56 */}
               <div className="flex items-center gap-4">
                 <UserAvatar name="Ahmed Al Mansouri" size={56} />
@@ -224,7 +224,7 @@ export default function UserPrimitivesDemoPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="p-4 rounded-xl bg-muted/30 border space-y-3">
+            <div className="p-4 rounded-md bg-muted/30 border space-y-3">
               <p className="text-xs text-muted-foreground">
                 Hover any chip below to inspect its plain explanation:
               </p>
@@ -383,7 +383,7 @@ export default function UserPrimitivesDemoPage() {
                 ))}
               </select>
 
-              <div className="md:col-span-2 p-3 rounded-xl border bg-rose-50/50 border-rose-200 dark:bg-rose-950/20 dark:border-rose-800 text-xs flex items-center gap-2.5">
+              <div className="md:col-span-2 p-3 rounded-md border bg-rose-50/50 border-rose-200 dark:bg-rose-950/20 dark:border-rose-800 text-xs flex items-center gap-2.5">
                 <AlertTriangle className="size-4 text-rose-600 shrink-0" />
                 <span className="font-medium text-rose-800 dark:text-rose-300">
                   {getPlainErrorMessage(selectedErrorCode)}
@@ -410,7 +410,7 @@ export default function UserPrimitivesDemoPage() {
                 ))}
               </select>
 
-              <div className="md:col-span-2 p-3 rounded-xl border bg-primary/5 border-primary/20 text-xs flex items-center justify-between gap-2.5">
+              <div className="md:col-span-2 p-3 rounded-md border bg-primary/5 border-primary/20 text-xs flex items-center justify-between gap-2.5">
                 <div className="flex items-center gap-2">
                   <Key className="size-4 text-primary shrink-0" />
                   <span className="font-semibold text-foreground">
@@ -443,7 +443,7 @@ export default function UserPrimitivesDemoPage() {
         onOpenPermissionsModal={() => toast.info("Opening full Permissions Audit Modal (§3.7)...")}
         onOpenActivityModal={() => toast.info("Opening Activity Trail...")}
       >
-        <div className="p-4 rounded-xl border bg-muted/20 space-y-2">
+        <div className="p-4 rounded-md border bg-muted/20 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-foreground">Slide-over Panel Slot Demo</span>
             <Button

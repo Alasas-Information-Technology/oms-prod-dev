@@ -44,7 +44,7 @@ export function ConcurrentSessionPolicyCard({ summary }: Props) {
   const autoRevoke = form.watch("autoRevokeOldestSession");
 
   return (
-    <Card className="rounded-2xl border-border/70 bg-card/70 backdrop-blur-xs shadow-xs">
+    <Card className="rounded-md border-border/70 bg-card/70 backdrop-blur-xs shadow-xs">
       <CardHeader className="pb-4 border-b border-border/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -68,7 +68,7 @@ export function ConcurrentSessionPolicyCard({ summary }: Props) {
 
       <CardContent className="pt-6 space-y-6">
         {/* Real-time System Load Pill */}
-        <div className="p-4 rounded-xl border border-border/70 bg-background/60 flex items-center justify-between shadow-2xs">
+        <div className="p-4 rounded-md border border-border/70 bg-background/60 flex items-center justify-between shadow-2xs">
           <div className="flex items-center gap-3">
             <div className="size-9 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
               <Activity className="size-4.5 animate-pulse" />
@@ -134,7 +134,7 @@ export function ConcurrentSessionPolicyCard({ summary }: Props) {
                   max={20}
                   {...field}
                   onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 1)}
-                  className="font-mono text-sm h-10 rounded-xl"
+                  className="font-mono text-sm h-10 rounded-md"
                 />
               </FormControl>
               <FormDescription className="text-xs">
@@ -159,7 +159,7 @@ export function ConcurrentSessionPolicyCard({ summary }: Props) {
                 <div
                   onClick={() => field.onChange(true)}
                   className={cn(
-                    "p-4 rounded-xl border cursor-pointer transition-all duration-150 space-y-2",
+                    "p-4 rounded-md border cursor-pointer transition-all duration-150 space-y-2",
                     field.value === true
                       ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-2xs"
                       : "border-border/70 hover:border-border hover:bg-muted/30"
@@ -192,7 +192,7 @@ export function ConcurrentSessionPolicyCard({ summary }: Props) {
                 <div
                   onClick={() => field.onChange(false)}
                   className={cn(
-                    "p-4 rounded-xl border cursor-pointer transition-all duration-150 space-y-2",
+                    "p-4 rounded-md border cursor-pointer transition-all duration-150 space-y-2",
                     field.value === false
                       ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-2xs"
                       : "border-border/70 hover:border-border hover:bg-muted/30"

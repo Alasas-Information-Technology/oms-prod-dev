@@ -3,22 +3,17 @@
 import * as React from "react";
 import { cn } from "@/components/ui/utils";
 import {
-  Building2,
   Lock,
-  AlertTriangle,
-  Info,
-  CheckCircle2,
-  Eye,
-  Layers,
-  Sparkles,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { OrgUnitPicker } from "@/components/organization/OrgUnitPicker";
 import { OrgUnitSummaryDto } from "@/lib/types/organization.types";
 import {
   SCOPE_LEVEL_DEFINITIONS,
-  ScopeLevelDefinition,
 } from "@/lib/constants/user-admin.constants";
 import {
   UserDetailDto,
@@ -28,6 +23,7 @@ import { usePermission } from "@/hooks/usePermission";
 import { useAuth } from "@/context/AuthContext";
 import { useScopeCoveragePreview } from "@/hooks/useAuthorization";
 import { useOrgUnits } from "@/hooks/useOrganization";
+import { UserPanelCard, UserPanelRow } from "@/components/users/UserPanelCard";
 
 export interface StagedScopeState {
   levelCode: "GLOBAL" | "ORGANIZATION" | "BUSINESS_UNIT" | "DEPARTMENT" | "SECTION" | "SELF_ONLY";
@@ -46,7 +42,6 @@ export interface UserScopeSectionProps {
 
 export function UserScopeSection({
   user,
-  serverScopes,
   stagedScope,
   onChangeScope,
   className,
@@ -54,6 +49,8 @@ export function UserScopeSection({
   const { can } = usePermission();
   const { user: currentAdmin } = useAuth();
   const canAssignScope = can("USER.SCOPE.ASSIGN");
+
+  const [isDepartmentsExpanded, setIsDepartmentsExpanded] = React.useState(false);
 
   // Calculate current admin's broadest scope level rank for Rule S4 filtering
   const currentAdminBroadestRank = React.useMemo(() => {
@@ -86,7 +83,6 @@ export function UserScopeSection({
     (l) => l.code === stagedScope.levelCode
   ) || SCOPE_LEVEL_DEFINITIONS[0];
 
-  // Live count preview from backend helper (§Part 3.6)
   const isTargetOrgUnitRequired =
     selectedLevelDef.code === "BUSINESS_UNIT" ||
     selectedLevelDef.code === "DEPARTMENT" ||
@@ -97,7 +93,7 @@ export function UserScopeSection({
     selectedLevelDef.code !== "SELF_ONLY" &&
     (!isTargetOrgUnitRequired || Boolean(stagedScope.orgUnitId));
 
-  const { data: coveragePreview, isLoading: isCoverageLoading } =
+  const { data: coveragePreview } =
     useScopeCoveragePreview(
       shouldFetchPreview ? selectedLevelDef.scopeDefinitionId : undefined,
       shouldFetchPreview ? (stagedScope.orgUnitId || undefined) : undefined,
@@ -106,64 +102,44 @@ export function UserScopeSection({
       }
     );
 
-  // Total departments fallback query if needed
   const { data: allUnitsData } = useOrgUnits({
     page: 1,
     pageSize: 100,
     isActive: true,
   });
 
-  const totalDeptsCount = React.useMemo(() => {
+  const allDepartments = React.useMemo(() => {
     const rawData = allUnitsData as any;
     const items: OrgUnitSummaryDto[] = Array.isArray(rawData?.data)
       ? rawData.data
       : Array.isArray(rawData)
       ? rawData
       : [];
-    if (!items.length) return 47;
-    // Count units of type 3 (Department)
-    const deptCount = items.filter((u) => u.orgUnitTypeId === 3).length;
-    return deptCount > 0 ? deptCount : (rawData?.meta?.total ?? rawData?.total ?? items.length);
+    return items.filter((u) => u.orgUnitTypeId === 3);
   }, [allUnitsData]);
 
-  // Compute live count text
   const liveCountSentence = React.useMemo(() => {
     if (selectedLevelDef.code === "GLOBAL") {
-      const count = coveragePreview?.accessibleOrgUnitsCount ?? totalDeptsCount;
+      const count = coveragePreview?.accessibleOrgUnitsCount ?? allDepartments.length;
       return `This gives access to ${count} departments.`;
     }
-
     if (selectedLevelDef.code === "SELF_ONLY") {
-      return "This gives access to 0 departments (only their own requests).";
+      return "This gives access to 0 departments.";
     }
-
     if (isTargetOrgUnitRequired) {
       if (!stagedScope.orgUnitId) {
-        const typeLabel =
-          selectedLevelDef.code === "BUSINESS_UNIT"
-            ? "business unit"
-            : selectedLevelDef.code === "DEPARTMENT"
-            ? "department"
-            : "section";
-        return `Select a ${typeLabel} to see accessible departments.`;
+        return `Select a unit to see accessible departments.`;
       }
-
-      if (isCoverageLoading) {
-        return "Calculating accessible departments...";
-      }
-
       const count = coveragePreview?.accessibleOrgUnitsCount ?? 1;
       return `This gives access to ${count} department${count === 1 ? "" : "s"}.`;
     }
-
     return "This gives access to 0 departments.";
   }, [
     selectedLevelDef.code,
     coveragePreview,
-    totalDeptsCount,
+    allDepartments.length,
     isTargetOrgUnitRequired,
     stagedScope.orgUnitId,
-    isCoverageLoading,
   ]);
 
   const handleLevelChange = (newLevelCode: string) => {
@@ -171,7 +147,7 @@ export function UserScopeSection({
     if (!targetDef) return;
 
     onChangeScope({
-      levelCode: targetDef.code,
+      levelCode: targetDef.code as any,
       scopeDefinitionId: targetDef.scopeDefinitionId,
       orgUnitId: targetDef.code === "SELF_ONLY" || targetDef.code === "GLOBAL" ? null : stagedScope.orgUnitId,
       orgUnitName: targetDef.code === "SELF_ONLY" || targetDef.code === "GLOBAL" ? null : stagedScope.orgUnitName,
@@ -186,104 +162,126 @@ export function UserScopeSection({
     });
   };
 
-  // Vendor users NEVER see this section at all (Rule V4)
   if (user.userType === "VENDOR") {
     return null;
   }
 
-  return (
-    <div id="access-section" className={cn("space-y-4 pt-2", className)}>
-      <div className="flex items-center justify-between border-b pb-2">
-        <h3 className="font-semibold text-sm text-foreground uppercase tracking-wider text-xs flex items-center gap-2">
-          <Building2 className="size-4 text-primary" />
-          What they can see
-        </h3>
-      </div>
+  // Generate mocked resolved list for display based on scope choice
+  const resolvedDepartmentsList = React.useMemo(() => {
+    if (selectedLevelDef.code === "SELF_ONLY") return [];
+    if (selectedLevelDef.code === "GLOBAL") return allDepartments;
+    if (stagedScope.orgUnitId && stagedScope.orgUnitName) {
+      if (selectedLevelDef.code === "DEPARTMENT") {
+        return [{ orgUnitId: stagedScope.orgUnitId, name: stagedScope.orgUnitName }];
+      }
+      return allDepartments.slice(0, coveragePreview?.accessibleOrgUnitsCount || 5);
+    }
+    return [];
+  }, [selectedLevelDef.code, allDepartments, stagedScope, coveragePreview]);
 
-      {/* Read-only notification if user lacks USER.SCOPE.ASSIGN */}
+  const departmentsToShow = isDepartmentsExpanded ? resolvedDepartmentsList : resolvedDepartmentsList.slice(0, 10);
+  const hiddenCount = resolvedDepartmentsList.length - 10;
+
+  return (
+    <div id="access-section" className={cn("space-y-6", className)}>
       {!canAssignScope && (
-        <div className="p-3 rounded-xl border bg-muted/40 text-xs text-muted-foreground flex items-center gap-2">
-          <Lock className="size-3.5 text-muted-foreground shrink-0" />
+        <div className="p-4 rounded-md border bg-muted/40 text-[13px] text-muted-foreground flex items-center gap-2">
+          <Lock className="size-4 text-muted-foreground shrink-0" />
           <span>Organizational visibility is managed by administrators with scope assignment authority.</span>
         </div>
       )}
 
-      {/* Level Selection Radio Group (§Part 3.6) */}
-      <RadioGroup
-        value={stagedScope.levelCode}
-        onValueChange={handleLevelChange}
-        disabled={!canAssignScope}
-        className="space-y-2.5"
-      >
-        {visibleLevels.map((level) => {
-          const isSelected = stagedScope.levelCode === level.code;
-          const radioId = `scope-level-${level.code.toLowerCase()}`;
-
-          return (
-            <div
-              key={level.code}
-              className={cn(
-                "flex items-start gap-3 p-3 rounded-lg border transition-colors",
-                isSelected
-                  ? "border-border/80 bg-card shadow-2xs"
-                  : "border-border/40 bg-muted/20 hover:bg-muted/40",
-                !canAssignScope && "cursor-default opacity-80"
-              )}
-            >
-              <RadioGroupItem
-                value={level.code}
-                id={radioId}
-                disabled={!canAssignScope}
-                className="mt-0.5"
-              />
-              <div className="flex-1 min-w-0 space-y-0.5">
-                <Label
-                  htmlFor={radioId}
-                  className={cn(
-                    "font-medium text-xs text-foreground select-none leading-none",
-                    canAssignScope && "cursor-pointer"
-                  )}
-                >
-                  {level.label}
-                </Label>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  {level.explanation}
-                </p>
-              </div>
-            </div>
-          );
-        })}
-      </RadioGroup>
-
-      {/* Which one — OrgUnitPicker (§Part 3.6) */}
-      {isTargetOrgUnitRequired && (
-        <div className="space-y-1.5 pt-2 animate-in fade-in-50">
-          <Label className="text-xs font-semibold text-foreground flex items-center justify-between">
-            <span>
-              Select {selectedLevelDef.label.toLowerCase().replace("one ", "")}
-            </span>
-            {stagedScope.orgUnitName && (
-              <span className="text-[11px] font-normal text-muted-foreground">
-                Current: <strong className="text-foreground">{stagedScope.orgUnitName}</strong>
-              </span>
-            )}
-          </Label>
-
-          <OrgUnitPicker
-            value={stagedScope.orgUnitId || undefined}
-            onChange={handleOrgUnitSelect}
-            filterType={selectedLevelDef.unitTypeId}
-            placeholder={`Choose ${selectedLevelDef.label.toLowerCase().replace("one ", "")}...`}
+      {/* What they can see Card */}
+      <UserPanelCard title="What they can see">
+        <div className="p-6">
+          <RadioGroup
+            value={stagedScope.levelCode}
+            onValueChange={handleLevelChange}
             disabled={!canAssignScope}
-          />
-        </div>
-      )}
+            className="space-y-3"
+          >
+            {visibleLevels.map((level) => {
+              const radioId = `scope-level-${level.code.toLowerCase()}`;
+              return (
+                <div key={level.code} className="flex items-start gap-3">
+                  <RadioGroupItem
+                    value={level.code}
+                    id={radioId}
+                    disabled={!canAssignScope}
+                    className="mt-0.5"
+                  />
+                  <div className="flex flex-col space-y-1">
+                    <Label
+                      htmlFor={radioId}
+                      className={cn(
+                        "font-medium text-[13px] text-foreground leading-none",
+                        canAssignScope && "cursor-pointer"
+                      )}
+                    >
+                      {level.label}
+                    </Label>
+                    <span className="text-xs text-muted-foreground">
+                      {level.explanation}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </RadioGroup>
 
-      {/* Live Department Access Count Banner (§Part 3.6) */}
-      <div className="mt-4 p-3 rounded-xl border border-primary/20 bg-primary/5 flex items-center gap-2.5 text-xs text-foreground">
-        <Sparkles className="size-4 text-primary shrink-0" />
-        <span className="font-semibold">{liveCountSentence}</span>
-      </div>
+          {isTargetOrgUnitRequired && (
+            <div className="mt-6 space-y-2 animate-in fade-in-50">
+              <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Select {selectedLevelDef.label.toLowerCase().replace("one ", "")}
+              </Label>
+              <OrgUnitPicker
+                value={stagedScope.orgUnitId || undefined}
+                onChange={handleOrgUnitSelect}
+                filterType={selectedLevelDef.unitTypeId}
+                placeholder={`Choose ${selectedLevelDef.label.toLowerCase().replace("one ", "")}...`}
+                disabled={!canAssignScope}
+              />
+            </div>
+          )}
+
+          <div className="mt-6 pt-4 border-t border-border/50 text-sm font-medium text-foreground">
+            {liveCountSentence}
+          </div>
+        </div>
+      </UserPanelCard>
+
+      {/* Departments included Card */}
+      <UserPanelCard title="Departments included">
+        {resolvedDepartmentsList.length === 0 ? (
+          <UserPanelRow>
+            <span className="text-muted-foreground italic">None</span>
+          </UserPanelRow>
+        ) : (
+          <>
+            {departmentsToShow.map((dept, idx) => (
+              <UserPanelRow key={dept.orgUnitId || idx}>
+                <span className="text-foreground">{dept.name}</span>
+              </UserPanelRow>
+            ))}
+            {hiddenCount > 0 && (
+              <UserPanelRow className="!min-h-12 bg-muted/20">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full text-xs text-muted-foreground hover:text-foreground"
+                  onClick={() => setIsDepartmentsExpanded(!isDepartmentsExpanded)}
+                >
+                  {isDepartmentsExpanded ? (
+                    <><ChevronUp className="size-3.5 mr-1.5" /> Show fewer</>
+                  ) : (
+                    <><ChevronDown className="size-3.5 mr-1.5" /> Show all {resolvedDepartmentsList.length} departments</>
+                  )}
+                </Button>
+              </UserPanelRow>
+            )}
+          </>
+        )}
+      </UserPanelCard>
     </div>
   );
 }

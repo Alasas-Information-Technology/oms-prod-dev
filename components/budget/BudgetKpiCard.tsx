@@ -46,7 +46,7 @@ export function BudgetKpiCard({ reserved, consumed }: BudgetKpiCardProps) {
   }, []);
 
   return (
-    <Card className="relative rounded-xl border bg-background p-5 shadow-sm overflow-hidden flex flex-col justify-between h-full">
+    <Card className="relative rounded-md border bg-background p-5 shadow-sm overflow-hidden flex flex-col justify-between h-full">
       {/* Skeleton layer */}
       <AnimatePresence>
         {loading && (

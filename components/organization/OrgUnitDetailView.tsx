@@ -273,8 +273,8 @@ export function OrgUnitDetailView({
         </div>
 
         <div className="space-y-4 pt-4">
-          <Skeleton className="h-48 rounded-xl" />
-          <Skeleton className="h-32 rounded-xl" />
+          <Skeleton className="h-48 rounded-md" />
+          <Skeleton className="h-32 rounded-md" />
         </div>
       </div>
     );
@@ -283,7 +283,7 @@ export function OrgUnitDetailView({
   // Error State: Genuine 404 (Part 6.5 & Vocabulary: Never say "Scope")
   if (isErrorUnit || !unit) {
     return (
-      <div className={cn("p-12 text-center flex flex-col items-center justify-center min-h-[450px] space-y-4 bg-card rounded-2xl border border-border", className)}>
+      <div className={cn("p-12 text-center flex flex-col items-center justify-center min-h-[450px] space-y-4 bg-card rounded-md border border-border", className)}>
         <div className="h-16 w-16 rounded-full bg-muted/60 flex items-center justify-center text-muted-foreground">
           <FileQuestion className="h-8 w-8 text-muted-foreground/60" />
         </div>
@@ -995,7 +995,7 @@ export function OrgUnitDetailView({
       {/* Dialogs: Edit, Add, Move, Remove                                         */}
       {/* ========================================================================= */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-2xl">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-md">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">Edit {typeName}</DialogTitle>
             <DialogDescription className="text-xs">
@@ -1012,7 +1012,7 @@ export function OrgUnitDetailView({
       </Dialog>
 
       <Dialog open={isAddChildOpen} onOpenChange={setIsAddChildOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-2xl">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-md">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">Add {childMeta.singularLabel}</DialogTitle>
             <DialogDescription className="text-xs">

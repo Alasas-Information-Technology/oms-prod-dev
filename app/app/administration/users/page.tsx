@@ -394,7 +394,7 @@ function PeopleListPageContent() {
     <div className="p-6 space-y-6 w-full">
       {/* 3-Tab Header Structure (§Part 1) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/80 pb-4">
-        <div className="flex items-center gap-1 bg-muted p-1 rounded-xl border">
+        <div className="flex items-center gap-1 bg-muted p-1 rounded-md border">
           {/* Tab 1: People */}
           <button
             type="button"

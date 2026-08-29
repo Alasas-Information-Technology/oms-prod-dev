@@ -152,7 +152,7 @@ export function BudgetRequestsSection({
             type="button"
             onClick={() => setSelectedType(selectedType === "UNBUDGETED" ? "ALL" : "UNBUDGETED")}
             className={cn(
-              "p-4 rounded-xl border text-left transition-all relative overflow-hidden cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
+              "p-4 rounded-md border text-left transition-all relative overflow-hidden cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
               selectedType === "UNBUDGETED"
                 ? "bg-primary/5 border-primary/40 shadow-none ring-1 ring-primary/20"
                 : "bg-card border-border/40 shadow-none hover:shadow-sm"
@@ -177,7 +177,7 @@ export function BudgetRequestsSection({
             type="button"
             onClick={() => setSelectedType(selectedType === "TOP_UP" ? "ALL" : "TOP_UP")}
             className={cn(
-              "p-4 rounded-xl border text-left transition-all relative overflow-hidden cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
+              "p-4 rounded-md border text-left transition-all relative overflow-hidden cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
               selectedType === "TOP_UP"
                 ? "bg-primary/5 border-primary/40 shadow-none ring-1 ring-primary/20"
                 : "bg-card border-border/40 shadow-none hover:shadow-sm"
@@ -202,7 +202,7 @@ export function BudgetRequestsSection({
             type="button"
             onClick={() => setSelectedType(selectedType === "AMENDMENT" ? "ALL" : "AMENDMENT")}
             className={cn(
-              "p-4 rounded-xl border text-left transition-all relative overflow-hidden cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
+              "p-4 rounded-md border text-left transition-all relative overflow-hidden cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
               selectedType === "AMENDMENT"
                 ? "bg-primary/5 border-primary/40 shadow-none ring-1 ring-primary/20"
                 : "bg-card border-border/40 shadow-none hover:shadow-sm"
@@ -227,7 +227,7 @@ export function BudgetRequestsSection({
             type="button"
             onClick={() => setSelectedType(selectedType === "EXCEPTION" ? "ALL" : "EXCEPTION")}
             className={cn(
-              "p-4 rounded-xl border text-left transition-all relative overflow-hidden cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-1",
+              "p-4 rounded-md border text-left transition-all relative overflow-hidden cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-1",
               summaryCounts.exceptionsCount > 0
                 ? "bg-amber-50/50 border-amber-500/30 dark:bg-amber-950/10"
                 : "bg-card border-border/40 hover:shadow-sm",
@@ -256,7 +256,7 @@ export function BudgetRequestsSection({
 
         {/* ── Active Filter Clear Bar ── */}
         {selectedType !== "ALL" && (
-          <div className="flex items-center justify-between gap-3 px-3 py-1.5 rounded-xl bg-muted/40 border border-border/60 text-xs">
+          <div className="flex items-center justify-between gap-3 px-3 py-1.5 rounded-md bg-muted/40 border border-border/60 text-xs">
             <div className="flex items-center gap-1.5">
               <Filter className="size-3 text-primary" />
               <span className="text-muted-foreground">Filtered by:</span>
@@ -276,7 +276,7 @@ export function BudgetRequestsSection({
         )}
 
         {/* ── 2. Requests Table ── */}
-        <div className="rounded-xl border border-border/40 bg-card overflow-hidden h-fit">
+        <div className="rounded-md border border-border/40 bg-card overflow-hidden h-fit">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>

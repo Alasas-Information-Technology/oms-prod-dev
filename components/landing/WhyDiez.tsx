@@ -76,7 +76,7 @@ export function WhyDiez() {
           <motion.div
             key={i}
             variants={itemVariants}
-            className="bg-card border border-border/60 rounded-2xl p-8 hover:shadow-lg hover:border-primary/20 transition-all duration-300 ease-out flex flex-col"
+            className="bg-card border border-border/60 rounded-md p-8 hover:shadow-lg hover:border-primary/20 transition-all duration-300 ease-out flex flex-col"
           >
             <span className="text-4xl md:text-5xl font-bold text-primary mb-4 block">
               {diff.metric}

@@ -832,7 +832,7 @@ function OrgChartCanvasInner({
         <button
           type="button"
           onClick={onSwitchToList}
-          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2.5 focus:bg-primary focus:text-primary-foreground focus:rounded-xl focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring focus:font-medium focus:text-xs"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2.5 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring focus:font-medium focus:text-xs"
         >
           Switch to accessible list view
         </button>
@@ -842,7 +842,7 @@ function OrgChartCanvasInner({
       <div className="absolute top-4 left-4 z-10 flex flex-col gap-2 items-start pointer-events-none">
         {/* Scoped User Notice Banner (Part 6.2 - Calm, non-technical) */}
         {isScopedFragment && (
-          <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-background/90 backdrop-blur-md border border-border shadow-xs text-xs text-muted-foreground animate-in fade-in-50 pointer-events-auto">
+          <div className="flex items-center gap-2 px-3.5 py-2 rounded-md bg-background/90 backdrop-blur-md border border-border shadow-xs text-xs text-muted-foreground animate-in fade-in-50 pointer-events-auto">
             <Info className="h-4 w-4 text-primary shrink-0" />
             <span>You&apos;re seeing the parts of the organization you work with.</span>
           </div>
@@ -877,14 +877,14 @@ function OrgChartCanvasInner({
       {isLoadingRoots && (
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 bg-card/80 backdrop-blur-xs space-y-6">
           <div className="flex flex-col items-center space-y-2">
-            <Skeleton className="h-10 w-10 rounded-xl" />
+            <Skeleton className="h-10 w-10 rounded-md" />
             <Skeleton className="h-4 w-48 rounded" />
           </div>
 
           <div className="flex items-center gap-8">
-            <Skeleton className="w-[240px] h-[160px] rounded-2xl" />
-            <Skeleton className="w-[240px] h-[160px] rounded-2xl" />
-            <Skeleton className="w-[240px] h-[160px] rounded-2xl" />
+            <Skeleton className="w-[240px] h-[160px] rounded-md" />
+            <Skeleton className="w-[240px] h-[160px] rounded-md" />
+            <Skeleton className="w-[240px] h-[160px] rounded-md" />
           </div>
 
           <span className="text-xs text-muted-foreground font-medium animate-pulse">
@@ -922,7 +922,7 @@ function OrgChartCanvasInner({
       {/* Empty State: First Run Setup (Part 6.5) */}
       {!isLoadingRoots && !isErrorRoots && effectiveRoots.length === 0 && (
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 bg-card space-y-4 text-center">
-          <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+          <div className="h-12 w-12 rounded-md bg-primary/10 text-primary flex items-center justify-center">
             <Building2 className="h-6 w-6" />
           </div>
           <div className="space-y-1 max-w-sm">
@@ -979,7 +979,7 @@ function OrgChartCanvasInner({
             return "var(--primary)";
           }}
           maskColor="rgba(0, 0, 0, 0.1)"
-          className="!bottom-4 !left-4 !m-0 !rounded-xl !border !border-border !bg-card/90 !backdrop-blur-md !shadow-xs !overflow-hidden"
+          className="!bottom-4 !left-4 !m-0 !rounded-md !border !border-border !bg-card/90 !backdrop-blur-md !shadow-xs !overflow-hidden"
           zoomable
           pannable
         />
@@ -987,7 +987,7 @@ function OrgChartCanvasInner({
 
       {/* Floating Canvas Controls Overlay (Bottom-Right Cluster - Part 4) */}
       {/* [ ⊖ ] 80% [ ⊕ ] │ [ ⤢ ] │ [ ⇅ ] │ [ ↺ ] */}
-      <div className="absolute bottom-4 right-4 z-10 flex items-center gap-1.5 p-1.5 rounded-xl bg-card/90 backdrop-blur-md border border-border shadow-xs">
+      <div className="absolute bottom-4 right-4 z-10 flex items-center gap-1.5 p-1.5 rounded-md bg-card/90 backdrop-blur-md border border-border shadow-xs">
         {/* Zoom Sub-cluster */}
         <Button
           type="button"

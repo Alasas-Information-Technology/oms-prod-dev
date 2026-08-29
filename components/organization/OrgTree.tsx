@@ -495,7 +495,7 @@ export function OrgTree({
 
   return (
     <div
-      className={cn("flex flex-col h-full bg-card rounded-xl border border-border overflow-hidden", className)}
+      className={cn("flex flex-col h-full bg-card rounded-md border border-border overflow-hidden", className)}
       onKeyDown={handleKeyDown}
     >
       {/* Hidden Child Data Fetchers */}

@@ -201,7 +201,7 @@ export function ManagerAssignmentPanel({
       </div>
 
       {/* Active Primary Head Card */}
-      <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 dark:bg-primary/10">
+      <div className="p-4 rounded-md border border-primary/20 bg-primary/5 dark:bg-primary/10">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
@@ -349,7 +349,7 @@ export function ManagerAssignmentPanel({
             <Clock className="h-4 w-4 text-muted-foreground" />
             Tenure Timeline
           </h4>
-          <div className="p-4 rounded-xl border border-border bg-card">
+          <div className="p-4 rounded-md border border-border bg-card">
             {timelineItems.length > 0 ? (
               <Timeline items={timelineItems} />
             ) : (

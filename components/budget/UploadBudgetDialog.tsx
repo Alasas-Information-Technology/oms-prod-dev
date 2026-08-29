@@ -44,9 +44,9 @@ export function UploadBudgetDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg rounded-2xl p-6">
+      <DialogContent className="sm:max-w-lg rounded-md p-6">
         <DialogHeader className="space-y-2">
-          <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-1">
+          <div className="size-10 rounded-md bg-primary/10 text-primary flex items-center justify-center mb-1">
             <Upload className="size-5" />
           </div>
           <DialogTitle className="text-lg font-bold font-display">
@@ -67,7 +67,7 @@ export function UploadBudgetDialog({
               });
               setSelectedFile(dummyFile);
             }}
-            className="border-2 border-dashed border-border/80 hover:border-primary/50 bg-muted/20 hover:bg-muted/40 rounded-xl p-6 text-center cursor-pointer transition-all duration-150 space-y-2"
+            className="border-2 border-dashed border-border/80 hover:border-primary/50 bg-muted/20 hover:bg-muted/40 rounded-md p-6 text-center cursor-pointer transition-all duration-150 space-y-2"
           >
             <FileSpreadsheet className="size-8 mx-auto text-muted-foreground" />
             <div className="space-y-1">
@@ -81,7 +81,7 @@ export function UploadBudgetDialog({
           </div>
 
           {/* Template Download Link */}
-          <div className="flex items-center justify-between p-3 rounded-xl bg-background/80 border border-border/60 text-xs">
+          <div className="flex items-center justify-between p-3 rounded-md bg-background/80 border border-border/60 text-xs">
             <div className="flex items-center gap-2">
               <Download className="size-4 text-primary" />
               <span className="text-muted-foreground font-medium">Official DIEZ Template</span>
@@ -102,7 +102,7 @@ export function UploadBudgetDialog({
             variant="outline"
             size="sm"
             onClick={() => onOpenChange(false)}
-            className="rounded-xl text-xs h-9"
+            className="rounded-md text-xs h-9"
           >
             Cancel
           </Button>
@@ -111,7 +111,7 @@ export function UploadBudgetDialog({
             size="sm"
             disabled={!selectedFile || isUploading}
             onClick={handleUploadSubmit}
-            className="rounded-xl text-xs h-9 font-semibold"
+            className="rounded-md text-xs h-9 font-semibold"
           >
             {isUploading ? "Validating & Uploading..." : "Upload & Validate"}
           </Button>

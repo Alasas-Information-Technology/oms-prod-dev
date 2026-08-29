@@ -84,9 +84,9 @@ export function Capabilities() {
             <motion.div
               key={i}
               variants={itemVariants}
-              className="bg-card border border-border/60 rounded-2xl p-8 group flex flex-col h-full hover:shadow-lg hover:border-primary/20 hover:-translate-y-1 transition-all duration-300 ease-out"
+              className="bg-card border border-border/60 rounded-md p-8 group flex flex-col h-full hover:shadow-lg hover:border-primary/20 hover:-translate-y-1 transition-all duration-300 ease-out"
             >
-              <div className="w-14 h-14 rounded-xl bg-primary/8 flex items-center justify-center mb-6 group-hover:bg-primary/15 transition-colors duration-300">
+              <div className="w-14 h-14 rounded-md bg-primary/8 flex items-center justify-center mb-6 group-hover:bg-primary/15 transition-colors duration-300">
                 <Icon className="size-6 text-primary" />
               </div>
               <h3 className="text-xl font-bold text-heading mb-3">{cap.title}</h3>

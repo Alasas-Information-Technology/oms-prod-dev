@@ -268,7 +268,7 @@ export default function NewUserPage() {
             </div>
 
             {/* Onboarding Notice */}
-            <div className="p-3.5 rounded-xl border bg-muted/40 flex items-start gap-3 text-xs text-muted-foreground">
+            <div className="p-3.5 rounded-md border bg-muted/40 flex items-start gap-3 text-xs text-muted-foreground">
               <Mail className="size-4 text-primary shrink-0 mt-0.5" />
               <div>
                 <span className="font-semibold text-foreground">Passwordless Onboarding Security: </span>

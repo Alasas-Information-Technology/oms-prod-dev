@@ -43,7 +43,7 @@ export function AuthenticationPoliciesCard() {
   return (
     <div className="space-y-6">
       {/* ── 1. Token Lifecycles Card ── */}
-      <Card className="rounded-2xl border-border/70 bg-card/70 backdrop-blur-xs shadow-xs">
+      <Card className="rounded-md border-border/70 bg-card/70 backdrop-blur-xs shadow-xs">
         <CardHeader className="pb-4 border-b border-border/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -98,7 +98,7 @@ export function AuthenticationPoliciesCard() {
                     max={60}
                     {...field}
                     onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                    className="font-mono text-sm h-10 rounded-xl"
+                    className="font-mono text-sm h-10 rounded-md"
                   />
                 </FormControl>
                 <FormDescription className="text-xs">
@@ -142,7 +142,7 @@ export function AuthenticationPoliciesCard() {
                     max={90}
                     {...field}
                     onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                    className="font-mono text-sm h-10 rounded-xl"
+                    className="font-mono text-sm h-10 rounded-md"
                   />
                 </FormControl>
                 <FormDescription className="text-xs">
@@ -158,7 +158,7 @@ export function AuthenticationPoliciesCard() {
             control={form.control}
             name="requireSessionFingerprinting"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-xl border border-border/70 bg-background/50 p-4 transition-all hover:bg-background/80">
+              <FormItem className="flex flex-row items-center justify-between rounded-md border border-border/70 bg-background/50 p-4 transition-all hover:bg-background/80">
                 <div className="space-y-0.5 max-w-[80%]">
                   <FormLabel className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     <Fingerprint className="size-4 text-indigo-500" />
@@ -180,7 +180,7 @@ export function AuthenticationPoliciesCard() {
             control={form.control}
             name="allowMultipleSessions"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-xl border border-border/70 bg-background/50 p-4 transition-all hover:bg-background/80">
+              <FormItem className="flex flex-row items-center justify-between rounded-md border border-border/70 bg-background/50 p-4 transition-all hover:bg-background/80">
                 <div className="space-y-0.5 max-w-[80%]">
                   <FormLabel className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     <Users className="size-4 text-emerald-500" />
@@ -200,7 +200,7 @@ export function AuthenticationPoliciesCard() {
       </Card>
 
       {/* ── 2. Account Lockout Defenses Card ── */}
-      <Card className="rounded-2xl border-border/70 bg-card/70 backdrop-blur-xs shadow-xs">
+      <Card className="rounded-md border-border/70 bg-card/70 backdrop-blur-xs shadow-xs">
         <CardHeader className="pb-4 border-b border-border/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -238,7 +238,7 @@ export function AuthenticationPoliciesCard() {
                       max={20}
                       {...field}
                       onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                      className="font-mono text-sm h-10 rounded-xl"
+                      className="font-mono text-sm h-10 rounded-md"
                     />
                   </FormControl>
                   <FormDescription className="text-[11px]">
@@ -264,7 +264,7 @@ export function AuthenticationPoliciesCard() {
                       max={1440}
                       {...field}
                       onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                      className="font-mono text-sm h-10 rounded-xl"
+                      className="font-mono text-sm h-10 rounded-md"
                     />
                   </FormControl>
                   <FormDescription className="text-[11px]">
@@ -277,7 +277,7 @@ export function AuthenticationPoliciesCard() {
           </div>
 
           {/* Live Simulator Preview Banner */}
-          <div className="p-4 rounded-xl border border-amber-300 bg-amber-50/90 dark:border-amber-900/60 dark:bg-amber-950/30 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-3 shadow-2xs">
+          <div className="p-4 rounded-md border border-amber-300 bg-amber-50/90 dark:border-amber-900/60 dark:bg-amber-950/30 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-3 shadow-2xs">
             <ShieldAlert className="size-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
             <div className="space-y-1">
               <span className="font-semibold block">Live Enforcement Simulation:</span>

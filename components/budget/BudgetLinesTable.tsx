@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { usePermission } from "@/hooks/usePermission";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 export interface BudgetLinesTableProps {
@@ -73,8 +74,36 @@ export function BudgetLinesTable({
   onOpenUploadDialog,
   className,
 }: BudgetLinesTableProps) {
+  const router = useRouter();
   const { can } = usePermission();
   const canUpload = can("BUDGET.UPLOAD") || can("ADMIN.VIEW");
+
+  const handleKeyDown = React.useCallback((e: React.KeyboardEvent) => {
+    if (!lines || lines.length === 0) return;
+
+    // We only care about ArrowUp, ArrowDown, and Enter
+    if (!["ArrowUp", "ArrowDown", "Enter"].includes(e.key)) return;
+
+    // Don't interfere with modifier keys
+    if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
+
+    e.preventDefault(); // Prevent scrolling for arrows
+
+    const currentIndex = lines.findIndex((l) => l.id === selectedLineId);
+
+    if (e.key === "ArrowDown") {
+      const nextIndex = currentIndex < 0 ? 0 : Math.min(currentIndex + 1, lines.length - 1);
+      if (onSelectLine) onSelectLine(lines[nextIndex]);
+    } else if (e.key === "ArrowUp") {
+      const prevIndex = currentIndex <= 0 ? 0 : currentIndex - 1;
+      if (onSelectLine) onSelectLine(lines[prevIndex]);
+    } else if (e.key === "Enter") {
+      const lineToOpen = currentIndex >= 0 ? lines[currentIndex] : lines[0];
+      if (lineToOpen) {
+        router.push(`/app/budget/dept-budget?code=${encodeURIComponent(lineToOpen.code)}`);
+      }
+    }
+  }, [lines, selectedLineId, onSelectLine, router]);
 
   // Define Columns matching Step 0 DataTable ColumnDef specification (Part 3 & Part 4)
   const columns: ColumnDef<IBudgetLineDto>[] = React.useMemo(() => {
@@ -312,7 +341,12 @@ export function BudgetLinesTable({
         </div>
 
         {/* ── Main DataTable ── */}
-        <div className="rounded-xl border border-border/40 bg-card overflow-hidden h-fit">
+        <div 
+          className="rounded-md border border-border/40 bg-card overflow-hidden h-fit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 transition-shadow"
+          tabIndex={0}
+          onKeyDown={handleKeyDown}
+          aria-label="Budget lines table (Use arrow keys to select, Enter to view ledger)"
+        >
           <DataTable<IBudgetLineDto>
             columns={columns}
             data={lines}
@@ -334,7 +368,7 @@ export function BudgetLinesTable({
           {/* ── Custom Empty State Overlay with Upload Action when empty ── */}
           {!isLoading && lines.length === 0 && (
             <div className="py-12 px-6 flex flex-col items-center justify-center text-center space-y-3">
-              <div className="size-12 rounded-2xl bg-muted/60 text-muted-foreground flex items-center justify-center">
+              <div className="size-12 rounded-md bg-muted/60 text-muted-foreground flex items-center justify-center">
                 <FileSpreadsheet className="size-6" />
               </div>
               <div className="space-y-1">
@@ -351,7 +385,7 @@ export function BudgetLinesTable({
                   variant="default"
                   size="sm"
                   onClick={onOpenUploadDialog}
-                  className="rounded-xl text-xs h-9 gap-2 mt-2 font-semibold shadow-xs cursor-pointer"
+                  className="rounded-md text-xs h-9 gap-2 mt-2 font-semibold shadow-xs cursor-pointer"
                 >
                   <Upload className="size-3.5" />
                   <span>Upload Budget CSV</span>

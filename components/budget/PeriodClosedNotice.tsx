@@ -27,9 +27,9 @@ export function PeriodClosedNotice({
   const canManagePeriod = can(PERMISSIONS.BUDGET_PERIOD_MANAGE);
 
   return (
-    <div className="p-4 rounded-2xl border border-border/80 bg-muted/40 backdrop-blur-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+    <div className="p-4 rounded-md border border-border/80 bg-muted/40 backdrop-blur-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
       <div className="flex items-start sm:items-center gap-3">
-        <div className="size-8 rounded-xl bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 flex items-center justify-center shrink-0">
+        <div className="size-8 rounded-md bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 flex items-center justify-center shrink-0">
           <Lock className="size-4" />
         </div>
         <div className="space-y-0.5 text-xs">
@@ -48,7 +48,7 @@ export function PeriodClosedNotice({
           variant="outline"
           size="sm"
           onClick={onRequestReopen}
-          className="rounded-xl text-xs h-8 gap-1.5 font-semibold shrink-0 cursor-pointer"
+          className="rounded-md text-xs h-8 gap-1.5 font-semibold shrink-0 cursor-pointer"
         >
           <RotateCcw className="size-3.5" />
           <span>Request Reopening</span>

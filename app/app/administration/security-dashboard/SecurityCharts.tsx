@@ -58,7 +58,11 @@ const BAR_COLORS = ["#6366f1", "#8b5cf6", "#ec4899", "#f43f5e", "#f59e0b", "#10b
 const safeFormatDate = (dateStr: string | Date, formatStr: string) => {
   try {
     if (!dateStr) return "-";
-    const d = new Date(dateStr);
+    let parseStr = String(dateStr);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(parseStr)) {
+      parseStr += "T12:00:00Z";
+    }
+    const d = new Date(parseStr);
     return isNaN(d.getTime()) ? String(dateStr) : format(d, formatStr);
   } catch {
     return String(dateStr);
@@ -91,6 +95,8 @@ export function SocPanel({ recentEvents }: { recentEvents: RawSecurityEvent[] })
       style = { badge: "bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-300 border-red-200 dark:border-red-500/30 animate-pulse", dot: "text-red-600", label: "REPLAY ATTEMPT", Icon: ShieldAlert };
     else if (["ACCOUNT_LOCKED", "FAILED_LOGIN_LIMIT_EXCEEDED", "ACCOUNT_LOCKOUT"].includes(type))
       style = { badge: "bg-orange-100 text-orange-800 dark:bg-orange-500/20 dark:text-orange-300 border-orange-200 dark:border-orange-500/30", dot: "text-orange-500", label: "ACCOUNT LOCKED", Icon: ShieldBan };
+    else if (type === "LOGIN_FAILURE" || type === "LOGIN_FAILED")
+      style = { badge: "bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-300 border-red-200 dark:border-red-500/30", dot: "text-red-500", label: "LOGIN FAILED", Icon: ShieldAlert };
     else if (type === "SESSION_REVOKED" || type.includes("REVOK"))
       style = { badge: "bg-yellow-100 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-300 border-yellow-200 dark:border-yellow-500/30", dot: "text-yellow-500", label: "SESSION REVOKED", Icon: ShieldX };
     else if (type === "LOGIN_SUCCESS")
@@ -155,7 +161,7 @@ export function FailedLoginsChart({ chartsData }: ChartsDataProps) {
   const data = useMemo(() => Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - (6 - i));
-    const match = chartsData?.failedLogins?.find(r => format(new Date(r.date), "yyyy-MM-dd") === format(d, "yyyy-MM-dd"));
+    const match = chartsData?.failedLogins?.find(r => r.date === format(d, "yyyy-MM-dd"));
     return { day: format(d, "do EEE"), count: match?.count || 0 };
   }), [chartsData?.failedLogins]);
 
@@ -181,7 +187,7 @@ export function FailedLoginsChart({ chartsData }: ChartsDataProps) {
 }
 
 const EVENT_LABELS: Record<string, string> = {
-  LOGIN_SUCCESS: "Login Success", LOGIN_FAILED: "Login Failed", ACCOUNT_LOCKED: "Account Locked",
+  LOGIN_SUCCESS: "Login Success", LOGIN_FAILED: "Login Failed", LOGIN_FAILURE: "Login Failed", ACCOUNT_LOCKED: "Account Locked",
   ACCOUNT_LOCKOUT: "Account Locked", SESSION_REVOKED: "Session Revoked", REFRESH_TOKEN_REPLAY: "Replay Detect",
   REFRESH_TOKEN_ROTATED: "Token Rotated", SESSION_CREATED: "Session Created", REFRESH_TOKEN_REVOKED: "Token Revoked",
   LOGOUT: "Logout", ADMIN_LOGIN: "Admin Login", USER_UPDATED: "User Updated", USER_CREATED: "User Created",

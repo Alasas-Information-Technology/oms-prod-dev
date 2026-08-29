@@ -90,7 +90,7 @@ export function DangerZoneCard({ summary }: Props) {
 
   return (
     <>
-      <Card className="rounded-2xl border-red-200 dark:border-red-900/50 bg-red-50/30 dark:bg-red-950/10 shadow-xs">
+      <Card className="rounded-md border-red-200 dark:border-red-900/50 bg-red-50/30 dark:bg-red-950/10 shadow-xs">
         <CardHeader className="pb-4 border-b border-red-200/60 dark:border-red-900/40">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -117,7 +117,7 @@ export function DangerZoneCard({ summary }: Props) {
 
         <CardContent className="pt-6 space-y-4">
           {/* Action 1: Mass Session Revocation */}
-          <div className="p-4 rounded-xl border border-red-200 dark:border-red-900/60 bg-background/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="p-4 rounded-md border border-red-200 dark:border-red-900/60 bg-background/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1">
               <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                 <LogOut className="size-3.5 text-red-600" />
@@ -137,7 +137,7 @@ export function DangerZoneCard({ summary }: Props) {
                 setConfirmText("");
                 setIsConfirmOpen(true);
               }}
-              className="rounded-xl text-xs h-9 font-semibold shrink-0 cursor-pointer"
+              className="rounded-md text-xs h-9 font-semibold shrink-0 cursor-pointer"
             >
               <ShieldAlert className="size-3.5 mr-1.5" />
               <span>Force Logout All</span>
@@ -145,7 +145,7 @@ export function DangerZoneCard({ summary }: Props) {
           </div>
 
           {/* Action 2: Audit Snapshot Generator */}
-          <div className="p-4 rounded-xl border border-border/70 bg-background/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="p-4 rounded-md border border-border/70 bg-background/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1">
               <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                 <FileJson className="size-3.5 text-primary" />
@@ -162,7 +162,7 @@ export function DangerZoneCard({ summary }: Props) {
               variant="outline"
               size="sm"
               onClick={handleGenerateSnapshot}
-              className="rounded-xl text-xs h-9 font-semibold shrink-0 cursor-pointer"
+              className="rounded-md text-xs h-9 font-semibold shrink-0 cursor-pointer"
             >
               <Download className="size-3.5 mr-1.5 text-muted-foreground" />
               <span>Export Snapshot</span>
@@ -173,9 +173,9 @@ export function DangerZoneCard({ summary }: Props) {
 
       {/* ── Emergency Confirmation Modal ── */}
       <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
-        <DialogContent className="sm:max-w-md rounded-2xl p-6">
+        <DialogContent className="sm:max-w-md rounded-md p-6">
           <DialogHeader className="space-y-2">
-            <div className="size-10 rounded-xl bg-red-500/15 text-red-600 dark:text-red-400 flex items-center justify-center">
+            <div className="size-10 rounded-md bg-red-500/15 text-red-600 dark:text-red-400 flex items-center justify-center">
               <AlertOctagon className="size-5" />
             </div>
             <DialogTitle className="text-lg font-bold font-display text-red-600 dark:text-red-400">
@@ -196,7 +196,7 @@ export function DangerZoneCard({ summary }: Props) {
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
               placeholder="TERMINATE-ALL"
-              className="font-mono text-xs h-10 rounded-xl"
+              className="font-mono text-xs h-10 rounded-md"
             />
           </div>
 
@@ -205,7 +205,7 @@ export function DangerZoneCard({ summary }: Props) {
               variant="outline"
               size="sm"
               onClick={() => setIsConfirmOpen(false)}
-              className="rounded-xl text-xs h-9"
+              className="rounded-md text-xs h-9"
             >
               Cancel
             </Button>
@@ -214,7 +214,7 @@ export function DangerZoneCard({ summary }: Props) {
               size="sm"
               disabled={confirmText !== "TERMINATE-ALL" || isRevoking}
               onClick={handleForceLogoutAll}
-              className="rounded-xl text-xs h-9 font-semibold"
+              className="rounded-md text-xs h-9 font-semibold"
             >
               {isRevoking ? "Revoking Sessions..." : "Authorize Mass Revocation"}
             </Button>

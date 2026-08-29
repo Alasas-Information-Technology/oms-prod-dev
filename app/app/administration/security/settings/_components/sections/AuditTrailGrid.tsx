@@ -141,7 +141,7 @@ export function AuditTrailGrid() {
   };
 
   return (
-    <Card className="rounded-2xl border-border/70 bg-card/70 backdrop-blur-xs shadow-xs">
+    <Card className="rounded-md border-border/70 bg-card/70 backdrop-blur-xs shadow-xs">
       <CardHeader className="pb-4 border-b border-border/50">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
@@ -162,7 +162,7 @@ export function AuditTrailGrid() {
             variant="outline"
             size="sm"
             onClick={handleExportCsv}
-            className="h-8 px-3 text-xs gap-1.5 rounded-xl font-semibold cursor-pointer"
+            className="h-8 px-3 text-xs gap-1.5 rounded-md font-semibold cursor-pointer"
           >
             <Download className="size-3.5 text-muted-foreground" />
             <span>Export CSV</span>
@@ -178,7 +178,7 @@ export function AuditTrailGrid() {
               placeholder="Search admin, setting, IP..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 h-8 text-xs rounded-xl"
+              className="pl-8 h-8 text-xs rounded-md"
             />
           </div>
 
@@ -200,7 +200,7 @@ export function AuditTrailGrid() {
       </CardHeader>
 
       <CardContent className="pt-4 space-y-4">
-        <div className="rounded-xl border border-border/70 overflow-hidden bg-background/50">
+        <div className="rounded-md border border-border/70 overflow-hidden bg-background/50">
           <Table>
             <TableHeader className="bg-muted/40">
               <TableRow>

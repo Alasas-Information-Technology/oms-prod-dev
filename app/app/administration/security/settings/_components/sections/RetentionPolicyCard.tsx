@@ -43,7 +43,7 @@ export function RetentionPolicyCard() {
   ];
 
   return (
-    <Card className="rounded-2xl border-border/70 bg-card/70 backdrop-blur-xs shadow-xs">
+    <Card className="rounded-md border-border/70 bg-card/70 backdrop-blur-xs shadow-xs">
       <CardHeader className="pb-4 border-b border-border/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -89,7 +89,7 @@ export function RetentionPolicyCard() {
                     max={3650}
                     {...field}
                     onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                    className="font-mono text-sm h-10 rounded-xl"
+                    className="font-mono text-sm h-10 rounded-md"
                   />
                 </FormControl>
                 <div className="flex items-center gap-1 pt-1">
@@ -136,7 +136,7 @@ export function RetentionPolicyCard() {
                     max={3650}
                     {...field}
                     onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                    className="font-mono text-sm h-10 rounded-xl"
+                    className="font-mono text-sm h-10 rounded-md"
                   />
                 </FormControl>
                 <div className="flex items-center gap-1 pt-1">
@@ -183,7 +183,7 @@ export function RetentionPolicyCard() {
                     max={3650}
                     {...field}
                     onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                    className="font-mono text-sm h-10 rounded-xl"
+                    className="font-mono text-sm h-10 rounded-md"
                   />
                 </FormControl>
                 <div className="flex items-center gap-1 pt-1">
@@ -230,7 +230,7 @@ export function RetentionPolicyCard() {
                     max={3650}
                     {...field}
                     onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                    className="font-mono text-sm h-10 rounded-xl"
+                    className="font-mono text-sm h-10 rounded-md"
                   />
                 </FormControl>
                 <div className="flex items-center gap-1 pt-1">

@@ -83,7 +83,7 @@ export function UserScopeCoverageCard({
       </CardHeader>
       <CardContent className="space-y-6">
         {activeScopes.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-10 text-center border rounded-xl border-dashed bg-muted/20">
+          <div className="flex flex-col items-center justify-center py-10 text-center border rounded-md border-dashed bg-muted/20">
             <Globe className="size-10 text-muted-foreground/50 mb-3" />
             <p className="text-sm font-medium text-foreground">No organizational scopes assigned</p>
             <p className="text-xs text-muted-foreground mt-1 max-w-sm">
@@ -103,7 +103,7 @@ export function UserScopeCoverageCard({
               return (
                 <div
                   key={scope.userOrganizationScopeId}
-                  className={`p-4 rounded-xl border transition-all ${
+                  className={`p-4 rounded-md border transition-all ${
                     isGlobal
                       ? "bg-primary/5 border-primary/30 shadow-xs"
                       : "bg-card border-border/80 shadow-xs"

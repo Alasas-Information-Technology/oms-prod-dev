@@ -119,11 +119,11 @@ export function SecuritySettingsDashboard() {
   if (isSettingsLoading) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-28 w-full rounded-2xl" />
-        <Skeleton className="h-10 w-full rounded-xl" />
+        <Skeleton className="h-28 w-full rounded-md" />
+        <Skeleton className="h-10 w-full rounded-md" />
         <div className="grid gap-6 md:grid-cols-2">
-          <Skeleton className="h-80 rounded-2xl" />
-          <Skeleton className="h-80 rounded-2xl" />
+          <Skeleton className="h-80 rounded-md" />
+          <Skeleton className="h-80 rounded-md" />
         </div>
       </div>
     );
@@ -150,7 +150,7 @@ export function SecuritySettingsDashboard() {
               size="sm"
               onClick={() => form.reset()}
               disabled={!hasUnsavedChanges || isSaving}
-              className="h-9 px-3 gap-1.5 text-xs font-semibold rounded-xl bg-background/80 hover:bg-background border-border/70 shadow-2xs transition-all disabled:opacity-40 cursor-pointer"
+              className="h-9 px-3 gap-1.5 text-xs font-semibold rounded-md bg-background/80 hover:bg-background border-border/70 shadow-2xs transition-all disabled:opacity-40 cursor-pointer"
             >
               <RotateCcw className="size-3.5 text-muted-foreground" />
               <span>Discard</span>
@@ -161,7 +161,7 @@ export function SecuritySettingsDashboard() {
               variant="default"
               size="sm"
               disabled={isSaving || !hasUnsavedChanges}
-              className="h-9 px-3.5 gap-1.5 text-xs font-semibold rounded-xl shadow-xs transition-all cursor-pointer disabled:opacity-40"
+              className="h-9 px-3.5 gap-1.5 text-xs font-semibold rounded-md shadow-xs transition-all cursor-pointer disabled:opacity-40"
             >
               <CheckCircle2 className="size-3.5" />
               <span>{isSaving ? "Saving..." : "Save Policies"}</span>
@@ -170,10 +170,10 @@ export function SecuritySettingsDashboard() {
         </PageBarActions>
 
         {/* ── Executive Hero Banner ── */}
-        <div className="p-6 rounded-2xl border border-border/70 bg-card/60 backdrop-blur-xs shadow-2xs relative overflow-hidden">
+        <div className="p-6 rounded-md border border-border/70 bg-card/60 backdrop-blur-xs shadow-2xs relative overflow-hidden">
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-start gap-4">
-              <div className="size-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-inner">
+              <div className="size-12 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-inner">
                 <ShieldCheck className="size-6" />
               </div>
               <div className="space-y-1">
@@ -208,7 +208,7 @@ export function SecuritySettingsDashboard() {
 
         {/* ── Tabbed Navigation ── */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="w-full justify-start rounded-xl border border-border/70 bg-muted/40 p-1 overflow-x-auto overflow-y-hidden flex-nowrap shadow-2xs">
+          <TabsList className="w-full justify-start rounded-md border border-border/70 bg-muted/40 p-1 overflow-x-auto overflow-y-hidden flex-nowrap shadow-2xs">
             <TabsTrigger
               value="authentication"
               className="flex items-center gap-2 h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs transition-all cursor-pointer"

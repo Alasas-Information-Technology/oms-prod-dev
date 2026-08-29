@@ -48,8 +48,8 @@ export function RoleChip({
           </span>
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-xs text-xs font-normal p-2.5">
-          <p className="font-semibold text-foreground mb-0.5">{displayName}</p>
-          <p className="text-muted-foreground leading-relaxed">{plainExplanation}</p>
+          <p className="font-semibold mb-0.5">{displayName}</p>
+          <p className="opacity-80 leading-relaxed">{plainExplanation}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
