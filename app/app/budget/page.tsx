@@ -216,7 +216,7 @@ function BudgetControlCenterContent() {
 
       {/* ── 4. Main Control Center Grid (Part 3: 1fr 420px, responsive stack under 1280px) ── */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
-        {/* Left Column: Budget Lines Table + Requests & Exceptions Section */}
+        {/* Left Column: Budget Lines Table */}
         <div className="space-y-8 min-w-0">
           <BudgetLinesTable
             lines={linesData?.items || []}
@@ -234,11 +234,6 @@ function BudgetControlCenterContent() {
             }}
             onOpenUploadDialog={() => setUploadDialogOpen(true)}
           />
-
-          <BudgetRequestsSection
-            periodId={selectedPeriod}
-            departmentId={filters.departmentId}
-          />
         </div>
 
         {/* Right Column: Selected Line Detail Panel — spec Part 3, grid 1fr 420px */}
@@ -249,6 +244,14 @@ function BudgetControlCenterContent() {
           departmentId={filters.departmentId}
           onOpenManagePeriodDialog={() => setManagePeriodDialogOpen(true)}
           onClose={handleClearSelection}
+        />
+      </div>
+
+      {/* ── 5. Full Width Bottom Section ── */}
+      <div className="pt-6 border-t border-border/40 mt-6">
+        <BudgetRequestsSection
+          periodId={selectedPeriod}
+          departmentId={filters.departmentId}
         />
       </div>
 
