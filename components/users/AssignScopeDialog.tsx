@@ -145,7 +145,7 @@ export function AssignScopeDialog({
           )}
 
           {/* Immediate Feedback Card */}
-          <div className="p-3.5 rounded-xl border bg-primary/5 border-primary/20 space-y-1.5">
+          <div className="p-3.5 rounded-md border bg-primary/5 border-primary/20 space-y-1.5">
             <div className="flex items-center gap-2 text-xs font-semibold text-primary">
               <Eye className="size-4" />
               <span>Immediate Coverage Evaluation</span>

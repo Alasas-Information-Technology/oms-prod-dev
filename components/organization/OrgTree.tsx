@@ -32,8 +32,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { StatusBadge, OMSStatus } from "@/components/oms/StatusBadge";
-import { OrgTypeIcon, UnitPath } from "@/components/oms/org";
+import { StatusBadge, OMSStatus } from "@/components/shared/StatusBadge";
+import { OrgTypeIcon, UnitPath } from "@/components/organization";
 import {
   useOrgUnits,
   useOrgUnitChildren,
@@ -495,7 +495,7 @@ export function OrgTree({
 
   return (
     <div
-      className={cn("flex flex-col h-full bg-card rounded-xl border border-border overflow-hidden", className)}
+      className={cn("flex flex-col h-full bg-card rounded-md border border-border overflow-hidden", className)}
       onKeyDown={handleKeyDown}
     >
       {/* Hidden Child Data Fetchers */}

@@ -44,6 +44,7 @@ import {
   InvitationValidationResultDto,
   PasswordResetRequestResultDto,
   AcceptInvitationDto,
+  ForceChangePasswordDto,
   ChangePasswordDto,
   PaginatedResponse,
   ApiSuccessResponse,
@@ -177,6 +178,27 @@ export function useUpdateUser(
         queryKey: authKeys.userDetail(variables.id),
       });
       queryClient.invalidateQueries({ queryKey: authKeys.usersList() });
+      if (onSuccess) {
+        await onSuccess(data, variables, context, mutation);
+      }
+    },
+    ...restOptions,
+  });
+}
+
+export function useForceChangePassword(
+  options?: UseMutationOptions<
+    ApiSuccessResponse,
+    Error,
+    { id: string; dto: ForceChangePasswordDto }
+  >,
+) {
+  const queryClient = useQueryClient();
+  const { onSuccess, ...restOptions } = options || {};
+
+  return useMutation({
+    mutationFn: ({ id, dto }) => usersApi.forceChangePassword(id, dto),
+    onSuccess: async (data, variables, context, mutation) => {
       if (onSuccess) {
         await onSuccess(data, variables, context, mutation);
       }
@@ -462,6 +484,14 @@ export function useRevokeRole(
       }
     },
     ...restOptions,
+  });
+}
+
+export function useMasterRoles() {
+  return useQuery({
+    queryKey: ['masterRoles'],
+    queryFn: () => userRolesApi.getMasterRoles(),
+    staleTime: 5 * 60 * 1000,
   });
 }
 

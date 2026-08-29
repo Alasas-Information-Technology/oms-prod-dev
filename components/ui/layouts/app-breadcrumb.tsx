@@ -3,7 +3,7 @@
 import * as React from "react";
 import { usePathname } from "next/navigation";
 import { usePageBar } from "./page-bar-context";
-import { Breadcrumb, BreadcrumbItemData } from "@/components/oms/Breadcrumb";
+import { Breadcrumb, BreadcrumbItemData } from "@/components/shared/Breadcrumb";
 
 const ROUTE_NAME_MAP: Record<string, string> = {
   app: "Home",
@@ -15,8 +15,8 @@ const ROUTE_NAME_MAP: Record<string, string> = {
   sections: "Sections",
   "security-dashboard": "Security dashboard",
   security: "Security",
-  settings: "Settings",
-  budget: "Budget",
+  budget: "Budget Control Center",
+  "control-center": "Budget Control Center",
   dashboard: "Dashboard",
   "dept-budget": "Department budget",
   "vendor-allocations": "Vendor allocations",
@@ -90,7 +90,7 @@ export function AppBreadcrumb() {
   return (
     <nav
       aria-label="Page Bar"
-      className="h-[56px] sticky top-0 z-10 flex items-center justify-between px-6 bg-background border-b border-border/50 shrink-0 select-none"
+      className="h-[56px] sticky print:static print:border-none top-0 z-10 flex items-center justify-between px-6 bg-background border-b border-border/50 shrink-0 select-none"
     >
       {/* Left: Breadcrumb as Page Title (Part 5) */}
       <div className="min-w-0 max-w-[65%]">
@@ -98,7 +98,7 @@ export function AppBreadcrumb() {
       </div>
 
       {/* Right: Page Actions Group (Part 4: exactly 36px tall controls) */}
-      <div className="flex items-center shrink-0 ml-4">
+      <div id="page-bar-actions-slot" className="flex items-center shrink-0 ml-4">
         {actions}
       </div>
     </nav>

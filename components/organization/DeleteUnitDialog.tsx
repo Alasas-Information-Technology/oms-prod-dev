@@ -145,7 +145,7 @@ export function DeleteUnitDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-6 rounded-2xl">
+      <DialogContent className="max-w-md p-6 rounded-md">
         <DialogHeader className="space-y-1">
           <DialogTitle className="text-lg font-bold flex items-center gap-2 text-destructive">
             <Trash2 className="h-5 w-5" />
@@ -161,7 +161,7 @@ export function DeleteUnitDialog({
           {/* Blocking Reasons (Part 4.3 Table)                                 */}
           {/* ================================================================= */}
           {isBlockedByRoot && (
-            <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-xs text-destructive space-y-1">
+            <div className="p-4 rounded-md bg-destructive/10 border border-destructive/20 text-xs text-destructive space-y-1">
               <div className="flex items-center gap-1.5 font-semibold">
                 <ShieldAlert className="h-4 w-4" />
                 <span>Cannot remove top level</span>
@@ -173,7 +173,7 @@ export function DeleteUnitDialog({
           )}
 
           {isBlockedByChildren && !isBlockedByRoot && (
-            <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-xs text-destructive space-y-2">
+            <div className="p-4 rounded-md bg-destructive/10 border border-destructive/20 text-xs text-destructive space-y-2">
               <div className="flex items-center gap-1.5 font-semibold">
                 <Layers className="h-4 w-4" />
                 <span>Contains active {childTypeWord}</span>
@@ -216,7 +216,7 @@ export function DeleteUnitDialog({
           )}
 
           {isBlockedByPeople && !isBlockedByChildren && !isBlockedByRoot && (
-            <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-xs text-destructive space-y-2">
+            <div className="p-4 rounded-md bg-destructive/10 border border-destructive/20 text-xs text-destructive space-y-2">
               <div className="flex items-center gap-1.5 font-semibold">
                 <Users className="h-4 w-4" />
                 <span>Assigned staff remaining</span>
@@ -242,7 +242,7 @@ export function DeleteUnitDialog({
           )}
 
           {blockingError && (
-            <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-xs text-destructive space-y-2">
+            <div className="p-4 rounded-md bg-destructive/10 border border-destructive/20 text-xs text-destructive space-y-2">
               <div className="flex items-center gap-1.5 font-semibold">
                 <AlertTriangle className="h-4 w-4" />
                 <span>Action Blocked</span>
@@ -265,7 +265,7 @@ export function DeleteUnitDialog({
 
           {/* Safe Confirmation Note (When not blocked) */}
           {!isBlocked && (
-            <div className="p-4 rounded-xl bg-muted/40 border border-border text-xs space-y-1.5">
+            <div className="p-4 rounded-md bg-muted/40 border border-border text-xs space-y-1.5">
               <p className="font-semibold text-foreground">Are you sure?</p>
               <p className="text-muted-foreground leading-relaxed">
                 This will permanently delete <strong className="text-foreground">{unit.name}</strong> ({unit.code}). This action cannot be undone.

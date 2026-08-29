@@ -56,7 +56,7 @@ export function FlexisIntro() {
           >
             <div 
               className={cn(
-                "w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center shadow-sm border border-border/40",
+                "w-16 h-16 md:w-20 md:h-20 rounded-md flex items-center justify-center shadow-sm border border-border/40",
                 index % 2 === 0 ? "bg-primary/10" : "bg-secondary"
               )}
             >

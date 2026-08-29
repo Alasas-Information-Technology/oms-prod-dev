@@ -26,7 +26,7 @@ import {
 import { OrgUnitPicker } from "@/components/organization/OrgUnitPicker";
 import { OrgUnitSummaryDto } from "@/lib/types/organization.types";
 import { UserType } from "@/lib/types/authorization.types";
-import { useCreateUser } from "@/hooks/useAuthorization";
+import { useCreateUser, useMasterRoles } from "@/hooks/useAuthorization";
 import { usePermission } from "@/hooks/usePermission";
 import { toast } from "sonner";
 
@@ -44,6 +44,7 @@ export default function NewUserPage() {
   const [department, setDepartment] = React.useState<OrgUnitSummaryDto | null>(null);
   const [initialRole, setInitialRole] = React.useState<string>("");
 
+  const { data: masterRoles } = useMasterRoles();
   const createMutation = useCreateUser();
 
   if (!can("USER.CREATE")) {
@@ -246,24 +247,28 @@ export default function NewUserPage() {
                   <SelectValue placeholder="None (Standard User Baseline)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="3053433E-F36B-1410-85ED-009A959FB303">
-                    Procurement Buyer (PROCUREMENT_BUYER)
-                  </SelectItem>
-                  <SelectItem value="3053433E-F36B-1410-85ED-009A959FB304">
-                    Finance Analyst (FINANCE_ANALYST)
-                  </SelectItem>
-                  <SelectItem value="3053433E-F36B-1410-85ED-009A959FB305">
-                    Department Head (DEPARTMENT_HEAD)
-                  </SelectItem>
-                  <SelectItem value="3053433E-F36B-1410-85ED-009A959FB302">
-                    Organization Administrator (ORG_ADMIN)
-                  </SelectItem>
+                  {masterRoles && masterRoles.length > 0 ? (
+                    masterRoles
+                      .filter((r) => !r.roleCode.startsWith("VENDOR"))
+                      .map((r) => (
+                        <SelectItem key={r.roleId} value={r.roleId}>
+                          {r.roleName} ({r.roleCode})
+                        </SelectItem>
+                      ))
+                  ) : (
+                    <>
+                      <SelectItem value="PROCUREMENT">Procurement Buyer (PROCUREMENT)</SelectItem>
+                      <SelectItem value="FINANCE">Finance Analyst (FINANCE)</SelectItem>
+                      <SelectItem value="HOD">Head of Department (HOD)</SelectItem>
+                      <SelectItem value="ORG_ADMIN">Organization Administrator (ORG_ADMIN)</SelectItem>
+                    </>
+                  )}
                 </SelectContent>
               </Select>
             </div>
 
             {/* Onboarding Notice */}
-            <div className="p-3.5 rounded-xl border bg-muted/40 flex items-start gap-3 text-xs text-muted-foreground">
+            <div className="p-3.5 rounded-md border bg-muted/40 flex items-start gap-3 text-xs text-muted-foreground">
               <Mail className="size-4 text-primary shrink-0 mt-0.5" />
               <div>
                 <span className="font-semibold text-foreground">Passwordless Onboarding Security: </span>

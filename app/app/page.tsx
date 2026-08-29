@@ -1,6 +1,5 @@
 import { getAuthSession } from "@/app/actions/auth";
-import { BudgetKpiCard } from "@/components/oms/budget-kpi";
-import { SimpleKpiCard } from "@/components/oms/simple-kpi";
+import { BudgetKpiCard, SimpleKpiCard } from "@/components/budget";
 import { Badge } from "@/components/ui/badge";
 export default async function Page() {
   const user = await getAuthSession();
@@ -49,10 +48,10 @@ export default async function Page() {
         </div>
         <BudgetKpiCard reserved={65.893} consumed={22} />
         <SimpleKpiCard icon="material-symbols:unknown-document-outline" value={1000} title="Total Contracts" description="aarush" />
-        <div className="aspect-video rounded-2xl bg-card border border-border shadow-sm" />
-        <div className="aspect-video rounded-2xl bg-card border border-border shadow-sm" />
+        <div className="aspect-video rounded-md bg-card border border-border shadow-sm" />
+        <div className="aspect-video rounded-md bg-card border border-border shadow-sm" />
       </div>
-      <div className="min-h-screen flex-1 rounded-2xl bg-card border border-border shadow-sm md:min-h-min" />
+      <div className="min-h-screen flex-1 rounded-md bg-card border border-border shadow-sm md:min-h-min" />
     </div>
   )
 }

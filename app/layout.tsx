@@ -37,7 +37,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={cn(
-        "h-full antialiased overflow-hidden",
+        "min-h-full antialiased",
         fontDisplay.variable,
         fontSans.variable,
         fontSerif.variable,
@@ -45,7 +45,7 @@ export default function RootLayout({
       )}
       suppressHydrationWarning
     >
-      <body className="h-full overflow-hidden bg-background text-foreground">
+      <body className="min-h-full bg-background text-foreground">
         <Providers>
           {children}
         </Providers>

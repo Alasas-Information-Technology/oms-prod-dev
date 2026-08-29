@@ -22,7 +22,11 @@ export default async function SecuritySettingsPage() {
         );
     }
 
-    if (!user.permissions.includes("SECURITY.ADMIN")) {
+    const isAuthorized =
+        user.permissions.includes("SECURITY.ADMIN") ||
+        user.permissions.includes("*");
+
+    if (!isAuthorized) {
         return (
             <div className="flex h-[50vh] items-center justify-center">
                 <div className="text-center space-y-4">
@@ -35,7 +39,7 @@ export default async function SecuritySettingsPage() {
     }
 
     return (
-        <div className="p-6 max-w-[880px] mx-auto">
+        <div className="p-6 space-y-6">
             <SecuritySettingsDashboard />
         </div>
     );

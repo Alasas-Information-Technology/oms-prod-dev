@@ -182,7 +182,7 @@ export default function UserImportPage() {
         <CardContent className="space-y-4">
           <textarea
             rows={8}
-            className="w-full p-3 text-xs font-mono rounded-xl border border-input bg-muted/20 focus:outline-none focus:ring-2 focus:ring-ring"
+            className="w-full p-3 text-xs font-mono rounded-md border border-input bg-muted/20 focus:outline-none focus:ring-2 focus:ring-ring"
             placeholder="Paste CSV rows here..."
             value={csvText}
             onChange={(e) => {

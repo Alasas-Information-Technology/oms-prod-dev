@@ -89,7 +89,7 @@ export function SecuritySection() {
             <motion.div
               key={i}
               variants={itemVariants}
-              className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center backdrop-blur-sm hover:bg-white/10 hover:border-white/20 transition-all duration-300 ease-out"
+              className="bg-white/5 border border-white/10 rounded-md p-6 text-center backdrop-blur-sm hover:bg-white/10 hover:border-white/20 transition-all duration-300 ease-out"
             >
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/5 flex items-center justify-center">
                 <Icon className="size-7 text-[#A6DCE6]" />

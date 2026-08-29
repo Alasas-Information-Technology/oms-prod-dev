@@ -15,7 +15,7 @@ export function AppTopbar() {
     const { toggleSidebar } = useSidebar();
 
     return (
-        <header className="h-12 md:h-13 shrink-0 fixed top-0 left-0 right-0 z-30 flex items-center px-4 bg-secondary/80 backdrop-blur-md border-b border-border/50">
+        <header className="h-12 md:h-13 shrink-0 fixed top-0 left-0 right-0 z-30 flex items-center px-4 bg-secondary/80 backdrop-blur-md border-b border-border/50 print:hidden">
 
             {/* Left section: Sidebar toggle + Logo */}
             <div className="flex items-center gap-0">

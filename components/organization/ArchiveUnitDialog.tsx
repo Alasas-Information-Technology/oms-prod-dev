@@ -65,7 +65,7 @@ export function ArchiveUnitDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-6 rounded-2xl">
+      <DialogContent className="max-w-md p-6 rounded-md">
         <DialogHeader className="space-y-1">
           <DialogTitle className="text-lg font-bold flex items-center gap-2">
             {isCurrentlyActive ? (
@@ -89,7 +89,7 @@ export function ArchiveUnitDialog({
 
         <div className="space-y-3 py-2">
           {isCurrentlyActive && (
-            <div className="p-3.5 rounded-xl bg-muted/40 border border-border text-xs space-y-1">
+            <div className="p-3.5 rounded-md bg-muted/40 border border-border text-xs space-y-1">
               <p className="font-semibold text-foreground">What happens when archived?</p>
               <ul className="list-disc pl-4 space-y-0.5 text-muted-foreground">
                 <li>The card appears faded on the organization chart (50% opacity).</li>

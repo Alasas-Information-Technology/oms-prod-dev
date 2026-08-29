@@ -239,7 +239,7 @@ export function OrgUnitForm({
                   key={t.orgUnitTypeId}
                   onClick={() => form.setValue("orgUnitTypeId", t.orgUnitTypeId)}
                   className={cn(
-                    "relative flex items-start gap-3 p-4 rounded-xl border text-left transition-all duration-150",
+                    "relative flex items-start gap-3 p-4 rounded-md border text-left transition-all duration-150",
                     isSelected
                       ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-xs"
                       : "border-border bg-card hover:bg-muted/40 hover:border-border/80"
@@ -268,7 +268,7 @@ export function OrgUnitForm({
 
       {/* 2. Reports to Selection */}
       {!isEdit && (
-        <div className="space-y-2 p-4 rounded-xl bg-muted/30 border border-border">
+        <div className="space-y-2 p-4 rounded-md bg-muted/30 border border-border">
           <div className="flex items-center justify-between">
             <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               2. Reports to
@@ -385,7 +385,7 @@ export function OrgUnitForm({
       </div>
 
       {/* 4. Optional Details Accordion */}
-      <div className="rounded-xl border border-border/80 bg-card overflow-hidden">
+      <div className="rounded-md border border-border/80 bg-card overflow-hidden">
         <button
           type="button"
           onClick={() => setShowAdvanced(!showAdvanced)}

@@ -73,7 +73,7 @@ export function EnvironmentSwitcher() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: "easeOut" as any }}
-            className="w-[320px] md:w-[380px] bg-card/90 backdrop-blur-2xl border border-border/80 shadow-2xl rounded-2xl overflow-hidden flex flex-col origin-bottom-right"
+            className="w-[320px] md:w-[380px] bg-card/90 backdrop-blur-2xl border border-border/80 shadow-2xl rounded-md overflow-hidden flex flex-col origin-bottom-right"
           >
             {/* Header */}
             <div className="px-6 py-4 border-b border-border/40 bg-secondary/30 flex justify-between items-center">
@@ -155,7 +155,7 @@ function ThemeOption({
         onClick(e);
       }}
       className={cn(
-        "w-full text-left p-4 rounded-xl flex items-start gap-4 transition-all duration-300 relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+        "w-full text-left p-4 rounded-md flex items-start gap-4 transition-all duration-300 relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
         isActive
           ? "bg-primary/5 border border-primary/20 shadow-sm"
           : "bg-transparent border border-transparent hover:bg-secondary/40 hover:border-border/60 hover:shadow-sm"

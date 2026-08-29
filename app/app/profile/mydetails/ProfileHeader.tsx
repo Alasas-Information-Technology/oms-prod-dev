@@ -10,7 +10,7 @@ interface ProfileHeaderProps {
 
 export function ProfileHeader({ profile, onEditClick }: ProfileHeaderProps) {
     return (
-        <div className="bg-card text-card-foreground rounded-xl border border-border px-6 py-5 flex items-center justify-between">
+        <div className="bg-card text-card-foreground rounded-md border border-border px-6 py-5 flex items-center justify-between">
             {/* Avatar + name */}
             <div className="flex items-center gap-4">
                 <div className="relative">

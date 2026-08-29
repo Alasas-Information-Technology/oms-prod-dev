@@ -7,7 +7,7 @@ import {
   OrgBreadcrumb,
   UnitPath,
   OrgBreadcrumbItem,
-} from "@/components/oms/org";
+} from "@/components/organization";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -53,9 +53,9 @@ export default function OrgPrimitivesDemoPage() {
   ];
 
   return (
-    <div className="space-y-8 p-6 max-w-7xl mx-auto pb-24">
+    <div className="space-y-8 p-6 pb-24">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl bg-card border border-border shadow-xs">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-md bg-card border border-border shadow-xs">
         <div>
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="font-mono text-xs text-primary border-primary/30">
@@ -106,7 +106,7 @@ export default function OrgPrimitivesDemoPage() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div
-            className={`p-6 rounded-2xl border transition-colors ${
+            className={`p-6 rounded-md border transition-colors ${
               isDarkPreview ? "dark bg-zinc-950 border-zinc-800 text-zinc-100" : "bg-muted/30 border-border"
             }`}
           >
@@ -217,7 +217,7 @@ export default function OrgPrimitivesDemoPage() {
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Level 1: Organization */}
-            <div className="p-4 rounded-xl border border-border bg-card space-y-3">
+            <div className="p-4 rounded-md border border-border bg-card space-y-3">
               <div className="flex items-center justify-between">
                 <OrgTypeIcon type="ORGANIZATION" size="lg" />
                 <Badge variant="outline" className="text-[10px] font-mono">Level 1</Badge>
@@ -230,7 +230,7 @@ export default function OrgPrimitivesDemoPage() {
             </div>
 
             {/* Level 2: Business Unit */}
-            <div className="p-4 rounded-xl border border-border bg-card space-y-3">
+            <div className="p-4 rounded-md border border-border bg-card space-y-3">
               <div className="flex items-center justify-between">
                 <OrgTypeIcon type="BUSINESS_UNIT" size="lg" />
                 <Badge variant="outline" className="text-[10px] font-mono">Level 2</Badge>
@@ -243,7 +243,7 @@ export default function OrgPrimitivesDemoPage() {
             </div>
 
             {/* Level 3: Department */}
-            <div className="p-4 rounded-xl border border-border bg-card space-y-3">
+            <div className="p-4 rounded-md border border-border bg-card space-y-3">
               <div className="flex items-center justify-between">
                 <OrgTypeIcon type="DEPARTMENT" size="lg" />
                 <Badge variant="outline" className="text-[10px] font-mono">Level 3</Badge>
@@ -256,7 +256,7 @@ export default function OrgPrimitivesDemoPage() {
             </div>
 
             {/* Level 4: Section */}
-            <div className="p-4 rounded-xl border border-border bg-card space-y-3">
+            <div className="p-4 rounded-md border border-border bg-card space-y-3">
               <div className="flex items-center justify-between">
                 <OrgTypeIcon type="SECTION" size="lg" />
                 <Badge variant="outline" className="text-[10px] font-mono">Level 4</Badge>
@@ -395,7 +395,7 @@ export default function OrgPrimitivesDemoPage() {
             </div>
 
             {/* Live Preview Pane */}
-            <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-muted/30 border border-border">
+            <div className="flex flex-col items-center justify-center p-6 rounded-md bg-muted/30 border border-border">
               <span className="text-[11px] font-mono text-muted-foreground uppercase mb-4 tracking-wider">
                 Live Render Output
               </span>
@@ -437,11 +437,11 @@ export default function OrgPrimitivesDemoPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="p-4 rounded-xl border border-border bg-card space-y-2">
+          <div className="p-4 rounded-md border border-border bg-card space-y-2">
             <span className="text-xs font-semibold text-muted-foreground">OrgBreadcrumb (with Icon Badges):</span>
             <OrgBreadcrumb items={deepBreadcrumb} showIcons />
           </div>
-          <div className="p-4 rounded-xl border border-border bg-card space-y-2">
+          <div className="p-4 rounded-md border border-border bg-card space-y-2">
             <span className="text-xs font-semibold text-muted-foreground">UnitPath (Plain Lineage Sentence):</span>
             <UnitPath ancestors={deepBreadcrumb} showCurrent currentName="Frontend Portal Section" />
           </div>
