@@ -2,6 +2,7 @@
 
 import * as React from "react";
 
+import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -411,13 +412,13 @@ export function RequestWorkspace({
       () => (
         <Button
           size="sm"
-          className="h-9 rounded-lg"
-          onClick={() =>
-            setNewRequestOpen(true)
-          }
+          className="h-9 rounded-lg gap-1.5"
+          asChild
         >
-          <Plus className="size-4" />
-          New requisition
+          <Link href="/app/requests/new">
+            <Plus className="size-4" />
+            New requisition
+          </Link>
         </Button>
       ),
       []

@@ -1,6 +1,6 @@
 "use client";
 
-import { TabsButton } from "@/components/oms/TabsButton";
+import { TabsButton } from "@/components/shared/TabsButton";
 
 import { RequestTab } from "./request.types";
 
