@@ -74,10 +74,19 @@ const navGroups: NavGroup[] = [
         ],
       },
       {
-        title: "Approvals",
-        url: "/app/approvals",
-        icon: CheckSquare,
-      },
+  title: "Approvals",
+  icon: CheckSquare,
+  items: [
+    {
+      title: "All Approvals",
+      url: "/app/approvals",
+    },
+    {
+      title: "HR Review",
+      url: "/app/hr-review",
+    },
+  ],
+},
     ],
   },
   {
