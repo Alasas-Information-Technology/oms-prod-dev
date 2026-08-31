@@ -19,6 +19,10 @@ export {
 } from "./RequestLifecycleStepper";
 
 export {
+  RequestNeedsActionSubFilters,
+} from "./RequestNeedsActionSubFilters";
+
+export {
   RequestsTable,
 } from "./RequestsTable";
 
@@ -39,6 +43,8 @@ export type {
 } from "./RequestWorkspace";
 
 export type {
+  NeedsActionSubFilter,
+  NeedsActionType,
   NewRequestDraft,
   OmsRequest,
   RequestActualStatus,

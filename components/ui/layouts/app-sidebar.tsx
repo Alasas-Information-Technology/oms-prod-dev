@@ -73,11 +73,6 @@ const navGroups: NavGroup[] = [
           { title: "My Requests", url: "/app/requests/mine" },
         ],
       },
-      {
-        title: "Approvals",
-        url: "/app/approvals",
-        icon: CheckSquare,
-      },
     ],
   },
   {

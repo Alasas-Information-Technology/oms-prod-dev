@@ -539,7 +539,7 @@ export function SelectedLinePanel({
   return (
     <div
       className={cn(
-        "rounded-xl border border-border/50 bg-card overflow-hidden flex flex-col",
+        "rounded-lg border border-border/50 bg-card overflow-hidden flex flex-col",
         "sticky top-6 max-h-[calc(100vh-96px)] shadow-xs",
         className
       )}

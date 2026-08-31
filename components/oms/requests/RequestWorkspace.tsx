@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-
+import { useSearchParams } from "next/navigation";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -21,35 +21,28 @@ import { PortfolioSnapshot } from "./PortfolioSnapshot";
 import { RequestFilters } from "./RequestFilters";
 import { RequestsTable } from "./RequestsTable";
 import { RequestStatusTabs } from "./RequestStatusTabs";
+import { RequestNeedsActionSubFilters } from "./RequestNeedsActionSubFilters";
 
 import {
   EMPTY_REQUEST_FILTERS,
+  NeedsActionSubFilter,
   NewRequestDraft,
   OmsRequest,
   RequestFiltersState,
   RequestTab,
 } from "./request.types";
 
-export type RequestWorkspaceMode =
-  | "all"
-  | "mine";
+export type RequestWorkspaceMode = "all" | "mine";
 
 interface RequestWorkspaceProps {
   mode: RequestWorkspaceMode;
 }
 
 function unique(values: string[]) {
-  return Array.from(
-    new Set(values)
-  ).sort((a, b) =>
-    a.localeCompare(b)
-  );
+  return Array.from(new Set(values)).sort((a, b) => a.localeCompare(b));
 }
 
-function exportRequests(
-  requests: OmsRequest[],
-  filename: string
-) {
+function exportRequests(requests: OmsRequest[], filename: string) {
   if (requests.length === 0) return;
 
   const rows = requests.map((request) => ({
@@ -71,330 +64,238 @@ function exportRequests(
 
   const csv = [
     headers.join(","),
-
     ...rows.map((row) =>
       headers
         .map((header) => {
-          const value =
-            row[
-              header as keyof typeof row
-            ];
-
-          return `"${String(
-            value ?? ""
-          ).replace(/"/g, '""')}"`;
+          const value = row[header as keyof typeof row];
+          return `"${String(value ?? "").replace(/"/g, '""')}"`;
         })
         .join(",")
     ),
   ].join("\n");
 
-  const blob = new Blob(
-    ["\uFEFF", csv],
-    {
-      type: "text/csv;charset=utf-8",
-    }
-  );
+  const blob = new Blob(["\uFEFF", csv], {
+    type: "text/csv;charset=utf-8",
+  });
 
-  const url =
-    URL.createObjectURL(blob);
-
-  const anchor =
-    document.createElement("a");
-
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
   anchor.href = url;
   anchor.download = `${filename}.csv`;
-
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
-
   URL.revokeObjectURL(url);
 }
 
-export function RequestWorkspace({
-  mode,
-}: RequestWorkspaceProps) {
+export function RequestWorkspace({ mode }: RequestWorkspaceProps) {
+  const searchParams = useSearchParams();
   const isMinePage = mode === "mine";
 
-  const [requests, setRequests] =
-    React.useState<OmsRequest[]>(
-      MOCK_REQUESTS
-    );
+  const [requests, setRequests] = React.useState<OmsRequest[]>(MOCK_REQUESTS);
 
-  const [activeTab, setActiveTab] =
-    React.useState<RequestTab>("all");
+  // Sync tab from URL if ?tab=needs-my-action or ?tab=needs-action
+  const tabParam = searchParams.get("tab");
+  const initialTab: RequestTab =
+    tabParam === "needs-my-action" || tabParam === "needs-action"
+      ? "needs-action"
+      : "all";
 
-  const [filters, setFilters] =
-    React.useState<RequestFiltersState>(
-      () => ({
-        ...EMPTY_REQUEST_FILTERS,
-        activeOnly: isMinePage,
-      })
-    );
+  const [activeTab, setActiveTab] = React.useState<RequestTab>(initialTab);
+  const [needsActionSubFilter, setNeedsActionSubFilter] =
+    React.useState<NeedsActionSubFilter>("all");
 
-  const [
-    expandedRequestId,
-    setExpandedRequestId,
-  ] = React.useState<string | null>(
+  const [filters, setFilters] = React.useState<RequestFiltersState>(() => ({
+    ...EMPTY_REQUEST_FILTERS,
+    activeOnly: isMinePage,
+  }));
+
+  const [expandedRequestId, setExpandedRequestId] = React.useState<string | null>(
     null
   );
 
-  const [
-    newRequestOpen,
-    setNewRequestOpen,
-  ] = React.useState(false);
+  const [newRequestOpen, setNewRequestOpen] = React.useState(false);
 
-  const pageTitle = isMinePage
-    ? "My Requests"
-    : "All Requests";
+  const pageTitle = isMinePage ? "My Requests" : "All Requests";
 
-  const scopedRequests =
-    React.useMemo(
-      () =>
-        requests.filter(
-          (request) =>
-            !isMinePage ||
-            request.isMine
-        ),
-      [isMinePage, requests]
-    );
+  const scopedRequests = React.useMemo(
+    () => requests.filter((request) => !isMinePage || request.isMine),
+    [isMinePage, requests]
+  );
 
-  const tabCounts =
-    React.useMemo(
-      () => ({
-        all: scopedRequests.length,
+  const tabCounts = React.useMemo(
+    () => ({
+      all: scopedRequests.length,
+      draft: scopedRequests.filter((request) => request.statusGroup === "draft")
+        .length,
+      "needs-action": scopedRequests.filter(
+        (request) => request.statusGroup === "needs-action"
+      ).length,
+      "in-progress": scopedRequests.filter(
+        (request) => request.statusGroup === "in-progress"
+      ).length,
+      closed: scopedRequests.filter(
+        (request) => request.statusGroup === "closed"
+      ).length,
+    }),
+    [scopedRequests]
+  );
 
-        draft: scopedRequests.filter(
-          (request) =>
-            request.statusGroup ===
-            "draft"
-        ).length,
+  // Sub-filter counts for Needs My Action tab
+  const needsActionItems = React.useMemo(() => {
+    return scopedRequests.filter((r) => r.statusGroup === "needs-action");
+  }, [scopedRequests]);
 
-        "needs-action":
-          scopedRequests.filter(
-            (request) =>
-              request.statusGroup ===
-              "needs-action"
-          ).length,
+  const subFilterCounts = React.useMemo(
+    () => ({
+      all: needsActionItems.length,
+      approvals: needsActionItems.filter((r) => r.actionType === "APPROVE")
+        .length,
+      revision: needsActionItems.filter(
+        (r) => r.actionType === "REVISE" || r.actionType === "CLARIFY"
+      ).length,
+      drafts: needsActionItems.filter(
+        (r) => r.actionType === "COMPLETE_DRAFT"
+      ).length,
+      other: needsActionItems.filter(
+        (r) =>
+          r.actionType === "REVIEW_CANDIDATES" ||
+          r.actionType === "CONFIRM_JOINING" ||
+          r.actionType === "LOG_COMPLETION"
+      ).length,
+    }),
+    [needsActionItems]
+  );
 
-        "in-progress":
-          scopedRequests.filter(
-            (request) =>
-              request.statusGroup ===
-              "in-progress"
-          ).length,
+  const filterOptions = React.useMemo(
+    () => ({
+      organizations: unique(
+        scopedRequests.map((request) => request.organization)
+      ),
+      departments: unique(scopedRequests.map((request) => request.department)),
+      statuses: unique(scopedRequests.map((request) => request.actualStatus)),
+      owners: unique(scopedRequests.map((request) => request.currentOwner)),
+    }),
+    [scopedRequests]
+  );
 
-        closed: scopedRequests.filter(
-          (request) =>
-            request.statusGroup ===
-            "closed"
-        ).length,
-      }),
-      [scopedRequests]
-    );
+  const filteredRequests = React.useMemo(() => {
+    const search = filters.search.trim().toLowerCase();
 
-  const filterOptions =
-    React.useMemo(
-      () => ({
-        organizations: unique(
-          scopedRequests.map(
-            (request) =>
-              request.organization
-          )
-        ),
+    return scopedRequests.filter((request) => {
+      if (activeTab !== "all" && request.statusGroup !== activeTab) {
+        return false;
+      }
 
-        departments: unique(
-          scopedRequests.map(
-            (request) =>
-              request.department
-          )
-        ),
-
-        statuses: unique(
-          scopedRequests.map(
-            (request) =>
-              request.actualStatus
-          )
-        ),
-
-        owners: unique(
-          scopedRequests.map(
-            (request) =>
-              request.currentOwner
-          )
-        ),
-      }),
-      [scopedRequests]
-    );
-
-  const filteredRequests =
-    React.useMemo(() => {
-      const search = filters.search
-        .trim()
-        .toLowerCase();
-
-      return scopedRequests.filter(
-        (request) => {
-          if (
-            activeTab !== "all" &&
-            request.statusGroup !==
-              activeTab
-          ) {
-            return false;
-          }
-
-          if (
-            filters.organization !==
-              "all" &&
-            request.organization !==
-              filters.organization
-          ) {
-            return false;
-          }
-
-          if (
-            filters.department !==
-              "all" &&
-            request.department !==
-              filters.department
-          ) {
-            return false;
-          }
-
-          if (
-            filters.actualStatus !==
-              "all" &&
-            request.actualStatus !==
-              filters.actualStatus
-          ) {
-            return false;
-          }
-
-          if (
-            filters.currentOwner !==
-              "all" &&
-            request.currentOwner !==
-              filters.currentOwner
-          ) {
-            return false;
-          }
-
-          if (
-            filters.startDate &&
-            request.startDate <
-              filters.startDate
-          ) {
-            return false;
-          }
-
-          if (
-            filters.endDate &&
-            request.endDate >
-              filters.endDate
-          ) {
-            return false;
-          }
-
-          if (
-            filters.activeOnly &&
-            !request.isActive
-          ) {
-            return false;
-          }
-
-          if (
-            filters.slaOnly &&
-            !request.needsSlaAttention
-          ) {
-            return false;
-          }
-
-          if (
-            filters.needsActionOnly &&
-            request.statusGroup !==
-              "needs-action"
-          ) {
-            return false;
-          }
-
-          if (
-            filters.savedView ===
-              "my-active" &&
-            (!request.isMine ||
-              !request.isActive)
-          ) {
-            return false;
-          }
-
-          if (
-            filters.savedView ===
-              "needs-action" &&
-            request.statusGroup !==
-              "needs-action"
-          ) {
-            return false;
-          }
-
-          if (
-            filters.savedView ===
-              "sla-attention" &&
-            !request.needsSlaAttention
-          ) {
-            return false;
-          }
-
-          if (!search) return true;
-
-          return [
-            request.requestId,
-            request.position,
-            request.department,
-            request.currentOwner,
-            request.actualStatus,
-          ].some((value) =>
-            value
-              .toLowerCase()
-              .includes(search)
-          );
+      // Sub-filter evaluation on Needs My Action tab
+      if (activeTab === "needs-action" && needsActionSubFilter !== "all") {
+        if (
+          needsActionSubFilter === "approvals" &&
+          request.actionType !== "APPROVE"
+        ) {
+          return false;
         }
-      );
-    }, [
-      activeTab,
-      filters,
-      scopedRequests,
-    ]);
+        if (
+          needsActionSubFilter === "revision" &&
+          request.actionType !== "REVISE" &&
+          request.actionType !== "CLARIFY"
+        ) {
+          return false;
+        }
+        if (
+          needsActionSubFilter === "drafts" &&
+          request.actionType !== "COMPLETE_DRAFT"
+        ) {
+          return false;
+        }
+        if (
+          needsActionSubFilter === "other" &&
+          request.actionType !== "REVIEW_CANDIDATES" &&
+          request.actionType !== "CONFIRM_JOINING" &&
+          request.actionType !== "LOG_COMPLETION"
+        ) {
+          return false;
+        }
+      }
+
+      if (
+        filters.organization !== "all" &&
+        request.organization !== filters.organization
+      ) {
+        return false;
+      }
+
+      if (
+        filters.department !== "all" &&
+        request.department !== filters.department
+      ) {
+        return false;
+      }
+
+      if (
+        filters.actualStatus !== "all" &&
+        request.actualStatus !== filters.actualStatus
+      ) {
+        return false;
+      }
+
+      if (
+        filters.currentOwner !== "all" &&
+        request.currentOwner !== filters.currentOwner
+      ) {
+        return false;
+      }
+
+      if (filters.startDate && request.startDate < filters.startDate) {
+        return false;
+      }
+
+      if (filters.endDate && request.endDate > filters.endDate) {
+        return false;
+      }
+
+      if (filters.activeOnly && !request.isActive) {
+        return false;
+      }
+
+      if (filters.slaOnly && !request.needsSlaAttention) {
+        return false;
+      }
+
+      if (filters.needsActionOnly && request.statusGroup !== "needs-action") {
+        return false;
+      }
+
+      if (!search) return true;
+
+      return [
+        request.requestId,
+        request.position,
+        request.department,
+        request.currentOwner,
+        request.actualStatus,
+      ].some((value) => value.toLowerCase().includes(search));
+    });
+  }, [activeTab, needsActionSubFilter, filters, scopedRequests]);
 
   const visibleExpandedRequestId =
     expandedRequestId &&
     filteredRequests.some(
-      (request) =>
-        request.requestId ===
-        expandedRequestId
+      (request) => request.requestId === expandedRequestId
     )
       ? expandedRequestId
       : null;
 
-  const createDraft = (
-    draft: NewRequestDraft
-  ) => {
-    const newRequest =
-      createMockDraft(draft);
+  const createDraft = (draft: NewRequestDraft) => {
+    const newRequest = createMockDraft(draft);
 
-    setRequests((current) => [
-      newRequest,
-      ...current,
-    ]);
-
+    setRequests((current) => [newRequest, ...current]);
     setActiveTab("draft");
-
     setFilters({
       ...EMPTY_REQUEST_FILTERS,
       activeOnly: false,
     });
-
-    setExpandedRequestId(
-      newRequest.requestId
-    );
+    setExpandedRequestId(newRequest.requestId);
   };
 
   const clearFilters = () => {
@@ -402,57 +303,47 @@ export function RequestWorkspace({
       ...EMPTY_REQUEST_FILTERS,
       activeOnly: isMinePage,
     });
-
     setActiveTab("all");
+    setNeedsActionSubFilter("all");
   };
 
-  const pageActions =
-    React.useMemo(
-      () => (
-        <Button
-          size="sm"
-          className="h-9 rounded-lg"
-          onClick={() =>
-            setNewRequestOpen(true)
-          }
-        >
-          <Plus className="size-4" />
-          New requisition
-        </Button>
-      ),
-      []
-    );
+  const pageActions = React.useMemo(
+    () => (
+      <Button
+        size="sm"
+        className="h-9 rounded-lg"
+        onClick={() => setNewRequestOpen(true)}
+      >
+        <Plus className="size-4" />
+        New requisition
+      </Button>
+    ),
+    []
+  );
 
-  const breadcrumbs =
-    React.useMemo(
-      () => [
-        {
-          label: "OMS Requests",
-          href: "/app/requests",
-        },
-        {
-          label: pageTitle,
-          isCurrent: true,
-        },
-      ],
-      [pageTitle]
-    );
+  const breadcrumbs = React.useMemo(
+    () => [
+      {
+        label: "OMS Requests",
+        href: "/app/requests",
+      },
+      {
+        label: pageTitle,
+        isCurrent: true,
+      },
+    ],
+    [pageTitle]
+  );
 
   return (
     <div className="min-h-full bg-background p-4 md:p-6">
-      <PageBarActions>
-        {pageActions}
-      </PageBarActions>
+      <PageBarActions>{pageActions}</PageBarActions>
 
-      <PageBarBreadcrumbs
-        crumbs={breadcrumbs}
-      />
+      <PageBarBreadcrumbs crumbs={breadcrumbs} />
 
       <NewRequisitionDialog
         open={newRequestOpen}
-        onOpenChange={
-          setNewRequestOpen
-        }
+        onOpenChange={setNewRequestOpen}
         onCreate={createDraft}
       />
 
@@ -463,49 +354,49 @@ export function RequestWorkspace({
             : "Monitor every requisition through approval, sourcing, and engagement."}
         </p>
 
-        <RequestStatusTabs
-          value={activeTab}
-          onValueChange={
-            setActiveTab
-          }
-          counts={tabCounts}
-        />
+        <div className="flex flex-col gap-3">
+          <RequestStatusTabs
+            value={activeTab}
+            onValueChange={(val) => {
+              setActiveTab(val);
+              setNeedsActionSubFilter("all");
+            }}
+            counts={tabCounts}
+          />
+
+          {/* Sub-filter chips beneath Needs My Action tab per Part 3 */}
+          {activeTab === "needs-action" && (
+            <RequestNeedsActionSubFilters
+              value={needsActionSubFilter}
+              onValueChange={setNeedsActionSubFilter}
+              counts={subFilterCounts}
+            />
+          )}
+        </div>
 
         <RequestFilters
           idPrefix={mode}
           filters={filters}
           options={filterOptions}
-          onFiltersChange={
-            setFilters
-          }
+          onFiltersChange={setFilters}
           onClear={clearFilters}
           onExport={() =>
             exportRequests(
               filteredRequests,
-              isMinePage
-                ? "my-requests"
-                : "all-requests"
+              isMinePage ? "my-requests" : "all-requests"
             )
           }
-          exportDisabled={
-            filteredRequests.length ===
-            0
-          }
+          exportDisabled={filteredRequests.length === 0}
         />
 
         <RequestsTable
           requests={filteredRequests}
-          expandedRequestId={
-            visibleExpandedRequestId
-          }
-          onExpandedRequestChange={
-            setExpandedRequestId
-          }
+          expandedRequestId={visibleExpandedRequestId}
+          onExpandedRequestChange={setExpandedRequestId}
+          isNeedsActionTab={activeTab === "needs-action"}
         />
 
-        <PortfolioSnapshot
-          requests={filteredRequests}
-        />
+        <PortfolioSnapshot requests={filteredRequests} />
       </div>
     </div>
   );
