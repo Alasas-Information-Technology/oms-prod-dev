@@ -8,9 +8,11 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { cn } from "@/components/ui/utils";
 import { Card } from "@/components/ui/card";
 
+import Link from "next/link";
+
 export type GenericKpiCardProps = {
   icon: string;
-  value: number;
+  value: number | string | bigint;
   title: string;
   description?: string;
   color?: string;
@@ -22,6 +24,10 @@ export type GenericKpiCardProps = {
   prefix?: string;
   /** Optional custom suffix (e.g. "%", "users") */
   suffix?: string;
+  /** Optional link navigation target */
+  href?: string;
+  /** Optional external loading state */
+  isLoading?: boolean;
 };
 
 function Shimmer({ className }: { className?: string }) {
@@ -54,24 +60,29 @@ export function SimpleKpiCard({
   isCurrency = false,
   prefix,
   suffix,
+  href,
+  isLoading,
 }: GenericKpiCardProps) {
-  const [loading, setLoading] = useState(true);
+  const [internalLoading, setInternalLoading] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setLoading(false);
+      setInternalLoading(false);
     }, 1500);
 
     return () => clearTimeout(timer);
   }, []);
 
+  const loading = isLoading !== undefined ? isLoading : internalLoading;
+
   const effectivePrefix = prefix !== undefined ? prefix : isCurrency ? "AED " : "";
   const formattedValue = formatCompactNumber(value);
 
-  return (
+  const content = (
     <Card
       className={cn(
-        "relative rounded-md p-5 shadow-sm overflow-hidden flex flex-col justify-between border-none",
+        "relative rounded-md p-5 shadow-sm overflow-hidden flex flex-col justify-between border-none select-none transition-shadow h-full min-h-[120px]",
+        href && "hover:shadow-md cursor-pointer",
         className
       )}
     >
@@ -106,7 +117,7 @@ export function SimpleKpiCard({
         <span className="text-sm font-medium text-muted-foreground">{title}</span>
         <div
           className={cn(
-            "flex h-9 w-9 items-center justify-center rounded-full",
+            "flex h-9 w-9 items-center justify-center rounded-full shrink-0",
             bg ? bg : "bg-primary/10",
             color ? color : "text-primary"
           )}
@@ -115,27 +126,41 @@ export function SimpleKpiCard({
         </div>
       </div>
 
-      <div className="space-y-1">
+      <div className="space-y-1 mt-2">
         <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-bold tracking-tight">
+          <span className="text-2xl font-bold tracking-tight font-display tabular-nums">
             {effectivePrefix}
             {formattedValue}
             {suffix ? ` ${suffix}` : ""}
           </span>
         </div>
-        {description && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <p className="text-xs text-muted-foreground truncate cursor-help">
-                {description}
-              </p>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="text-xs">{description}</p>
-            </TooltipContent>
-          </Tooltip>
-        )}
+        <div className="min-h-[18px] flex items-center">
+          {description ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <p className="text-xs text-muted-foreground truncate cursor-help">
+                  {description}
+                </p>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-xs">{description}</p>
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <span className="text-xs opacity-0 select-none">-</span>
+          )}
+        </div>
       </div>
     </Card>
   );
+
+  if (href) {
+    return (
+      <Link href={href} className="block h-full group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md">
+        {content}
+      </Link>
+    );
+  }
+
+  return content;
 }

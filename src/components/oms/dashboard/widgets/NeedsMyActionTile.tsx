@@ -12,6 +12,7 @@ export function NeedsMyActionTile({
   isLoading,
   error,
   onRetry,
+  updatedAt,
 }: WidgetProps<NeedsMyActionData>) {
   const total = data?.total ?? 0;
   const overdue = data?.overdue ?? 0;
@@ -35,6 +36,9 @@ export function NeedsMyActionTile({
       isLoading={isLoading}
       error={error}
       onRetry={onRetry}
+      updatedAt={updatedAt}
+      zeroMeaning="GOOD"
+      zeroMessage="Nothing waiting on you"
     />
   );
 }

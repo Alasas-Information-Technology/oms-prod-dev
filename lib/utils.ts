@@ -8,14 +8,18 @@ export function cn(...inputs: ClassValue[]) {
 /**
  * Formats a number to a compact string representation (e.g. 2830000000 to 2.83B)
  */
-export function formatCompactNumber(number: number): string {
-  if (number === 0) return "0"
+export function formatCompactNumber(number: number | string | bigint): string {
+  if (typeof number === "string" && isNaN(Number(number))) {
+    return number;
+  }
+  const num = typeof number === "bigint" ? Number(number) : typeof number === "string" ? Number(number) : number;
+  if (isNaN(num) || num === 0) return "0";
 
   const formatter = new Intl.NumberFormat("en-US", {
     notation: "compact",
     compactDisplay: "short",
     maximumFractionDigits: 2,
-  })
+  });
 
-  return formatter.format(number)
+  return formatter.format(num);
 }

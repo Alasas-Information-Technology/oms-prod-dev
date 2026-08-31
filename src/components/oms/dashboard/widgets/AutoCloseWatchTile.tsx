@@ -13,19 +13,17 @@ export function AutoCloseWatchTile({
   isLoading,
   error,
   onRetry,
+  updatedAt,
 }: WidgetProps<AutoCloseWatchData>) {
   const count = data?.items ? data.items.length : 0;
   const fundsFils = data?.totalFundsAtRisk ?? 0;
   const formattedFunds = formatAbbreviated(fundsFils, { showCurrency: true });
-
-  const detailText = count > 0 ? `${formattedFunds} at risk` : "No requests at risk";
 
   return (
     <KpiTile
       title="Auto-close watch"
       scopeLabel={scope?.label}
       value={count}
-      detail={detailText}
       badge={
         count > 0
           ? {
@@ -43,6 +41,9 @@ export function AutoCloseWatchTile({
       isLoading={isLoading}
       error={error}
       onRetry={onRetry}
+      updatedAt={updatedAt}
+      zeroMeaning="GOOD"
+      zeroMessage="No requests closing soon"
     />
   );
 }

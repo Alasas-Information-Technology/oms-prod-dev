@@ -12,6 +12,7 @@ export function VendorSubmissionsTile({
   isLoading,
   error,
   onRetry,
+  updatedAt,
 }: WidgetProps<VendorSubmissionsData>) {
   const total = data?.totalPending ?? 0;
   const thisWeek = data?.submittedThisWeek ?? 0;
@@ -35,6 +36,9 @@ export function VendorSubmissionsTile({
       isLoading={isLoading}
       error={error}
       onRetry={onRetry}
+      updatedAt={updatedAt}
+      zeroMeaning="GOOD"
+      zeroMessage="No pending submissions"
     />
   );
 }

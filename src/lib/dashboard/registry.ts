@@ -25,6 +25,7 @@ export interface WidgetProps<T = unknown> {
   scope: DashboardScope;
   period?: string;
   data?: T;
+  updatedAt?: string;
   isLoading?: boolean;
   error?: Error | string | null;
   onRetry?: () => void;
@@ -116,6 +117,26 @@ import {
   PendingHrDecisionsWidget,
 } from "../../components/oms/dashboard/widgets";
 
+// Band A & Band E Admin Widgets
+import {
+  FailingIntegrationsTile,
+  JobsFailedTile,
+  IntegrityIssuesTile,
+  ElevatedAccountsTile,
+  BackgroundJobHealthWidget,
+  ScheduledActionsTonightWidget,
+  NotificationDeliveryWidget,
+  DocumentPipelineWidget,
+  DataIntegrityChecksWidget,
+  PrivilegeChangesWidget,
+  ElevatedAccessRegisterWidget,
+  ActiveDelegationsWidget,
+  AccountHygieneWidget,
+  RateLimitPressureWidget,
+  AuditRetentionWidget,
+  ConfigurationDriftWidget,
+} from "../../components/oms/dashboard/widgets";
+
 // =============================================================================
 // Complete Widget Registry (Seeded from DASHBOARD-PLAN.md Part 2)
 // =============================================================================
@@ -130,7 +151,7 @@ export const WIDGET_REGISTRY: Record<WidgetId, WidgetDefinition> = {
     requiredPermissions: [],
     minimumScope: "SELF",
     defaultSpan: 3,
-    minHeight: 140,
+    minHeight: 120,
     component: NeedsMyActionTile as React.ComponentType<WidgetProps>,
   },
   "requests-in-approval": {
@@ -139,7 +160,7 @@ export const WIDGET_REGISTRY: Record<WidgetId, WidgetDefinition> = {
     requiredPermissions: ["REQUISITION.VIEW"],
     minimumScope: "SELF",
     defaultSpan: 3,
-    minHeight: 140,
+    minHeight: 120,
     component: RequestsInApprovalTile as React.ComponentType<WidgetProps>,
   },
   "onboarding-cases": {
@@ -148,7 +169,7 @@ export const WIDGET_REGISTRY: Record<WidgetId, WidgetDefinition> = {
     requiredPermissions: ["WORKFORCE.VIEW"],
     minimumScope: "SELF",
     defaultSpan: 3,
-    minHeight: 140,
+    minHeight: 120,
     component: OnboardingCasesTile as React.ComponentType<WidgetProps>,
   },
   "expiring-documents": {
@@ -157,7 +178,7 @@ export const WIDGET_REGISTRY: Record<WidgetId, WidgetDefinition> = {
     requiredPermissions: ["WORKFORCE.VIEW"],
     minimumScope: "SELF",
     defaultSpan: 3,
-    minHeight: 140,
+    minHeight: 120,
     component: ExpiringDocumentsTile as React.ComponentType<WidgetProps>,
   },
   "auto-close-watch": {
@@ -166,7 +187,7 @@ export const WIDGET_REGISTRY: Record<WidgetId, WidgetDefinition> = {
     requiredPermissions: ["REQUISITION.VIEW"],
     minimumScope: "SELF",
     defaultSpan: 3,
-    minHeight: 140,
+    minHeight: 120,
     component: AutoCloseWatchTile as React.ComponentType<WidgetProps>,
   },
   "open-exceptions": {
@@ -175,7 +196,7 @@ export const WIDGET_REGISTRY: Record<WidgetId, WidgetDefinition> = {
     requiredPermissions: ["REQUISITION.VIEW"],
     minimumScope: "DEPARTMENT",
     defaultSpan: 3,
-    minHeight: 140,
+    minHeight: 120,
     component: OpenExceptionsTile as React.ComponentType<WidgetProps>,
   },
   "candidates-awaiting-review": {
@@ -184,7 +205,7 @@ export const WIDGET_REGISTRY: Record<WidgetId, WidgetDefinition> = {
     requiredPermissions: ["CANDIDATE.VIEW"],
     minimumScope: "SELF",
     defaultSpan: 3,
-    minHeight: 140,
+    minHeight: 120,
     component: CandidatesAwaitingReviewTile as React.ComponentType<WidgetProps>,
   },
   "vendor-submissions": {
@@ -193,7 +214,7 @@ export const WIDGET_REGISTRY: Record<WidgetId, WidgetDefinition> = {
     requiredPermissions: ["VENDOR.VIEW"],
     minimumScope: "DEPARTMENT",
     defaultSpan: 3,
-    minHeight: 140,
+    minHeight: 120,
     component: VendorSubmissionsTile as React.ComponentType<WidgetProps>,
   },
   "security-events": {
@@ -202,7 +223,7 @@ export const WIDGET_REGISTRY: Record<WidgetId, WidgetDefinition> = {
     requiredPermissions: ["SECURITY.DASHBOARD.VIEW"],
     minimumScope: "GLOBAL",
     defaultSpan: 3,
-    minHeight: 140,
+    minHeight: 120,
     component: SecurityEventsTile as React.ComponentType<WidgetProps>,
   },
 
@@ -387,6 +408,158 @@ export const WIDGET_REGISTRY: Record<WidgetId, WidgetDefinition> = {
     defaultSpan: 6,
     minHeight: 240,
     component: PendingHrDecisionsWidget as React.ComponentType<WidgetProps>,
+  },
+
+  // ---------------------------------------------------------------------------
+  // Band A — Admin Additions (KPI tiles)
+  // ---------------------------------------------------------------------------
+  "failing-integrations": {
+    id: "failing-integrations",
+    title: "Failing integrations",
+    requiredPermissions: ["PLATFORM.HEALTH.VIEW"],
+    minimumScope: "GLOBAL",
+    defaultSpan: 3,
+    minHeight: 120,
+    component: FailingIntegrationsTile as React.ComponentType<WidgetProps>,
+  },
+  "integrity-issues": {
+    id: "integrity-issues",
+    title: "Integrity issues",
+    requiredPermissions: ["PLATFORM.INTEGRITY.VIEW"],
+    minimumScope: "GLOBAL",
+    defaultSpan: 3,
+    minHeight: 120,
+    component: IntegrityIssuesTile as React.ComponentType<WidgetProps>,
+  },
+  "elevated-accounts": {
+    id: "elevated-accounts",
+    title: "Elevated accounts",
+    requiredPermissions: ["USER.VIEW"],
+    minimumScope: "GLOBAL",
+    defaultSpan: 3,
+    minHeight: 120,
+    component: ElevatedAccountsTile as React.ComponentType<WidgetProps>,
+  },
+  "jobs-failed-24h": {
+    id: "jobs-failed-24h",
+    title: "Jobs failed (24h)",
+    requiredPermissions: ["PLATFORM.HEALTH.VIEW"],
+    minimumScope: "GLOBAL",
+    defaultSpan: 3,
+    minHeight: 120,
+    component: JobsFailedTile as React.ComponentType<WidgetProps>,
+  },
+
+  // ---------------------------------------------------------------------------
+  // Band E — Platform Operations & Integrity (12 Widgets)
+  // ---------------------------------------------------------------------------
+  "background-job-health": {
+    id: "background-job-health",
+    title: "Background job health",
+    requiredPermissions: ["PLATFORM.HEALTH.VIEW"],
+    minimumScope: "GLOBAL",
+    defaultSpan: 6,
+    minHeight: 240,
+    component: BackgroundJobHealthWidget as React.ComponentType<WidgetProps>,
+  },
+  "data-integrity-checks": {
+    id: "data-integrity-checks",
+    title: "Data integrity checks",
+    requiredPermissions: ["PLATFORM.INTEGRITY.VIEW"],
+    minimumScope: "GLOBAL",
+    defaultSpan: 6,
+    minHeight: 240,
+    component: DataIntegrityChecksWidget as React.ComponentType<WidgetProps>,
+  },
+  "scheduled-actions-tonight": {
+    id: "scheduled-actions-tonight",
+    title: "Tonight's scheduled actions",
+    requiredPermissions: ["PLATFORM.HEALTH.VIEW"],
+    minimumScope: "GLOBAL",
+    defaultSpan: 6,
+    minHeight: 240,
+    component: ScheduledActionsTonightWidget as React.ComponentType<WidgetProps>,
+  },
+  "privilege-changes": {
+    id: "privilege-changes",
+    title: "Privilege changes",
+    requiredPermissions: ["SECURITY.EVENTS.VIEW"],
+    minimumScope: "GLOBAL",
+    defaultSpan: 6,
+    minHeight: 240,
+    component: PrivilegeChangesWidget as React.ComponentType<WidgetProps>,
+  },
+  "elevated-access-register": {
+    id: "elevated-access-register",
+    title: "Elevated access register",
+    requiredPermissions: ["USER.VIEW"],
+    minimumScope: "GLOBAL",
+    defaultSpan: 4,
+    minHeight: 240,
+    component: ElevatedAccessRegisterWidget as React.ComponentType<WidgetProps>,
+  },
+  "active-delegations": {
+    id: "active-delegations",
+    title: "Active delegations",
+    requiredPermissions: ["USER.VIEW"],
+    minimumScope: "GLOBAL",
+    defaultSpan: 4,
+    minHeight: 240,
+    component: ActiveDelegationsWidget as React.ComponentType<WidgetProps>,
+  },
+  "account-hygiene": {
+    id: "account-hygiene",
+    title: "Account hygiene",
+    requiredPermissions: ["USER.VIEW"],
+    minimumScope: "GLOBAL",
+    defaultSpan: 4,
+    minHeight: 240,
+    component: AccountHygieneWidget as React.ComponentType<WidgetProps>,
+  },
+  "rate-limit-pressure": {
+    id: "rate-limit-pressure",
+    title: "Rate limit pressure",
+    requiredPermissions: ["SECURITY.DASHBOARD.VIEW"],
+    minimumScope: "GLOBAL",
+    defaultSpan: 6,
+    minHeight: 240,
+    component: RateLimitPressureWidget as React.ComponentType<WidgetProps>,
+  },
+  "notification-delivery": {
+    id: "notification-delivery",
+    title: "Notification delivery",
+    requiredPermissions: ["PLATFORM.HEALTH.VIEW"],
+    minimumScope: "GLOBAL",
+    defaultSpan: 6,
+    minHeight: 240,
+    component: NotificationDeliveryWidget as React.ComponentType<WidgetProps>,
+  },
+  "document-pipeline": {
+    id: "document-pipeline",
+    title: "Document pipeline",
+    requiredPermissions: ["PLATFORM.HEALTH.VIEW"],
+    minimumScope: "GLOBAL",
+    defaultSpan: 6,
+    minHeight: 240,
+    component: DocumentPipelineWidget as React.ComponentType<WidgetProps>,
+  },
+  "audit-retention": {
+    id: "audit-retention",
+    title: "Audit & retention",
+    requiredPermissions: ["SECURITY.EVENTS.VIEW"],
+    minimumScope: "GLOBAL",
+    defaultSpan: 6,
+    minHeight: 240,
+    component: AuditRetentionWidget as React.ComponentType<WidgetProps>,
+  },
+  "configuration-drift": {
+    id: "configuration-drift",
+    title: "Configuration drift",
+    requiredPermissions: ["SECURITY.ADMIN"],
+    minimumScope: "GLOBAL",
+    defaultSpan: 6,
+    minHeight: 240,
+    component: ConfigurationDriftWidget as React.ComponentType<WidgetProps>,
   },
 };
 

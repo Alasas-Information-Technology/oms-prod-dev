@@ -155,20 +155,28 @@ export default function DashboardPage() {
 
   if (isLayoutLoading) {
     return (
-      <div className="flex flex-col gap-6 p-6 max-w-[1680px] mx-auto w-full">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-1">
-          <Skeleton className="h-7 w-80 rounded-md" />
-          <Skeleton className="h-9 w-36 rounded-md" />
+      <div className="flex flex-col gap-6 p-6 lg:p-8 pb-24 w-full">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
+          <div className="space-y-1.5">
+            <Skeleton className="h-7 w-80 rounded-md" />
+            <Skeleton className="h-4 w-44 rounded-md" />
+          </div>
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-8 w-32 rounded-lg" />
+            <Skeleton className="h-9 w-36 rounded-lg" />
+          </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-8 2xl:grid-cols-12 gap-6">
-          <Skeleton className="col-span-3 h-32 rounded-xl" />
-          <Skeleton className="col-span-3 h-32 rounded-xl" />
-          <Skeleton className="col-span-3 h-32 rounded-xl" />
-          <Skeleton className="col-span-3 h-32 rounded-xl" />
+        {/* Band A Skeleton (4 KPI cards) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Skeleton className="h-28 rounded-md" />
+          <Skeleton className="h-28 rounded-md" />
+          <Skeleton className="h-28 rounded-md" />
+          <Skeleton className="h-28 rounded-md" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-8 2xl:grid-cols-12 gap-6">
-          <Skeleton className="col-span-6 h-64 rounded-xl" />
-          <Skeleton className="col-span-6 h-64 rounded-xl" />
+        {/* Band B Skeleton (2 charts) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Skeleton className="h-56 rounded-md" />
+          <Skeleton className="h-56 rounded-md" />
         </div>
       </div>
     );
@@ -176,8 +184,8 @@ export default function DashboardPage() {
 
   if (layoutError || !layout) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 text-center max-w-[1680px] mx-auto w-full">
-        <div className="p-8 bg-card border border-destructive/30 rounded-xl max-w-md w-full">
+      <div className="flex flex-col items-center justify-center p-12 text-center w-full">
+        <div className="p-8 bg-card border border-destructive/30 rounded-xl max-w-md w-full shadow-sm">
           <h2 className="text-base font-semibold text-foreground">
             Unable to load dashboard layout
           </h2>
@@ -199,23 +207,28 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-6 p-6 max-w-[1680px] mx-auto w-full">
+    <div className="flex flex-1 flex-col gap-6 p-6 lg:p-8 pb-24 w-full">
       {/* Top Greeting & Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/40 pb-4">
-        {/* Left: Time-of-day greeting sentence */}
-        <div>
-          <h1 className="text-lg sm:text-xl font-semibold text-foreground tracking-tight">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/50 pb-5">
+        {/* Left: Time-of-day greeting sentence & scope pill */}
+        <div className="space-y-1">
+          <h1 className="text-xl sm:text-2xl font-bold font-display text-foreground tracking-tight">
             {greetingText}
           </h1>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            {displayScopeLabel} · {layout.fiscalPeriod.label}
-          </p>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-muted/60 border border-border/40 font-medium text-foreground/80">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              {displayScopeLabel}
+            </span>
+            <span>·</span>
+            <span className="font-mono text-muted-foreground">{layout.fiscalPeriod.label}</span>
+          </div>
         </div>
 
         {/* Right: Persona Testing Selector & Primary Gated Action */}
         <div className="flex items-center gap-3">
           {/* Persona Switcher for Layout Verification */}
-          <div className="flex items-center gap-1.5 bg-muted/60 px-2 py-1 rounded-lg border border-border/50 text-xs">
+          <div className="flex items-center gap-1.5 bg-muted/60 hover:bg-muted/80 transition-colors px-3 py-1 rounded-lg border border-border/50 text-xs shadow-2xs">
             <Layers className="w-3.5 h-3.5 text-muted-foreground" />
             <span className="text-muted-foreground font-medium text-[11px] hidden sm:inline">
               View as:
@@ -224,7 +237,7 @@ export default function DashboardPage() {
               value={persona}
               onValueChange={(val) => setSelectedPersona(val as DashboardPersona)}
             >
-              <SelectTrigger className="h-7 border-none bg-transparent shadow-none text-xs font-medium focus:ring-0 px-1 py-0">
+              <SelectTrigger className="h-7 border-none bg-transparent shadow-none text-xs font-medium focus:ring-0 px-1 py-0 text-foreground">
                 <SelectValue placeholder="Persona" />
               </SelectTrigger>
               <SelectContent align="end">
@@ -242,7 +255,7 @@ export default function DashboardPage() {
             <Button
               onClick={() => setNewReqOpen(true)}
               size="sm"
-              className="h-9 gap-1.5 shadow-xs font-medium"
+              className="h-9 gap-1.5 shadow-sm font-semibold px-4"
             >
               <Plus className="w-4 h-4" />
               <span>New requisition</span>
@@ -251,7 +264,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* 12-Column Responsive Dashboard Grid */}
+      {/* 12-Column Responsive Full-Width Dashboard Grid */}
       <DashboardGrid
         bands={layout.bands}
         scope={{

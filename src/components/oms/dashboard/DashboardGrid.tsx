@@ -96,25 +96,24 @@ export function calculateBalancedSpans(
 }
 
 // =============================================================================
-// Helper for Responsive Grid Classes
+// Helper for Responsive Grid Classes (12-Column Grid)
 // =============================================================================
 
-function getResponsiveSpanClasses(span12: number): string {
-  switch (span12) {
+export function getResponsiveSpanClasses(span: number): string {
+  switch (span) {
     case 12:
-      return "col-span-1 md:col-span-4 lg:col-span-8 2xl:col-span-12";
+      return "col-span-1 lg:col-span-12";
+    case 9:
+      return "col-span-1 lg:col-span-9";
     case 8:
-      return "col-span-1 md:col-span-4 lg:col-span-8 2xl:col-span-8";
+      return "col-span-1 lg:col-span-8";
     case 6:
-      return "col-span-1 md:col-span-4 lg:col-span-4 2xl:col-span-6";
+      return "col-span-1 lg:col-span-6";
     case 4:
-      return "col-span-1 md:col-span-2 lg:col-span-4 2xl:col-span-4";
+      return "col-span-1 md:col-span-6 lg:col-span-4";
     case 3:
-      return "col-span-1 md:col-span-2 lg:col-span-2 2xl:col-span-3";
-    case 2:
-      return "col-span-1 md:col-span-2 lg:col-span-2 2xl:col-span-2";
     default:
-      return "col-span-1 md:col-span-2 lg:col-span-4 2xl:col-span-6";
+      return "col-span-1 sm:col-span-6 lg:col-span-3";
   }
 }
 
@@ -123,22 +122,17 @@ function getResponsiveSpanClasses(span12: number): string {
 // =============================================================================
 
 export interface DashboardGridProps {
-  /** Array of layout bands from layout endpoint */
   bands: DashboardBand[];
-  /** Default scope passed down from layout */
   scope: DashboardScope;
-  /** Active period code/label */
-  period?: string;
-  /** Map of widget results by widgetId */
+  period: string;
   widgetResponses?: Map<
     WidgetId,
     {
-      data?: unknown;
+      data?: any;
       isLoading?: boolean;
       error?: Error | string | null;
       onRetry?: () => void;
       scope?: DashboardScope;
-      link?: string;
     }
   >;
   className?: string;
@@ -177,18 +171,51 @@ export function DashboardGrid({
           (a, b) => (a.priority || 0) - (b.priority || 0)
         );
 
-        // Compute hole-free balanced spans
+        // Band A renders as a clean 4-column KPI strip
+        if (band.band === "A") {
+          return (
+            <section
+              key={`dashboard-band-${band.band}`}
+              aria-label="Attention Strip"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full items-stretch"
+            >
+              {sortedWidgets.map((placement) => {
+                const definition = getWidgetDefinition(placement.id);
+                if (!definition) return null;
+                const WidgetComponent = definition.component;
+                const responseState = widgetResponses?.get(placement.id);
+                const widgetScope = responseState?.scope || scope;
+
+                return (
+                  <div key={placement.id} className="h-full flex flex-col">
+                    <WidgetComponent
+                      widgetId={placement.id}
+                      scope={widgetScope}
+                      period={period}
+                      data={responseState?.data}
+                      isLoading={responseState?.isLoading ?? false}
+                      error={responseState?.error ?? null}
+                      onRetry={responseState?.onRetry}
+                    />
+                  </div>
+                );
+              })}
+            </section>
+          );
+        }
+
+        // Compute hole-free balanced spans for other bands (B, C, D)
         const balancedSpans = calculateBalancedSpans(sortedWidgets);
 
         return (
           <section
             key={`dashboard-band-${band.band}`}
             aria-label={`Dashboard Band ${band.band}`}
-            className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-8 2xl:grid-cols-12 gap-6 w-full items-stretch"
+            className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full items-stretch"
           >
             {sortedWidgets.map((placement) => {
               const definition = getWidgetDefinition(placement.id);
-              const computedSpan = balancedSpans.get(placement.id) || placement.span || 3;
+              const computedSpan = balancedSpans.get(placement.id) || placement.span || 6;
               const spanClasses = getResponsiveSpanClasses(computedSpan);
 
               // Extract response state for this widget
@@ -196,11 +223,10 @@ export function DashboardGrid({
               const widgetScope = responseState?.scope || scope;
 
               if (!definition) {
-                // Fallback for unregistered widget
                 return (
                   <div
                     key={placement.id}
-                    className={cn(spanClasses, "flex flex-col")}
+                    className={cn(spanClasses, "h-full flex flex-col")}
                   >
                     <div className="p-4 rounded-xl border border-destructive/30 bg-destructive/5 text-destructive text-xs">
                       Unregistered widget: {placement.id}
@@ -214,7 +240,7 @@ export function DashboardGrid({
               return (
                 <div
                   key={placement.id}
-                  className={cn(spanClasses, "flex flex-col")}
+                  className={cn(spanClasses, "h-full flex flex-col")}
                 >
                   <WidgetComponent
                     widgetId={placement.id}

@@ -4,8 +4,8 @@ import React from "react";
 import { WidgetShell } from "../WidgetShell";
 import { WidgetProps } from "@/src/lib/dashboard/registry";
 import { PendingHrDecisionsData } from "@/src/types/dashboard";
-import { Clock, MessageSquare, Edit3, ShieldAlert, AlertCircle, type LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { DashboardListRow } from "../DashboardListRow";
+import { Clock, MessageSquare, Edit3, ShieldAlert, type LucideIcon } from "lucide-react";
 
 export function PendingHrDecisionsWidget({
   scope,
@@ -13,78 +13,61 @@ export function PendingHrDecisionsWidget({
   isLoading,
   error,
   onRetry,
+  updatedAt,
 }: WidgetProps<PendingHrDecisionsData>) {
-  
   const total = data?.totalPending ?? 0;
   const urgent = data?.urgentCount ?? 0;
   const breakdown = data?.byClarificationType || { newReview: 0, responseToClarification: 0, amendmentReview: 0, salaryException: 0 };
 
-  const TYPE_CONFIG: Array<{ key: keyof typeof breakdown; label: string; icon: LucideIcon; color: string }> = [
-    { key: "newReview", label: "New Reviews", icon: Clock, color: "text-blue-500" },
-    { key: "responseToClarification", label: "Clarification Responses", icon: MessageSquare, color: "text-purple-500" },
-    { key: "amendmentReview", label: "Amendment Reviews", icon: Edit3, color: "text-amber-500" },
-    { key: "salaryException", label: "Salary Exceptions", icon: ShieldAlert, color: "text-red-500" },
+  const TYPE_CONFIG: Array<{ key: keyof typeof breakdown; label: string; icon: LucideIcon; color: string; bg: string }> = [
+    { key: "newReview", label: "New Reviews", icon: Clock, color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-500/10" },
+    { key: "responseToClarification", label: "Clarification Responses", icon: MessageSquare, color: "text-purple-600 dark:text-purple-400", bg: "bg-purple-500/10" },
+    { key: "amendmentReview", label: "Amendment Reviews", icon: Edit3, color: "text-amber-600 dark:text-amber-400", bg: "bg-amber-500/10" },
+    { key: "salaryException", label: "Salary Exceptions", icon: ShieldAlert, color: "text-rose-600 dark:text-rose-400", bg: "bg-rose-500/10" },
   ];
 
   return (
     <WidgetShell
       title="Pending HR decisions"
       scopeLabel={scope?.label}
+      updatedAt={updatedAt}
       href="/app/requests?status=hr-review"
       isLoading={isLoading}
       error={error}
       onRetry={onRetry}
-      minHeight={240}
+      minHeight={215}
+      headerActions={
+        urgent > 0 ? (
+          <span className="text-[11px] font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">
+            {urgent} urgent
+          </span>
+        ) : undefined
+      }
     >
       {total === 0 ? (
         <div className="flex items-center justify-center py-10 text-sm text-muted-foreground">
           No pending HR decisions.
         </div>
       ) : (
-        <div className="flex flex-col gap-4 mt-2">
-          
-          <div className="flex items-center justify-between">
-            <div className="flex items-end gap-3">
-              <span className="text-3xl font-bold font-mono tracking-tight text-foreground leading-none">
-                {total}
-              </span>
-              <span className="text-xs font-medium text-muted-foreground pb-1">
-                Total Pending
-              </span>
-            </div>
-            
-            {urgent > 0 && (
-              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 rounded-full border border-red-200 dark:border-red-500/20">
-                <AlertCircle className="size-3.5" />
-                <span className="text-xs font-bold">{urgent} Urgent</span>
-              </div>
-            )}
-          </div>
-
-          <div className="grid grid-cols-2 gap-2 mt-1">
-            {TYPE_CONFIG.map((config) => {
-              const count = breakdown[config.key] || 0;
-              const Icon = config.icon;
-              return (
-                <div 
-                  key={config.key} 
-                  className={cn(
-                    "flex flex-col p-3 rounded-lg border transition-colors",
-                    count > 0 ? "border-border/60 bg-card hover:bg-muted/30" : "border-transparent bg-muted/20 opacity-60"
-                  )}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <Icon className={cn("size-4 shrink-0", count > 0 ? config.color : "text-muted-foreground")} />
-                    <span className="text-xs font-medium text-foreground truncate">{config.label}</span>
-                  </div>
-                  <span className="text-xl font-semibold font-mono tabular-nums text-foreground">
+        <div className="flex flex-col gap-1 w-full">
+          {TYPE_CONFIG.map((config) => {
+            const count = breakdown[config.key] || 0;
+            return (
+              <DashboardListRow
+                key={config.key}
+                icon={config.icon}
+                iconBg={config.bg}
+                iconColor={config.color}
+                title={config.label}
+                trailing={
+                  <span className="font-mono tabular-nums">
                     {count}
                   </span>
-                </div>
-              );
-            })}
-          </div>
-
+                }
+                href={`/app/requests?status=hr-review&type=${config.key}`}
+              />
+            );
+          })}
         </div>
       )}
     </WidgetShell>

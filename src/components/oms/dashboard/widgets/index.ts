@@ -7,6 +7,10 @@ export * from "./OpenExceptionsTile";
 export * from "./CandidatesAwaitingReviewTile";
 export * from "./VendorSubmissionsTile";
 export * from "./SecurityEventsTile";
+export * from "./FailingIntegrationsTile";
+export * from "./JobsFailedTile";
+export * from "./IntegrityIssuesTile";
+export * from "./ElevatedAccountsTile";
 
 // Band B Charts
 export * from "./RequestsByLifecycleStageChart";
@@ -32,3 +36,17 @@ export * from "./InterviewScheduleWidget";
 export * from "./VendorPerformanceWidget";
 export * from "./DraftExpiryWatchWidget";
 export * from "./PendingHrDecisionsWidget";
+
+// Band E Platform Operations & Integrity
+export * from "./BackgroundJobHealthWidget";
+export * from "./ScheduledActionsTonightWidget";
+export * from "./NotificationDeliveryWidget";
+export * from "./DocumentPipelineWidget";
+export * from "./DataIntegrityChecksWidget";
+export * from "./PrivilegeChangesWidget";
+export * from "./ElevatedAccessRegisterWidget";
+export * from "./ActiveDelegationsWidget";
+export * from "./AccountHygieneWidget";
+export * from "./RateLimitPressureWidget";
+export * from "./AuditRetentionWidget";
+export * from "./ConfigurationDriftWidget";
