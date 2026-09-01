@@ -24,7 +24,6 @@ import {
   Plus,
   Coins,
   FileText,
-  Send,
   UploadCloud,
   Trash2,
   Eye,
@@ -44,17 +43,19 @@ import {
 } from "@/components/ui/layouts/page-bar-context";
 import { DatePickerField } from "@/components/shared/DatePickerField";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface Step {
   id: number;
   label: string;
+  subtitle: string;
 }
 
 const STEPS: Step[] = [
-  { id: 1, label: "Position Details" },
-  { id: 2, label: "Roles & Funding" },
-  { id: 3, label: "Attachments" },
-  { id: 4, label: "Review & Submit" },
+  { id: 1, label: "Position Details", subtitle: "Requirements & location" },
+  { id: 2, label: "Roles & Funding", subtitle: "Governance & budget" },
+  { id: 3, label: "Attachments", subtitle: "Identity & documents" },
+  { id: 4, label: "Review & Submit", subtitle: "Final verification" },
 ];
 
 // DIEZ Colleague Directory mock options for dropdown selection
@@ -220,7 +221,6 @@ export function CreateRequisitionWorkspace() {
   }, [workLocation]);
 
   // ==================== STEP 2 FORM STATE ====================
-  // Assigned Roles State (Empty by default)
   const [reportingManager, setReportingManager] = React.useState<string[]>([]);
   const [interviewers, setInterviewers] = React.useState<string[]>([]);
   const [mainInterviewer, setMainInterviewer] = React.useState<string[]>([]);
@@ -359,12 +359,12 @@ export function CreateRequisitionWorkspace() {
   );
 
   return (
-    <div className="min-h-full bg-background p-4 md:p-6 pb-36 md:pb-44">
+    <div className="flex flex-col min-h-screen bg-background select-none font-sans">
       <PageBarActions>
         <Button
           variant="ghost"
           size="sm"
-          className="h-9 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+          className="h-8 gap-1.5 text-xs text-muted-foreground hover:text-foreground rounded-md"
           onClick={handleCancel}
         >
           <ArrowLeft className="size-3.5" />
@@ -374,65 +374,74 @@ export function CreateRequisitionWorkspace() {
 
       <PageBarBreadcrumbs crumbs={breadcrumbs} />
 
-      <div className="mx-auto flex w-full max-w-[1680px] flex-col gap-6">
+      <main className="flex-1 w-full max-w-[1600px] mx-auto px-4 md:px-8 py-6 space-y-6 pb-8">
         {/* Page Header */}
-        <div className="space-y-1">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-            Create Requisition
-          </h1>
-          <p className="text-sm font-medium text-muted-foreground">
-            {jobTitle ? `${jobTitle} · ` : ""}Draft REQ-2026-0186
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-border/40 pb-5">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                Create Requisition
+              </h1>
+              <Badge variant="outline" className="text-xs font-mono font-medium bg-muted/40">
+                REQ-2026-0186
+              </Badge>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {jobTitle ? <strong className="text-foreground font-semibold">{jobTitle}</strong> : "New position requisition"} · Complete all 4 steps to route for departmental and financial review.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground font-medium">Step {currentStep} of 4</span>
+          </div>
         </div>
 
         {/* Stepper Navigation */}
-        <div className="relative my-2 w-full">
-          <div className="flex items-center justify-between">
-            {STEPS.map((step, idx) => {
-              const isActive = currentStep === step.id;
-              const isCompleted = currentStep > step.id;
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+          {STEPS.map((step) => {
+            const isActive = currentStep === step.id;
+            const isCompleted = currentStep > step.id;
 
-              return (
-                <React.Fragment key={step.id}>
-                  {/* Step item */}
-                  <div
-                    onClick={() => setCurrentStep(step.id)}
-                    className="flex cursor-pointer items-center gap-3 group"
-                  >
-                    <div
-                      className={`flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-all duration-200 ${
-                        isActive
-                          ? "bg-primary text-primary-foreground shadow-xs"
-                          : isCompleted
-                          ? "bg-primary/20 text-primary"
-                          : "border border-border bg-card text-muted-foreground group-hover:border-foreground/40"
-                      }`}
-                    >
-                      {isCompleted ? <Check className="size-4" /> : step.id}
-                    </div>
-                    <span
-                      className={`text-sm font-medium transition-colors ${
-                        isActive
-                          ? "font-semibold text-foreground"
-                          : "text-muted-foreground group-hover:text-foreground"
-                      }`}
-                    >
-                      {step.label}
-                    </span>
-                  </div>
-
-                  {/* Step Line Connector */}
-                  {idx < STEPS.length - 1 && (
-                    <div
-                      className={`h-[1px] flex-1 mx-4 transition-colors ${
-                        currentStep > step.id ? "bg-primary" : "bg-border"
-                      }`}
-                    />
+            return (
+              <button
+                key={step.id}
+                type="button"
+                onClick={() => setCurrentStep(step.id)}
+                className={cn(
+                  "flex items-center gap-3 p-3 rounded-lg border text-left transition-all",
+                  isActive
+                    ? "bg-primary/10 border-primary shadow-xs"
+                    : isCompleted
+                      ? "bg-card border-border/70 hover:border-primary/40 hover:bg-muted/40"
+                      : "bg-muted/20 border-border/40 text-muted-foreground hover:border-border/70 hover:bg-muted/30"
+                )}
+              >
+                <div
+                  className={cn(
+                    "flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors",
+                    isActive
+                      ? "bg-primary text-primary-foreground"
+                      : isCompleted
+                        ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300"
+                        : "bg-muted text-muted-foreground border border-border/60"
                   )}
-                </React.Fragment>
-              );
-            })}
-          </div>
+                >
+                  {isCompleted ? <Check className="size-3.5 stroke-[2.5]" /> : step.id}
+                </div>
+                <div className="min-w-0">
+                  <div className={cn(
+                    "text-xs font-semibold leading-tight truncate",
+                    isActive ? "text-primary font-bold" : isCompleted ? "text-foreground" : "text-muted-foreground"
+                  )}>
+                    {step.label}
+                  </div>
+                  <div className="text-[10.5px] text-muted-foreground truncate mt-0.5">
+                    {step.subtitle}
+                  </div>
+                </div>
+              </button>
+            );
+          })}
         </div>
 
         {/* ========================================================================= */}
@@ -443,83 +452,77 @@ export function CreateRequisitionWorkspace() {
             {/* Left Column - Details Form */}
             <div className="space-y-6 lg:col-span-7 xl:col-span-8">
               {/* Position Requirements Section */}
-              <div className="rounded-xl border border-border/70 bg-card p-5 shadow-xs md:p-6">
-                <h2 className="mb-5 text-base font-semibold text-foreground md:text-lg">
-                  Position Requirements
-                </h2>
+              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-5">
+                <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                  <div className="flex items-center gap-2">
+                    <Briefcase className="size-4 text-primary" />
+                    <h2 className="text-sm font-bold text-foreground">
+                      Position Requirements
+                    </h2>
+                  </div>
+                  <span className="text-[11px] text-muted-foreground">Mandatory fields</span>
+                </div>
 
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   {/* Number of resources */}
                   <div className="space-y-1.5">
-                    <Label
-                      htmlFor="num-resources"
-                      className="text-xs font-medium text-muted-foreground"
-                    >
+                    <Label htmlFor="num-resources" className="text-xs font-medium text-foreground">
                       Number of resources
                     </Label>
                     <Input
                       id="num-resources"
-                      placeholder="Enter number of resources"
+                      placeholder="e.g. 2"
                       value={resources}
                       onChange={(e) => setResources(e.target.value)}
-                      className="font-medium"
+                      className="h-9.5 text-xs font-medium rounded-md"
                     />
                   </div>
 
                   {/* Job Title */}
                   <div className="space-y-1.5">
-                    <Label
-                      htmlFor="job-title"
-                      className="text-xs font-medium text-muted-foreground"
-                    >
+                    <Label htmlFor="job-title" className="text-xs font-medium text-foreground">
                       Job title
                     </Label>
                     <Input
                       id="job-title"
-                      placeholder="Enter job title"
+                      placeholder="e.g. Senior Cybersecurity Analyst"
                       value={jobTitle}
                       onChange={(e) => setJobTitle(e.target.value)}
-                      className="font-medium"
+                      className="h-9.5 text-xs font-medium rounded-md"
                     />
                   </div>
 
                   {/* Salary Grade */}
                   <div className="space-y-1.5">
-                    <Label
-                      htmlFor="salary-grade"
-                      className="text-xs font-medium text-muted-foreground"
-                    >
+                    <Label htmlFor="salary-grade" className="text-xs font-medium text-foreground">
                       Salary grade
                     </Label>
                     <Input
                       id="salary-grade"
-                      placeholder="Enter salary grade"
+                      placeholder="e.g. G8"
                       value={salaryGrade}
                       onChange={(e) => setSalaryGrade(e.target.value)}
-                      className="font-medium"
+                      className="h-9.5 text-xs font-medium rounded-md"
                     />
                   </div>
 
                   {/* Job Profile */}
                   <div className="space-y-1.5">
-                    <Label
-                      htmlFor="job-profile"
-                      className="text-xs font-medium text-muted-foreground"
-                    >
-                      Job profile
+                    <Label htmlFor="job-profile" className="text-xs font-medium text-foreground">
+                      Job profile code
                     </Label>
                     <Input
                       id="job-profile"
-                      placeholder="Enter job profile description"
+                      placeholder="e.g. IT-SEC-004"
                       value={jobProfile}
                       onChange={(e) => setJobProfile(e.target.value)}
-                      className="font-medium"
+                      className="h-9.5 text-xs font-medium rounded-md"
                     />
                   </div>
 
                   {/* Engagement Start */}
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-medium text-muted-foreground">
+                    <Label className="text-xs font-medium text-foreground">
                       Engagement start
                     </Label>
                     <DatePickerField
@@ -532,7 +535,7 @@ export function CreateRequisitionWorkspace() {
 
                   {/* Engagement End */}
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-medium text-muted-foreground">
+                    <Label className="text-xs font-medium text-foreground">
                       Engagement end
                     </Label>
                     <DatePickerField
@@ -545,87 +548,86 @@ export function CreateRequisitionWorkspace() {
 
                   {/* Duration */}
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-medium text-muted-foreground">
+                    <Label className="text-xs font-medium text-foreground">
                       Duration (auto-calculated)
                     </Label>
-                    <div className="flex h-9 w-full items-center rounded border border-border bg-input-background px-3 text-xs font-semibold text-foreground">
+                    <div className="flex h-9.5 w-full items-center rounded-md border border-border/60 bg-muted/40 px-3 text-xs font-semibold text-foreground tabular-nums">
                       {calculatedDuration}
                     </div>
                   </div>
 
                   {/* Budget Amount */}
                   <div className="space-y-1.5">
-                    <Label
-                      htmlFor="budget-amount"
-                      className="text-xs font-medium text-muted-foreground"
-                    >
-                      Budget amount
+                    <Label htmlFor="budget-amount" className="text-xs font-medium text-foreground">
+                      Estimated budget amount (AED)
                     </Label>
                     <Input
                       id="budget-amount"
-                      placeholder="Enter estimated budget amount"
+                      placeholder="e.g. AED 620,000"
                       value={budgetAmount}
                       onChange={(e) => setBudgetAmount(e.target.value)}
-                      className="font-medium"
+                      className="h-9.5 text-xs font-medium tabular-nums rounded-md"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Business Justification Section */}
-              <div className="rounded-xl border border-border/70 bg-card p-5 shadow-xs md:p-6">
-                <h2 className="mb-4 text-base font-semibold text-foreground md:text-lg">
-                  Business Justification
-                </h2>
+              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                  <div className="flex items-center gap-2">
+                    <FileText className="size-4 text-primary" />
+                    <h2 className="text-sm font-bold text-foreground">
+                      Business Justification & Specifications
+                    </h2>
+                  </div>
+                  <span className="text-xs text-muted-foreground tabular-nums font-mono">
+                    {justification.length} / 500
+                  </span>
+                </div>
 
                 <div className="space-y-4">
                   {/* Justification Textarea */}
                   <div className="space-y-1.5">
+                    <Label htmlFor="justification" className="text-xs font-medium text-foreground">
+                      Business need & impact
+                    </Label>
                     <Textarea
                       id="justification"
                       rows={4}
-                      placeholder="Enter business justification details..."
+                      placeholder="Describe the operational business need and justification for this requisition..."
                       value={justification}
                       onChange={(e) => setJustification(e.target.value)}
-                      className="resize-none text-sm text-foreground/90 leading-relaxed"
+                      className="resize-none text-xs text-foreground/90 leading-relaxed rounded-md border-border/60"
                     />
-                    <div className="text-right text-xs text-muted-foreground font-mono">
-                      {justification.length} / 500
-                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 pt-2">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 pt-1">
                     {/* Software Requirements */}
                     <div className="space-y-1.5">
-                      <Label
-                        htmlFor="software-reqs"
-                        className="text-xs font-medium text-muted-foreground"
-                      >
+                      <Label htmlFor="software-reqs" className="text-xs font-medium text-foreground">
                         Software requirements
                       </Label>
                       <Input
                         id="software-reqs"
-                        placeholder="Enter software requirements"
+                        placeholder="e.g. CrowdStrike, Splunk Enterprise, Jira"
                         value={softwareRequirements}
                         onChange={(e) => setSoftwareRequirements(e.target.value)}
-                        className="text-sm"
+                        className="h-9.5 text-xs rounded-md"
                       />
                     </div>
 
                     {/* Hardware Requirements */}
                     <div className="space-y-1.5">
-                      <Label
-                        htmlFor="hardware-reqs"
-                        className="text-xs font-medium text-muted-foreground"
-                      >
+                      <Label htmlFor="hardware-reqs" className="text-xs font-medium text-foreground">
                         Hardware requirements
                       </Label>
                       <Input
                         id="hardware-reqs"
-                        placeholder="Enter hardware requirements"
+                        placeholder="e.g. Secure IT Laptop (Standard Specs)"
                         value={hardwareRequirements}
                         onChange={(e) => setHardwareRequirements(e.target.value)}
-                        className="text-sm"
+                        className="h-9.5 text-xs rounded-md"
                       />
                     </div>
                   </div>
@@ -636,35 +638,34 @@ export function CreateRequisitionWorkspace() {
             {/* Right Column - Operating Model & Readiness */}
             <div className="space-y-6 lg:col-span-5 xl:col-span-4">
               {/* Operating Model Section */}
-              <div className="rounded-xl border border-border/70 bg-card p-5 shadow-xs md:p-6 space-y-4">
-                <h2 className="text-base font-semibold text-foreground">
-                  Operating Model
-                </h2>
+              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                  <h2 className="text-sm font-bold text-foreground">
+                    Operating Model
+                  </h2>
+                  <Badge variant="outline" className="text-[10.5px]">Work Arrangement</Badge>
+                </div>
 
                 <div className="space-y-2">
                   <Label className="text-xs font-medium text-muted-foreground">
-                    Work location
+                    Select work location
                   </Label>
 
                   {/* 4 Cards Selector Grid */}
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  <div className="grid grid-cols-2 gap-2">
                     {/* 1. DIEZ Premises */}
                     <button
                       type="button"
                       onClick={() => setWorkLocation("diez")}
-                      className={`flex flex-col items-center justify-between rounded-lg border p-2.5 text-center transition-all min-h-[96px] ${
+                      className={cn(
+                        "flex flex-col items-center justify-between rounded-lg border p-3 text-center transition-all h-[92px]",
                         workLocation === "diez"
-                          ? "border-primary bg-primary/10 text-primary font-semibold"
-                          : "border-border/80 bg-background text-muted-foreground hover:border-foreground/30 hover:text-foreground"
-                      }`}
+                          ? "border-primary bg-primary/10 text-primary font-semibold shadow-xs"
+                          : "border-border/60 bg-background text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+                      )}
                     >
-                      <div className="relative flex items-center justify-center w-full pt-1">
-                        {workLocation === "diez" && (
-                          <div className="absolute top-0 right-0 size-2 rounded-full bg-primary" />
-                        )}
-                        <Building2 className="size-5 shrink-0" />
-                      </div>
-                      <span className="text-xs font-medium leading-tight mt-2">
+                      <Building2 className="size-5 shrink-0" />
+                      <span className="text-xs leading-tight">
                         DIEZ Premises
                       </span>
                     </button>
@@ -673,19 +674,15 @@ export function CreateRequisitionWorkspace() {
                     <button
                       type="button"
                       onClick={() => setWorkLocation("wfh")}
-                      className={`flex flex-col items-center justify-between rounded-lg border p-2.5 text-center transition-all min-h-[96px] ${
+                      className={cn(
+                        "flex flex-col items-center justify-between rounded-lg border p-3 text-center transition-all h-[92px]",
                         workLocation === "wfh"
-                          ? "border-primary bg-primary/10 text-primary font-semibold"
-                          : "border-border/80 bg-background text-muted-foreground hover:border-foreground/30 hover:text-foreground"
-                      }`}
+                          ? "border-primary bg-primary/10 text-primary font-semibold shadow-xs"
+                          : "border-border/60 bg-background text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+                      )}
                     >
-                      <div className="relative flex items-center justify-center w-full pt-1">
-                        {workLocation === "wfh" && (
-                          <div className="absolute top-0 right-0 size-2 rounded-full bg-primary" />
-                        )}
-                        <Home className="size-5 shrink-0" />
-                      </div>
-                      <span className="text-xs font-medium leading-tight mt-2">
+                      <Home className="size-5 shrink-0" />
+                      <span className="text-xs leading-tight">
                         UAE Remote (WFH)
                       </span>
                     </button>
@@ -694,20 +691,16 @@ export function CreateRequisitionWorkspace() {
                     <button
                       type="button"
                       onClick={() => setWorkLocation("vendor")}
-                      className={`flex flex-col items-center justify-between rounded-lg border p-2.5 text-center transition-all min-h-[96px] ${
+                      className={cn(
+                        "flex flex-col items-center justify-between rounded-lg border p-3 text-center transition-all h-[92px]",
                         workLocation === "vendor"
-                          ? "border-primary bg-primary/10 text-primary font-semibold"
-                          : "border-border/80 bg-background text-muted-foreground hover:border-foreground/30 hover:text-foreground"
-                      }`}
+                          ? "border-primary bg-primary/10 text-primary font-semibold shadow-xs"
+                          : "border-border/60 bg-background text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+                      )}
                     >
-                      <div className="relative flex items-center justify-center w-full pt-1">
-                        {workLocation === "vendor" && (
-                          <div className="absolute top-0 right-0 size-2 rounded-full bg-primary" />
-                        )}
-                        <Briefcase className="size-5 shrink-0" />
-                      </div>
-                      <span className="text-xs font-medium leading-tight mt-2">
-                        UAE Remote (Vendor Office)
+                      <Briefcase className="size-5 shrink-0" />
+                      <span className="text-xs leading-tight">
+                        Vendor Facility
                       </span>
                     </button>
 
@@ -715,19 +708,15 @@ export function CreateRequisitionWorkspace() {
                     <button
                       type="button"
                       onClick={() => setWorkLocation("abroad")}
-                      className={`flex flex-col items-center justify-between rounded-lg border p-2.5 text-center transition-all min-h-[96px] ${
+                      className={cn(
+                        "flex flex-col items-center justify-between rounded-lg border p-3 text-center transition-all h-[92px]",
                         workLocation === "abroad"
-                          ? "border-primary bg-primary/10 text-primary font-semibold"
-                          : "border-border/80 bg-background text-muted-foreground hover:border-foreground/30 hover:text-foreground"
-                      }`}
+                          ? "border-primary bg-primary/10 text-primary font-semibold shadow-xs"
+                          : "border-border/60 bg-background text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+                      )}
                     >
-                      <div className="relative flex items-center justify-center w-full pt-1">
-                        {workLocation === "abroad" && (
-                          <div className="absolute top-0 right-0 size-2 rounded-full bg-primary" />
-                        )}
-                        <Globe className="size-5 shrink-0" />
-                      </div>
-                      <span className="text-xs font-medium leading-tight mt-2">
+                      <Globe className="size-5 shrink-0" />
+                      <span className="text-xs leading-tight">
                         Remote (Abroad)
                       </span>
                     </button>
@@ -735,25 +724,26 @@ export function CreateRequisitionWorkspace() {
                 </div>
 
                 {/* Sub-info below location */}
-                <div className="grid grid-cols-2 gap-4 pt-2 border-t border-border/50 transition-all duration-200">
+                <div className="grid grid-cols-2 gap-4 pt-3 border-t border-border/40">
                   <div>
-                    <div className="text-xs text-muted-foreground font-medium">
+                    <div className="text-[11px] text-muted-foreground font-medium">
                       Office space
                     </div>
-                    <div className="text-sm font-semibold text-foreground mt-0.5">
+                    <div className="text-xs font-semibold text-foreground mt-0.5">
                       {locationDetails.officeSpace}
                     </div>
                   </div>
                   <div>
-                    <div className="text-xs text-muted-foreground font-medium">
+                    <div className="text-[11px] text-muted-foreground font-medium">
                       Seating plan
                     </div>
                     <div
-                      className={`text-sm font-semibold mt-0.5 ${
+                      className={cn(
+                        "text-xs font-semibold mt-0.5",
                         locationDetails.isInteractive
                           ? "text-primary cursor-pointer hover:underline"
                           : "text-foreground"
-                      }`}
+                      )}
                     >
                       {locationDetails.seatingPlan}
                     </div>
@@ -762,32 +752,36 @@ export function CreateRequisitionWorkspace() {
               </div>
 
               {/* Candidate Route Section */}
-              <div className="rounded-xl border border-border/70 bg-card p-5 shadow-xs md:p-6 space-y-4">
-                <h2 className="text-base font-semibold text-foreground">
-                  Candidate Route
-                </h2>
+              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                  <h2 className="text-sm font-bold text-foreground">
+                    Candidate Route
+                  </h2>
+                  <Badge variant="outline" className="text-[10.5px]">Sourcing Type</Badge>
+                </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   {/* 1. Unknown candidates */}
                   <div
                     onClick={() => setCandidateRoute("unknown")}
-                    className={`flex cursor-pointer items-start gap-3.5 rounded-xl border p-4 transition-all ${
+                    className={cn(
+                      "flex cursor-pointer items-start gap-3 rounded-lg border p-3.5 transition-all",
                       candidateRoute === "unknown"
-                        ? "border-primary bg-primary/5"
-                        : "border-border/80 bg-background hover:border-foreground/30"
-                    }`}
+                        ? "border-primary bg-primary/10 shadow-xs"
+                        : "border-border/60 bg-background hover:border-foreground/30 hover:bg-muted/30"
+                    )}
                   >
                     <div className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full border border-primary">
                       {candidateRoute === "unknown" && (
                         <div className="size-2 rounded-full bg-primary" />
                       )}
                     </div>
-                    <UserPlus className="size-5 shrink-0 text-primary mt-0.5" />
+                    <UserPlus className="size-4 shrink-0 text-primary mt-0.5" />
                     <div className="space-y-0.5">
-                      <div className="text-sm font-semibold text-foreground">
+                      <div className="text-xs font-semibold text-foreground">
                         Unknown candidates
                       </div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-[11px] text-muted-foreground">
                         Attach a job description for vendor sourcing
                       </div>
                     </div>
@@ -796,24 +790,25 @@ export function CreateRequisitionWorkspace() {
                   {/* 2. Known candidate */}
                   <div
                     onClick={() => setCandidateRoute("known")}
-                    className={`flex cursor-pointer items-start gap-3.5 rounded-xl border p-4 transition-all ${
+                    className={cn(
+                      "flex cursor-pointer items-start gap-3 rounded-lg border p-3.5 transition-all",
                       candidateRoute === "known"
-                        ? "border-primary bg-primary/5"
-                        : "border-border/80 bg-background hover:border-foreground/30"
-                    }`}
+                        ? "border-primary bg-primary/10 shadow-xs"
+                        : "border-border/60 bg-background hover:border-foreground/30 hover:bg-muted/30"
+                    )}
                   >
                     <div className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full border border-muted-foreground/50">
                       {candidateRoute === "known" && (
                         <div className="size-2 rounded-full bg-primary" />
                       )}
                     </div>
-                    <User className="size-5 shrink-0 text-muted-foreground mt-0.5" />
+                    <User className="size-4 shrink-0 text-muted-foreground mt-0.5" />
                     <div className="space-y-0.5">
-                      <div className="text-sm font-semibold text-foreground">
+                      <div className="text-xs font-semibold text-foreground">
                         Known candidate
                       </div>
-                      <div className="text-xs text-muted-foreground">
-                        Attach the candidate CV
+                      <div className="text-[11px] text-muted-foreground">
+                        Attach candidate CV and profile details
                       </div>
                     </div>
                   </div>
@@ -821,63 +816,58 @@ export function CreateRequisitionWorkspace() {
               </div>
 
               {/* Request Readiness Section */}
-              <div className="rounded-xl border border-border/70 bg-card p-5 shadow-xs md:p-6 space-y-4">
-                <h2 className="text-base font-semibold text-foreground">
-                  Request Readiness
-                </h2>
+              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                  <h2 className="text-sm font-bold text-foreground">
+                    Request Readiness
+                  </h2>
+                  <Badge variant="outline" className="text-[10.5px]">Validation</Badge>
+                </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+                <div className="grid grid-cols-2 gap-3 pt-1">
                   {/* 1. Required fields */}
-                  <div className="space-y-1">
-                    <CheckCircle2 className="size-5 text-primary" />
-                    <div className="text-[11px] font-medium text-muted-foreground leading-tight">
-                      Required fields
+                  <div className="p-2.5 rounded-lg bg-muted/30 border border-border/40 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10.5px] text-muted-foreground font-medium">Required fields</span>
+                      <CheckCircle2 className="size-3.5 text-emerald-600 dark:text-emerald-400" />
                     </div>
-                    <div className="text-xs font-bold text-foreground">
-                      12 / 12 complete
+                    <div className="text-xs font-bold text-foreground tabular-nums">
+                      Complete
                     </div>
                   </div>
 
                   {/* 2. Expected approval route */}
-                  <div className="space-y-1">
-                    <GitFork className="size-5 text-muted-foreground" />
-                    <div className="text-[11px] font-medium text-muted-foreground leading-tight">
-                      Expected approval route
+                  <div className="p-2.5 rounded-lg bg-muted/30 border border-border/40 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10.5px] text-muted-foreground font-medium">Approval route</span>
+                      <GitFork className="size-3.5 text-muted-foreground" />
                     </div>
                     <div className="text-xs font-bold text-foreground">
-                      Resolved after role selection
+                      Step 2 check
                     </div>
                   </div>
 
                   {/* 3. Budget check */}
-                  <div className="space-y-1">
-                    <CreditCard className="size-5 text-muted-foreground" />
-                    <div className="text-[11px] font-medium text-muted-foreground leading-tight">
-                      Budget check
+                  <div className="p-2.5 rounded-lg bg-muted/30 border border-border/40 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10.5px] text-muted-foreground font-medium">Budget check</span>
+                      <CreditCard className="size-3.5 text-muted-foreground" />
                     </div>
                     <div className="text-xs font-bold text-foreground">
-                      Runs in next step
+                      Step 2 check
                     </div>
                   </div>
 
                   {/* 4. Privacy classification */}
-                  <div className="space-y-1">
-                    <ShieldCheck className="size-5 text-muted-foreground" />
-                    <div className="text-[11px] font-medium text-muted-foreground leading-tight">
-                      Privacy classification
+                  <div className="p-2.5 rounded-lg bg-muted/30 border border-border/40 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10.5px] text-muted-foreground font-medium">Privacy class</span>
+                      <ShieldCheck className="size-3.5 text-muted-foreground" />
                     </div>
                     <div className="text-xs font-bold text-foreground">
-                      Candidate personal data
+                      Candidate data
                     </div>
                   </div>
-                </div>
-
-                {/* Bottom Notice Box */}
-                <div className="rounded-lg border border-border/60 bg-muted/40 p-3 flex items-start gap-2.5 text-xs text-muted-foreground mt-4">
-                  <Clock className="size-4 text-muted-foreground shrink-0 mt-0.5" />
-                  <span>
-                    Unknown-candidate sourcing will use anonymised department review.
-                  </span>
                 </div>
               </div>
             </div>
@@ -889,26 +879,22 @@ export function CreateRequisitionWorkspace() {
         {/* ========================================================================= */}
         {currentStep === 2 && (
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-            {/* Left Column - Assigned Roles (Width reduced to 5 cols) */}
+            {/* Left Column - Assigned Roles */}
             <div className="space-y-6 lg:col-span-5 xl:col-span-5">
-              <div className="rounded-xl border border-border/70 bg-card p-5 shadow-xs md:p-6 space-y-6">
-                <div>
-                  <h2 className="text-base font-semibold text-foreground md:text-lg">
-                    Assigned Roles
+              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-5">
+                <div className="border-b border-border/40 pb-3">
+                  <h2 className="text-sm font-bold text-foreground">
+                    Assigned Governance Roles
                   </h2>
-                  <div className="flex items-center gap-2 mt-1.5 text-xs text-muted-foreground">
-                    <Badge variant="outline" className="gap-1 border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-medium">
-                      <CheckCircle2 className="size-3" />
-                      Active Directory
-                    </Badge>
-                    <span>Select colleagues from DIEZ directory.</span>
-                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                    Select verified colleagues from the DIEZ enterprise directory.
+                  </p>
                 </div>
 
-                <div className="space-y-5">
+                <div className="space-y-4">
                   {/* 1. Reporting Line Manager */}
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-medium text-muted-foreground">
+                    <Label className="text-xs font-medium text-foreground">
                       Reporting Line Manager
                     </Label>
                     <div className="relative">
@@ -918,24 +904,28 @@ export function CreateRequisitionWorkspace() {
                             activeDropdown === "manager" ? null : "manager"
                           )
                         }
-                        className="min-h-[44px] cursor-pointer rounded-lg border border-border bg-background p-2 flex items-center justify-between gap-2 hover:border-foreground/40 transition-colors"
+                        className="min-h-[42px] cursor-pointer rounded-lg border border-border/70 bg-background p-2 flex items-center justify-between gap-2 hover:border-foreground/40 transition-colors"
                       >
                         <div className="flex flex-wrap gap-1.5 items-center">
-                          {reportingManager.map((name) => (
-                            <span
-                              key={name}
-                              className="inline-flex items-center gap-1 text-xs font-medium bg-muted text-foreground px-2.5 py-1 rounded-md border border-border/60"
-                            >
-                              {name}
-                              <X
-                                className="size-3 text-muted-foreground hover:text-foreground cursor-pointer ml-0.5"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  removeRoleTag(setReportingManager, name);
-                                }}
-                              />
-                            </span>
-                          ))}
+                          {reportingManager.length === 0 ? (
+                            <span className="text-xs text-muted-foreground px-1">Select manager...</span>
+                          ) : (
+                            reportingManager.map((name) => (
+                              <span
+                                key={name}
+                                className="inline-flex items-center gap-1 text-xs font-medium bg-muted/80 text-foreground px-2.5 py-1 rounded-md border border-border/60"
+                              >
+                                {name}
+                                <X
+                                  className="size-3 text-muted-foreground hover:text-foreground cursor-pointer ml-0.5"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeRoleTag(setReportingManager, name);
+                                  }}
+                                />
+                              </span>
+                            ))
+                          )}
                         </div>
 
                         <div className="flex items-center gap-1.5 text-muted-foreground shrink-0">
@@ -968,7 +958,7 @@ export function CreateRequisitionWorkspace() {
 
                   {/* 2. Interviewers */}
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-medium text-muted-foreground">
+                    <Label className="text-xs font-medium text-foreground">
                       Interviewers
                     </Label>
                     <div className="relative">
@@ -978,24 +968,28 @@ export function CreateRequisitionWorkspace() {
                             activeDropdown === "interviewers" ? null : "interviewers"
                           )
                         }
-                        className="min-h-[44px] cursor-pointer rounded-lg border border-border bg-background p-2 flex items-center justify-between gap-2 hover:border-foreground/40 transition-colors"
+                        className="min-h-[42px] cursor-pointer rounded-lg border border-border/70 bg-background p-2 flex items-center justify-between gap-2 hover:border-foreground/40 transition-colors"
                       >
                         <div className="flex flex-wrap gap-1.5 items-center">
-                          {interviewers.map((name) => (
-                            <span
-                              key={name}
-                              className="inline-flex items-center gap-1 text-xs font-medium bg-muted text-foreground px-2.5 py-1 rounded-md border border-border/60"
-                            >
-                              {name}
-                              <X
-                                className="size-3 text-muted-foreground hover:text-foreground cursor-pointer ml-0.5"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  removeRoleTag(setInterviewers, name);
-                                }}
-                              />
-                            </span>
-                          ))}
+                          {interviewers.length === 0 ? (
+                            <span className="text-xs text-muted-foreground px-1">Select interviewers...</span>
+                          ) : (
+                            interviewers.map((name) => (
+                              <span
+                                key={name}
+                                className="inline-flex items-center gap-1 text-xs font-medium bg-muted/80 text-foreground px-2.5 py-1 rounded-md border border-border/60"
+                              >
+                                {name}
+                                <X
+                                  className="size-3 text-muted-foreground hover:text-foreground cursor-pointer ml-0.5"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeRoleTag(setInterviewers, name);
+                                  }}
+                                />
+                              </span>
+                            ))
+                          )}
                         </div>
 
                         <div className="flex items-center gap-1.5 text-muted-foreground shrink-0">
@@ -1028,7 +1022,7 @@ export function CreateRequisitionWorkspace() {
 
                   {/* 3. Main Interviewer */}
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-medium text-muted-foreground">
+                    <Label className="text-xs font-medium text-foreground">
                       Main Interviewer
                     </Label>
                     <div className="relative">
@@ -1038,24 +1032,28 @@ export function CreateRequisitionWorkspace() {
                             activeDropdown === "main" ? null : "main"
                           )
                         }
-                        className="min-h-[44px] cursor-pointer rounded-lg border border-border bg-background p-2 flex items-center justify-between gap-2 hover:border-foreground/40 transition-colors"
+                        className="min-h-[42px] cursor-pointer rounded-lg border border-border/70 bg-background p-2 flex items-center justify-between gap-2 hover:border-foreground/40 transition-colors"
                       >
                         <div className="flex flex-wrap gap-1.5 items-center">
-                          {mainInterviewer.map((name) => (
-                            <span
-                              key={name}
-                              className="inline-flex items-center gap-1 text-xs font-medium bg-muted text-foreground px-2.5 py-1 rounded-md border border-border/60"
-                            >
-                              {name}
-                              <X
-                                className="size-3 text-muted-foreground hover:text-foreground cursor-pointer ml-0.5"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  removeRoleTag(setMainInterviewer, name);
-                                }}
-                              />
-                            </span>
-                          ))}
+                          {mainInterviewer.length === 0 ? (
+                            <span className="text-xs text-muted-foreground px-1">Select main interviewer...</span>
+                          ) : (
+                            mainInterviewer.map((name) => (
+                              <span
+                                key={name}
+                                className="inline-flex items-center gap-1 text-xs font-medium bg-muted/80 text-foreground px-2.5 py-1 rounded-md border border-border/60"
+                              >
+                                {name}
+                                <X
+                                  className="size-3 text-muted-foreground hover:text-foreground cursor-pointer ml-0.5"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeRoleTag(setMainInterviewer, name);
+                                  }}
+                                />
+                              </span>
+                            ))
+                          )}
                         </div>
 
                         <div className="flex items-center gap-1.5 text-muted-foreground shrink-0">
@@ -1088,7 +1086,7 @@ export function CreateRequisitionWorkspace() {
 
                   {/* 4. Work Completion Assignees */}
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-medium text-muted-foreground">
+                    <Label className="text-xs font-medium text-foreground">
                       Work Completion Assignees
                     </Label>
                     <div className="relative">
@@ -1098,24 +1096,28 @@ export function CreateRequisitionWorkspace() {
                             activeDropdown === "work" ? null : "work"
                           )
                         }
-                        className="min-h-[44px] cursor-pointer rounded-lg border border-border bg-background p-2 flex items-center justify-between gap-2 hover:border-foreground/40 transition-colors"
+                        className="min-h-[42px] cursor-pointer rounded-lg border border-border/70 bg-background p-2 flex items-center justify-between gap-2 hover:border-foreground/40 transition-colors"
                       >
                         <div className="flex flex-wrap gap-1.5 items-center">
-                          {workAssignees.map((name) => (
-                            <span
-                              key={name}
-                              className="inline-flex items-center gap-1 text-xs font-medium bg-muted text-foreground px-2.5 py-1 rounded-md border border-border/60"
-                            >
-                              {name}
-                              <X
-                                className="size-3 text-muted-foreground hover:text-foreground cursor-pointer ml-0.5"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  removeRoleTag(setWorkAssignees, name);
-                                }}
-                              />
-                            </span>
-                          ))}
+                          {workAssignees.length === 0 ? (
+                            <span className="text-xs text-muted-foreground px-1">Select assignees...</span>
+                          ) : (
+                            workAssignees.map((name) => (
+                              <span
+                                key={name}
+                                className="inline-flex items-center gap-1 text-xs font-medium bg-muted/80 text-foreground px-2.5 py-1 rounded-md border border-border/60"
+                              >
+                                {name}
+                                <X
+                                  className="size-3 text-muted-foreground hover:text-foreground cursor-pointer ml-0.5"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeRoleTag(setWorkAssignees, name);
+                                  }}
+                                />
+                              </span>
+                            ))
+                          )}
                         </div>
 
                         <div className="flex items-center gap-1.5 text-muted-foreground shrink-0">
@@ -1147,20 +1149,20 @@ export function CreateRequisitionWorkspace() {
                   </div>
 
                   {/* Approval Route Summary Box */}
-                  <div className="rounded-xl border border-border/70 bg-muted/30 p-4 flex items-center gap-3 text-xs md:text-sm">
-                    <GitFork className="size-5 text-primary shrink-0" />
+                  <div className="rounded-lg border border-border/60 bg-muted/30 p-3.5 flex items-center gap-3 text-xs">
+                    <GitFork className="size-4 text-primary shrink-0" />
                     <div className="text-muted-foreground leading-relaxed">
-                      <span className="font-semibold text-foreground">Approval route: </span>
+                      <span className="font-semibold text-foreground">Resolved route: </span>
                       {reportingManager.length > 0 ? (
                         <>
                           <span className="font-semibold text-foreground">
                             {reportingManager.join(", ")}
                           </span>{" "}
-                          → <span className="font-semibold text-foreground">Ebrahim Al Tamimi</span> →{" "}
-                          <span className="font-semibold text-foreground">Zayed Al Hosani</span>
+                          → <span className="font-semibold text-foreground">Ebrahim Al Tamimi (HOD)</span> →{" "}
+                          <span className="font-semibold text-foreground">Zayed Al Hosani (Finance)</span>
                         </>
                       ) : (
-                        <span className="text-muted-foreground">
+                        <span>
                           Select a Reporting Line Manager to establish approval route
                         </span>
                       )}
@@ -1170,46 +1172,52 @@ export function CreateRequisitionWorkspace() {
               </div>
             </div>
 
-            {/* Right Column - Funding Route & Budget Lines (Width expanded to 7 cols) */}
+            {/* Right Column - Funding Route & Budget Lines */}
             <div className="space-y-6 lg:col-span-7 xl:col-span-7">
               {/* Funding Route Section */}
-              <div className="rounded-xl border border-border/70 bg-card p-5 shadow-xs md:p-6 space-y-4">
-                <h2 className="text-base font-semibold text-foreground">
-                  Funding Route
-                </h2>
+              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                  <h2 className="text-sm font-bold text-foreground">
+                    Funding Route
+                  </h2>
+                  <Badge variant="outline" className="text-[10.5px]">Cost Center</Badge>
+                </div>
 
                 {/* Segmented Switcher */}
                 <div className="grid grid-cols-3 gap-1 rounded-lg bg-muted p-1 text-center">
                   <button
                     type="button"
                     onClick={() => handleRouteSwitch("budgeted")}
-                    className={`rounded-md py-1.5 text-xs font-semibold transition-all ${
+                    className={cn(
+                      "rounded-md py-1.5 text-xs font-semibold transition-all",
                       fundingRoute === "budgeted"
-                        ? "bg-primary text-primary-foreground shadow-xs"
+                        ? "bg-background text-foreground shadow-xs"
                         : "text-muted-foreground hover:text-foreground"
-                    }`}
+                    )}
                   >
                     Budgeted
                   </button>
                   <button
                     type="button"
                     onClick={() => handleRouteSwitch("unallocated")}
-                    className={`rounded-md py-1.5 text-xs font-semibold transition-all ${
+                    className={cn(
+                      "rounded-md py-1.5 text-xs font-semibold transition-all",
                       fundingRoute === "unallocated"
-                        ? "bg-primary text-primary-foreground shadow-xs"
+                        ? "bg-background text-foreground shadow-xs"
                         : "text-muted-foreground hover:text-foreground"
-                    }`}
+                    )}
                   >
                     Unallocated
                   </button>
                   <button
                     type="button"
                     onClick={() => handleRouteSwitch("unbudgeted")}
-                    className={`rounded-md py-1.5 text-xs font-semibold transition-all ${
+                    className={cn(
+                      "rounded-md py-1.5 text-xs font-semibold transition-all",
                       fundingRoute === "unbudgeted"
-                        ? "bg-primary text-primary-foreground shadow-xs"
+                        ? "bg-background text-foreground shadow-xs"
                         : "text-muted-foreground hover:text-foreground"
-                    }`}
+                    )}
                   >
                     Unbudgeted
                   </button>
@@ -1222,15 +1230,15 @@ export function CreateRequisitionWorkspace() {
                 </p>
               </div>
 
-              {/* Budget Lines Section with Editable Grouped Inputs */}
-              <div className="rounded-xl border border-border/70 bg-card p-5 shadow-xs md:p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-base font-semibold text-foreground">
+              {/* Budget Lines Section */}
+              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                  <h2 className="text-sm font-bold text-foreground">
                     {fundingRoute === "budgeted" && "Budget Lines"}
                     {fundingRoute === "unallocated" && "Unallocated Reserve Pool"}
                     {fundingRoute === "unbudgeted" && "Out-of-Budget Request Lines"}
                   </h2>
-                  <Badge variant="outline" className="text-[11px] font-medium">
+                  <Badge variant="outline" className="text-[10.5px] font-medium">
                     {fundingRoute === "budgeted" && "Pre-approved"}
                     {fundingRoute === "unallocated" && "Central Reserve"}
                     {fundingRoute === "unbudgeted" && "Special Approval"}
@@ -1241,16 +1249,16 @@ export function CreateRequisitionWorkspace() {
                   <table className="w-full text-left text-xs">
                     <thead>
                       <tr className="border-b border-border/60 text-muted-foreground">
-                        <th className="py-2 px-1 w-8"></th>
-                        <th className="py-2 px-2 font-medium">Budget line</th>
-                        <th className="py-2 px-2 font-medium text-right">Available</th>
-                        <th className="py-2 px-2 font-medium text-right w-44">Allocate</th>
-                        <th className="py-2 px-2 font-medium text-center">Period</th>
+                        <th className="py-2.5 px-1 w-8"></th>
+                        <th className="py-2.5 px-2 font-medium">Budget line</th>
+                        <th className="py-2.5 px-2 font-medium text-right">Available</th>
+                        <th className="py-2.5 px-2 font-medium text-right w-44">Allocate</th>
+                        <th className="py-2.5 px-2 font-medium text-center">Period</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-border/40">
+                    <tbody className="divide-y divide-border/30">
                       {budgetLines.map((line) => (
-                        <tr key={line.id} className="hover:bg-muted/30">
+                        <tr key={line.id} className="hover:bg-muted/30 transition-colors">
                           <td className="py-3 px-1">
                             <Checkbox
                               checked={line.checked}
@@ -1260,7 +1268,7 @@ export function CreateRequisitionWorkspace() {
                           <td className="py-3 px-2 font-semibold text-foreground leading-tight">
                             {line.name}
                           </td>
-                          <td className="py-3 px-2 text-right text-muted-foreground whitespace-nowrap">
+                          <td className="py-3 px-2 text-right text-muted-foreground whitespace-nowrap tabular-nums">
                             {line.available}
                           </td>
                           <td className="py-2.5 px-2 text-right">
@@ -1279,7 +1287,7 @@ export function CreateRequisitionWorkspace() {
                                       prev.map((b) => (b.id === line.id ? { ...b, allocated: val } : b))
                                     );
                                   }}
-                                  className="h-full border-0 rounded-none text-right text-xs font-bold focus-visible:ring-0 shadow-none px-2.5 bg-transparent"
+                                  className="h-full border-0 rounded-none text-right text-xs font-bold tabular-nums focus-visible:ring-0 shadow-none px-2.5 bg-transparent"
                                 />
                               </div>
                             ) : (
@@ -1298,10 +1306,10 @@ export function CreateRequisitionWorkspace() {
                 </div>
               </div>
 
-              {/* Allocation Summary & Fix for UI Alignment Issue */}
-              <div className="rounded-xl border border-border/70 bg-card p-5 shadow-xs md:p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-base font-semibold text-foreground">
+              {/* Allocation Summary */}
+              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                  <h2 className="text-sm font-bold text-foreground">
                     Allocation Summary
                   </h2>
                   <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 gap-1 font-semibold text-xs">
@@ -1310,65 +1318,60 @@ export function CreateRequisitionWorkspace() {
                   </Badge>
                 </div>
 
-                {/* 4 Metric Stats Grid - Properly Aligned */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-                  <div className="rounded-lg border border-border/60 bg-muted/20 p-3 space-y-1">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="rounded-lg border border-border/50 bg-muted/20 p-3 space-y-1">
                     <div className="text-[11px] font-medium text-muted-foreground">
                       Request amount
                     </div>
-                    <div className="text-xs font-bold text-foreground">
+                    <div className="text-xs font-bold text-foreground tabular-nums">
                       AED 620,000
                     </div>
                   </div>
 
-                  <div className="rounded-lg border border-border/60 bg-muted/20 p-3 space-y-1">
+                  <div className="rounded-lg border border-border/50 bg-muted/20 p-3 space-y-1">
                     <div className="text-[11px] font-medium text-muted-foreground">
                       Selected allocation
                     </div>
-                    <div className="text-xs font-bold text-foreground">
+                    <div className="text-xs font-bold text-foreground tabular-nums">
                       AED {selectedAllocationTotal.toLocaleString()}
                     </div>
                   </div>
 
-                  <div className="rounded-lg border border-border/60 bg-muted/20 p-3 space-y-1">
+                  <div className="rounded-lg border border-border/50 bg-muted/20 p-3 space-y-1">
                     <div className="text-[11px] font-medium text-muted-foreground">
                       Available across lines
                     </div>
-                    <div className="text-xs font-bold text-foreground">
+                    <div className="text-xs font-bold text-foreground tabular-nums">
                       AED 1,240,000
                     </div>
                   </div>
 
-                  <div className="rounded-lg border border-border/60 bg-muted/20 p-3 space-y-1">
+                  <div className="rounded-lg border border-border/50 bg-muted/20 p-3 space-y-1">
                     <div className="text-[11px] font-medium text-muted-foreground">
                       Remaining reservation
                     </div>
-                    <div className="text-xs font-bold text-foreground">
+                    <div className="text-xs font-bold text-foreground tabular-nums">
                       AED 620,000
                     </div>
                   </div>
                 </div>
 
-                {/* Control Explanation - Fixed Formatting & Clean Horizontal Layout */}
-                <div className="rounded-lg border border-border/60 bg-muted/40 p-4 space-y-2 mt-2">
+                {/* Control Explanation */}
+                <div className="rounded-lg border border-border/60 bg-muted/30 p-3.5 space-y-2">
                   <div className="text-xs font-semibold text-foreground">
-                    Clear control explanation
+                    State Machine Lifecycle
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                     <span>Funds:</span>
-                    <Badge variant="outline" className="text-[11px] font-medium bg-background">
+                    <Badge variant="outline" className="text-[10.5px] font-medium bg-background">
                       On submit: Available → Reserved
                     </Badge>
                     <span className="text-muted-foreground/60">•</span>
-                    <Badge variant="outline" className="text-[11px] font-medium bg-background">
+                    <Badge variant="outline" className="text-[10.5px] font-medium bg-background">
                       On HOD approval: Reserved → Allocated
                     </Badge>
                   </div>
-
-                  <p className="text-xs text-muted-foreground leading-relaxed pt-1">
-                    Funds are reserved on submit. They are locked and allocated only after HOD approval.
-                  </p>
                 </div>
               </div>
             </div>
@@ -1382,38 +1385,37 @@ export function CreateRequisitionWorkspace() {
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
             {/* Left Column: Required Document Category Cards & Dropzone */}
             <div className="space-y-6 lg:col-span-7 xl:col-span-8">
-              {/* Category Upload Cards Grid */}
-              <div className="rounded-xl border border-border/70 bg-card p-5 shadow-xs md:p-6 space-y-5">
-                <div>
-                  <h2 className="text-base font-semibold text-foreground md:text-lg">
+              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-5">
+                <div className="border-b border-border/40 pb-3">
+                  <h2 className="text-sm font-bold text-foreground">
                     Required & Supporting Attachments
                   </h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
                     Attach candidate identity verification, certificates, and compliance documentation.
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
                   {/* 1. Passport Copy */}
-                  <div className="rounded-xl border border-border/80 bg-background p-4 flex flex-col justify-between gap-3 hover:border-foreground/30 transition-colors">
+                  <div className="rounded-lg border border-border/70 bg-background p-4 flex flex-col justify-between gap-3 hover:border-foreground/30 transition-colors">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                        <FileText className="size-5" />
+                      <div className="size-8 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                        <FileText className="size-4" />
                       </div>
                       {attachedFiles.some((f) => f.category === "Passport Copy") ? (
-                        <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 gap-1 text-[11px]">
+                        <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 gap-1 text-[10.5px]">
                           <CheckCircle2 className="size-3" /> Attached
                         </Badge>
                       ) : (
-                        <Badge variant="outline" className="text-[11px] text-amber-600 border-amber-500/30 bg-amber-500/10">
+                        <Badge variant="outline" className="text-[10.5px] text-amber-600 border-amber-500/30 bg-amber-500/10">
                           Required
                         </Badge>
                       )}
                     </div>
 
                     <div>
-                      <h3 className="text-sm font-semibold text-foreground">Passport Copy</h3>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <h3 className="text-xs font-bold text-foreground">Passport Copy</h3>
+                      <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">
                         Clear scan of passport information page (PDF or JPG).
                       </p>
                     </div>
@@ -1421,7 +1423,7 @@ export function CreateRequisitionWorkspace() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="w-full text-xs h-8 gap-1.5"
+                      className="w-full text-xs h-8 gap-1.5 rounded-md"
                       onClick={() => handleSimulatedFileUpload("Passport Copy")}
                     >
                       <Plus className="size-3.5" />
@@ -1430,25 +1432,25 @@ export function CreateRequisitionWorkspace() {
                   </div>
 
                   {/* 2. Emirates ID Copy */}
-                  <div className="rounded-xl border border-border/80 bg-background p-4 flex flex-col justify-between gap-3 hover:border-foreground/30 transition-colors">
+                  <div className="rounded-lg border border-border/70 bg-background p-4 flex flex-col justify-between gap-3 hover:border-foreground/30 transition-colors">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                        <ShieldCheck className="size-5" />
+                      <div className="size-8 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                        <ShieldCheck className="size-4" />
                       </div>
                       {attachedFiles.some((f) => f.category === "Emirates ID") ? (
-                        <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 gap-1 text-[11px]">
+                        <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 gap-1 text-[10.5px]">
                           <CheckCircle2 className="size-3" /> Attached
                         </Badge>
                       ) : (
-                        <Badge variant="outline" className="text-[11px] text-amber-600 border-amber-500/30 bg-amber-500/10">
+                        <Badge variant="outline" className="text-[10.5px] text-amber-600 border-amber-500/30 bg-amber-500/10">
                           Required (UAE)
                         </Badge>
                       )}
                     </div>
 
                     <div>
-                      <h3 className="text-sm font-semibold text-foreground">Emirates ID (EID) Copy</h3>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <h3 className="text-xs font-bold text-foreground">Emirates ID (EID) Copy</h3>
+                      <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">
                         Front and back copy of valid Emirates ID.
                       </p>
                     </div>
@@ -1456,7 +1458,7 @@ export function CreateRequisitionWorkspace() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="w-full text-xs h-8 gap-1.5"
+                      className="w-full text-xs h-8 gap-1.5 rounded-md"
                       onClick={() => handleSimulatedFileUpload("Emirates ID")}
                     >
                       <Plus className="size-3.5" />
@@ -1465,25 +1467,25 @@ export function CreateRequisitionWorkspace() {
                   </div>
 
                   {/* 3. Professional Certificates */}
-                  <div className="rounded-xl border border-border/80 bg-background p-4 flex flex-col justify-between gap-3 hover:border-foreground/30 transition-colors">
+                  <div className="rounded-lg border border-border/70 bg-background p-4 flex flex-col justify-between gap-3 hover:border-foreground/30 transition-colors">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                        <Award className="size-5" />
+                      <div className="size-8 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                        <Award className="size-4" />
                       </div>
                       {attachedFiles.some((f) => f.category === "Certificates") ? (
-                        <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 gap-1 text-[11px]">
+                        <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 gap-1 text-[10.5px]">
                           <CheckCircle2 className="size-3" /> Attached
                         </Badge>
                       ) : (
-                        <Badge variant="outline" className="text-[11px] text-muted-foreground">
+                        <Badge variant="outline" className="text-[10.5px] text-muted-foreground">
                           Recommended
                         </Badge>
                       )}
                     </div>
 
                     <div>
-                      <h3 className="text-sm font-semibold text-foreground">Certificates & Qualifications</h3>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <h3 className="text-xs font-bold text-foreground">Certificates & Qualifications</h3>
+                      <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">
                         Degrees, CISSP, CISM, or professional certifications.
                       </p>
                     </div>
@@ -1491,7 +1493,7 @@ export function CreateRequisitionWorkspace() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="w-full text-xs h-8 gap-1.5"
+                      className="w-full text-xs h-8 gap-1.5 rounded-md"
                       onClick={() => handleSimulatedFileUpload("Certificates")}
                     >
                       <Plus className="size-3.5" />
@@ -1500,19 +1502,19 @@ export function CreateRequisitionWorkspace() {
                   </div>
 
                   {/* 4. Job Description / CV */}
-                  <div className="rounded-xl border border-border/80 bg-background p-4 flex flex-col justify-between gap-3 hover:border-foreground/30 transition-colors">
+                  <div className="rounded-lg border border-border/70 bg-background p-4 flex flex-col justify-between gap-3 hover:border-foreground/30 transition-colors">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                        <FileCheck className="size-5" />
+                      <div className="size-8 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                        <FileCheck className="size-4" />
                       </div>
-                      <Badge variant="outline" className="text-[11px] text-muted-foreground">
+                      <Badge variant="outline" className="text-[10.5px] text-muted-foreground">
                         Optional
                       </Badge>
                     </div>
 
                     <div>
-                      <h3 className="text-sm font-semibold text-foreground">Job Specs / Candidate CV</h3>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <h3 className="text-xs font-bold text-foreground">Job Specs / Candidate CV</h3>
+                      <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">
                         Vendor sourcing spec document or candidate resume.
                       </p>
                     </div>
@@ -1520,7 +1522,7 @@ export function CreateRequisitionWorkspace() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="w-full text-xs h-8 gap-1.5"
+                      className="w-full text-xs h-8 gap-1.5 rounded-md"
                       onClick={() => handleSimulatedFileUpload("Job Specs")}
                     >
                       <Plus className="size-3.5" />
@@ -1532,16 +1534,16 @@ export function CreateRequisitionWorkspace() {
                 {/* Drag and Drop Zone */}
                 <div
                   onClick={() => handleSimulatedFileUpload("General Attachment")}
-                  className="cursor-pointer rounded-xl border-2 border-dashed border-border/80 bg-muted/20 p-6 text-center hover:border-primary/50 hover:bg-primary/5 transition-all space-y-2 mt-4"
+                  className="cursor-pointer rounded-lg border-2 border-dashed border-border/80 bg-muted/20 p-6 text-center hover:border-primary/50 hover:bg-primary/5 transition-all space-y-2 mt-2"
                 >
-                  <div className="size-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
-                    <UploadCloud className="size-6" />
+                  <div className="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
+                    <UploadCloud className="size-5" />
                   </div>
                   <div>
-                    <div className="text-sm font-semibold text-foreground">
+                    <div className="text-xs font-bold text-foreground">
                       Click or drag & drop files here to upload
                     </div>
-                    <div className="text-xs text-muted-foreground mt-0.5">
+                    <div className="text-[11px] text-muted-foreground mt-0.5">
                       Supports PDF, DOCX, PNG, JPG up to 15MB each
                     </div>
                   </div>
@@ -1552,32 +1554,32 @@ export function CreateRequisitionWorkspace() {
             {/* Right Column: Uploaded Files List & Compliance Check */}
             <div className="space-y-6 lg:col-span-5 xl:col-span-4">
               {/* Uploaded Files List */}
-              <div className="rounded-xl border border-border/70 bg-card p-5 shadow-xs md:p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-base font-semibold text-foreground">
+              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                  <h2 className="text-sm font-bold text-foreground">
                     Attached Documents ({attachedFiles.length})
                   </h2>
-                  <Badge variant="outline" className="text-xs">
-                    Ready for review
+                  <Badge variant="outline" className="text-[10.5px]">
+                    Ready
                   </Badge>
                 </div>
 
                 {attachedFiles.length > 0 ? (
-                  <div className="space-y-2.5">
+                  <div className="space-y-2">
                     {attachedFiles.map((file) => (
                       <div
                         key={file.id}
-                        className="rounded-lg border border-border/60 bg-background p-3 flex items-center justify-between gap-3 hover:border-foreground/30 transition-colors"
+                        className="rounded-lg border border-border/60 bg-background p-2.5 flex items-center justify-between gap-3 hover:border-foreground/30 transition-colors"
                       >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="size-8 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                            <FileText className="size-4" />
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="size-7 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                            <FileText className="size-3.5" />
                           </div>
                           <div className="min-w-0">
                             <div className="text-xs font-semibold text-foreground truncate">
                               {file.name}
                             </div>
-                            <div className="text-[11px] text-muted-foreground flex items-center gap-2">
+                            <div className="text-[10.5px] text-muted-foreground flex items-center gap-1.5">
                               <span>{file.category}</span>
                               <span>•</span>
                               <span>{file.size}</span>
@@ -1589,7 +1591,7 @@ export function CreateRequisitionWorkspace() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="size-7 text-muted-foreground hover:text-foreground"
+                            className="size-7 text-muted-foreground hover:text-foreground rounded-md"
                             onClick={() => toast.info(`Previewing ${file.name}`)}
                           >
                             <Eye className="size-3.5" />
@@ -1597,7 +1599,7 @@ export function CreateRequisitionWorkspace() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="size-7 text-muted-foreground hover:text-destructive"
+                            className="size-7 text-muted-foreground hover:text-destructive rounded-md"
                             onClick={() => handleRemoveFile(file.id)}
                           >
                             <Trash2 className="size-3.5" />
@@ -1614,13 +1616,18 @@ export function CreateRequisitionWorkspace() {
               </div>
 
               {/* Compliance Checklist Box */}
-              <div className="rounded-xl border border-border/70 bg-card p-5 shadow-xs md:p-6 space-y-4">
-                <h2 className="text-base font-semibold text-foreground">
-                  Document Verification
-                </h2>
+              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                  <h2 className="text-sm font-bold text-foreground">
+                    Document Verification
+                  </h2>
+                  <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 text-[10.5px]">
+                    Compliant
+                  </Badge>
+                </div>
 
-                <div className="space-y-3 text-xs">
-                  <div className="flex items-center justify-between py-1 border-b border-border/40">
+                <div className="space-y-2.5 text-xs">
+                  <div className="flex items-center justify-between py-1 border-b border-border/30">
                     <span className="text-muted-foreground">Passport Copy</span>
                     {attachedFiles.some((f) => f.category === "Passport Copy") ? (
                       <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 gap-1 text-[10px]">
@@ -1631,7 +1638,7 @@ export function CreateRequisitionWorkspace() {
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between py-1 border-b border-border/40">
+                  <div className="flex items-center justify-between py-1 border-b border-border/30">
                     <span className="text-muted-foreground">Emirates ID Copy</span>
                     {attachedFiles.some((f) => f.category === "Emirates ID") ? (
                       <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 gap-1 text-[10px]">
@@ -1642,7 +1649,7 @@ export function CreateRequisitionWorkspace() {
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between py-1 border-b border-border/40">
+                  <div className="flex items-center justify-between py-1 border-b border-border/30">
                     <span className="text-muted-foreground">Professional Certificates</span>
                     {attachedFiles.some((f) => f.category === "Certificates") ? (
                       <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 gap-1 text-[10px]">
@@ -1671,17 +1678,17 @@ export function CreateRequisitionWorkspace() {
         {currentStep === 4 && (
           <div className="space-y-6">
             {/* Top Banner Card */}
-            <div className="rounded-xl border border-primary/20 bg-gradient-to-r from-primary/10 via-primary/5 to-card p-5 md:p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-5 md:p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-start gap-4">
-                <div className="size-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-md">
-                  <CheckCircle2 className="size-6" />
+                <div className="size-11 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-xs">
+                  <CheckCircle2 className="size-5" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-lg font-bold text-foreground">
+                    <h2 className="text-base font-bold text-foreground">
                       Requisition REQ-2026-0186
                     </h2>
-                    <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 gap-1 text-[11px] font-semibold">
+                    <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 gap-1 text-[10.5px] font-semibold">
                       <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       Ready for Submission
                     </Badge>
@@ -1702,58 +1709,58 @@ export function CreateRequisitionWorkspace() {
             {/* 4 Review Cards Grid */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {/* Card 1: Position Requirements */}
-              <div className="rounded-xl border border-border/70 bg-card p-5 shadow-xs md:p-6 space-y-4 flex flex-col justify-between">
+              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4 flex flex-col justify-between">
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between border-b border-border/50 pb-3">
+                  <div className="flex items-center justify-between border-b border-border/40 pb-3">
                     <div className="flex items-center gap-2">
                       <Briefcase className="size-4 text-primary" />
-                      <h3 className="text-sm font-bold text-foreground">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
                         1. Position Requirements
                       </h3>
                     </div>
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 px-2.5 text-xs gap-1 text-primary hover:text-primary hover:bg-primary/10"
+                      className="h-7 px-2 text-xs gap-1 text-primary hover:text-primary hover:bg-primary/10 rounded-md"
                       onClick={() => setCurrentStep(1)}
                     >
-                      <Edit3 className="size-3.5" /> Edit
+                      <Edit3 className="size-3" /> Edit
                     </Button>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 text-xs">
+                  <div className="grid grid-cols-2 gap-3.5 text-xs">
                     <div>
-                      <span className="text-muted-foreground">Job Title</span>
-                      <div className="font-semibold text-foreground text-sm mt-0.5">
+                      <span className="text-muted-foreground text-[11px]">Job Title</span>
+                      <div className="font-semibold text-foreground mt-0.5">
                         {jobTitle || "Senior Cybersecurity Analyst"}
                       </div>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Resources</span>
-                      <div className="font-semibold text-foreground text-sm mt-0.5">
+                      <span className="text-muted-foreground text-[11px]">Resources</span>
+                      <div className="font-semibold text-foreground mt-0.5">
                         {resources || "2 positions"}
                       </div>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Salary Grade</span>
+                      <span className="text-muted-foreground text-[11px]">Salary Grade</span>
                       <div className="font-semibold text-foreground mt-0.5">
                         {salaryGrade || "G8"}
                       </div>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Operating Model</span>
+                      <span className="text-muted-foreground text-[11px]">Operating Model</span>
                       <div className="font-semibold text-foreground capitalize mt-0.5">
                         {workLocation === "diez" ? "DIEZ Premises (Floor 4)" : workLocation}
                       </div>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Duration</span>
+                      <span className="text-muted-foreground text-[11px]">Duration</span>
                       <div className="font-semibold text-foreground mt-0.5">
                         {calculatedDuration !== "Select start & end dates" ? calculatedDuration : "12 months"}
                       </div>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Candidate Route</span>
+                      <span className="text-muted-foreground text-[11px]">Candidate Route</span>
                       <div className="font-semibold text-foreground capitalize mt-0.5">
                         {candidateRoute} candidates
                       </div>
@@ -1761,8 +1768,8 @@ export function CreateRequisitionWorkspace() {
                   </div>
 
                   {justification && (
-                    <div className="rounded-lg border border-border/50 bg-muted/20 p-3 text-xs space-y-1">
-                      <span className="font-semibold text-foreground">Business Justification</span>
+                    <div className="rounded-lg border border-border/40 bg-muted/20 p-3 text-xs space-y-1">
+                      <span className="font-semibold text-foreground text-[11px]">Business Justification</span>
                       <p className="text-muted-foreground leading-relaxed line-clamp-2">
                         {justification}
                       </p>
@@ -1772,54 +1779,54 @@ export function CreateRequisitionWorkspace() {
               </div>
 
               {/* Card 2: Assigned Governance & Approval Workflow */}
-              <div className="rounded-xl border border-border/70 bg-card p-5 shadow-xs md:p-6 space-y-4 flex flex-col justify-between">
+              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4 flex flex-col justify-between">
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between border-b border-border/50 pb-3">
+                  <div className="flex items-center justify-between border-b border-border/40 pb-3">
                     <div className="flex items-center gap-2">
                       <GitFork className="size-4 text-primary" />
-                      <h3 className="text-sm font-bold text-foreground">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
                         2. Assigned Governance
                       </h3>
                     </div>
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 px-2.5 text-xs gap-1 text-primary hover:text-primary hover:bg-primary/10"
+                      className="h-7 px-2 text-xs gap-1 text-primary hover:text-primary hover:bg-primary/10 rounded-md"
                       onClick={() => setCurrentStep(2)}
                     >
-                      <Edit3 className="size-3.5" /> Edit
+                      <Edit3 className="size-3" /> Edit
                     </Button>
                   </div>
 
                   {/* Visual Approval Chain */}
                   <div className="space-y-2">
-                    <span className="text-xs text-muted-foreground font-medium">
+                    <span className="text-[11px] text-muted-foreground font-medium">
                       Approval Flow Sequence
                     </span>
-                    <div className="rounded-lg border border-border/60 bg-muted/30 p-3 flex flex-wrap items-center gap-2 text-xs">
-                      <Badge className="bg-primary text-primary-foreground font-semibold text-[11px]">
+                    <div className="rounded-lg border border-border/60 bg-muted/30 p-3 flex flex-wrap items-center gap-1.5 text-xs">
+                      <Badge className="bg-primary text-primary-foreground font-semibold text-[10.5px]">
                         1. {reportingManager[0] || "Tariq Al Suwaidi"}
                       </Badge>
                       <span className="text-muted-foreground">→</span>
-                      <Badge variant="outline" className="bg-background font-semibold text-[11px]">
+                      <Badge variant="outline" className="bg-background font-semibold text-[10.5px]">
                         2. Ebrahim Al Tamimi (HOD)
                       </Badge>
                       <span className="text-muted-foreground">→</span>
-                      <Badge variant="outline" className="bg-background font-semibold text-[11px]">
+                      <Badge variant="outline" className="bg-background font-semibold text-[10.5px]">
                         3. Zayed Al Hosani (Finance)
                       </Badge>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 text-xs pt-1">
+                  <div className="grid grid-cols-2 gap-3.5 text-xs pt-1">
                     <div>
-                      <span className="text-muted-foreground">Main Interviewer</span>
+                      <span className="text-muted-foreground text-[11px]">Main Interviewer</span>
                       <div className="font-semibold text-foreground mt-0.5">
                         {mainInterviewer.length > 0 ? mainInterviewer.join(", ") : "Not assigned"}
                       </div>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Interviewers</span>
+                      <span className="text-muted-foreground text-[11px]">Interviewers</span>
                       <div className="font-semibold text-foreground mt-0.5">
                         {interviewers.length > 0 ? interviewers.join(", ") : "Not assigned"}
                       </div>
@@ -1829,52 +1836,52 @@ export function CreateRequisitionWorkspace() {
               </div>
 
               {/* Card 3: Financial & Budget Allocation */}
-              <div className="rounded-xl border border-border/70 bg-card p-5 shadow-xs md:p-6 space-y-4 flex flex-col justify-between">
+              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4 flex flex-col justify-between">
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between border-b border-border/50 pb-3">
+                  <div className="flex items-center justify-between border-b border-border/40 pb-3">
                     <div className="flex items-center gap-2">
                       <Coins className="size-4 text-primary" />
-                      <h3 className="text-sm font-bold text-foreground">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
                         3. Financial & Budget Allocation
                       </h3>
                     </div>
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 px-2.5 text-xs gap-1 text-primary hover:text-primary hover:bg-primary/10"
+                      className="h-7 px-2 text-xs gap-1 text-primary hover:text-primary hover:bg-primary/10 rounded-md"
                       onClick={() => setCurrentStep(2)}
                     >
-                      <Edit3 className="size-3.5" /> Edit
+                      <Edit3 className="size-3" /> Edit
                     </Button>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 text-xs">
+                  <div className="grid grid-cols-2 gap-3.5 text-xs">
                     <div>
-                      <span className="text-muted-foreground">Funding Route</span>
+                      <span className="text-muted-foreground text-[11px]">Funding Route</span>
                       <div className="font-semibold text-foreground capitalize mt-0.5">
                         {fundingRoute}
                       </div>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Requisition Total</span>
-                      <div className="font-bold text-foreground text-sm mt-0.5">
+                      <span className="text-muted-foreground text-[11px]">Requisition Total</span>
+                      <div className="font-bold text-foreground text-sm mt-0.5 tabular-nums">
                         {budgetAmount || "AED 620,000"}
                       </div>
                     </div>
                   </div>
 
-                  {/* Selected Budget Lines Summary Table */}
-                  <div className="rounded-lg border border-border/60 bg-muted/20 p-3 space-y-2">
-                    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                  {/* Selected Budget Lines Summary */}
+                  <div className="rounded-lg border border-border/50 bg-muted/20 p-3 space-y-1.5">
+                    <span className="text-[10.5px] font-semibold text-muted-foreground uppercase tracking-wider">
                       Selected Budget Lines ({budgetLines.filter((b) => b.checked).length})
                     </span>
                     <div className="space-y-1 text-xs">
                       {budgetLines
                         .filter((b) => b.checked)
                         .map((line) => (
-                          <div key={line.id} className="flex items-center justify-between py-1 border-b border-border/30 last:border-0">
+                          <div key={line.id} className="flex items-center justify-between py-1 border-b border-border/20 last:border-0">
                             <span className="font-medium text-foreground truncate pr-2">{line.name}</span>
-                            <span className="font-bold text-foreground shrink-0">AED {line.allocated.toLocaleString()}</span>
+                            <span className="font-bold text-foreground shrink-0 tabular-nums">AED {line.allocated.toLocaleString()}</span>
                           </div>
                         ))}
                     </div>
@@ -1883,27 +1890,27 @@ export function CreateRequisitionWorkspace() {
               </div>
 
               {/* Card 4: Attachments & Compliance */}
-              <div className="rounded-xl border border-border/70 bg-card p-5 shadow-xs md:p-6 space-y-4 flex flex-col justify-between">
+              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4 flex flex-col justify-between">
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between border-b border-border/50 pb-3">
+                  <div className="flex items-center justify-between border-b border-border/40 pb-3">
                     <div className="flex items-center gap-2">
                       <FileText className="size-4 text-primary" />
-                      <h3 className="text-sm font-bold text-foreground">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
                         4. Attached Compliance Documents
                       </h3>
                     </div>
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 px-2.5 text-xs gap-1 text-primary hover:text-primary hover:bg-primary/10"
+                      className="h-7 px-2 text-xs gap-1 text-primary hover:text-primary hover:bg-primary/10 rounded-md"
                       onClick={() => setCurrentStep(3)}
                     >
-                      <Edit3 className="size-3.5" /> Edit
+                      <Edit3 className="size-3" /> Edit
                     </Button>
                   </div>
 
                   <div className="space-y-2">
-                    <span className="text-xs text-muted-foreground font-medium">
+                    <span className="text-[11px] text-muted-foreground font-medium">
                       Attached Files ({attachedFiles.length})
                     </span>
                     <div className="space-y-1.5 text-xs">
@@ -1925,13 +1932,13 @@ export function CreateRequisitionWorkspace() {
             </div>
 
             {/* Compliance & Legal Declaration Box */}
-            <div className="rounded-xl border border-border/70 bg-card p-5 shadow-xs md:p-6 space-y-3">
-              <div className="flex items-center gap-2.5 text-foreground font-semibold text-sm">
-                <ShieldCheck className="size-5 text-primary" />
+            <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-3">
+              <div className="flex items-center gap-2.5 text-foreground font-semibold text-xs">
+                <ShieldCheck className="size-4 text-primary" />
                 <span>Submitter Compliance Declaration</span>
               </div>
 
-              <div className="rounded-lg border border-border/60 bg-muted/30 p-4 flex items-start gap-3 text-xs">
+              <div className="rounded-lg border border-border/60 bg-muted/30 p-3.5 flex items-start gap-3 text-xs">
                 <Checkbox id="confirm-req" defaultChecked className="mt-0.5" />
                 <Label htmlFor="confirm-req" className="text-xs font-normal text-muted-foreground leading-relaxed cursor-pointer">
                   I confirm that all provided position details, assigned roles, budget funding, and attached compliance documents are accurate, verified, and ready to submit for Head of Department (HOD) approval.
@@ -1940,23 +1947,23 @@ export function CreateRequisitionWorkspace() {
             </div>
           </div>
         )}
-      </div>
+      </main>
 
-      {/* Sticky Bottom Action Footer */}
-      <div className="sticky bottom-0 z-20 border-t border-border/80 bg-background/95 backdrop-blur-md px-4 py-3 md:px-8 -mx-4 -mb-36 md:-mx-6 md:-mb-44 mt-8">
-        <div className="mx-auto flex max-w-[1680px] items-center justify-between">
+      {/* Clean Docked Action Footer - Sticky within main content column */}
+      <footer className="sticky bottom-0 z-20 border-t border-border/80 bg-background/95 backdrop-blur-md px-4 py-3.5 md:px-8 shadow-xs">
+        <div className="max-w-[1600px] mx-auto flex items-center justify-between">
           <div className="text-xs text-muted-foreground hidden sm:block font-medium">
-            Drafts are retained for 60 days.
+            Drafts are automatically saved and retained for 60 days.
           </div>
 
-          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+          <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
             {currentStep > 1 && (
               <Button
                 variant="outline"
                 onClick={handleBack}
-                className="h-10 px-5 text-sm gap-1.5"
+                className="h-9 px-4 text-xs font-medium gap-1.5 rounded-md"
               >
-                <ArrowLeft className="size-4" />
+                <ArrowLeft className="size-3.5" />
                 Back
               </Button>
             )}
@@ -1965,7 +1972,7 @@ export function CreateRequisitionWorkspace() {
               <Button
                 variant="outline"
                 onClick={handleCancel}
-                className="h-10 px-5 text-sm"
+                className="h-9 px-4 text-xs font-medium rounded-md"
               >
                 Cancel
               </Button>
@@ -1974,25 +1981,25 @@ export function CreateRequisitionWorkspace() {
             <Button
               variant="outline"
               onClick={handleSaveDraft}
-              className="h-10 px-5 text-sm gap-2"
+              className="h-9 px-4 text-xs font-medium gap-1.5 rounded-md"
             >
-              <Bookmark className="size-4" />
+              <Bookmark className="size-3.5" />
               Save Draft
             </Button>
 
             <Button
               onClick={handleContinue}
-              className="h-10 px-5 text-sm gap-2 shadow-xs"
+              className="h-9 px-5 text-xs font-semibold gap-1.5 rounded-md shadow-xs"
             >
               {currentStep === 1 && "Continue to Roles & Funding"}
               {currentStep === 2 && "Continue to Attachments"}
               {currentStep === 3 && "Continue to Review & Submit"}
               {currentStep === 4 && "Submit Requisition"}
-              <ArrowRight className="size-4" />
+              <ArrowRight className="size-3.5" />
             </Button>
           </div>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }

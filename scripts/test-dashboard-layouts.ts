@@ -1,6 +1,6 @@
-import { DASHBOARD_PERSONA_LAYOUTS } from "../src/lib/dashboard/fixtures";
-import { calculateBalancedSpans } from "../src/components/oms/dashboard/DashboardGrid";
-import { DashboardPersona } from "../src/types/dashboard";
+import { DASHBOARD_PERSONA_LAYOUTS } from "../lib/dashboard/fixtures";
+import { calculateBalancedSpans } from "../components/oms/dashboard/DashboardGrid";
+import { DashboardPersona } from "../types/dashboard";
 
 const personas: DashboardPersona[] = ["requestor", "hod", "hr", "finance", "systemAdmin"];
 

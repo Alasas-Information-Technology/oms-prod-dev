@@ -1,6 +1,6 @@
-import { WIDGET_REGISTRY } from "../src/lib/dashboard/registry";
-import { calculateBalancedSpans } from "../src/components/oms/dashboard/DashboardGrid";
-import { WidgetId, WidgetPlacement } from "../src/types/dashboard";
+import { WIDGET_REGISTRY } from "../lib/dashboard/registry";
+import { calculateBalancedSpans } from "../components/oms/dashboard/DashboardGrid";
+import { WidgetId, WidgetPlacement } from "../types/dashboard";
 
 console.log("===============================================================================");
 console.log("VERIFYING BAND A PERMISSION GATING & HOLE-FREE ROW BALANCING");

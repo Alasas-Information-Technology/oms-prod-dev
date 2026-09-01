@@ -95,20 +95,20 @@ function SortableHeader({
       type="button"
       onClick={() => onSort(sortKey)}
       className={cn(
-        "inline-flex w-full items-center gap-1 whitespace-normal text-xs font-semibold uppercase leading-4 tracking-wider text-slate-500 hover:text-foreground",
-        align === "center" && "justify-center",
-        align === "right" && "justify-end"
+        "inline-flex items-center gap-1 whitespace-nowrap text-xs font-semibold uppercase leading-4 tracking-wider text-slate-500 hover:text-foreground",
+        align === "center" && "justify-center w-full",
+        align === "right" && "justify-end w-full"
       )}
     >
-      {label}
+      <span>{label}</span>
       {isActive ? (
         sort.direction === "asc" ? (
-          <ChevronUp className="size-3 text-primary" />
+          <ChevronUp className="size-3 text-primary shrink-0" />
         ) : (
-          <ChevronDown className="size-3 text-primary" />
+          <ChevronDown className="size-3 text-primary shrink-0" />
         )
       ) : (
-        <ChevronsUpDown className="size-3 opacity-50" />
+        <ChevronsUpDown className="size-3 opacity-50 shrink-0" />
       )}
     </button>
   );
@@ -192,28 +192,15 @@ export function RequestsTable({
   };
 
   return (
-    <div className="overflow-hidden rounded-lg border border-border bg-white shadow-xs">
-      <Table className="w-full table-fixed border-none">
-        <colgroup>
-          <col className="w-[3%]" />
-          <col className="w-[12%]" />
-          <col className="w-[18%]" />
-          <col className="w-[6%]" />
-          <col className="w-[12%]" />
-          <col className="w-[11%]" />
-          <col className="w-[11%]" />
-          <col className="w-[10%]" />
-          <col className="w-[7%]" />
-          <col className="w-[10%]" />
-        </colgroup>
-
+    <div className="overflow-x-auto rounded-lg border border-border bg-white shadow-xs">
+      <Table className="w-full border-none">
         <TableHeader className="border-b border-border bg-slate-50/80">
           <TableRow className="hover:bg-slate-50/80">
-            <TableHead className="w-10 px-2">
+            <TableHead className="w-9 px-2">
               <span className="sr-only">Expand request</span>
             </TableHead>
 
-            <TableHead className="px-2 py-3">
+            <TableHead className="px-3 py-3 whitespace-nowrap min-w-[140px]">
               <SortableHeader
                 label="Request ID"
                 sortKey="requestId"
@@ -222,7 +209,7 @@ export function RequestsTable({
               />
             </TableHead>
 
-            <TableHead className="px-2 py-3">
+            <TableHead className="px-3 py-3 whitespace-nowrap min-w-[180px]">
               <SortableHeader
                 label="Position"
                 sortKey="position"
@@ -231,7 +218,7 @@ export function RequestsTable({
               />
             </TableHead>
 
-            <TableHead className="px-2 py-3 text-center">
+            <TableHead className="px-2 py-3 text-center whitespace-nowrap w-14">
               <SortableHeader
                 label="Qty"
                 sortKey="resources"
@@ -241,7 +228,7 @@ export function RequestsTable({
               />
             </TableHead>
 
-            <TableHead className="px-2 py-3">
+            <TableHead className="px-3 py-3 whitespace-nowrap min-w-[150px]">
               <SortableHeader
                 label="Status / SLA"
                 sortKey="actualStatus"
@@ -250,7 +237,7 @@ export function RequestsTable({
               />
             </TableHead>
 
-            <TableHead className="px-2 py-3">
+            <TableHead className="px-3 py-3 whitespace-nowrap min-w-[130px]">
               <SortableHeader
                 label="Current Stage"
                 sortKey="currentStage"
@@ -259,7 +246,7 @@ export function RequestsTable({
               />
             </TableHead>
 
-            <TableHead className="px-2 py-3">
+            <TableHead className="px-3 py-3 whitespace-nowrap min-w-[140px]">
               <SortableHeader
                 label="Current Owner"
                 sortKey="currentOwner"
@@ -268,7 +255,7 @@ export function RequestsTable({
               />
             </TableHead>
 
-            <TableHead className="px-2 py-3 text-right">
+            <TableHead className="px-3 py-3 text-right whitespace-nowrap min-w-[140px]">
               <SortableHeader
                 label="Budget"
                 sortKey="budget"
@@ -278,7 +265,7 @@ export function RequestsTable({
               />
             </TableHead>
 
-            <TableHead className="px-2 py-3">
+            <TableHead className="px-3 py-3 whitespace-nowrap min-w-[110px]">
               <SortableHeader
                 label="Updated"
                 sortKey="updatedAt"
@@ -287,7 +274,7 @@ export function RequestsTable({
               />
             </TableHead>
 
-            <TableHead className="whitespace-normal px-2 py-3 text-xs font-semibold uppercase leading-4 tracking-wider text-slate-500 text-right">
+            <TableHead className="px-3 py-3 text-right whitespace-nowrap min-w-[150px] text-xs font-semibold uppercase leading-4 tracking-wider text-slate-500">
               Next Action
             </TableHead>
           </TableRow>
@@ -392,7 +379,7 @@ export function RequestsTable({
                       </Button>
                     </TableCell>
 
-                    <TableCell className="px-3 py-3">
+                    <TableCell className="px-3 py-3 whitespace-nowrap">
                       <div className="flex flex-col gap-1">
                         <span className="whitespace-nowrap font-mono text-xs font-semibold text-secondary">
                           {request.requestId}
@@ -400,7 +387,8 @@ export function RequestsTable({
                         {request.actingFor && (
                           <Badge
                             variant="outline"
-                            className="text-[9px] font-semibold bg-indigo-50 text-indigo-700 border-indigo-200 w-max px-1.5 py-0"
+                            className="text-[9px] font-semibold bg-indigo-50 text-indigo-700 border-indigo-200 w-max px-1.5 py-0 truncate max-w-[130px]"
+                            title={`Acting for ${request.actingFor.name}`}
                           >
                             Acting for {request.actingFor.name}
                           </Badge>
@@ -408,26 +396,27 @@ export function RequestsTable({
                       </div>
                     </TableCell>
 
-                    <TableCell className="whitespace-normal break-words px-2 py-3 text-sm font-medium leading-5 text-foreground">
-                      {request.position}
+                    <TableCell className="px-3 py-3">
+                      <div className="font-medium text-foreground text-sm truncate max-w-[200px]" title={request.position}>
+                        {request.position}
+                      </div>
                     </TableCell>
 
-                    <TableCell className="px-3 py-3 text-center text-sm font-medium">
+                    <TableCell className="px-2 py-3 text-center text-sm font-medium">
                       {request.resources}
                     </TableCell>
 
-                    <TableCell className="whitespace-normal px-2 py-3">
-                      <div className="flex flex-col gap-1.5">
+                    <TableCell className="px-3 py-3 whitespace-nowrap">
+                      <div className="flex flex-col gap-1 items-start">
                         <RequestStatusBadge
                           status={request.actualStatus}
-                          className="max-w-full whitespace-normal text-center leading-4"
                         />
                         {/* SLA Indicator per Part 3 */}
                         {sla && (
                           <Badge
                             variant="outline"
                             className={cn(
-                              "gap-1 font-medium text-[10px] w-max py-0.5 px-1.5",
+                              "gap-1 font-medium text-[10px] w-max py-0.5 px-1.5 whitespace-nowrap",
                               slaColor
                             )}
                           >
@@ -442,25 +431,29 @@ export function RequestsTable({
                       </div>
                     </TableCell>
 
-                    <TableCell className="whitespace-normal break-words px-2 py-3 text-sm leading-5">
-                      {request.currentStage}
+                    <TableCell className="px-3 py-3 text-sm">
+                      <div className="truncate max-w-[120px]" title={request.currentStage}>
+                        {request.currentStage}
+                      </div>
                     </TableCell>
 
-                    <TableCell className="whitespace-normal break-words px-2 py-3 text-sm leading-5">
-                      {request.currentOwner}
+                    <TableCell className="px-3 py-3 text-sm">
+                      <div className="truncate max-w-[130px]" title={request.currentOwner}>
+                        {request.currentOwner}
+                      </div>
                     </TableCell>
 
                     {/* Money column: exact via lib/money.ts, tabular-nums */}
-                    <TableCell className="px-3 py-3 text-right text-sm font-semibold tabular-nums">
+                    <TableCell className="px-3 py-3 text-right text-sm font-semibold tabular-nums whitespace-nowrap">
                       AED {formatAmount(request.budget * 100)}
                     </TableCell>
 
-                    <TableCell className="whitespace-nowrap px-3 py-3 text-sm text-muted-foreground">
+                    <TableCell className="whitespace-nowrap px-3 py-3 text-xs text-muted-foreground">
                       {request.updatedLabel}
                     </TableCell>
 
                     {/* Next Action Column: Part 3 Reuse */}
-                    <TableCell className="whitespace-normal px-2 py-3">
+                    <TableCell className="whitespace-nowrap px-3 py-3 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         {request.actionType === "APPROVE" ? (
                           isRoleQueue ? (
@@ -473,7 +466,7 @@ export function RequestsTable({
                                 >
                                   <Button
                                     size="sm"
-                                    className="h-8 rounded-lg px-2.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
+                                    className="h-8 w-32 rounded-lg px-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white text-center justify-center"
                                   >
                                     Review & approve
                                   </Button>
@@ -497,7 +490,7 @@ export function RequestsTable({
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="h-8 rounded-lg px-3 text-xs font-semibold border-primary/30 text-primary hover:bg-primary/5"
+                                className="h-8 w-32 rounded-lg px-2 text-xs font-semibold border-primary/30 text-primary hover:bg-primary/5 text-center justify-center"
                               >
                                 Claim
                               </Button>
@@ -510,7 +503,7 @@ export function RequestsTable({
                             >
                               <Button
                                 size="sm"
-                                className="h-8 rounded-lg px-3 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white"
+                                className="h-8 w-32 rounded-lg px-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white text-center justify-center"
                               >
                                 Review & approve
                               </Button>
@@ -520,7 +513,7 @@ export function RequestsTable({
                           <Button
                             variant="outline"
                             size="sm"
-                            className="h-8 rounded-lg px-2.5 text-xs font-medium"
+                            className="h-8 w-32 rounded-lg px-2 text-xs font-medium text-center justify-center truncate"
                             onClick={() => toggleExpanded(request.requestId)}
                           >
                             {request.nextAction}

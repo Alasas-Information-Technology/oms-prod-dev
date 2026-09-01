@@ -44,7 +44,7 @@ export function RequestStatusBadge({
     <Badge
       variant="outline"
       className={cn(
-        "rounded-md px-2 py-1 text-[11px] font-semibold",
+        "inline-flex items-center justify-center whitespace-nowrap rounded-md px-2.5 py-0.5 text-[11px] font-semibold shrink-0",
         STATUS_STYLES[status],
         className
       )}

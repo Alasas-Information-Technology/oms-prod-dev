@@ -79,7 +79,7 @@ export function DatePickerField({
               onChange?.(date);
               setOpen(false);
             }}
-            initialFocus
+            autoFocus
           />
         </PopoverContent>
       </Popover>

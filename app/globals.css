@@ -58,10 +58,10 @@
   --destructive-foreground: #FFFFFF;
   --destructive-light: #FEE2E2;
 
-  /* Border & Input */
-  --border: #CBD5E1;
+  /* Border & Input - Lighter & more subtle */
+  --border: #E2E8F0;
   --input: #F8FAFC;
-  --input-border: #CBD5E1;
+  --input-border: #E2E8F0;
   --ring: #5B5FE1;
 
   /* Chart Colors - Updated for better contrast */
@@ -78,7 +78,7 @@
   --sidebar-primary-foreground: #FFFFFF;
   --sidebar-accent: #E0E8F8;
   --sidebar-accent-foreground: #0C3A8F;
-  --sidebar-border: #DBE3F0;
+  --sidebar-border: #E2E8F0;
   --sidebar-ring: #5B5FE1;
 
   /* Typography - Updated fonts */
@@ -155,10 +155,10 @@
   --destructive-foreground: #0F1419;
   --destructive-light: #7F1D1D;
 
-  /* Border & Input */
-  --border: #374151;
-  --input: #252D3D;
-  --input-border: #374151;
+  /* Border & Input - Subtle dark mode borders */
+  --border: #222B3C;
+  --input: #1A1F2E;
+  --input-border: #222B3C;
   --ring: #818CF8;
 
   /* Chart Colors - Dark Mode */
@@ -175,7 +175,7 @@
   --sidebar-primary-foreground: #0F1419;
   --sidebar-accent: #312E81;
   --sidebar-accent-foreground: #A5B4FC;
-  --sidebar-border: #374151;
+  --sidebar-border: #222B3C;
   --sidebar-ring: #818CF8;
 }
 
@@ -418,4 +418,21 @@
 }
 @utility enterprise-body {
   @apply text-base md:text-lg text-foreground-secondary leading-relaxed;
+}
+
+/* Dashboard Band Heights */
+section[data-band-height="kpi"] > div {
+  height: 148px;
+}
+section[data-band-height="hero"] > div {
+  height: 280px;
+}
+section[data-band-height="standard"] > div {
+  height: 215px;
+}
+section[data-band-height="strip"] > div {
+  height: 120px;
+}
+section[data-band-height="list"] > div {
+  height: 320px;
 }
