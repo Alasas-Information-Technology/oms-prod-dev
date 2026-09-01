@@ -228,7 +228,7 @@ export function EventsByTypeChart({ chartsData }: ChartsDataProps) {
   );
 }
 
-import { DistributionBar, DistributionSegment } from "@/src/components/oms/dashboard/DistributionBar";
+import { DistributionBar, DistributionSegment } from "@/components/oms/dashboard/DistributionBar";
 
 export function SessionsByDeviceChart({ chartsData }: ChartsDataProps) {
   const devices = chartsData?.sessionsByDevice || [];

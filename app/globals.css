@@ -419,3 +419,20 @@
 @utility enterprise-body {
   @apply text-base md:text-lg text-foreground-secondary leading-relaxed;
 }
+
+/* Dashboard Band Heights */
+section[data-band-height="kpi"] > div {
+  height: 148px;
+}
+section[data-band-height="hero"] > div {
+  height: 280px;
+}
+section[data-band-height="standard"] > div {
+  height: 215px;
+}
+section[data-band-height="strip"] > div {
+  height: 120px;
+}
+section[data-band-height="list"] > div {
+  height: 320px;
+}
