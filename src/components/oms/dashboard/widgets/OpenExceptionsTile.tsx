@@ -12,6 +12,7 @@ export function OpenExceptionsTile({
   isLoading,
   error,
   onRetry,
+  updatedAt,
 }: WidgetProps<OpenExceptionsData>) {
   const total = data?.totalExceptions ?? 0;
   const breaches = data?.slaBreaches ?? 0;
@@ -38,6 +39,9 @@ export function OpenExceptionsTile({
       isLoading={isLoading}
       error={error}
       onRetry={onRetry}
+      updatedAt={updatedAt}
+      zeroMeaning="GOOD"
+      zeroMessage="No open exceptions"
     />
   );
 }

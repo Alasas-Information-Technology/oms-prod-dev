@@ -12,6 +12,7 @@ export function SecurityEventsTile({
   isLoading,
   error,
   onRetry,
+  updatedAt,
 }: WidgetProps<SecurityEventsData>) {
   const total = data?.totalEvents24h ?? 0;
   const failedLogins = data?.failedLogins ?? 0;
@@ -38,6 +39,9 @@ export function SecurityEventsTile({
       isLoading={isLoading}
       error={error}
       onRetry={onRetry}
+      updatedAt={updatedAt}
+      zeroMeaning="GOOD"
+      zeroMessage="No security events in 24 hours"
     />
   );
 }

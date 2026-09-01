@@ -1,169 +1,109 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { type LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { WidgetShell } from "./WidgetShell";
+import { SimpleKpiCard } from "@/components/budget";
 
-export type KpiTone = "default" | "amber" | "destructive" | "emerald" | "indigo";
+export type KpiTone = "default" | "amber" | "destructive" | "emerald" | "indigo" | "blue" | "purple" | "teal";
+export type ZeroMeaning = "GOOD" | "NEEDS_ACTION" | "NO_DATA";
 
 export interface KpiTileProps {
-  /** Widget title in header */
   title: string;
-  /** Scope label on right of header */
   scopeLabel?: string;
-  /** Value shown at 28px/600 tabular-nums */
-  value: number | string;
-  /** Optional secondary label / detail */
+  updatedAt?: string;
+  value: number | bigint | string | null | undefined;
   label?: string;
-  /** Optional badge text at bottom-left (e.g. "2 overdue", "Within 30 days") */
+  href: string;
+  icon?: any;
+  tone?: KpiTone;
+  isLoading?: boolean;
+  error?: Error | string | null;
+  onRetry?: () => void;
+  className?: string;
+
   badge?: {
     text: string;
     tone?: "neutral" | "amber" | "destructive" | "emerald";
   } | null;
-  /** Destination link */
-  href: string;
-  /** 32px Icon component */
-  icon: LucideIcon;
-  /** Visual tone for icon square */
-  tone?: KpiTone;
-  /** Loading state */
-  isLoading?: boolean;
-  /** Error object or message */
-  error?: Error | string | null;
-  /** Retry callback */
-  onRetry?: () => void;
-  /** Extra detail text or money string next to value */
-  detail?: string;
-  className?: string;
+
+  delta?: {
+    value: number;
+    direction: "up" | "down";
+    increaseIsGood: boolean;
+    comparisonLabel?: string;
+  };
+
+  sparklineData?: any[];
+  sparklineKey?: string;
+
+  zeroMeaning?: ZeroMeaning;
+  zeroMessage?: string;
+  zeroActionLabel?: string;
 }
 
-const TONE_STYLES: Record<
-  KpiTone,
-  {
-    iconBg: string;
-    iconColor: string;
-  }
-> = {
-  default: {
-    iconBg: "bg-muted/80 text-foreground",
-    iconColor: "text-foreground",
-  },
-  amber: {
-    iconBg: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
-    iconColor: "text-amber-600 dark:text-amber-400",
-  },
-  destructive: {
-    iconBg: "bg-rose-500/10 text-rose-600 dark:text-rose-400",
-    iconColor: "text-rose-600 dark:text-rose-400",
-  },
-  emerald: {
-    iconBg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-    iconColor: "text-emerald-600 dark:text-emerald-400",
-  },
-  indigo: {
-    iconBg: "bg-primary/10 text-primary",
-    iconColor: "text-primary",
-  },
+const TONE_MAP: Record<string, { color: string; bg: string; icon: string }> = {
+  blue: { color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30", icon: "mdi:inbox-arrow-down" },
+  indigo: { color: "text-indigo-600", bg: "bg-indigo-100 dark:bg-indigo-900/30", icon: "mdi:progress-clock" },
+  purple: { color: "text-purple-600", bg: "bg-purple-100 dark:bg-purple-900/30", icon: "mdi:account-plus-outline" },
+  amber: { color: "text-amber-600", bg: "bg-amber-100 dark:bg-amber-900/30", icon: "mdi:file-alert-outline" },
+  destructive: { color: "text-red-600", bg: "bg-red-100 dark:bg-red-900/30", icon: "mdi:alert-octagon-outline" },
+  emerald: { color: "text-emerald-600", bg: "bg-emerald-100 dark:bg-emerald-900/30", icon: "mdi:check-circle-outline" },
+  teal: { color: "text-teal-600", bg: "bg-teal-100 dark:bg-teal-900/30", icon: "mdi:account-search-outline" },
+  default: { color: "text-blue-600", bg: "bg-blue-100 dark:bg-blue-900/30", icon: "mdi:chart-box-outline" },
 };
 
-const BADGE_STYLES = {
-  neutral:
-    "bg-muted text-muted-foreground border-border/60",
-  amber:
-    "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 font-medium",
-  destructive:
-    "bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30 font-medium",
-  emerald:
-    "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 font-medium",
-};
-
+/**
+ * KpiTile — Uses SimpleKpiCard from the Security Dashboard for visual uniformity.
+ */
 export function KpiTile({
   title,
-  scopeLabel,
   value,
-  label,
-  badge,
   href,
-  icon: Icon,
+  badge,
+  delta,
   tone = "default",
-  isLoading = false,
-  error = null,
-  onRetry,
-  detail,
+  zeroMeaning,
+  zeroMessage,
+  isLoading,
   className,
 }: KpiTileProps) {
-  const toneStyle = TONE_STYLES[tone] || TONE_STYLES.default;
+  const numValue =
+    typeof value === "number"
+      ? value
+      : typeof value === "bigint"
+      ? Number(value)
+      : Number(value || 0);
 
-  // Format value: render 0 as "0", never empty or dash
-  const displayValue =
-    value === undefined || value === null
-      ? "0"
-      : typeof value === "number"
-      ? value.toLocaleString()
-      : value;
+  const isZero =
+    value === 0 ||
+    value === "0" ||
+    value === null ||
+    value === undefined ||
+    (!isNaN(numValue) && numValue === 0);
+
+  let description: string | undefined = undefined;
+  if (isZero && zeroMeaning) {
+    description = zeroMessage || "No active items";
+  } else if (delta) {
+    description = `${delta.comparisonLabel || "vs last month"} ${delta.direction === "up" ? "+" : "-"}${delta.value}%`;
+  } else if (badge?.text) {
+    description = badge.text;
+  }
+
+  const toneConfig = TONE_MAP[tone] || TONE_MAP.default;
 
   return (
-    <WidgetShell
+    <SimpleKpiCard
       title={title}
-      scopeLabel={scopeLabel}
+      value={numValue}
+      description={description}
+      icon={toneConfig.icon}
+      color={toneConfig.color}
+      bg={toneConfig.bg}
       href={href}
       isLoading={isLoading}
-      error={error}
-      onRetry={onRetry}
-      minHeight={140}
-      className={cn("group transition-all duration-200 hover:border-primary/40", className)}
-    >
-      <Link
-        href={href}
-        className="flex flex-col justify-between flex-1 gap-2.5 focus-visible:outline-none"
-      >
-        {/* Top Row: 32px tinted icon square */}
-        <div className="flex items-center justify-between">
-          <div
-            className={cn(
-              "w-8 h-8 rounded-lg flex items-center justify-center transition-transform duration-200 group-hover:scale-105",
-              toneStyle.iconBg
-            )}
-          >
-            <Icon className="w-4 h-4" />
-          </div>
-          {label && (
-            <span className="text-[13px] text-muted-foreground font-medium">
-              {label}
-            </span>
-          )}
-        </div>
-
-        {/* Middle Row: Large Value + Optional Detail */}
-        <div className="flex items-baseline gap-2 mt-1">
-          <span className="text-[28px] font-semibold tracking-tight text-foreground tabular-nums leading-none">
-            {displayValue}
-          </span>
-          {detail && (
-            <span className="text-xs text-muted-foreground font-normal truncate">
-              {detail}
-            </span>
-          )}
-        </div>
-
-        {/* Bottom Row: Optional Badge */}
-        {badge ? (
-          <div className="pt-1">
-            <span
-              className={cn(
-                "inline-flex items-center px-2 py-0.5 rounded-md text-[11px] border leading-tight",
-                BADGE_STYLES[badge.tone || "neutral"]
-              )}
-            >
-              {badge.text}
-            </span>
-          </div>
-        ) : (
-          <div className="h-[21px]" />
-        )}
-      </Link>
-    </WidgetShell>
+      className={className}
+    />
   );
 }
+
+export const KpiCard = KpiTile;

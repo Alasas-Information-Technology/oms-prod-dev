@@ -12,6 +12,7 @@ export function CandidatesAwaitingReviewTile({
   isLoading,
   error,
   onRetry,
+  updatedAt,
 }: WidgetProps<CandidatesAwaitingReviewData>) {
   const total = data?.totalAwaiting ?? 0;
   const urgent = data?.urgentReview ?? 0;
@@ -38,6 +39,9 @@ export function CandidatesAwaitingReviewTile({
       isLoading={isLoading}
       error={error}
       onRetry={onRetry}
+      updatedAt={updatedAt}
+      zeroMeaning="GOOD"
+      zeroMessage="No candidates to review"
     />
   );
 }

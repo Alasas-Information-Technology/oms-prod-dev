@@ -1,34 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { WidgetShell } from "../WidgetShell";
 import { WidgetProps } from "@/src/lib/dashboard/registry";
 import { BudgetAllocationByDepartmentData, DepartmentBudgetAllocationItem } from "@/src/types/dashboard";
 import { formatAbbreviated } from "@/lib/money";
-import { cn } from "@/lib/utils";
-
-function getUtilisationTone(pct: number) {
-  if (pct >= 95) {
-    return {
-      bar: "bg-rose-500 dark:bg-rose-600",
-      badge: "bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30 font-bold",
-      text: "text-rose-600 dark:text-rose-400",
-    };
-  }
-  if (pct >= 80) {
-    return {
-      bar: "bg-amber-500 dark:bg-amber-600",
-      badge: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 font-semibold",
-      text: "text-amber-600 dark:text-amber-400",
-    };
-  }
-  return {
-    bar: "bg-blue-500 dark:bg-blue-600",
-    badge: "bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/20 font-medium",
-    text: "text-blue-600 dark:text-blue-400",
-  };
-}
+import { BarChartCard } from "../charts/BarChartCard";
+import { semanticColors, categoricalScale } from "@/src/lib/dashboard/chart-tokens";
 
 export function BudgetAllocationByDepartmentChart({
   scope,
@@ -36,23 +16,51 @@ export function BudgetAllocationByDepartmentChart({
   isLoading,
   error,
   onRetry,
+  updatedAt,
 }: WidgetProps<BudgetAllocationByDepartmentData>) {
   const router = useRouter();
 
   // Pre-sorted by utilisation descending as mandated by requirement
-  const departments = React.useMemo(() => {
+  const sortedDepts = useMemo(() => {
     if (!data?.departments) return [];
     return [...data.departments].sort((a, b) => b.utilisationPercent - a.utilisationPercent);
   }, [data]);
 
-  const handleRowClick = (dept: DepartmentBudgetAllocationItem) => {
-    router.push(`/app/budget?department=${dept.orgUnitId}`);
+  // Maximum 8 departments; beyond that show top 8 + "+N more"
+  const top8 = useMemo(() => sortedDepts.slice(0, 8), [sortedDepts]);
+  const remainingCount = sortedDepts.length - 8;
+
+  // Single hue descending scale for ranks
+  const rankScale = useMemo(() => categoricalScale(top8.length || 8), [top8.length]);
+
+  const chartData = useMemo(() => {
+    return top8.map((dept, idx) => ({
+      name: dept.name,
+      utilisation: dept.utilisationPercent,
+      consumed: dept.consumed,
+      allocated: dept.allocated,
+      orgUnitId: dept.orgUnitId,
+      rankColor: rankScale[idx],
+    }));
+  }, [top8, rankScale]);
+
+  // Only semantic colours allowed: amber > 80%, red > 95%, otherwise rank opacity of primary
+  const getBarColor = (entry: any) => {
+    if (entry.utilisation >= 95) return semanticColors.failure;
+    if (entry.utilisation >= 80) return semanticColors.warning;
+    return entry.rankColor || "var(--primary)";
   };
 
-  const srSummary = departments
+  const handleRowClick = (entry: any) => {
+    if (entry?.orgUnitId) {
+      router.push(`/app/budget?department=${entry.orgUnitId}`);
+    }
+  };
+
+  const srSummary = sortedDepts
     .map(
       (d) =>
-        `${d.name}: ${d.utilisationPercent}% utilized (${formatAbbreviated(d.consumed)} consumed of ${formatAbbreviated(d.allocated)})`
+        `${d.name}: ${d.utilisationPercent}% utilized (${formatAbbreviated(d.consumed)} of ${formatAbbreviated(d.allocated)})`
     )
     .join("; ");
 
@@ -60,67 +68,50 @@ export function BudgetAllocationByDepartmentChart({
     <WidgetShell
       title="Budget allocation by department"
       scopeLabel={scope?.label}
+      updatedAt={updatedAt}
       href="/app/budget"
       isLoading={isLoading}
       error={error}
       onRetry={onRetry}
-      minHeight={280}
+      minHeight={215}
+      headerActions={
+        remainingCount > 0 ? (
+          <Link
+            href="/app/budget"
+            className="text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            +{remainingCount} more
+          </Link>
+        ) : undefined
+      }
     >
-      {/* Screen Reader Accessible Summary */}
       <span className="sr-only">
         Department budget allocation sorted by utilisation: {srSummary}
       </span>
 
-      {departments.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-10 text-center text-muted-foreground">
-          <p className="text-sm">No department budget allocations found.</p>
+      {sortedDepts.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
+          <p className="text-sm">No department budget allocations recorded.</p>
         </div>
       ) : (
-        <div className="flex flex-col justify-between flex-1 gap-3 py-1">
-          {/* Department Rows */}
-          <div className="flex flex-col gap-2.5">
-            {departments.map((dept) => {
-              const tone = getUtilisationTone(dept.utilisationPercent);
-              const barWidth = Math.min(Math.max(dept.utilisationPercent, 2), 100);
-
-              return (
-                <button
-                  type="button"
-                  key={dept.orgUnitId}
-                  onClick={() => handleRowClick(dept)}
-                  className="group flex flex-col gap-1.5 p-2 rounded-lg border border-border/40 bg-card/40 hover:bg-muted/40 transition-all text-left cursor-pointer"
-                >
-                  {/* Row Header: Name + Utilisation badge + Raw amounts */}
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-medium text-foreground truncate group-hover:text-primary transition-colors">
-                      {dept.name}
-                    </span>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-[11px] text-muted-foreground tabular-nums">
-                        {formatAbbreviated(dept.consumed)} / {formatAbbreviated(dept.allocated)}
-                      </span>
-                      <span
-                        className={cn(
-                          "px-1.5 py-0.2 rounded text-[10px] border tabular-nums",
-                          tone.badge
-                        )}
-                      >
-                        {dept.utilisationPercent.toFixed(1)}%
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Horizontal Progress Bar */}
-                  <div className="relative h-2 w-full overflow-hidden rounded-full bg-muted/70 flex">
-                    <div
-                      style={{ width: `${barWidth}%` }}
-                      className={cn("h-full transition-all duration-300 rounded-full", tone.bar)}
-                    />
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+        <div className="flex flex-col justify-between flex-1">
+          <BarChartCard
+            data={chartData.slice(0, 5)}
+            series={[
+              {
+                key: "utilisation",
+                name: "Utilisation %",
+              },
+            ]}
+            xAxisKey="name"
+            layout="vertical"
+            height={130}
+            hideLegend
+            xAxisFormatter={(val) => `${val}%`}
+            getCellColor={(entry) => getBarColor(entry)}
+            onBarClick={handleRowClick}
+            accessibilitySummary="Horizontal bar chart showing department budget utilisation sorted descending"
+          />
         </div>
       )}
     </WidgetShell>

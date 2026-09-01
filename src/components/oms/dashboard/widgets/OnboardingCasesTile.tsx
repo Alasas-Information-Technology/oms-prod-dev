@@ -12,6 +12,7 @@ export function OnboardingCasesTile({
   isLoading,
   error,
   onRetry,
+  updatedAt,
 }: WidgetProps<OnboardingCasesData>) {
   const activeCount = data?.activeCount ?? 0;
   const joiningThisWeek = data?.joiningThisWeek ?? 0;
@@ -38,6 +39,9 @@ export function OnboardingCasesTile({
       isLoading={isLoading}
       error={error}
       onRetry={onRetry}
+      updatedAt={updatedAt}
+      zeroMeaning="GOOD"
+      zeroMessage="No active cases"
     />
   );
 }

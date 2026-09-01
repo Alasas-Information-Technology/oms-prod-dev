@@ -7,17 +7,19 @@
 
 /**
  * Returns an array of CSS colors based on a single hue at descending opacities.
- * NEVER use one hue per category. Color must mean something.
+ * Categorical Scale per T6 / F1: 100%, 72%, 48%, 30%, 18%, 10%...
  */
 export function categoricalScale(count: number): string[] {
-  // We use color-mix to apply opacity to the CSS variable dynamically
-  // Opacity steps: 100%, 75%, 55%, 40%, 28%, 20%, 12%, 8%...
-  const opacities = [100, 75, 55, 40, 28, 20, 12, 8, 5, 2];
+  const opacities = [100, 72, 48, 30, 18, 10, 6, 3];
   
   const scale: string[] = [];
   for (let i = 0; i < count; i++) {
     const opacity = opacities[i % opacities.length];
-    scale.push(`color-mix(in srgb, var(--primary) ${opacity}%, transparent)`);
+    if (opacity === 100) {
+      scale.push("var(--primary)");
+    } else {
+      scale.push(`color-mix(in srgb, var(--primary) ${opacity}%, transparent)`);
+    }
   }
   
   return scale;
@@ -30,13 +32,19 @@ export const semanticColors = {
   neutral: "var(--muted-foreground)",
 };
 
+/**
+ * Gridlines per T11: Horizontal only, foreground at 4% opacity.
+ */
 export const gridStyle = {
   stroke: "var(--foreground)",
-  strokeOpacity: 0.06,
+  strokeOpacity: 0.04,
   vertical: false, // Enforce horizontal only
   horizontal: true,
 };
 
+/**
+ * Axis labels per T11: 11px muted, no axis line, no tick line.
+ */
 export const axisStyle = {
   fontSize: 11,
   fill: "var(--muted-foreground)",
@@ -45,6 +53,9 @@ export const axisStyle = {
   axisLine: false,
 };
 
+/**
+ * Default Tooltip style
+ */
 export const tooltipStyle = {
   backgroundColor: "var(--popover)",
   border: "1px solid var(--border)",
@@ -52,5 +63,5 @@ export const tooltipStyle = {
   color: "var(--popover-foreground)",
   boxShadow: "var(--shadow-md)",
   fontSize: 12,
-  fontFamily: "var(--font-mono)", // tabular-nums implicitly supported by mono or classes
+  fontFamily: "var(--font-mono)",
 };

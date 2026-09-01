@@ -1174,6 +1174,329 @@ Requisitions currently queued at the HR review desk categorized by action needed
 
 ---
 
+### 4.29 `failing-integrations` (A10)
+Count of external and internal integrations in degraded or down states. Zero is GOOD ("All integrations healthy").
+- **Permission**: `PLATFORM.HEALTH.VIEW`
+- **Deep Link**: `/app/administration/integrations`
+- **Data Shape**:
+```jsonc
+{
+  "count": 0,
+  "total": 4,
+  "systems": [
+    {
+      "systemId": "docusign",
+      "name": "DocuSign",
+      "state": "HEALTHY", // "HEALTHY" | "DEGRADED" | "DOWN"
+      "lastSyncAt": "2026-08-31T08:30:00Z"
+    }
+  ]
+}
+```
+
+#### 4.30 `integrity-issues` (A11)
+Failed data-integrity and closure checks across tenant hierarchies. Zero is GOOD ("All checks passed").
+- **Permission**: `PLATFORM.INTEGRITY.VIEW`
+- **Deep Link**: `/app/administration/integrity`
+- **Data Shape**:
+```jsonc
+{
+  "count": 0,
+  "failedChecks": 0,
+  "lastCheckAt": "2026-08-31T02:15:00Z"
+}
+```
+
+#### 4.31 `elevated-accounts` (A12)
+Users holding `SYSTEM_ADMIN` or GLOBAL scope. Zero is NOT good (presents a system lockout risk).
+- **Permission**: `USER.VIEW`
+- **Deep Link**: `/app/administration/users?filter=elevated`
+- **Data Shape**:
+```jsonc
+{
+  "count": 3,
+  "systemAdminsCount": 3,
+  "globalScopeCount": 4
+}
+```
+
+#### 4.32 `jobs-failed-24h` (A13)
+Count of background hygiene, cron, and daemon jobs that failed in the trailing 24 hours. Zero is GOOD ("All jobs completed").
+- **Permission**: `PLATFORM.HEALTH.VIEW`
+- **Deep Link**: `/app/administration/jobs`
+- **Data Shape**:
+```jsonc
+{
+  "count": 0,
+  "totalRuns": 18,
+  "windowHours": 24
+}
+```
+
+---
+
+### 4.33 `background-job-health` (E1)
+Comprehensive status of all scheduled background daemons. Surfaces `missedWindows` prominently to catch silent daemon stalls.
+- **Permission**: `PLATFORM.HEALTH.VIEW`
+- **Span**: 6
+- **Deep Link**: `/app/administration/jobs`
+- **Data Shape**:
+```jsonc
+{
+  "jobs": [
+    {
+      "code": "REQUEST_AUTO_CLOSE",
+      "label": "Auto-close stale requests",
+      "schedule": "Daily 02:00",
+      "lastRunAt": "2026-08-31T02:00:12Z",
+      "lastOutcome": "SUCCESS", // "SUCCESS" | "FAILED" | "PARTIAL"
+      "durationMs": 4210,
+      "itemsProcessed": 3,
+      "nextRunAt": "2026-09-01T02:00:00Z",
+      "missedWindows": 0,
+      "lastError": null
+    }
+  ],
+  "anyFailing": false,
+  "anyMissedWindow": false
+}
+```
+
+#### 4.34 `data-integrity-checks` (E2)
+Automated structural sanity checks (org closure, budget reconciliation, orphaned scopes).
+- **Permission**: `PLATFORM.INTEGRITY.VIEW`
+- **Span**: 6
+- **Deep Link**: `/app/administration/integrity`
+- **Data Shape**:
+```jsonc
+{
+  "checks": [
+    {
+      "code": "ORG_CLOSURE_INTEGRITY",
+      "label": "Organisation structure integrity",
+      "state": "PASSED", // "PASSED" | "FAILED" | "NOT_RUN"
+      "affectedCount": 0,
+      "lastRunAt": "2026-08-31T02:15:00Z",
+      "detailLink": "/app/administration/integrity/org-closure",
+      "severity": "CRITICAL" // "CRITICAL" | "HIGH" | "MEDIUM"
+    }
+  ],
+  "allPassed": true,
+  "lastFullRunAt": "2026-08-31T02:15:00Z"
+}
+```
+
+#### 4.35 `scheduled-actions-tonight` (E3)
+Forecasting upcoming automated daemon actions and monetary consequences (funds released).
+- **Permission**: `PLATFORM.HEALTH.VIEW`
+- **Span**: 6
+- **Deep Link**: `/app/administration/jobs`
+- **Data Shape**:
+```jsonc
+{
+  "runsAt": "2026-09-01T02:00:00Z",
+  "actions": [
+    {
+      "code": "AUTO_CLOSE",
+      "label": "Requests will auto-close",
+      "count": 3,
+      // ALL MONETARY VALUES ARE INTEGERS IN MINOR UNITS (fils). Never floats.
+      "fundsReleased": 120000000
+    },
+    {
+      "code": "DRAFT_PURGE",
+      "label": "Drafts will be deleted",
+      "count": 7,
+      "fundsReleased": 0
+    },
+    {
+      "code": "DOC_EXPIRY_REMINDER",
+      "label": "Document reminders will send",
+      "count": 12,
+      "fundsReleased": 0
+    }
+  ],
+  // ALL MONETARY VALUES ARE INTEGERS IN MINOR UNITS (fils). Never floats.
+  "totalFundsReleased": 120000000
+}
+```
+
+#### 4.36 `privilege-changes` (E4)
+Audit feed of role assignments, scope grants, and permission overrides created over the trailing 7 days.
+- **Permission**: `SECURITY.EVENTS.VIEW`
+- **Span**: 6
+- **Deep Link**: `/app/administration/security-dashboard?tab=privileges`
+- **Data Shape**:
+```jsonc
+{
+  "windowDays": 7,
+  "changes": [
+    {
+      "type": "ROLE_GRANTED", // "ROLE_GRANTED" | "ROLE_REVOKED" | "SCOPE_GRANTED" | "SCOPE_REVOKED" | "OVERRIDE_GRANTED" | "OVERRIDE_REVOKED" | "DELEGATION_CREATED"
+      "subject": { "userId": "usr-01", "name": "Sara Ahmed" },
+      "actor": { "userId": "usr-02", "name": "Ahmed Al Mansouri" },
+      "detail": "Head of Department",
+      "at": "2026-08-29T11:02:00Z"
+    }
+  ],
+  "counts": { "ROLE_GRANTED": 3, "SCOPE_GRANTED": 1, "OVERRIDE_GRANTED": 1 },
+  "trend": { "thisWeek": 5, "lastWeek": 2 }
+}
+```
+
+#### 4.37 `elevated-access-register` (E5)
+Registry of active administrative privileges, global scopes, and permission overrides.
+- **Permission**: `USER.VIEW`
+- **Span**: 4
+- **Deep Link**: `/app/administration/users?filter=elevated`
+- **Data Shape**:
+```jsonc
+{
+  "systemAdmins": {
+    "count": 3,
+    "users": [
+      { "userId": "usr-01", "name": "Sultan Al Qasimi" }
+    ]
+  },
+  "globalScope": { "count": 4 },
+  "activeOverrides": { "count": 2, "expiringWithin7Days": 1 },
+  "activeDelegations": { "count": 3 }
+}
+```
+
+#### 4.38 `active-delegations` (E6)
+Active authority delegations and impending expirations.
+- **Permission**: `USER.VIEW`
+- **Span**: 4
+- **Deep Link**: `/app/administration/delegations`
+- **Data Shape**:
+```jsonc
+{
+  "delegations": [
+    {
+      "delegationId": "del-001",
+      "delegator": { "userId": "usr-01", "name": "Dr. Tariq Al Nuaimi" },
+      "delegate": { "userId": "usr-02", "name": "Sara Ahmed" },
+      "scope": "DEPARTMENT - Digital Security",
+      "validFrom": "2026-08-20T00:00:00Z",
+      "validUntil": "2026-09-03T23:59:59Z",
+      "daysRemaining": 3,
+      "isExpiringSoon": true
+    }
+  ],
+  "totalActive": 3,
+  "expiringWithin3Days": 1
+}
+```
+
+#### 4.39 `account-hygiene` (E7)
+Dormant, uninvited, or unassigned user account hygiene counters.
+- **Permission**: `USER.VIEW`
+- **Span**: 4
+- **Deep Link**: `/app/administration/users`
+- **Data Shape**:
+```jsonc
+{
+  "neverSignedIn": 4,
+  "dormant90Days": 11,
+  "invitationsExpiringSoon": 2,
+  "invitationsExpired": 1,
+  "usersWithoutRoles": 3,
+  "lockedOut": 0
+}
+```
+
+#### 4.40 `rate-limit-pressure` (E8)
+Throttled request hit counts across configured security tiers.
+- **Permission**: `SECURITY.DASHBOARD.VIEW`
+- **Span**: 6
+- **Deep Link**: `/app/administration/security-dashboard`
+- **Data Shape**:
+```jsonc
+{
+  "windowHours": 24,
+  "tiers": [
+    { "tier": 1, "label": "Sign-in", "limit": 10, "hits": 0, "uniqueUsers": 0 },
+    { "tier": 4, "label": "Standard requests", "limit": 120, "hits": 34, "uniqueUsers": 6 }
+  ],
+  "totalHits": 34
+}
+```
+
+#### 4.41 `notification-delivery` (E9)
+Delivery status of transactional notifications and invitations.
+- **Permission**: `PLATFORM.HEALTH.VIEW`
+- **Span**: 6
+- **Deep Link**: `/app/administration/notifications`
+- **Data Shape**:
+```jsonc
+{
+  "windowHours": 24,
+  "queued": 4,
+  "sent": 118,
+  "failed": 2,
+  "retrying": 1,
+  "oldestQueuedAgeMinutes": 6,
+  "failuresByType": {
+    "INVITATION": 1,
+    "SLA_REMINDER": 1
+  }
+}
+```
+
+#### 4.42 `document-pipeline` (E10)
+System-wide attachment and file pipeline health.
+- **Permission**: `PLATFORM.HEALTH.VIEW`
+- **Span**: 6
+- **Deep Link**: `/app/administration/documents`
+- **Data Shape**:
+```jsonc
+{
+  "totalStored": 1420,
+  "malwareScanFailures": 0,
+  "expiringWithin30Days": 14,
+  "totalStorageBytes": 5420000000
+}
+```
+
+#### 4.43 `audit-retention` (E11)
+Audit log ingestion rate, storage footprint, and data purge calendar.
+- **Permission**: `SECURITY.EVENTS.VIEW`
+- **Span**: 4
+- **Deep Link**: `/app/administration/audit-logs`
+- **Data Shape**:
+```jsonc
+{
+  "eventsWritten24h": 4120,
+  "totalRetained": 128450,
+  "oldestRetainedDate": "2025-08-31T00:00:00Z",
+  "nextPurgeDate": "2026-09-01T03:00:00Z"
+}
+```
+
+#### 4.44 `configuration-drift` (E12)
+System runtime configurations deviating from default settings.
+- **Permission**: `SECURITY.ADMIN`
+- **Span**: 6
+- **Deep Link**: `/app/administration/settings`
+- **Data Shape**:
+```jsonc
+{
+  "changes": [
+    {
+      "setting": "Request auto-close days",
+      "defaultValue": "30",
+      "currentValue": "45",
+      "changedBy": { "userId": "usr-01", "name": "Sultan Al Qasimi" },
+      "changedAt": "2026-07-14T09:00:00Z"
+    }
+  ],
+  "count": 3
+}
+```
+
+---
+
 ## 5. RFC 7807 Error Protocol
 
 All error responses return the standard DIEZ OMS RFC 7807 Error Envelope:
@@ -1198,3 +1521,21 @@ All error responses return the standard DIEZ OMS RFC 7807 Error Envelope:
 | `404 Not Found` | `WIDGET_NOT_FOUND` | Widget ID does not exist. |
 | `500 Internal Server Error` | `DASHBOARD_AGGREGATION_FAILED` | Internal error during data aggregation. Other widgets remain isolated. |
 | `504 Gateway Timeout` | `UPSTREAM_TIMEOUT` | External dependency (e.g., Oracle ERP) timed out. Widget enters isolated retry state. |
+
+---
+
+## 6. Permissions & Backend Dependencies
+
+The platform health, data integrity, and system administrator widgets introduce two new fine-grained permissions alongside `SECURITY.ADMIN`:
+
+| Permission | Description | Used By Widgets |
+| :--- | :--- | :--- |
+| `PLATFORM.HEALTH.VIEW` | Grants visibility into platform uptime, daemon cron execution, notification queues, document scan pipelines, and failing integrations. | `failing-integrations` (A10), `jobs-failed-24h` (A13), `background-job-health` (E1), `scheduled-actions-tonight` (E3), `notification-delivery` (E9), `document-pipeline` (E10) |
+| `PLATFORM.INTEGRITY.VIEW` | Grants visibility into structural data sanity checks, organization closure drift, budget ledger reconciliation, and orphan record detection. | `integrity-issues` (A11), `data-integrity-checks` (E2) |
+| `SECURITY.EVENTS.VIEW` | Grants visibility into audit log retention and privilege alteration feeds. | `privilege-changes` (E4), `audit-retention` (E11) |
+| `SECURITY.DASHBOARD.VIEW` | Grants visibility into security throttle events and rate limit pressure. | `rate-limit-pressure` (E8) |
+| `SECURITY.ADMIN` | Grants visibility and mutation of system configuration and default parameters. | `configuration-drift` (E12) |
+| `USER.VIEW` | Grants visibility into user directory, elevated access registry, active delegations, and dormant account hygiene. | `elevated-accounts` (A12), `elevated-access-register` (E5), `active-delegations` (E6), `account-hygiene` (E7) |
+
+> **Backend Dependency Note**:
+> `PLATFORM.HEALTH.VIEW` and `PLATFORM.INTEGRITY.VIEW` must be provisioned in the backend auth service (`oms-backend`) and mapped to system administrator and operations roles. Band E renders on the dashboard **only** for users holding either `PLATFORM.HEALTH.VIEW` or `PLATFORM.INTEGRITY.VIEW`.

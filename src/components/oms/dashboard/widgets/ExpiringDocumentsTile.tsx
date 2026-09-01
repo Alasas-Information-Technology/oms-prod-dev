@@ -12,6 +12,7 @@ export function ExpiringDocumentsTile({
   isLoading,
   error,
   onRetry,
+  updatedAt,
 }: WidgetProps<ExpiringDocumentsData>) {
   const count = data?.countWithin30Days ?? 0;
   const critical = data?.criticalCount ?? 0;
@@ -31,6 +32,9 @@ export function ExpiringDocumentsTile({
       isLoading={isLoading}
       error={error}
       onRetry={onRetry}
+      updatedAt={updatedAt}
+      zeroMeaning="GOOD"
+      zeroMessage="No documents expiring"
     />
   );
 }

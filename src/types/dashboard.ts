@@ -42,7 +42,7 @@ export interface FiscalPeriodSummary {
   isOpen: boolean;
 }
 
-export type BandIdentifier = "A" | "B" | "C" | "D";
+export type BandIdentifier = "A" | "B" | "C" | "D" | "E";
 
 export type WidgetId =
   // Band A — Attention strip (KPI tiles)
@@ -55,6 +55,10 @@ export type WidgetId =
   | "candidates-awaiting-review"
   | "vendor-submissions"
   | "security-events"
+  | "failing-integrations"
+  | "integrity-issues"
+  | "elevated-accounts"
+  | "jobs-failed-24h"
   // Band B — Position (Charts)
   | "requests-by-lifecycle-stage"
   | "budget-exposure"
@@ -76,7 +80,20 @@ export type WidgetId =
   | "interview-schedule"
   | "vendor-performance"
   | "draft-expiry-watch"
-  | "pending-hr-decisions";
+  | "pending-hr-decisions"
+  // Band E — Platform Operations & Integrity
+  | "background-job-health"
+  | "data-integrity-checks"
+  | "scheduled-actions-tonight"
+  | "privilege-changes"
+  | "elevated-access-register"
+  | "active-delegations"
+  | "account-hygiene"
+  | "rate-limit-pressure"
+  | "notification-delivery"
+  | "document-pipeline"
+  | "audit-retention"
+  | "configuration-drift";
 
 export interface WidgetPlacement {
   id: WidgetId;
@@ -583,6 +600,204 @@ export interface PendingHrDecisionsData {
 }
 
 // =============================================================================
+// Band A Admin Additions
+// =============================================================================
+
+export interface FailingIntegrationsData {
+  count: number;
+  total: number;
+  systems?: Array<{
+    systemId: string;
+    name: string;
+    state: "HEALTHY" | "DEGRADED" | "DOWN";
+    lastSyncAt: string;
+  }>;
+}
+
+export interface IntegrityIssuesData {
+  count: number;
+  failedChecks: number;
+  lastCheckAt: string;
+}
+
+export interface ElevatedAccountsData {
+  count: number;
+  systemAdminsCount: number;
+  globalScopeCount: number;
+}
+
+export interface JobsFailed24hData {
+  count: number;
+  totalRuns: number;
+  windowHours: number;
+}
+
+// =============================================================================
+// Band E Widget Payloads (Platform Operations & Integrity)
+// =============================================================================
+
+export interface ScheduledJobStatus {
+  code: string;
+  label: string;
+  schedule: string;
+  lastRunAt: string;
+  lastOutcome: "SUCCESS" | "FAILED" | "PARTIAL";
+  durationMs: number;
+  itemsProcessed: number;
+  nextRunAt: string;
+  missedWindows: number;
+  lastError: string | null;
+}
+
+export interface BackgroundJobHealthData {
+  jobs: ScheduledJobStatus[];
+  anyFailing: boolean;
+  anyMissedWindow: boolean;
+}
+
+export interface DataIntegrityCheckItem {
+  code: string;
+  label: string;
+  state: "PASSED" | "FAILED" | "NOT_RUN";
+  affectedCount: number;
+  lastRunAt: string;
+  detailLink: string;
+  severity: "CRITICAL" | "HIGH" | "MEDIUM";
+}
+
+export interface DataIntegrityChecksData {
+  checks: DataIntegrityCheckItem[];
+  allPassed: boolean;
+  lastFullRunAt: string;
+}
+
+export interface ScheduledActionItem {
+  code: string;
+  label: string;
+  count: number;
+  /** ALL MONETARY VALUES ARE INTEGERS IN MINOR UNITS (fils) */
+  fundsReleased: number | bigint;
+}
+
+export interface ScheduledActionsTonightData {
+  runsAt: string;
+  actions: ScheduledActionItem[];
+  /** ALL MONETARY VALUES ARE INTEGERS IN MINOR UNITS (fils) */
+  totalFundsReleased: number | bigint;
+}
+
+export type PrivilegeChangeType =
+  | "ROLE_GRANTED"
+  | "ROLE_REVOKED"
+  | "SCOPE_GRANTED"
+  | "SCOPE_REVOKED"
+  | "OVERRIDE_GRANTED"
+  | "OVERRIDE_REVOKED"
+  | "DELEGATION_CREATED";
+
+export interface PrivilegeChangeItem {
+  type: PrivilegeChangeType;
+  subject: { userId: string; name: string };
+  actor: { userId: string; name: string };
+  detail: string;
+  at: string;
+}
+
+export interface PrivilegeChangesData {
+  windowDays: number;
+  changes: PrivilegeChangeItem[];
+  counts: Partial<Record<PrivilegeChangeType, number>>;
+  trend: { thisWeek: number; lastWeek: number };
+}
+
+export interface ElevatedAccessRegisterData {
+  systemAdmins: {
+    count: number;
+    users: Array<{ userId: string; name: string }>;
+  };
+  globalScope: { count: number };
+  activeOverrides: { count: number; expiringWithin7Days: number };
+  activeDelegations: { count: number };
+}
+
+export interface ActiveDelegationItem {
+  delegationId: string;
+  delegator: { userId: string; name: string };
+  delegate: { userId: string; name: string };
+  scope: string;
+  validFrom: string;
+  validUntil: string;
+  daysRemaining: number;
+  isExpiringSoon: boolean;
+}
+
+export interface ActiveDelegationsData {
+  delegations: ActiveDelegationItem[];
+  totalActive: number;
+  expiringWithin3Days: number;
+}
+
+export interface AccountHygieneData {
+  neverSignedIn: number;
+  dormant90Days: number;
+  invitationsExpiringSoon: number;
+  invitationsExpired: number;
+  usersWithoutRoles: number;
+  lockedOut: number;
+}
+
+export interface RateLimitTier {
+  tier: number;
+  label: string;
+  limit: number;
+  hits: number;
+  uniqueUsers: number;
+}
+
+export interface RateLimitPressureData {
+  windowHours: number;
+  tiers: RateLimitTier[];
+  totalHits: number;
+}
+
+export interface NotificationDeliveryData {
+  windowHours: number;
+  queued: number;
+  sent: number;
+  failed: number;
+  retrying: number;
+  oldestQueuedAgeMinutes: number;
+  failuresByType: Record<string, number>;
+}
+
+export interface DocumentPipelineData {
+  totalStored: number;
+  malwareScanFailures: number;
+  expiringWithin30Days: number;
+  totalStorageBytes: number;
+}
+
+export interface AuditRetentionData {
+  eventsWritten24h: number;
+  totalRetained: number;
+  oldestRetainedDate: string;
+  nextPurgeDate: string;
+}
+
+export interface ConfigurationDriftItem {
+  setting: string;
+  defaultValue: string;
+  currentValue: string;
+  changedBy: { userId: string; name: string };
+  changedAt: string;
+}
+
+export interface ConfigurationDriftData {
+  changes: ConfigurationDriftItem[];
+  count: number;
+}
+
+// =============================================================================
 // Discriminated Unions & Mapping Types
 // =============================================================================
 
@@ -597,6 +812,10 @@ export interface WidgetDataMap {
   "candidates-awaiting-review": CandidatesAwaitingReviewData;
   "vendor-submissions": VendorSubmissionsData;
   "security-events": SecurityEventsData;
+  "failing-integrations": FailingIntegrationsData;
+  "integrity-issues": IntegrityIssuesData;
+  "elevated-accounts": ElevatedAccountsData;
+  "jobs-failed-24h": JobsFailed24hData;
   // Band B
   "requests-by-lifecycle-stage": RequestsByLifecycleStageData;
   "budget-exposure": BudgetExposureData;
@@ -619,6 +838,19 @@ export interface WidgetDataMap {
   "vendor-performance": VendorPerformanceData;
   "draft-expiry-watch": DraftExpiryWatchData;
   "pending-hr-decisions": PendingHrDecisionsData;
+  // Band E
+  "background-job-health": BackgroundJobHealthData;
+  "data-integrity-checks": DataIntegrityChecksData;
+  "scheduled-actions-tonight": ScheduledActionsTonightData;
+  "privilege-changes": PrivilegeChangesData;
+  "elevated-access-register": ElevatedAccessRegisterData;
+  "active-delegations": ActiveDelegationsData;
+  "account-hygiene": AccountHygieneData;
+  "rate-limit-pressure": RateLimitPressureData;
+  "notification-delivery": NotificationDeliveryData;
+  "document-pipeline": DocumentPipelineData;
+  "audit-retention": AuditRetentionData;
+  "configuration-drift": ConfigurationDriftData;
 }
 
 export type TypedWidgetResponse = {

@@ -4,9 +4,8 @@ import React from "react";
 import { WidgetShell } from "../WidgetShell";
 import { WidgetProps } from "@/src/lib/dashboard/registry";
 import { DraftExpiryWatchData } from "@/src/types/dashboard";
-import { AlertCircle, Trash2 } from "lucide-react";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { DashboardListRow } from "../DashboardListRow";
+import { Trash2, FileEdit } from "lucide-react";
 import { formatAmount } from "@/lib/money";
 
 export function DraftExpiryWatchWidget({
@@ -15,8 +14,8 @@ export function DraftExpiryWatchWidget({
   isLoading,
   error,
   onRetry,
+  updatedAt,
 }: WidgetProps<DraftExpiryWatchData>) {
-  
   const count = data?.draftsExpiringCount ?? 0;
   const days = data?.soonestDaysRemaining ?? 0;
   const items = data?.items || [];
@@ -29,53 +28,42 @@ export function DraftExpiryWatchWidget({
       isLoading={isLoading}
       error={error}
       onRetry={onRetry}
-      minHeight={240}
+      updatedAt={updatedAt}
+      minHeight={215}
+      headerActions={
+        count > 0 ? (
+          <span className="px-2 py-0.5 text-[11px] font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 rounded border border-rose-500/20">
+            {count} draft{count !== 1 ? "s" : ""} · {days}d left
+          </span>
+        ) : undefined
+      }
     >
       {count === 0 ? (
-        <div className="flex flex-col items-center justify-center py-10 text-center gap-2">
-          <Trash2 className="size-8 text-muted-foreground/30" />
-          <p className="text-sm text-muted-foreground">No drafts nearing deletion.</p>
+        <div className="flex flex-col items-center justify-center py-10 text-center gap-1.5 text-muted-foreground">
+          <Trash2 className="w-6 h-6 text-muted-foreground/40" />
+          <p className="text-xs">No drafts nearing deletion.</p>
         </div>
       ) : (
-        <div className="flex flex-col gap-3 mt-1">
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-800 dark:text-red-400">
-            <AlertCircle className="size-4 shrink-0" />
-            <span className="text-sm font-medium">
-              {count} draft{count !== 1 ? 's' : ''} will be deleted in {days} day{days !== 1 ? 's' : ''}.
-            </span>
-          </div>
-
-          <div className="flex flex-col gap-0 divide-y divide-border/40 mt-1">
-            {items.map((item) => (
-              <Link
-                key={item.requestId}
-                href={`/app/requests/${item.requestId}`}
-                className="flex items-center justify-between py-2.5 px-1 group hover:bg-muted/30 transition-colors rounded-sm"
-              >
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors truncate max-w-[180px]">
-                    {item.title}
-                  </span>
-                  <span className="text-[11px] text-muted-foreground font-mono">
-                    {item.requestId}
-                  </span>
-                </div>
-                <div className="flex flex-col items-end shrink-0">
-                  <span className={cn(
-                    "text-sm font-semibold tabular-nums",
-                    item.daysRemaining <= 7 ? "text-red-600 dark:text-red-500" : "text-amber-600 dark:text-amber-500"
-                  )}>
-                    {item.daysRemaining}d left
-                  </span>
-                  {item.estimatedAmountFils !== undefined && (
-                    <span className="text-[11px] text-muted-foreground tabular-nums">
-                      {formatAmount(item.estimatedAmountFils)}
-                    </span>
-                  )}
-                </div>
-              </Link>
-            ))}
-          </div>
+        <div className="flex flex-col gap-1 w-full">
+          {items.slice(0, 3).map((item) => (
+            <DashboardListRow
+              key={item.requestId}
+              icon={FileEdit}
+              title={item.title}
+              subtitle={item.requestId}
+              trailing={
+                <span className="text-rose-600 dark:text-rose-400 font-mono tabular-nums font-semibold">
+                  {item.daysRemaining}d left
+                </span>
+              }
+              trailingSubtitle={
+                item.estimatedAmountFils !== undefined
+                  ? formatAmount(item.estimatedAmountFils)
+                  : undefined
+              }
+              href={`/app/requests/${item.requestId}`}
+            />
+          ))}
         </div>
       )}
     </WidgetShell>

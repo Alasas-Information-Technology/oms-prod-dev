@@ -12,6 +12,7 @@ export function RequestsInApprovalTile({
   isLoading,
   error,
   onRetry,
+  updatedAt,
 }: WidgetProps<RequestsInApprovalData>) {
   const count = data?.count ?? 0;
   const urgent = data?.urgentCount ?? 0;
@@ -38,6 +39,9 @@ export function RequestsInApprovalTile({
       isLoading={isLoading}
       error={error}
       onRetry={onRetry}
+      updatedAt={updatedAt}
+      zeroMeaning="GOOD"
+      zeroMessage="No requests pending approval"
     />
   );
 }

@@ -988,6 +988,730 @@ export const DASHBOARD_WIDGET_FIXTURES: {
       urgentCount: 2,
     },
   },
+
+  // ---------------------------------------------------------------------------
+  // Band A — Admin Additions (A10, A11, A12, A13)
+  // ---------------------------------------------------------------------------
+  "failing-integrations": {
+    widgetId: "failing-integrations",
+    scope: { level: "GLOBAL", label: "Enterprise Integrations" },
+    period: "Live",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/integrations",
+    data: {
+      count: 0,
+      total: 4,
+      systems: [
+        { systemId: "docusign", name: "DocuSign", state: "HEALTHY", lastSyncAt: "2026-08-31T08:30:00.000Z" },
+        { systemId: "oracle", name: "Oracle ERP", state: "HEALTHY", lastSyncAt: "2026-08-31T08:28:00.000Z" },
+        { systemId: "saned", name: "Saned", state: "HEALTHY", lastSyncAt: "2026-08-31T08:25:00.000Z" },
+        { systemId: "active-directory", name: "Azure AD", state: "HEALTHY", lastSyncAt: "2026-08-31T08:29:00.000Z" },
+      ],
+    },
+  },
+
+  "integrity-issues": {
+    widgetId: "integrity-issues",
+    scope: { level: "GLOBAL", label: "Platform Data Integrity" },
+    period: "Current",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/integrity",
+    data: {
+      count: 0,
+      failedChecks: 0,
+      lastCheckAt: "2026-08-31T02:15:00.000Z",
+    },
+  },
+
+  "elevated-accounts": {
+    widgetId: "elevated-accounts",
+    scope: { level: "GLOBAL", label: "Privileged Access" },
+    period: "Current",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/users?filter=elevated",
+    data: {
+      count: 3,
+      systemAdminsCount: 3,
+      globalScopeCount: 4,
+    },
+  },
+
+  "jobs-failed-24h": {
+    widgetId: "jobs-failed-24h",
+    scope: { level: "GLOBAL", label: "Daemon Operations" },
+    period: "Last 24 Hours",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/jobs",
+    data: {
+      count: 0,
+      totalRuns: 18,
+      windowHours: 24,
+    },
+  },
+
+  // ---------------------------------------------------------------------------
+  // Band E — Platform Operations & Integrity (12 Widgets)
+  // ---------------------------------------------------------------------------
+  "background-job-health": {
+    widgetId: "background-job-health",
+    scope: { level: "GLOBAL", label: "Daemon Operations" },
+    period: "Last 24 Hours",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/jobs",
+    data: {
+      jobs: [
+        {
+          code: "REQUEST_AUTO_CLOSE",
+          label: "Auto-close stale requests",
+          schedule: "Daily 02:00",
+          lastRunAt: "2026-08-31T02:00:12.000Z",
+          lastOutcome: "SUCCESS",
+          durationMs: 4210,
+          itemsProcessed: 3,
+          nextRunAt: "2026-09-01T02:00:00.000Z",
+          missedWindows: 0,
+          lastError: null,
+        },
+        {
+          code: "DRAFT_PURGE",
+          label: "Purge expired draft requisitions",
+          schedule: "Daily 02:30",
+          lastRunAt: "2026-08-31T02:30:05.000Z",
+          lastOutcome: "SUCCESS",
+          durationMs: 1840,
+          itemsProcessed: 7,
+          nextRunAt: "2026-09-01T02:30:00.000Z",
+          missedWindows: 0,
+          lastError: null,
+        },
+        {
+          code: "SLA_ESCALATION_CHECK",
+          label: "SLA breach notification scanner",
+          schedule: "Hourly :00",
+          lastRunAt: "2026-08-31T08:00:02.000Z",
+          lastOutcome: "SUCCESS",
+          durationMs: 620,
+          itemsProcessed: 2,
+          nextRunAt: "2026-08-31T09:00:00.000Z",
+          missedWindows: 0,
+          lastError: null,
+        },
+        {
+          code: "ORG_CLOSURE_SYNC",
+          label: "Organization hierarchy closure sync",
+          schedule: "Daily 03:00",
+          lastRunAt: "2026-08-31T03:00:18.000Z",
+          lastOutcome: "SUCCESS",
+          durationMs: 8900,
+          itemsProcessed: 142,
+          nextRunAt: "2026-09-01T03:00:00.000Z",
+          missedWindows: 0,
+          lastError: null,
+        },
+        {
+          code: "RETENTION_RUN",
+          label: "Audit log purge & cold storage",
+          schedule: "Weekly Sun 04:00",
+          lastRunAt: "2026-08-30T04:00:45.000Z",
+          lastOutcome: "SUCCESS",
+          durationMs: 14200,
+          itemsProcessed: 8450,
+          nextRunAt: "2026-09-06T04:00:00.000Z",
+          missedWindows: 0,
+          lastError: null,
+        },
+      ],
+      anyFailing: false,
+      anyMissedWindow: false,
+    },
+  },
+
+  "data-integrity-checks": {
+    widgetId: "data-integrity-checks",
+    scope: { level: "GLOBAL", label: "Platform Data Integrity" },
+    period: "Nightly Run",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/integrity",
+    data: {
+      checks: [
+        {
+          code: "ORG_CLOSURE_INTEGRITY",
+          label: "Organisation structure integrity",
+          state: "PASSED",
+          affectedCount: 0,
+          lastRunAt: "2026-08-31T02:15:00.000Z",
+          detailLink: "/app/administration/integrity/org-closure",
+          severity: "CRITICAL",
+        },
+        {
+          code: "BUDGET_SUM_RECONCILIATION",
+          label: "Budget sum ledger reconciliation",
+          state: "PASSED",
+          affectedCount: 0,
+          lastRunAt: "2026-08-31T02:15:00.000Z",
+          detailLink: "/app/administration/integrity/budget-reconciliation",
+          severity: "CRITICAL",
+        },
+        {
+          code: "ORPHANED_SCOPES",
+          label: "Orphaned user organization scopes",
+          state: "PASSED",
+          affectedCount: 0,
+          lastRunAt: "2026-08-31T02:15:00.000Z",
+          detailLink: "/app/administration/integrity/orphaned-scopes",
+          severity: "HIGH",
+        },
+        {
+          code: "USERS_WITHOUT_ROLES",
+          label: "Active users without assigned roles",
+          state: "PASSED",
+          affectedCount: 0,
+          lastRunAt: "2026-08-31T02:15:00.000Z",
+          detailLink: "/app/administration/integrity/users-without-roles",
+          severity: "HIGH",
+        },
+        {
+          code: "ORG_UNITS_WITHOUT_HEAD",
+          label: "Organization units without assigned head",
+          state: "PASSED",
+          affectedCount: 0,
+          lastRunAt: "2026-08-31T02:15:00.000Z",
+          detailLink: "/app/administration/integrity/org-units-without-head",
+          severity: "MEDIUM",
+        },
+        {
+          code: "EXPIRED_DELEGATIONS_ACTIVE",
+          label: "Expired delegations marked active",
+          state: "PASSED",
+          affectedCount: 0,
+          lastRunAt: "2026-08-31T02:15:00.000Z",
+          detailLink: "/app/administration/integrity/expired-delegations",
+          severity: "MEDIUM",
+        },
+        {
+          code: "REQUISITIONS_WITHOUT_APPROVER",
+          label: "Pending requisitions with no valid approver",
+          state: "PASSED",
+          affectedCount: 0,
+          lastRunAt: "2026-08-31T02:15:00.000Z",
+          detailLink: "/app/administration/integrity/requisitions-without-approver",
+          severity: "CRITICAL",
+        },
+      ],
+      allPassed: true,
+      lastFullRunAt: "2026-08-31T02:15:00.000Z",
+    },
+  },
+
+  "scheduled-actions-tonight": {
+    widgetId: "scheduled-actions-tonight",
+    scope: { level: "GLOBAL", label: "Scheduled Operations" },
+    period: "Tonight 02:00",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/jobs",
+    data: {
+      runsAt: "2026-09-01T02:00:00.000Z",
+      actions: [
+        {
+          code: "AUTO_CLOSE",
+          label: "Requests will auto-close",
+          count: 3,
+          // 120,000,000 fils = AED 1,200,000.00
+          fundsReleased: 120000000,
+        },
+        {
+          code: "DRAFT_PURGE",
+          label: "Drafts will be deleted",
+          count: 7,
+          fundsReleased: 0,
+        },
+        {
+          code: "DOC_EXPIRY_REMINDER",
+          label: "Document reminders will send",
+          count: 12,
+          fundsReleased: 0,
+        },
+      ],
+      // Total: 120,000,000 fils = AED 1,200,000.00
+      totalFundsReleased: 120000000,
+    },
+  },
+
+  "privilege-changes": {
+    widgetId: "privilege-changes",
+    scope: { level: "GLOBAL", label: "Security & Privileges" },
+    period: "Last 7 Days",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/security-dashboard?tab=privileges",
+    data: {
+      windowDays: 7,
+      changes: [
+        {
+          type: "ROLE_GRANTED",
+          subject: { userId: "usr-01", name: "Sara Ahmed" },
+          actor: { userId: "usr-02", name: "Ahmed Al Mansouri" },
+          detail: "Head of Department",
+          at: "2026-08-29T11:02:00.000Z",
+        },
+        {
+          type: "SCOPE_GRANTED",
+          subject: { userId: "usr-03", name: "Omar Khalid" },
+          actor: { userId: "usr-01", name: "Sultan Al Qasimi" },
+          detail: "DEPARTMENT - Corporate Technology",
+          at: "2026-08-28T14:20:00.000Z",
+        },
+        {
+          type: "OVERRIDE_GRANTED",
+          subject: { userId: "usr-04", name: "Fatima Al Suwaidi" },
+          actor: { userId: "usr-01", name: "Sultan Al Qasimi" },
+          detail: "REQUISITION.APPROVE (7 days)",
+          at: "2026-08-27T09:15:00.000Z",
+        },
+        {
+          type: "ROLE_GRANTED",
+          subject: { userId: "usr-05", name: "Rashid Al Nuaimi" },
+          actor: { userId: "usr-02", name: "Ahmed Al Mansouri" },
+          detail: "Finance Approver",
+          at: "2026-08-26T16:45:00.000Z",
+        },
+        {
+          type: "DELEGATION_CREATED",
+          subject: { userId: "usr-06", name: "Zaid Al Nuaimi" },
+          actor: { userId: "usr-07", name: "Dr. Tariq Al Humaidi" },
+          detail: "Interim HOD Approval Authority",
+          at: "2026-08-25T10:00:00.000Z",
+        },
+      ],
+      counts: {
+        ROLE_GRANTED: 3,
+        SCOPE_GRANTED: 1,
+        OVERRIDE_GRANTED: 1,
+      },
+      trend: {
+        thisWeek: 5,
+        lastWeek: 5,
+      },
+    },
+  },
+
+  "elevated-access-register": {
+    widgetId: "elevated-access-register",
+    scope: { level: "GLOBAL", label: "Privileged Accounts" },
+    period: "Current",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/users?filter=elevated",
+    data: {
+      systemAdmins: {
+        count: 3,
+        users: [
+          { userId: "usr-01", name: "Sultan Al Qasimi" },
+          { userId: "usr-02", name: "Ahmed Al Mansouri" },
+          { userId: "usr-08", name: "Khalid Bin Thani" },
+        ],
+      },
+      globalScope: { count: 4 },
+      activeOverrides: { count: 2, expiringWithin7Days: 1 },
+      activeDelegations: { count: 3 },
+    },
+  },
+
+  "active-delegations": {
+    widgetId: "active-delegations",
+    scope: { level: "GLOBAL", label: "Authority Delegations" },
+    period: "Active",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/delegations",
+    data: {
+      delegations: [
+        {
+          delegationId: "del-001",
+          delegator: { userId: "usr-07", name: "Dr. Tariq Al Humaidi" },
+          delegate: { userId: "usr-01", name: "Sara Ahmed" },
+          scope: "DEPARTMENT - Digital Security",
+          validFrom: "2026-08-20T00:00:00.000Z",
+          validUntil: "2026-09-03T23:59:59.000Z",
+          daysRemaining: 3,
+          isExpiringSoon: true,
+        },
+        {
+          delegationId: "del-002",
+          delegator: { userId: "usr-05", name: "Rashid Al Nuaimi" },
+          delegate: { userId: "usr-09", name: "Nasser Al Zaabi" },
+          scope: "ORGANIZATION - Finance & Budget",
+          validFrom: "2026-08-15T00:00:00.000Z",
+          validUntil: "2026-09-15T23:59:59.000Z",
+          daysRemaining: 15,
+          isExpiringSoon: false,
+        },
+        {
+          delegationId: "del-003",
+          delegator: { userId: "usr-10", name: "Fatima Al Mazrouei" },
+          delegate: { userId: "usr-11", name: "Mariam Al Falasi" },
+          scope: "ORGANIZATION - Human Resources",
+          validFrom: "2026-08-25T00:00:00.000Z",
+          validUntil: "2026-09-25T23:59:59.000Z",
+          daysRemaining: 25,
+          isExpiringSoon: false,
+        },
+      ],
+      totalActive: 3,
+      expiringWithin3Days: 1,
+    },
+  },
+
+  "account-hygiene": {
+    widgetId: "account-hygiene",
+    scope: { level: "GLOBAL", label: "User Accounts" },
+    period: "Current",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/users",
+    data: {
+      neverSignedIn: 4,
+      dormant90Days: 11,
+      invitationsExpiringSoon: 2,
+      invitationsExpired: 1,
+      usersWithoutRoles: 3,
+      lockedOut: 0,
+    },
+  },
+
+  "rate-limit-pressure": {
+    widgetId: "rate-limit-pressure",
+    scope: { level: "GLOBAL", label: "Security Throttling" },
+    period: "Last 24 Hours",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/security-dashboard",
+    data: {
+      windowHours: 24,
+      tiers: [
+        { tier: 1, label: "Sign-in (Auth)", limit: 10, hits: 0, uniqueUsers: 0 },
+        { tier: 2, label: "Financial Approvals", limit: 60, hits: 2, uniqueUsers: 1 },
+        { tier: 3, label: "Report Exports", limit: 30, hits: 8, uniqueUsers: 3 },
+        { tier: 4, label: "Standard Requests", limit: 120, hits: 34, uniqueUsers: 6 },
+      ],
+      totalHits: 34,
+    },
+  },
+
+  "notification-delivery": {
+    widgetId: "notification-delivery",
+    scope: { level: "GLOBAL", label: "Transactional Messaging" },
+    period: "Last 24 Hours",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/notifications",
+    data: {
+      windowHours: 24,
+      queued: 4,
+      sent: 118,
+      failed: 0,
+      retrying: 0,
+      oldestQueuedAgeMinutes: 6,
+      failuresByType: {},
+    },
+  },
+
+  "document-pipeline": {
+    widgetId: "document-pipeline",
+    scope: { level: "GLOBAL", label: "File Storage & Scan" },
+    period: "Current",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/documents",
+    data: {
+      totalStored: 1420,
+      malwareScanFailures: 0,
+      expiringWithin30Days: 14,
+      totalStorageBytes: 5420000000,
+    },
+  },
+
+  "audit-retention": {
+    widgetId: "audit-retention",
+    scope: { level: "GLOBAL", label: "Audit & Retention" },
+    period: "Current",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/audit-logs",
+    data: {
+      eventsWritten24h: 4120,
+      totalRetained: 128450,
+      oldestRetainedDate: "2025-08-31T00:00:00.000Z",
+      nextPurgeDate: "2026-09-01T03:00:00.000Z",
+    },
+  },
+
+  "configuration-drift": {
+    widgetId: "configuration-drift",
+    scope: { level: "GLOBAL", label: "Runtime Settings" },
+    period: "Active Drift",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/settings",
+    data: {
+      changes: [
+        {
+          setting: "Request auto-close days",
+          defaultValue: "30",
+          currentValue: "45",
+          changedBy: { userId: "usr-01", name: "Sultan Al Qasimi" },
+          changedAt: "2026-07-14T09:00:00.000Z",
+        },
+        {
+          setting: "Draft expiration threshold days",
+          defaultValue: "60",
+          currentValue: "90",
+          changedBy: { userId: "usr-02", name: "Ahmed Al Mansouri" },
+          changedAt: "2026-06-20T11:30:00.000Z",
+        },
+        {
+          setting: "Max concurrent report exports",
+          defaultValue: "5",
+          currentValue: "10",
+          changedBy: { userId: "usr-01", name: "Sultan Al Qasimi" },
+          changedAt: "2026-08-01T15:00:00.000Z",
+        },
+      ],
+      count: 3,
+    },
+  },
+};
+
+// =============================================================================
+// Degraded / Failure Fixtures Set (for Admin Testing & Edge-Case Verification)
+// =============================================================================
+
+export const DASHBOARD_DEGRADED_WIDGET_FIXTURES: Partial<{
+  [K in WidgetId]: WidgetResponse<WidgetDataMap[K]>;
+}> = {
+  "failing-integrations": {
+    widgetId: "failing-integrations",
+    scope: { level: "GLOBAL", label: "Enterprise Integrations" },
+    period: "Live",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/integrations",
+    data: {
+      count: 1,
+      total: 4,
+      systems: [
+        { systemId: "docusign", name: "DocuSign", state: "DOWN", lastSyncAt: "2026-08-31T07:15:00.000Z" },
+        { systemId: "oracle", name: "Oracle ERP", state: "HEALTHY", lastSyncAt: "2026-08-31T08:28:00.000Z" },
+        { systemId: "saned", name: "Saned", state: "HEALTHY", lastSyncAt: "2026-08-31T08:25:00.000Z" },
+        { systemId: "active-directory", name: "Azure AD", state: "HEALTHY", lastSyncAt: "2026-08-31T08:29:00.000Z" },
+      ],
+    },
+  },
+
+  "integrity-issues": {
+    widgetId: "integrity-issues",
+    scope: { level: "GLOBAL", label: "Platform Data Integrity" },
+    period: "Current",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/integrity",
+    data: {
+      count: 1,
+      failedChecks: 1,
+      lastCheckAt: "2026-08-31T02:15:00.000Z",
+    },
+  },
+
+  "jobs-failed-24h": {
+    widgetId: "jobs-failed-24h",
+    scope: { level: "GLOBAL", label: "Daemon Operations" },
+    period: "Last 24 Hours",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/jobs",
+    data: {
+      count: 3,
+      totalRuns: 18,
+      windowHours: 24,
+    },
+  },
+
+  "background-job-health": {
+    widgetId: "background-job-health",
+    scope: { level: "GLOBAL", label: "Daemon Operations" },
+    period: "Last 24 Hours",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/jobs",
+    data: {
+      jobs: [
+        {
+          code: "REQUEST_AUTO_CLOSE",
+          label: "Auto-close stale requests",
+          schedule: "Daily 02:00",
+          lastRunAt: "2026-08-28T02:00:00.000Z",
+          lastOutcome: "FAILED",
+          durationMs: 30000,
+          itemsProcessed: 0,
+          nextRunAt: "2026-09-01T02:00:00.000Z",
+          missedWindows: 3,
+          lastError: "Connection to ledger DB timed out after 30000ms",
+        },
+        {
+          code: "DRAFT_PURGE",
+          label: "Purge expired draft requisitions",
+          schedule: "Daily 02:30",
+          lastRunAt: "2026-08-31T02:30:05.000Z",
+          lastOutcome: "SUCCESS",
+          durationMs: 1840,
+          itemsProcessed: 7,
+          nextRunAt: "2026-09-01T02:30:00.000Z",
+          missedWindows: 0,
+          lastError: null,
+        },
+        {
+          code: "SLA_ESCALATION_CHECK",
+          label: "SLA breach notification scanner",
+          schedule: "Hourly :00",
+          lastRunAt: "2026-08-31T08:00:02.000Z",
+          lastOutcome: "SUCCESS",
+          durationMs: 620,
+          itemsProcessed: 2,
+          nextRunAt: "2026-08-31T09:00:00.000Z",
+          missedWindows: 0,
+          lastError: null,
+        },
+        {
+          code: "ORG_CLOSURE_SYNC",
+          label: "Organization hierarchy closure sync",
+          schedule: "Daily 03:00",
+          lastRunAt: "2026-08-31T03:00:18.000Z",
+          lastOutcome: "SUCCESS",
+          durationMs: 8900,
+          itemsProcessed: 142,
+          nextRunAt: "2026-09-01T03:00:00.000Z",
+          missedWindows: 0,
+          lastError: null,
+        },
+      ],
+      anyFailing: true,
+      anyMissedWindow: true,
+    },
+  },
+
+  "data-integrity-checks": {
+    widgetId: "data-integrity-checks",
+    scope: { level: "GLOBAL", label: "Platform Data Integrity" },
+    period: "Nightly Run",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/integrity",
+    data: {
+      checks: [
+        {
+          code: "ORG_CLOSURE_INTEGRITY",
+          label: "Organisation structure integrity",
+          state: "FAILED",
+          affectedCount: 7,
+          lastRunAt: "2026-08-31T02:15:00.000Z",
+          detailLink: "/app/administration/integrity/org-closure",
+          severity: "CRITICAL",
+        },
+        {
+          code: "BUDGET_SUM_RECONCILIATION",
+          label: "Budget sum ledger reconciliation",
+          state: "PASSED",
+          affectedCount: 0,
+          lastRunAt: "2026-08-31T02:15:00.000Z",
+          detailLink: "/app/administration/integrity/budget-reconciliation",
+          severity: "CRITICAL",
+        },
+        {
+          code: "ORPHANED_SCOPES",
+          label: "Orphaned user organization scopes",
+          state: "PASSED",
+          affectedCount: 0,
+          lastRunAt: "2026-08-31T02:15:00.000Z",
+          detailLink: "/app/administration/integrity/orphaned-scopes",
+          severity: "HIGH",
+        },
+        {
+          code: "USERS_WITHOUT_ROLES",
+          label: "Active users without assigned roles",
+          state: "PASSED",
+          affectedCount: 0,
+          lastRunAt: "2026-08-31T02:15:00.000Z",
+          detailLink: "/app/administration/integrity/users-without-roles",
+          severity: "HIGH",
+        },
+      ],
+      allPassed: false,
+      lastFullRunAt: "2026-08-31T02:15:00.000Z",
+    },
+  },
+
+  "notification-delivery": {
+    widgetId: "notification-delivery",
+    scope: { level: "GLOBAL", label: "Transactional Messaging" },
+    period: "Last 24 Hours",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/notifications",
+    data: {
+      windowHours: 24,
+      queued: 12,
+      sent: 112,
+      failed: 2,
+      retrying: 3,
+      oldestQueuedAgeMinutes: 45,
+      failuresByType: {
+        INVITATION: 1,
+        SLA_REMINDER: 1,
+      },
+    },
+  },
+
+  "privilege-changes": {
+    widgetId: "privilege-changes",
+    scope: { level: "GLOBAL", label: "Security & Privileges" },
+    period: "Last 7 Days",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "/app/administration/security-dashboard?tab=privileges",
+    data: {
+      windowDays: 7,
+      changes: [
+        {
+          type: "ROLE_GRANTED",
+          subject: { userId: "usr-01", name: "Sara Ahmed" },
+          actor: { userId: "usr-02", name: "Ahmed Al Mansouri" },
+          detail: "Head of Department",
+          at: "2026-08-29T11:02:00.000Z",
+        },
+        {
+          type: "SCOPE_GRANTED",
+          subject: { userId: "usr-03", name: "Omar Khalid" },
+          actor: { userId: "usr-01", name: "Sultan Al Qasimi" },
+          detail: "DEPARTMENT - Corporate Technology",
+          at: "2026-08-28T14:20:00.000Z",
+        },
+        {
+          type: "OVERRIDE_GRANTED",
+          subject: { userId: "usr-04", name: "Fatima Al Suwaidi" },
+          actor: { userId: "usr-01", name: "Sultan Al Qasimi" },
+          detail: "REQUISITION.APPROVE (7 days)",
+          at: "2026-08-27T09:15:00.000Z",
+        },
+        {
+          type: "ROLE_GRANTED",
+          subject: { userId: "usr-05", name: "Rashid Al Nuaimi" },
+          actor: { userId: "usr-02", name: "Ahmed Al Mansouri" },
+          detail: "Finance Approver",
+          at: "2026-08-26T16:45:00.000Z",
+        },
+        {
+          type: "DELEGATION_CREATED",
+          subject: { userId: "usr-06", name: "Zaid Al Nuaimi" },
+          actor: { userId: "usr-07", name: "Dr. Tariq Al Humaidi" },
+          detail: "Interim HOD Approval Authority",
+          at: "2026-08-25T10:00:00.000Z",
+        },
+      ],
+      counts: {
+        ROLE_GRANTED: 3,
+        SCOPE_GRANTED: 1,
+        OVERRIDE_GRANTED: 1,
+      },
+      trend: {
+        thisWeek: 5,
+        lastWeek: 2,
+      },
+    },
+  },
 };
 
 // =============================================================================
@@ -1219,8 +1943,11 @@ export const DASHBOARD_PERSONA_LAYOUTS: Record<DashboardPersona, DashboardLayout
   },
 
   // ---------------------------------------------------------------------------
-  // 5. System & Security Administrator
-  // Part 3: A1, A9 · C5 · D3, D4
+  // 5. System Administrator (Part 4 of DASHBOARD-ADMIN-WIDGETS.md)
+  // Band A: A1, A10, A11, A13
+  // Band E: E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12
+  // Band C: C5
+  // Band D: D3, D4
   // ---------------------------------------------------------------------------
   systemAdmin: {
     greeting: {
@@ -1240,8 +1967,27 @@ export const DASHBOARD_PERSONA_LAYOUTS: Record<DashboardPersona, DashboardLayout
       {
         band: "A",
         widgets: [
-          { id: "needs-my-action", span: 6, priority: 10 },
-          { id: "security-events", span: 6, priority: 20 },
+          { id: "needs-my-action", span: 3, priority: 10 },
+          { id: "failing-integrations", span: 3, priority: 20 },
+          { id: "integrity-issues", span: 3, priority: 30 },
+          { id: "jobs-failed-24h", span: 3, priority: 40 },
+        ],
+      },
+      {
+        band: "E",
+        widgets: [
+          { id: "background-job-health", span: 6, priority: 10 },
+          { id: "data-integrity-checks", span: 6, priority: 20 },
+          { id: "scheduled-actions-tonight", span: 6, priority: 30 },
+          { id: "privilege-changes", span: 6, priority: 40 },
+          { id: "elevated-access-register", span: 4, priority: 50 },
+          { id: "active-delegations", span: 4, priority: 60 },
+          { id: "account-hygiene", span: 4, priority: 70 },
+          { id: "rate-limit-pressure", span: 6, priority: 80 },
+          { id: "notification-delivery", span: 6, priority: 90 },
+          { id: "document-pipeline", span: 6, priority: 100 },
+          { id: "audit-retention", span: 6, priority: 110 },
+          { id: "configuration-drift", span: 6, priority: 120 },
         ],
       },
       {
@@ -1287,19 +2033,23 @@ export function getMockDashboardLayout(
 }
 
 /**
- * Returns mock widget data for specified widgetId with optional period/window overrides.
+ * Returns mock widget data for specified widgetId with optional period/window overrides and degraded state support.
  */
 export function getMockWidgetData<K extends WidgetId>(
   widgetId: K,
-  query?: { period?: string; window?: string }
+  query?: { period?: string; window?: string; degraded?: boolean }
 ): WidgetResponse<WidgetDataMap[K]> {
-  const fixture = DASHBOARD_WIDGET_FIXTURES[widgetId];
-  if (!fixture) {
+  const source =
+    query?.degraded && DASHBOARD_DEGRADED_WIDGET_FIXTURES[widgetId]
+      ? (DASHBOARD_DEGRADED_WIDGET_FIXTURES[widgetId] as WidgetResponse<WidgetDataMap[K]>)
+      : DASHBOARD_WIDGET_FIXTURES[widgetId];
+
+  if (!source) {
     throw new Error(`Widget fixture for '${widgetId}' does not exist.`);
   }
 
   // Clone to avoid accidental mutations
-  const response = JSON.parse(JSON.stringify(fixture)) as WidgetResponse<WidgetDataMap[K]>;
+  const response = JSON.parse(JSON.stringify(source)) as WidgetResponse<WidgetDataMap[K]>;
 
   if (query?.period) {
     response.period = query.period;
