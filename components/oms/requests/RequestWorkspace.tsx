@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { useSearchParams } from "next/navigation";
+
+import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -307,33 +308,37 @@ export function RequestWorkspace({ mode }: RequestWorkspaceProps) {
     setNeedsActionSubFilter("all");
   };
 
-  const pageActions = React.useMemo(
-    () => (
-      <Button
-        size="sm"
-        className="h-9 rounded-lg"
-        onClick={() => setNewRequestOpen(true)}
-      >
-        <Plus className="size-4" />
-        New requisition
-      </Button>
-    ),
-    []
-  );
+  const pageActions =
+    React.useMemo(
+      () => (
+        <Button
+          size="sm"
+          className="h-9 rounded-lg gap-1.5"
+          asChild
+        >
+          <Link href="/app/requests/new">
+            <Plus className="size-4" />
+            New requisition
+          </Link>
+        </Button>
+      ),
+      []
+    );
 
-  const breadcrumbs = React.useMemo(
-    () => [
-      {
-        label: "OMS Requests",
-        href: "/app/requests",
-      },
-      {
-        label: pageTitle,
-        isCurrent: true,
-      },
-    ],
-    [pageTitle]
-  );
+  const breadcrumbs =
+    React.useMemo(
+      () => [
+        {
+          label: "OMS Requests",
+          href: "/app/requests",
+        },
+        {
+          label: pageTitle,
+          isCurrent: true,
+        },
+      ],
+      [pageTitle]
+    );
 
   return (
     <div className="min-h-full bg-background p-4 md:p-6">
