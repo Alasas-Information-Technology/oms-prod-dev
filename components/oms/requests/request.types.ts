@@ -5,6 +5,8 @@ export type RequestTab =
   | "in-progress"
   | "closed";
 
+export type RequestStatusGroup = Exclude<RequestTab, "all">;
+
 export type RequestActualStatus =
   | "Draft"
   | "Department Approval"
@@ -29,6 +31,22 @@ export interface RequestLifecycleStep {
   description?: string;
 }
 
+export type NeedsActionType =
+  | "APPROVE"
+  | "REVISE"
+  | "CLARIFY"
+  | "COMPLETE_DRAFT"
+  | "REVIEW_CANDIDATES"
+  | "CONFIRM_JOINING"
+  | "LOG_COMPLETION";
+
+export type NeedsActionSubFilter =
+  | "all"
+  | "approvals"
+  | "revision"
+  | "drafts"
+  | "other";
+
 export interface OmsRequest {
   id: string;
   requestId: string;
@@ -49,6 +67,22 @@ export interface OmsRequest {
   updatedAt: string;
 
   nextAction: string;
+  actionType?: NeedsActionType;
+
+  sla?: {
+    dueAt: string;
+    daysRemaining: number;
+    breached: boolean;
+  };
+
+  assignment?: {
+    mode: "NAMED" | "ROLE_QUEUE";
+    assignedUserId: string | null;
+    claimedBy: { id: string; name: string } | null;
+  };
+
+  actingFor?: { id: string; name: string } | null;
+  approvalTaskId?: string;
 
   organization: string;
   businessUnit: string;
@@ -72,6 +106,13 @@ export interface OmsRequest {
   lifecycle: RequestLifecycleStep[];
 }
 
+export type RequestSavedView =
+  | "default"
+  | "my-active"
+  | "needs-action"
+  | "sla-attention"
+  | string;
+
 export interface RequestFilters {
   search: string;
   organization: string;
@@ -85,6 +126,17 @@ export interface RequestFilters {
   activeOnly: boolean;
   slaOnly: boolean;
   needsActionOnly: boolean;
+  savedView?: RequestSavedView;
+}
+
+export type RequestFiltersState = RequestFilters;
+
+export interface NewRequestDraft {
+  position: string;
+  resources: number;
+  department: string;
+  budget: number;
+  justification?: string;
 }
 
 export const EMPTY_REQUEST_FILTERS: RequestFilters = {
@@ -100,4 +152,5 @@ export const EMPTY_REQUEST_FILTERS: RequestFilters = {
   activeOnly: false,
   slaOnly: false,
   needsActionOnly: false,
+  savedView: "default",
 };

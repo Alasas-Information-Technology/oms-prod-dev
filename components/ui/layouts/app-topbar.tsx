@@ -1,18 +1,20 @@
 "use client";
 
+import Link from "next/link";
 import { AnimatedThemeToggler } from "../animated-theme-toggler";
 import { GlobalSearch } from "../global-search";
 import AccountDropdown from "./AccountDropdown";
 import { AppLogo } from "./AppLogo";
 import Notification from "./notification-dropdown";
 import { useSidebar } from "../sidebar";
-import { Menu } from "lucide-react";
+import { Menu, CheckSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "../separator";
-
+import { getNeedsAttentionSummary } from "@/lib/fixtures/dashboard-attention.fixtures";
 
 export function AppTopbar() {
     const { toggleSidebar } = useSidebar();
+    const { totalCount } = getNeedsAttentionSummary();
 
     return (
         <header className="h-12 md:h-13 shrink-0 fixed top-0 left-0 right-0 z-30 flex items-center px-4 bg-secondary/80 backdrop-blur-md border-b border-border/50 print:hidden">
@@ -44,7 +46,21 @@ export function AppTopbar() {
             </div>
 
             {/* Right section: Utilities + Avatar */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+                {/* Needs Attention Global Header Badge */}
+                {totalCount > 0 && (
+                    <Link
+                        href="/app/requests?tab=needs-my-action"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 dark:text-amber-200 text-xs font-semibold border border-amber-500/30 transition-colors"
+                        title={`${totalCount} items need your attention`}
+                    >
+                        <CheckSquare className="size-3.5 text-amber-600 dark:text-amber-400" />
+                        <span>Action</span>
+                        <span className="px-1.5 py-0.2 rounded-full bg-amber-600 text-white text-[10px] font-bold tabular-nums">
+                            {totalCount}
+                        </span>
+                    </Link>
+                )}
 
                 {/* Notification: 32px hit area, 18px glyph */}
                 <Notification />
