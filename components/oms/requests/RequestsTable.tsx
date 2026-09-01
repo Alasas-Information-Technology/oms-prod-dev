@@ -487,13 +487,15 @@ export function RequestsTable({
                                 Claimed by {request.assignment?.claimedBy?.name}
                               </Badge>
                             ) : (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="h-8 w-32 rounded-lg px-2 text-xs font-semibold border-primary/30 text-primary hover:bg-primary/5 text-center justify-center"
-                              >
-                                Claim
-                              </Button>
+                              <Link href={`/app/requests/${request.requestId}/documents`}>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="h-8 w-32 rounded-lg px-2 text-xs font-semibold border-primary/30 text-primary hover:bg-primary/5 text-center justify-center"
+                                >
+                                  Claim
+                                </Button>
+                              </Link>
                             )
                           ) : (
                             <Link
@@ -509,6 +511,16 @@ export function RequestsTable({
                               </Button>
                             </Link>
                           )
+                        ) : request.nextAction === "Claim" ? (
+                          <Link href={`/app/requests/${request.requestId}/documents`}>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-8 w-32 rounded-lg px-2 text-xs font-semibold border-primary/30 text-primary hover:bg-primary/5 text-center justify-center"
+                            >
+                              Claim
+                            </Button>
+                          </Link>
                         ) : (
                           <Button
                             variant="outline"

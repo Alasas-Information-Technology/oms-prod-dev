@@ -93,6 +93,7 @@ export interface OmsRequest {
 
   engagementType: string;
   location: string;
+  candidateRoute?: string;
 
   startDate: string;
   endDate: string;

@@ -485,3 +485,9 @@ export function createMockDraft(
     isMine: true,
   });
 }
+
+export function getRequestById(requestId: string): OmsRequest | undefined {
+  return MOCK_REQUESTS.find(
+    (r) => r.requestId.toLowerCase() === requestId.toLowerCase()
+  );
+}

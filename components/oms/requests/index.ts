@@ -11,6 +11,10 @@ export {
 } from "./PortfolioSnapshot";
 
 export {
+  PostHrDocumentPack,
+} from "./PostHrDocumentPack";
+
+export {
   RequestExpandedDetails,
 } from "./RequestExpandedDetails";
 
