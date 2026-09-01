@@ -1,4 +1,8 @@
 export {
+  CreateRequisitionWorkspace,
+} from "./CreateRequisitionWorkspace";
+
+export {
   NewRequisitionDialog,
 } from "./NewRequisitionDialog";
 
