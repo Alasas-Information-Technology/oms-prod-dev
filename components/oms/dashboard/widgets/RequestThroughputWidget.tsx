@@ -71,18 +71,14 @@ export function RequestThroughputWidget({
 
   // T8 Header Legend
   const headerLegend = (
-    <div className="flex items-center gap-3.5 text-[11px] text-muted-foreground select-none">
+    <div className="flex items-center gap-3 text-[11px] text-muted-foreground select-none">
       <div className="flex items-center gap-1.5">
-        <span className="w-2.5 h-2.5 rounded-xs bg-primary shrink-0" />
-        <span>Created</span>
+        <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
+        <span className="font-medium text-foreground/80">Created</span>
       </div>
       <div className="flex items-center gap-1.5">
-        <span className="w-2.5 h-2.5 rounded-xs bg-emerald-500 shrink-0" />
-        <span>Completed</span>
-      </div>
-      <div className="flex items-center gap-1.5">
-        <span className="w-2.5 h-2.5 rounded-xs bg-amber-500/20 border border-amber-500/40 shrink-0" />
-        <span>Backlog delta</span>
+        <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+        <span className="font-medium text-foreground/80">Completed</span>
       </div>
     </div>
   );
@@ -97,23 +93,23 @@ export function RequestThroughputWidget({
       onRetry={onRetry}
       updatedAt={updatedAt}
       headerActions={headerLegend}
-      minHeight={215}
+      minHeight={180}
     >
-      <div className="flex flex-col justify-between h-full p-5 gap-3 select-none font-sans">
+      <div className="flex flex-col justify-between h-full gap-2.5 select-none font-sans py-1">
         {/* SVG Defs for 45° Diagonal Hatch Fills */}
         <svg className="sr-only" aria-hidden="true" width="0" height="0">
           <defs>
             <HatchPatternDefs
               id={createdHatchId}
-              color="var(--primary)"
+              color="#3b82f6"
               strokeWidth={1}
-              opacity={0.20}
+              opacity={0.16}
             />
             <HatchPatternDefs
               id={completedHatchId}
               color="#10b981"
               strokeWidth={1}
-              opacity={0.25}
+              opacity={0.20}
             />
           </defs>
         </svg>
@@ -149,39 +145,39 @@ export function RequestThroughputWidget({
                   stroke: "var(--muted-foreground)",
                   strokeWidth: 1,
                   strokeDasharray: "3 3",
-                  opacity: 0.4,
+                  opacity: 0.3,
                 }}
               />
               <Area
-                type="linear"
+                type="monotone"
                 dataKey="created"
                 name="Requests created"
-                stroke="var(--primary)"
-                strokeWidth={1.5}
+                stroke="#3b82f6"
+                strokeWidth={2}
                 fill={`url(#${createdHatchId})`}
                 dot={false}
-                activeDot={{ r: 3.5, strokeWidth: 0, fill: "var(--primary)" }}
+                activeDot={{ r: 4, strokeWidth: 2, fill: "#3b82f6", stroke: "var(--card)" }}
               />
               <Area
-                type="linear"
+                type="monotone"
                 dataKey="completed"
                 name="Requests completed"
                 stroke="#10b981"
-                strokeWidth={1.5}
+                strokeWidth={2}
                 fill={`url(#${completedHatchId})`}
                 dot={false}
-                activeDot={{ r: 3.5, strokeWidth: 0, fill: "#10b981" }}
+                activeDot={{ r: 4, strokeWidth: 2, fill: "#10b981", stroke: "var(--card)" }}
               />
             </AreaChart>
           </ResponsiveContainer>
         </div>
 
         {/* Bottom Assessment & Contextual Caption */}
-        <div className="pt-2 border-t border-border/40 flex items-center justify-between text-xs">
-          <span className={cn("font-medium", toneClass)}>
+        <div className="pt-2 border-t border-border/30 dark:border-white/[0.05] flex items-center justify-between text-xs mt-auto">
+          <span className={cn("font-medium text-[11.5px]", toneClass)}>
             {caption}
           </span>
-          <span className="text-[11px] text-muted-foreground font-mono tabular-nums">
+          <span className="text-[10.5px] text-muted-foreground font-mono tabular-nums">
             12-week rolling window
           </span>
         </div>
@@ -189,3 +185,4 @@ export function RequestThroughputWidget({
     </WidgetShell>
   );
 }
+

@@ -76,50 +76,54 @@ export function BudgetBurnVsElapsedWidget({
       error={error}
       onRetry={onRetry}
       updatedAt={updatedAt}
-      minHeight={215}
+      minHeight={180}
     >
-      <div className="flex flex-col justify-between h-full p-5 gap-4 select-none font-sans">
+      <div className="flex flex-col justify-between h-full gap-3.5 select-none font-sans py-1">
         {/* Track 1: Budget Consumed */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-normal text-muted-foreground">Budget consumed</span>
-            <span className="font-mono font-semibold text-foreground tabular-nums">
+            <span className="font-medium text-foreground/80 text-[12px]">Budget consumed</span>
+            <span className="font-mono font-semibold text-foreground tabular-nums text-[13px]">
               {consumedPercent.toFixed(1)}%
             </span>
           </div>
-          <div className="h-3 w-full bg-muted/40 rounded-[4px] overflow-hidden">
+          <div className="h-3 w-full bg-muted/40 dark:bg-slate-800/60 rounded-full overflow-hidden p-[1px]">
             <div
               style={{
                 width: `${Math.min(100, Math.max(0, consumedPercent))}%`,
-                backgroundColor: track1FillColor,
+                background: isCritical
+                  ? "linear-gradient(90deg, #f43f5e, #e11d48)"
+                  : isWarning
+                  ? "linear-gradient(90deg, #f59e0b, #d97706)"
+                  : "linear-gradient(90deg, #3b82f6, #6366f1)",
               }}
-              className="h-full rounded-[4px] transition-all duration-300"
+              className="h-full rounded-full transition-all duration-300 shadow-2xs"
             />
           </div>
         </div>
 
-        {/* Track 2: Financial Year Elapsed (8px gap) */}
+        {/* Track 2: Financial Year Elapsed */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-normal text-muted-foreground">Financial year elapsed</span>
-            <span className="font-mono font-medium text-muted-foreground tabular-nums">
+            <span className="font-normal text-muted-foreground text-[12px]">Financial year elapsed</span>
+            <span className="font-mono font-medium text-muted-foreground tabular-nums text-[12px]">
               {elapsedPercent.toFixed(1)}%
             </span>
           </div>
-          <div className="h-3 w-full bg-muted/40 rounded-[4px] overflow-hidden">
+          <div className="h-3 w-full bg-muted/40 dark:bg-slate-800/60 rounded-full overflow-hidden p-[1px]">
             <div
               style={{
                 width: `${Math.min(100, Math.max(0, elapsedPercent))}%`,
-                backgroundColor: "color-mix(in srgb, var(--foreground) 35%, transparent)",
+                background: "linear-gradient(90deg, rgba(148, 163, 184, 0.4), rgba(100, 116, 139, 0.5))",
               }}
-              className="h-full rounded-[4px] transition-all duration-300"
+              className="h-full rounded-full transition-all duration-300"
             />
           </div>
         </div>
 
         {/* Bottom Assessment & Contextual Caption */}
-        <div className="pt-2 border-t border-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
-          <span className={cn("font-medium", toneClass)}>
+        <div className="pt-2 border-t border-border/30 dark:border-white/[0.05] flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs mt-auto">
+          <span className={cn("font-medium text-[11.5px] flex items-center gap-1", toneClass)}>
             {gap !== 0 && <span>{gap > 0 ? "↑ " : "↓ "}</span>}
             {caption}
           </span>
@@ -133,3 +137,4 @@ export function BudgetBurnVsElapsedWidget({
     </WidgetShell>
   );
 }
+

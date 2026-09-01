@@ -72,7 +72,7 @@ export function DistributionBar({ segments, className }: DistributionBarProps) {
         if (seg.isResidual) {
           color = undefined;
         } else {
-          color = scale[nonResidualIdx] || scale[0];
+          color = scale[nonResidualIdx % scale.length];
           nonResidualIdx++;
         }
       }
@@ -94,6 +94,7 @@ export function DistributionBar({ segments, className }: DistributionBarProps) {
 
     return { processedSegments: procs, hasNarrowSegment: anyNarrow };
   }, [segments, scale, containerWidth]);
+
 
   return (
     <div

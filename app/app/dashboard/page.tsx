@@ -208,19 +208,19 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 md:p-6 pb-20 w-full">
+    <div className="flex flex-1 flex-col gap-3.5 p-3.5 sm:p-4 md:p-5 max-w-[1600px] mx-auto pb-16 w-full">
       {/* Inject Persona Switcher into the sticky Breadcrumb / Page Bar */}
       <PageBarActions>
-        <div className="flex items-center gap-1.5 bg-muted/60 hover:bg-muted/80 transition-colors px-2.5 py-1 rounded-md border border-border/50 text-xs shadow-2xs">
-          <Layers className="size-3.5 text-muted-foreground" />
-          <span className="text-muted-foreground font-medium text-xs hidden sm:inline whitespace-nowrap">
+        <div className="flex items-center gap-1 bg-muted/40 hover:bg-muted/60 transition-colors px-2 py-0.5 rounded-md border border-border/40 text-[11px] shadow-2xs">
+          <Layers className="size-3 text-muted-foreground" />
+          <span className="text-muted-foreground font-medium text-[11px] hidden sm:inline whitespace-nowrap">
             View as:
           </span>
           <Select
             value={persona}
             onValueChange={(val) => setSelectedPersona(val as DashboardPersona)}
           >
-            <SelectTrigger className="h-6 border-none bg-transparent shadow-none text-xs font-medium focus:ring-0 px-1 py-0 text-foreground">
+            <SelectTrigger size="xs" className="h-5 border-none bg-transparent shadow-none text-[11px] font-semibold focus:ring-0 px-1 py-0 text-foreground gap-1">
               <SelectValue placeholder="Persona" />
             </SelectTrigger>
             <SelectContent align="end">
@@ -233,6 +233,7 @@ export default function DashboardPage() {
           </Select>
         </div>
       </PageBarActions>
+
 
 
       {/* 12-Column Responsive Full-Width Dashboard Grid */}

@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, FileEdit, Sliders, SlidersHorizontal } from "lucide-react";
 import { WidgetShell } from "../WidgetShell";
+import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { ConfigurationDriftData } from "@/types/dashboard";
 
@@ -44,17 +45,23 @@ export function ConfigurationDriftWidget({
       onRetry={onRetry}
       minHeight={240}
       headerActions={
-        count > 0 ? (
-          <span className="text-[11.5px] font-medium text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-            {count} customized setting{count === 1 ? "" : "s"}
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-            <CheckCircle2 className="w-3 h-3" />
-            Default baseline
-          </span>
-        )
+        <StatusTooltipIcon
+          status={count > 0 ? "WARNING" : "CLEAN"}
+          label={count > 0 ? `${count} customized` : "Baseline"}
+          tooltipTitle="Tenant Configuration Baseline"
+          tooltipDescription={
+            count > 0
+              ? `${count} tenant configuration parameters have been altered from standard baseline defaults.`
+              : "All system flags and configuration parameters match baseline standard defaults."
+          }
+          tooltipDetails={[
+            { label: "Customized Settings", value: `${count}` },
+            { label: "State", value: count > 0 ? "Custom Drift" : "Standard Defaults" },
+          ]}
+          showBorder
+        />
       }
+
     >
       <div className="space-y-1.5 select-none">
         {changes.length === 0 ? (

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { WidgetShell } from "../WidgetShell";
+import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { PendingHrDecisionsData } from "@/types/dashboard";
 import { DashboardListRow } from "../DashboardListRow";
@@ -38,12 +39,21 @@ export function PendingHrDecisionsWidget({
       minHeight={215}
       headerActions={
         urgent > 0 ? (
-          <span className="text-[11px] font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">
-            {urgent} urgent
-          </span>
+          <StatusTooltipIcon
+            status="CRITICAL"
+            label={`${urgent} urgent`}
+            tooltipTitle="Urgent HR Reviews Required"
+            tooltipDescription={`${urgent} requisitions require urgent HR review or clarification resolution.`}
+            tooltipDetails={[
+              { label: "Total Pending", value: `${total}` },
+              { label: "Urgent Queue", value: `${urgent}` },
+            ]}
+            showBorder
+          />
         ) : undefined
       }
     >
+
       {total === 0 ? (
         <div className="flex items-center justify-center py-10 text-sm text-muted-foreground">
           No pending HR decisions.

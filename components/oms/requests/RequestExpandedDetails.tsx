@@ -73,7 +73,7 @@ export function RequestExpandedDetails({
   request,
 }: RequestExpandedDetailsProps) {
   return (
-    <div className="w-full max-w-full overflow-hidden whitespace-normal bg-white px-4 py-5 md:px-6">
+    <div className="w-full max-w-full overflow-hidden whitespace-normal bg-card/60 dark:bg-card/40 px-4 py-5 md:px-6">
       <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm font-semibold text-foreground">

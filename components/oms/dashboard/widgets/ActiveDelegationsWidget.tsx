@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { ArrowRight, Clock, UserCheck, Users } from "lucide-react";
 import { WidgetShell } from "../WidgetShell";
+import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { ActiveDelegationsData } from "@/types/dashboard";
 import { cn } from "@/lib/utils";
@@ -39,21 +40,26 @@ export function ActiveDelegationsWidget({
       onRetry={onRetry}
       minHeight={240}
       headerActions={
-        expiringSoonCount > 0 ? (
-          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-            <Clock className="w-3 h-3" />
-            {expiringSoonCount} expiring soon
-          </span>
-        ) : (
-          <span className="text-[11.5px] font-medium text-muted-foreground bg-muted/50 px-2 py-0.5 rounded border border-border/30">
-            {delegations.length} active
-          </span>
-        )
+        <StatusTooltipIcon
+          status={expiringSoonCount > 0 ? "WARNING" : "SUCCESS"}
+          label={expiringSoonCount > 0 ? `${expiringSoonCount} expiring` : `${delegations.length} active`}
+          tooltipTitle="Authority Delegations"
+          tooltipDescription={
+            expiringSoonCount > 0
+              ? `${expiringSoonCount} approval delegations are expiring within 3 days.`
+              : "All active delegations are currently valid."
+          }
+          tooltipDetails={[
+            { label: "Active Delegations", value: `${delegations.length}` },
+            { label: "Expiring Soon (≤3d)", value: `${expiringSoonCount}` },
+          ]}
+          showBorder
+        />
       }
     >
-      <div className="space-y-1.5 select-none">
+      <div className="space-y-0.5 select-none">
         {delegations.length === 0 ? (
-          <div className="py-8 text-center text-xs text-muted-foreground">
+          <div className="py-6 text-center text-xs text-muted-foreground">
             No active authority delegations in place.
           </div>
         ) : (
@@ -65,43 +71,55 @@ export function ActiveDelegationsWidget({
                 key={del.delegationId}
                 href="/app/administration/delegations"
                 className={cn(
-                  "group flex items-center justify-between min-h-[44px] px-3.5 py-1.5 rounded-md transition-colors border",
+                  "group flex items-center justify-between h-[38px] px-2.5 sm:px-3 rounded-lg transition-colors border",
                   isExpiringSoon
                     ? "bg-amber-500/10 border-amber-500/30 dark:bg-amber-950/20 dark:border-amber-900/40 hover:bg-amber-500/15"
-                    : "bg-background/40 hover:bg-muted/50 border-transparent hover:border-border/40"
+                    : "bg-transparent hover:bg-muted/40 border-transparent hover:border-border/30 dark:hover:border-white/[0.04]"
                 )}
               >
                 {/* Left: Delegator -> Delegate + Scope */}
-                <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
-                  <div className={cn(
-                    "w-6 h-6 rounded flex items-center justify-center shrink-0 text-xs",
-                    isExpiringSoon
-                      ? "bg-amber-500/20 text-amber-700 dark:text-amber-300"
-                      : "bg-muted text-muted-foreground"
-                  )}>
-                    <UserCheck className="w-3.5 h-3.5" />
+                <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
+                  <div
+                    className={cn(
+                      "w-5.5 h-5.5 rounded-md flex items-center justify-center shrink-0 text-xs",
+                      isExpiringSoon
+                        ? "bg-amber-500/20 text-amber-700 dark:text-amber-300"
+                        : "bg-muted/60 text-muted-foreground"
+                    )}
+                  >
+                    <UserCheck className="w-3 h-3" />
                   </div>
 
                   <div className="flex flex-col min-w-0">
-                    <div className="flex items-center gap-1.5 text-[13px] font-medium text-foreground truncate leading-tight">
+                    <div className="flex items-center gap-1.5 text-[12.5px] font-medium text-foreground/90 truncate leading-tight">
                       <span className="truncate">{del.delegator.name}</span>
-                      <ArrowRight className="w-3 h-3 text-muted-foreground shrink-0" />
+                      <ArrowRight className="w-3 h-3 text-muted-foreground/60 shrink-0" />
                       <span className="font-semibold text-primary truncate">{del.delegate.name}</span>
                     </div>
-                    <span className="text-[11px] text-muted-foreground truncate leading-tight mt-0.5">
+                    <span className="text-[10px] text-muted-foreground/70 truncate leading-tight mt-0.5">
                       {del.scope}
                     </span>
                   </div>
                 </div>
 
-                {/* Right: Expiry badge */}
+                {/* Right: Expiry badge with tooltip */}
                 <div className="flex items-center gap-2 shrink-0">
                   {isExpiringSoon ? (
-                    <span className="text-[11px] font-bold text-amber-700 dark:text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/30 tabular-nums">
-                      {del.daysRemaining}d left
-                    </span>
+                    <StatusTooltipIcon
+                      status="WARNING"
+                      label={`${del.daysRemaining}d left`}
+                      tooltipTitle="Delegation Expiring Soon"
+                      tooltipDescription={`Delegation from ${del.delegator.name} to ${del.delegate.name} expires in ${del.daysRemaining} days (${formatDate(del.validUntil)}).`}
+                      tooltipDetails={[
+                        { label: "Delegator", value: del.delegator.name },
+                        { label: "Delegate", value: del.delegate.name },
+                        { label: "Valid Until", value: formatDate(del.validUntil) },
+                        { label: "Days Left", value: `${del.daysRemaining} days` },
+                      ]}
+                      size="sm"
+                    />
                   ) : (
-                    <span className="text-[11px] font-medium text-muted-foreground tabular-nums">
+                    <span className="text-[10.5px] font-mono text-muted-foreground tabular-nums">
                       Until {formatDate(del.validUntil)}
                     </span>
                   )}
@@ -114,3 +132,4 @@ export function ActiveDelegationsWidget({
     </WidgetShell>
   );
 }
+

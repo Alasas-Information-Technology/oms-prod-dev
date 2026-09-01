@@ -30,10 +30,10 @@ export function RequestLifecycleStepper({
 
         return (
           <Fragment key={step.id}>
-            <div className="flex min-w-0 flex-1 items-center gap-3 rounded-lg bg-slate-50 px-3 py-2 xl:flex-col xl:bg-transparent xl:p-0 xl:text-center">
+            <div className="flex min-w-0 flex-1 items-center gap-3 rounded-lg bg-muted/40 px-3 py-2 xl:flex-col xl:bg-transparent xl:p-0 xl:text-center">
               <span
                 className={cn(
-                  "flex size-8 shrink-0 items-center justify-center rounded-full border-2 bg-white",
+                  "flex size-8 shrink-0 items-center justify-center rounded-full border-2 bg-card dark:bg-background",
 
                   isCompleted &&
                     "border-primary bg-primary text-primary-foreground",
@@ -43,7 +43,7 @@ export function RequestLifecycleStepper({
 
                   !isCompleted &&
                     !isCurrent &&
-                    "border-border text-muted-foreground"
+                    "border-border/80 text-muted-foreground/60"
                 )}
               >
                 {isCompleted ? (
@@ -61,7 +61,7 @@ export function RequestLifecycleStepper({
                     "whitespace-normal break-words text-xs font-medium leading-4",
 
                     isCurrent
-                      ? "text-primary"
+                      ? "text-primary font-semibold"
                       : "text-foreground"
                   )}
                 >
@@ -80,7 +80,7 @@ export function RequestLifecycleStepper({
             {index < steps.length - 1 && (
               <div
                 aria-hidden="true"
-                className="flex h-7 shrink-0 items-center justify-center text-slate-400 xl:mt-2 xl:h-auto xl:w-7"
+                className="flex h-7 shrink-0 items-center justify-center text-muted-foreground/40 xl:mt-2 xl:h-auto xl:w-7"
               >
                 <ArrowDown className="size-4 xl:hidden" />
 

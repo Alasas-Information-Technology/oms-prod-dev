@@ -164,21 +164,21 @@ export function DashboardGrid({
   }
 
   return (
-    <div className={cn("flex flex-col gap-6 w-full", className)}>
+    <div className={cn("flex flex-col gap-3.5 w-full", className)}>
       {activeBands.map((band) => {
         // Sort widgets within band by priority ascending
         const sortedWidgets = [...band.widgets].sort(
           (a, b) => (a.priority || 0) - (b.priority || 0)
         );
 
-        // Band A renders as a clean 4-column KPI strip
+        // Band A renders as a clean 4-column KPI strip with tight gap-3
         if (band.band === "A") {
           return (
             <section
               key={`dashboard-band-${band.band}`}
               aria-label="Attention Strip"
               data-band-height={band.height}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full items-stretch"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full items-stretch"
             >
               {sortedWidgets.map((placement) => {
                 const definition = getWidgetDefinition(placement.id);
@@ -213,7 +213,7 @@ export function DashboardGrid({
             key={`dashboard-band-${band.band}`}
             aria-label={`Dashboard Band ${band.band}`}
             data-band-height={band.height}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full items-stretch"
+            className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 w-full items-stretch"
           >
             {sortedWidgets.map((placement) => {
               const definition = getWidgetDefinition(placement.id);
@@ -262,3 +262,4 @@ export function DashboardGrid({
     </div>
   );
 }
+

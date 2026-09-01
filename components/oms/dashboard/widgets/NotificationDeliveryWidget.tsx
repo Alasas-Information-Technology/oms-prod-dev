@@ -6,6 +6,7 @@
 import React from "react";
 import { AlertCircle, CheckCircle2, Clock, Mail, RefreshCw, Send } from "lucide-react";
 import { WidgetShell } from "../WidgetShell";
+import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { NotificationDeliveryData } from "@/types/dashboard";
 import { cn } from "@/lib/utils";
@@ -39,18 +40,25 @@ export function NotificationDeliveryWidget({
       onRetry={onRetry}
       minHeight={240}
       headerActions={
-        hasFailures ? (
-          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-600 dark:text-red-400 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20">
-            <AlertCircle className="w-3 h-3" />
-            {failed} delivery failure{failed === 1 ? "" : "s"}
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-            <CheckCircle2 className="w-3 h-3" />
-            Queues healthy
-          </span>
-        )
+        <StatusTooltipIcon
+          status={hasFailures ? "FAILED" : "HEALTHY"}
+          label={hasFailures ? `${failed} failed` : "Healthy"}
+          tooltipTitle="Notification Delivery Queues"
+          tooltipDescription={
+            hasFailures
+              ? `${failed} notification messages failed delivery across channels.`
+              : "All email, SMS, and in-app delivery dispatchers are operating normally with real-time throughput."
+          }
+          tooltipDetails={[
+            { label: "Sent (24h)", value: `${sent}` },
+            { label: "Queued", value: `${queued}` },
+            { label: "Retrying", value: `${retrying}` },
+            { label: "Oldest Queue Age", value: `${oldestQueuedAgeMinutes}m` },
+          ]}
+          showBorder
+        />
       }
+
     >
       <div className="space-y-4 select-none">
         {/* Four Core Metrics */}

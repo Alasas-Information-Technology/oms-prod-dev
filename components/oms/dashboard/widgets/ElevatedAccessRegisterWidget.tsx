@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { ArrowUpRight, Globe, Key, Shield, UserCheck, Users } from "lucide-react";
 import { WidgetShell } from "../WidgetShell";
+import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { ElevatedAccessRegisterData } from "@/types/dashboard";
 import { cn } from "@/lib/utils";
@@ -32,10 +33,21 @@ export function ElevatedAccessRegisterWidget({
       onRetry={onRetry}
       minHeight={240}
       headerActions={
-        <span className="text-[11.5px] font-medium text-muted-foreground bg-muted/50 px-2 py-0.5 rounded border border-border/30">
-          {sysAdmins.count + globalScope.count} privileged accounts
-        </span>
+        <StatusTooltipIcon
+          status="INFO"
+          label={`${sysAdmins.count + globalScope.count} privileged`}
+          tooltipTitle="Elevated & Privileged Access"
+          tooltipDescription="Total accounts holding administrative roles, full-tenant global scopes, active overrides, or delegations."
+          tooltipDetails={[
+            { label: "System Admins", value: `${sysAdmins.count}` },
+            { label: "Global Scope", value: `${globalScope.count}` },
+            { label: "Active Overrides", value: `${activeOverrides.count}` },
+            { label: "Active Delegations", value: `${activeDelegations.count}` },
+          ]}
+          showBorder
+        />
       }
+
     >
       <div className="space-y-2.5 select-none">
         {/* System Admins Row */}
