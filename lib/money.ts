@@ -128,6 +128,95 @@ export function formatAbbreviated(
   return `${prefix}${currencyPrefix}${formatAmount(absFils)}`;
 }
 
+export interface AmountParts {
+  currency: string;
+  integer: string;
+  decimalOrSuffix: string;
+  isNegative: boolean;
+}
+
+/**
+ * Splits exact formatted currency into three distinct spans for T2 numeral weight contrast:
+ * [currency code] [integer part] [decimal part]
+ */
+export function formatAmountParts(
+  value: MinorUnitInput,
+  options?: { currency?: string; showCurrency?: boolean }
+): AmountParts {
+  const { currency = "AED", showCurrency = true } = options || {};
+  const filsBigInt = toBigIntFils(value);
+  const isNegative = filsBigInt < B_ZERO;
+  const absFils = isNegative ? -filsBigInt : filsBigInt;
+
+  const dirhams = absFils / B_HUNDRED;
+  const filsRemainder = absFils % B_HUNDRED;
+
+  const dirhamsFormatted = dirhams
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const filsFormatted = `.${filsRemainder.toString().padStart(2, "0")}`;
+
+  return {
+    currency: showCurrency ? currency : "",
+    integer: `${isNegative ? "-" : ""}${dirhamsFormatted}`,
+    decimalOrSuffix: filsFormatted,
+    isNegative,
+  };
+}
+
+/**
+ * Splits abbreviated formatted currency into three distinct spans for T2 numeral weight contrast:
+ * Example: "AED 24.80M" -> currency: "AED", integer: "24", decimalOrSuffix: ".80M"
+ */
+export function formatAbbreviatedParts(
+  value: MinorUnitInput,
+  options?: AbbreviateOptions
+): AmountParts {
+  const { currency = "AED", showCurrency = true } = options || {};
+  const filsBigInt = toBigIntFils(value);
+  const isNegative = filsBigInt < B_ZERO;
+  const absFils = isNegative ? -filsBigInt : filsBigInt;
+  const prefix = isNegative ? "-" : "";
+
+  if (absFils >= B_ONE_BILLION_FILS) {
+    const scaled = (absFils + B_FIVE_HUNDRED_MILLION_FILS) / B_ONE_BILLION_SCALE;
+    const whole = scaled / B_HUNDRED;
+    const decimals = (scaled % B_HUNDRED).toString().padStart(2, "0");
+    return {
+      currency: showCurrency ? currency : "",
+      integer: `${prefix}${whole.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`,
+      decimalOrSuffix: `.${decimals}B`,
+      isNegative,
+    };
+  }
+
+  if (absFils >= B_ONE_MILLION_FILS) {
+    const scaled = (absFils + B_FIVE_HUNDRED_THOUSAND_FILS) / B_ONE_MILLION_SCALE;
+    const whole = scaled / B_HUNDRED;
+    const decimals = (scaled % B_HUNDRED).toString().padStart(2, "0");
+    return {
+      currency: showCurrency ? currency : "",
+      integer: `${prefix}${whole.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`,
+      decimalOrSuffix: `.${decimals}M`,
+      isNegative,
+    };
+  }
+
+  if (absFils >= B_ONE_THOUSAND_FILS) {
+    const scaled = (absFils + B_FIVE_HUNDRED_FILS) / B_THOUSAND;
+    const whole = scaled / B_HUNDRED;
+    const decimals = (scaled % B_HUNDRED).toString().padStart(2, "0");
+    return {
+      currency: showCurrency ? currency : "",
+      integer: `${prefix}${whole.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`,
+      decimalOrSuffix: `.${decimals}k`,
+      isNegative,
+    };
+  }
+
+  return formatAmountParts(value, { currency, showCurrency });
+}
+
 /**
  * Formats a ratio of two integer fils amounts into a percentage with one decimal place.
  * Computed entirely with BigInt integer division and round-half-up.
@@ -206,3 +295,6 @@ export function reconcileFundStates(
     discrepancyFils,
   };
 }
+
+// Re-export Amount component for unified money access
+export { Amount, type AmountProps } from "@/components/budget/Amount";

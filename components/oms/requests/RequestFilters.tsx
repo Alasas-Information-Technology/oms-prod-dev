@@ -66,7 +66,7 @@ function FilterSelect({
       value={value}
       onValueChange={onValueChange}
     >
-      <SelectTrigger className="h-9 min-w-0 bg-white">
+      <SelectTrigger className="h-9 min-w-0 bg-background/80 dark:bg-card/40">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
 
@@ -123,7 +123,7 @@ export function RequestFilters({
   ].filter(Boolean).length;
 
   return (
-    <Card className="gap-4 rounded-xl bg-white p-4 shadow-xs hover:translate-y-0">
+    <Card className="gap-4 rounded-lg bg-card border-border/60 dark:border-white/[0.08] p-4 shadow-xs hover:translate-y-0">
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(250px,1.5fr)_repeat(4,minmax(160px,1fr))]">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -137,7 +137,7 @@ export function RequestFilters({
               )
             }
             placeholder="Search request ID or position"
-            className="h-9 rounded-md bg-white pl-9"
+            className="h-9 rounded-md bg-background/80 dark:bg-card/40 pl-9"
           />
         </div>
 
@@ -209,7 +209,7 @@ export function RequestFilters({
               )
             }
           >
-            <SelectTrigger className="h-9 w-[190px] bg-white">
+            <SelectTrigger className="h-9 w-[190px] bg-background/80 dark:bg-card/40">
               <Bookmark className="size-4 text-muted-foreground" />
 
               <SelectValue placeholder="Saved views" />

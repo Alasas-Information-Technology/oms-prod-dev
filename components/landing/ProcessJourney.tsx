@@ -6,35 +6,35 @@ import { SectionWrapper, SectionHeader } from "./SectionWrapper";
 const steps = [
   {
     title: "Identify Business Need",
-    description: "Define workforce requirements, budget, and timeline",
+    description: "Define workforce requirements, budget allocation, and timeline",
   },
   {
     title: "Select FLEXIS Model",
-    description: "Choose the optimal engagement model for your need",
+    description: "Choose the optimal engagement model matching the operational scope",
   },
   {
     title: "Create Requisition",
-    description: "Submit a detailed outsource request through OMS",
+    description: "Submit a structured outsource requisition with automated validation",
   },
   {
     title: "Approval Workflow",
-    description: "Automated multi-level approval routing",
+    description: "Automated multi-level routing according to delegation authority",
   },
   {
     title: "Vendor Engagement",
-    description: "Match with accredited service providers",
+    description: "Match with accredited service providers across registered categories",
   },
   {
     title: "Contract Execution",
-    description: "Digital contract creation and signing",
+    description: "Digital contract creation, digital signature, and legal compliance",
   },
   {
     title: "Workforce Deployment",
-    description: "Onboard and deploy the outsourced team",
+    description: "Secure onboarding and deployment of the outsourced workforce",
   },
   {
     title: "Monitor & Analyze",
-    description: "Track performance, compliance, and spend",
+    description: "Track SLA performance, compliance metrics, and financial variance",
   },
 ];
 
@@ -66,7 +66,7 @@ export function ProcessJourney() {
         description="A streamlined 8-step journey that transforms business requirements into managed workforce deployments."
       />
 
-      <div className="max-w-4xl mx-auto mt-16">
+      <div className="max-w-4xl mx-auto mt-12 sm:mt-16">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -75,10 +75,10 @@ export function ProcessJourney() {
           className="relative"
         >
           {/* Center Line (Desktop) */}
-          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-border -translate-x-1/2" />
+          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-border/80 -translate-x-1/2" />
           
           {/* Left Line (Mobile) */}
-          <div className="md:hidden absolute left-5 top-0 bottom-0 w-px bg-border" />
+          <div className="md:hidden absolute left-5 top-0 bottom-0 w-px bg-border/80" />
 
           <div className="flex flex-col gap-6 md:gap-0">
             {steps.map((step, i) => {
@@ -99,22 +99,26 @@ export function ProcessJourney() {
                     {/* Empty Space for Desktop Alternate Layout */}
                     <div className="hidden md:block w-[calc(50%-2rem)]" />
 
-                    {/* Center Circle */}
-                    <div className="absolute left-0 md:left-1/2 w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold shadow-md z-10 md:-translate-x-1/2 border-4 border-background">
+                    {/* Step Number Node */}
+                    <div className="relative z-10 size-10 sm:size-12 rounded-xl bg-card border-2 border-primary text-primary flex items-center justify-center font-extrabold text-sm sm:text-base shadow-md shrink-0 md:mx-auto">
                       {i + 1}
                     </div>
 
-                    {/* Card */}
+                    {/* Content Card */}
                     <div className={`
-                      w-full md:w-[calc(50%-2rem)] pl-16 md:pl-0
-                      ${isEven ? 'md:pr-10 md:text-right' : 'md:pl-10 text-left'}
+                      w-[calc(100%-3.5rem)] md:w-[calc(50%-2rem)] pl-4 md:pl-0
+                      ${isEven ? 'md:pr-8 md:text-right' : 'md:pl-8 md:text-left'}
                     `}>
-                      <div className="bg-card border border-border/60 rounded-md p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
-                        <h3 className="text-lg font-bold text-heading mb-1">{step.title}</h3>
-                        <p className="text-sm text-muted-foreground">{step.description}</p>
+                      <div className="bg-card border border-border/70 rounded-xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition-shadow">
+                        <h3 className="text-base sm:text-lg font-bold text-heading mb-1.5 leading-snug tracking-tight">
+                          {step.title}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-normal">
+                          {step.description}
+                        </p>
                       </div>
                     </div>
-                    
+
                   </div>
                 </motion.div>
               );

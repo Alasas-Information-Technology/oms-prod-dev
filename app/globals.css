@@ -37,9 +37,9 @@
   --secondary-foreground: #FFFFFF;
   --secondary-light: #E0E8F8;
 
-  /* Accent: Maintains brand personality */
-  --accent: #0C3A8F;
-  --accent-foreground: #FFFFFF;
+  /* Accent: Teal Branding */
+  --accent: #34bcb2;
+  --accent-foreground: #0F1419;
 
   /* Muted - Improved */
   --muted: #E2E8F0;
@@ -58,10 +58,10 @@
   --destructive-foreground: #FFFFFF;
   --destructive-light: #FEE2E2;
 
-  /* Border & Input */
-  --border: #CBD5E1;
+  /* Border & Input - Lighter & more subtle */
+  --border: #E2E8F0;
   --input: #F8FAFC;
-  --input-border: #CBD5E1;
+  --input-border: #E2E8F0;
   --ring: #5B5FE1;
 
   /* Chart Colors - Updated for better contrast */
@@ -78,7 +78,7 @@
   --sidebar-primary-foreground: #FFFFFF;
   --sidebar-accent: #E0E8F8;
   --sidebar-accent-foreground: #0C3A8F;
-  --sidebar-border: #DBE3F0;
+  --sidebar-border: #E2E8F0;
   --sidebar-ring: #5B5FE1;
 
   /* Typography - Updated fonts */
@@ -90,14 +90,14 @@
   --font-mono: "JetBrains Mono", monospace;
 
   /* Enterprise radii & shadows */
-  --radius: 0.75rem;
+  --radius: 0.5rem;
 
-  --shadow-xs: 0px 1px 2px 0px rgba(0,0,0,0.05);
-  --shadow-sm: 0px 2px 4px 0px rgba(0,0,0,0.05), 0px 1px 2px -1px rgba(0,0,0,0.05);
-  --shadow: 0px 4px 6px -1px rgba(0,0,0,0.05), 0px 2px 4px -2px rgba(0,0,0,0.05);
-  --shadow-md: 0px 10px 15px -3px rgba(0,0,0,0.1), 0px 4px 6px -4px rgba(0,0,0,0.05);
-  --shadow-lg: 0px 20px 25px -5px rgba(0,0,0,0.1), 0px 8px 10px -6px rgba(0,0,0,0.05);
-  --shadow-xl: 0px 25px 50px -12px rgba(0,0,0,0.1);
+  --shadow-xs: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0px 2px 4px 0px rgba(0, 0, 0, 0.05), 0px 1px 2px -1px rgba(0, 0, 0, 0.05);
+  --shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.05), 0px 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0px 20px 25px -5px rgba(0, 0, 0, 0.1), 0px 8px 10px -6px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0px 25px 50px -12px rgba(0, 0, 0, 0.1);
 
   --tracking-normal: 0em;
   --spacing: 0.25rem;
@@ -134,8 +134,13 @@
   --secondary-foreground: #0F1419;
   --secondary-light: #1A237E;
 
-  /* Accent */
-  --accent: #42A5F5;
+  /* Brand Teal - Dark Mode variant */
+  --brand-teal: #34bcb2;
+  --brand-teal-foreground: #0F1419;
+  --brand-teal-light: #064E3B;
+
+  /* Accent: Teal Branding */
+  --accent: #34bcb2;
   --accent-foreground: #0F1419;
 
   /* Muted - Dark Mode */
@@ -155,10 +160,10 @@
   --destructive-foreground: #0F1419;
   --destructive-light: #7F1D1D;
 
-  /* Border & Input */
-  --border: #374151;
-  --input: #252D3D;
-  --input-border: #374151;
+  /* Border & Input - Subtle dark mode borders */
+  --border: #222B3C;
+  --input: #1A1F2E;
+  --input-border: #222B3C;
   --ring: #818CF8;
 
   /* Chart Colors - Dark Mode */
@@ -175,7 +180,7 @@
   --sidebar-primary-foreground: #0F1419;
   --sidebar-accent: #312E81;
   --sidebar-accent-foreground: #A5B4FC;
-  --sidebar-border: #374151;
+  --sidebar-border: #222B3C;
   --sidebar-ring: #818CF8;
 }
 
@@ -198,6 +203,11 @@
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary-light: var(--secondary-light);
+
+  --color-brand-teal: var(--brand-teal);
+  --color-brand-teal-foreground: var(--brand-teal-foreground);
+  --color-brand-teal-light: var(--brand-teal-light);
+
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
@@ -253,55 +263,85 @@
   --animate-shine: shine 2s infinite linear;
 
   @keyframes shine {
-    0% { background-position: 0% 0%; }
-    50% { background-position: 100% 100%; }
-    to { background-position: 0% 0%; }
+    0% {
+      background-position: 0% 0%;
+    }
+
+    50% {
+      background-position: 100% 100%;
+    }
+
+    to {
+      background-position: 0% 0%;
+    }
   }
 }
 
 @layer base {
-  *, ::before, ::after {
+
+  *,
+  ::before,
+  ::after {
     @apply border-border outline-ring/50;
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 700ms;
   }
+
   body {
     @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
     font-family: var(--font-sans);
     line-height: 1.6;
   }
+
   html {
     scroll-behavior: smooth;
   }
-  html, body {
+
+  html,
+  body {
     overscroll-behavior: none !important;
   }
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply text-heading font-display font-bold;
   }
+
   h1 {
     @apply text-4xl tracking-tight;
   }
+
   h2 {
     @apply text-3xl;
   }
+
   h3 {
     @apply text-2xl;
   }
+
   h4 {
     @apply text-xl;
   }
+
   h5 {
     @apply text-lg;
   }
+
   h6 {
     @apply text-base;
   }
+
   p {
     @apply text-base leading-7;
   }
-  small, .text-sm {
+
+  small,
+  .text-sm {
     @apply text-sm leading-6;
   }
 
@@ -398,24 +438,52 @@
 @utility glass {
   @apply bg-white/70 backdrop-blur-xl border border-white/20 dark:bg-black/70 dark:border-white/10;
 }
+
 @utility glass-card {
   @apply glass shadow-md;
 }
+
 @utility glass-popover {
   @apply glass shadow-xl;
 }
+
 @utility premium-transition {
   @apply transition-all duration-300 ease-out;
 }
+
 @utility hover-scale {
   @apply premium-transition hover:scale-[1.02] active:scale-[0.98];
 }
+
 @utility section-container {
   @apply max-w-[1280px] mx-auto px-6 sm:px-8 lg:px-12;
 }
+
 @utility enterprise-heading {
   @apply text-3xl md:text-4xl lg:text-5xl font-display font-bold tracking-tight text-heading leading-[1.15];
 }
+
 @utility enterprise-body {
   @apply text-base md:text-lg text-foreground-secondary leading-relaxed;
+}
+
+/* Dashboard Band Heights */
+section[data-band-height="kpi"]>div {
+  min-height: 148px;
+}
+
+section[data-band-height="hero"]>div {
+  min-height: 280px;
+}
+
+section[data-band-height="standard"]>div {
+  min-height: 215px;
+}
+
+section[data-band-height="strip"]>div {
+  min-height: 120px;
+}
+
+section[data-band-height="list"]>div {
+  min-height: 320px;
 }

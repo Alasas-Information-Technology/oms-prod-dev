@@ -89,64 +89,69 @@ const ChartCard = ({ title, desc, icon: Icon, h = "h-[220px]", isEmpty, emptyMsg
 export function SocPanel({ recentEvents }: { recentEvents: RawSecurityEvent[] }) {
   const socEvents = useMemo(() => recentEvents.slice(0, 20).map(event => {
     const type = event.EventType;
-    let style = { badge: "bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-300 border-blue-200 dark:border-blue-500/30", dot: "text-blue-500", label: type, Icon: KeyRound };
+    let style = { badge: "bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/20", iconBg: "bg-blue-500/10", iconColor: "text-blue-600 dark:text-blue-400", label: type, Icon: KeyRound };
 
     if (type === "REFRESH_TOKEN_REPLAY")
-      style = { badge: "bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-300 border-red-200 dark:border-red-500/30 animate-pulse", dot: "text-red-600", label: "REPLAY ATTEMPT", Icon: ShieldAlert };
+      style = { badge: "bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20", iconBg: "bg-rose-500/10", iconColor: "text-rose-600 dark:text-rose-400", label: "REPLAY ATTEMPT", Icon: ShieldAlert };
     else if (["ACCOUNT_LOCKED", "FAILED_LOGIN_LIMIT_EXCEEDED", "ACCOUNT_LOCKOUT"].includes(type))
-      style = { badge: "bg-orange-100 text-orange-800 dark:bg-orange-500/20 dark:text-orange-300 border-orange-200 dark:border-orange-500/30", dot: "text-orange-500", label: "ACCOUNT LOCKED", Icon: ShieldBan };
+      style = { badge: "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20", iconBg: "bg-amber-500/10", iconColor: "text-amber-600 dark:text-amber-400", label: "ACCOUNT LOCKED", Icon: ShieldBan };
     else if (type === "LOGIN_FAILURE" || type === "LOGIN_FAILED")
-      style = { badge: "bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-300 border-red-200 dark:border-red-500/30", dot: "text-red-500", label: "LOGIN FAILED", Icon: ShieldAlert };
+      style = { badge: "bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20", iconBg: "bg-rose-500/10", iconColor: "text-rose-600 dark:text-rose-400", label: "LOGIN FAILED", Icon: ShieldAlert };
     else if (type === "SESSION_REVOKED" || type.includes("REVOK"))
-      style = { badge: "bg-yellow-100 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-300 border-yellow-200 dark:border-yellow-500/30", dot: "text-yellow-500", label: "SESSION REVOKED", Icon: ShieldX };
+      style = { badge: "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20", iconBg: "bg-amber-500/10", iconColor: "text-amber-600 dark:text-amber-400", label: "SESSION REVOKED", Icon: ShieldX };
     else if (type === "LOGIN_SUCCESS")
-      style = { badge: "bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-300 border-green-200 dark:border-green-500/30", dot: "text-green-500", label: "LOGIN SUCCESS", Icon: ShieldCheck };
+      style = { badge: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20", iconBg: "bg-emerald-500/10", iconColor: "text-emerald-600 dark:text-emerald-400", label: "LOGIN SUCCESS", Icon: ShieldCheck };
 
     return { ...event, ...style };
   }), [recentEvents]);
 
   return (
-    <Card className="flex flex-col h-[550px] shadow-sm border-muted overflow-hidden w-full">
-      <CardHeader className="pb-4 border-b bg-muted/20 shrink-0">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-primary" />
-            <CardTitle className="text-lg">Enterprise SOC Panel</CardTitle>
-          </div>
-          <span className="flex h-2.5 w-2.5 relative">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+    <Card className="flex flex-col h-[550px] shadow-none border border-border/60 bg-card rounded-xl overflow-hidden w-full">
+      <CardHeader className="h-11 min-h-[44px] px-5 py-0 flex flex-row items-center justify-between shrink-0 select-none">
+        <div className="flex items-center gap-2">
+          <Activity className="w-4 h-4 text-primary" />
+          <CardTitle className="text-[14px] font-semibold text-foreground">Enterprise SOC Panel</CardTitle>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] text-muted-foreground font-medium">Real-time</span>
+          <span className="flex h-2 w-2 relative">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
           </span>
         </div>
-        <CardDescription className="text-xs">Real-time security event feed (Top 20)</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 p-0 min-h-0">
-        <ScrollArea className="h-full w-full">
+      <CardContent className="flex-1 p-2 min-h-0">
+        <ScrollArea className="h-full w-full pr-2">
           {socEvents.length === 0 ? (
-            <div className="text-center text-muted-foreground py-12 text-sm">No recent security events</div>
+            <div className="text-center text-muted-foreground py-12 text-xs">No recent security events</div>
           ) : (
-            <div className="divide-y divide-border">
+            <div className="flex flex-col gap-1">
               {socEvents.map((event, idx) => (
-                <div key={event.SecurityEventID || idx} className="p-4 hover:bg-muted/30 transition-colors">
-                  <div className="flex gap-3 text-sm">
-
-                    <div className="flex items-start justify-center">
-                      <div className={`shrink-0 mt-0.5 p-1.5 rounded-md border ${event.badge} bg-opacity-50`}>
-                        <event.Icon className={`w-4 h-4! ${event.dot}`} />
-                      </div>
+                <div
+                  key={event.SecurityEventID || idx}
+                  className="group flex items-start justify-between p-2.5 rounded-[8px] hover:bg-foreground/[0.03] transition-colors select-none"
+                >
+                  <div className="flex items-start gap-3 min-w-0 flex-1 pr-2">
+                    <div className={`w-7 h-7 rounded-md ${event.iconBg} ${event.iconColor} flex items-center justify-center shrink-0 mt-0.5`}>
+                      <event.Icon className="w-4 h-4" />
                     </div>
-
-                    <div className="space-y-1 flex-1 min-w-0">
-                      <div className="flex justify-between items-center gap-2">
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${event.badge}`}>{event.label}</span>
-                        <span className="text-muted-foreground text-[11px] tabular-nums whitespace-nowrap">
-                          {event.CreatedAt ? safeFormatDate(event.CreatedAt, "MMM d, HH:mm:ss") : "-"}
+                    <div className="space-y-0.5 flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className={`px-1.5 py-0.2 rounded text-[10px] font-semibold border ${event.badge}`}>
+                          {event.label}
+                        </span>
+                        <span className="text-[11px] text-muted-foreground font-mono">
+                          IP: {event.IPAddress || "Local"}
                         </span>
                       </div>
-                      <p className="font-medium text-foreground text-xs leading-relaxed break-words">{event.EventDescription}</p>
-                      <div className="text-[11px] text-muted-foreground pt-1 font-medium">IP: {event.IPAddress || "Local"}</div>
+                      <p className="font-medium text-foreground text-xs leading-snug break-words">
+                        {event.EventDescription}
+                      </p>
                     </div>
                   </div>
+                  <span className="text-muted-foreground text-[11px] font-mono tabular-nums whitespace-nowrap shrink-0 pt-0.5">
+                    {event.CreatedAt ? safeFormatDate(event.CreatedAt, "HH:mm:ss") : "-"}
+                  </span>
                 </div>
               ))}
             </div>
@@ -223,25 +228,35 @@ export function EventsByTypeChart({ chartsData }: ChartsDataProps) {
   );
 }
 
-export function SessionsByDeviceChart({ chartsData }: ChartsDataProps) {
-  const data = useMemo(() => (chartsData?.sessionsByDevice || []).map((item, i) => ({
-    name: item.device || "Unknown", value: item.count || 0, fill: COLORS[i % COLORS.length]
-  })), [chartsData?.sessionsByDevice]);
+import { DistributionBar, DistributionSegment } from "@/components/oms/dashboard/DistributionBar";
 
-  const config = useMemo(() => data.reduce((acc, item) => ({ ...acc, [item.name]: { label: item.name, color: item.fill } }), { value: { label: "Sessions" } } as Record<string, any>), [data]);
+export function SessionsByDeviceChart({ chartsData }: ChartsDataProps) {
+  const devices = chartsData?.sessionsByDevice || [];
+  const total = useMemo(() => devices.reduce((sum, item) => sum + (item.count || 0), 0) || 1, [devices]);
+
+  const segments: DistributionSegment[] = useMemo(() => {
+    return devices.map((item) => ({
+      label: item.device || "Unknown",
+      value: item.count || 0,
+      formatted: `${item.count || 0}`,
+      percent: ((item.count || 0) / total) * 100,
+    }));
+  }, [devices, total]);
 
   return (
-    <ChartCard title="Sessions by Device" desc="Client type distribution" h="h-[300px]" isEmpty={data.length === 0} emptyMsg="No active sessions">
-      <ChartContainer config={config} className="h-full w-full">
-        <PieChart>
-          <Pie data={data} cx="50%" cy="50%" innerRadius={55} outerRadius={80} paddingAngle={3} dataKey="value" stroke="none">
-            {data.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
-          </Pie>
-          <ChartTooltip content={<ChartTooltipContent nameKey="name" hideLabel />} />
-          <ChartLegend content={(props: any) => <ChartLegendContent {...props} />} className="-translate-y-2 flex-wrap gap-2 text-[10px]" />
-        </PieChart>
-      </ChartContainer>
-    </ChartCard>
+    <Card className="flex flex-col shadow-sm border-muted w-full h-full p-5 justify-between select-none">
+      <div className="space-y-1">
+        <h3 className="text-sm font-semibold text-foreground">Sessions by Device</h3>
+        <p className="text-xs text-muted-foreground">Client platform breakdown</p>
+      </div>
+      <div className="my-auto py-2 w-full">
+        {devices.length === 0 ? (
+          <div className="flex h-full items-center justify-center text-muted-foreground text-xs py-6">No active sessions</div>
+        ) : (
+          <DistributionBar segments={segments} />
+        )}
+      </div>
+    </Card>
   );
 }
 

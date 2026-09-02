@@ -16,42 +16,42 @@ import { SectionWrapper, SectionHeader } from "./SectionWrapper";
 const modules = [
   {
     title: "Requisition Management",
-    description: "Streamlined request creation and tracking",
+    description: "Streamlined request creation, live tracking, and approval lifecycle",
     icon: ClipboardList,
   },
   {
     title: "Vendor Management",
-    description: "Centralized vendor registry and evaluation",
+    description: "Centralized vendor registry, compliance audits, and accreditation",
     icon: Store,
   },
   {
     title: "Procurement",
-    description: "End-to-end procurement lifecycle",
+    description: "End-to-end procurement lifecycle from RFP to award",
     icon: ShoppingCart,
   },
   {
     title: "Workflow Engine",
-    description: "Configurable multi-level approvals",
+    description: "Configurable multi-level authority limits and delegation rules",
     icon: GitBranch,
   },
   {
     title: "Contract Management",
-    description: "Digital contract lifecycle management",
+    description: "Digital contract lifecycle, amendments, and renewals",
     icon: FileText,
   },
   {
     title: "Security & Access",
-    description: "Role-based enterprise security",
+    description: "Role-based enterprise access control with SAML & SSO",
     icon: ShieldCheck,
   },
   {
-    title: "Analytics",
-    description: "Real-time insights and reporting",
+    title: "Analytics & Intelligence",
+    description: "Real-time insights, utilization metrics, and SLA reporting",
     icon: BarChart3,
   },
   {
     title: "Budget Control",
-    description: "Financial oversight and allocation",
+    description: "Financial oversight, department allocation, and ledger tracking",
     icon: Wallet,
   },
 ];
@@ -89,7 +89,7 @@ export function PlatformOverview() {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
-        className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6"
       >
         {modules.map((mod, i) => {
           const Icon = mod.icon;
@@ -97,13 +97,17 @@ export function PlatformOverview() {
             <motion.div
               key={i}
               variants={itemVariants}
-              className="bg-card border border-border/60 rounded-md p-6 text-center group hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-out"
+              className="bg-card border border-border/70 rounded-xl p-6 sm:p-7 text-center group hover:shadow-lg hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 ease-out flex flex-col items-center"
             >
-              <div className="w-14 h-14 rounded-md bg-primary/8 flex items-center justify-center mx-auto mb-5 group-hover:bg-primary/15 transition-colors duration-300">
-                <Icon className="size-6 text-primary" />
+              <div className="size-14 rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300 text-primary">
+                <Icon className="size-6 transition-colors" />
               </div>
-              <h3 className="text-base font-semibold text-heading mb-2 leading-tight">{mod.title}</h3>
-              <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{mod.description}</p>
+              <h3 className="text-base sm:text-lg font-bold text-heading mb-2 leading-snug">
+                {mod.title}
+              </h3>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                {mod.description}
+              </p>
             </motion.div>
           );
         })}

@@ -1,4 +1,8 @@
 export {
+  CreateRequisitionWorkspace,
+} from "./CreateRequisitionWorkspace";
+
+export {
   NewRequisitionDialog,
 } from "./NewRequisitionDialog";
 
@@ -17,6 +21,10 @@ export {
 export {
   RequestLifecycleStepper,
 } from "./RequestLifecycleStepper";
+
+export {
+  RequestNeedsActionSubFilters,
+} from "./RequestNeedsActionSubFilters";
 
 export {
   RequestsTable,
@@ -39,6 +47,8 @@ export type {
 } from "./RequestWorkspace";
 
 export type {
+  NeedsActionSubFilter,
+  NeedsActionType,
   NewRequestDraft,
   OmsRequest,
   RequestActualStatus,
