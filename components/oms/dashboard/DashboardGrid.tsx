@@ -107,11 +107,20 @@ export function getResponsiveSpanClasses(span: number): string {
       return "col-span-1 lg:col-span-9";
     case 8:
       return "col-span-1 lg:col-span-8";
+    case 7:
+      return "col-span-1 lg:col-span-7";
     case 6:
       return "col-span-1 lg:col-span-6";
+    case 5:
+      return "col-span-1 md:col-span-6 lg:col-span-5";
     case 4:
       return "col-span-1 md:col-span-6 lg:col-span-4";
     case 3:
+      return "col-span-1 sm:col-span-6 lg:col-span-3";
+    case 2:
+      return "col-span-1 sm:col-span-4 lg:col-span-2";
+    case 1:
+      return "col-span-1 sm:col-span-2 lg:col-span-1";
     default:
       return "col-span-1 sm:col-span-6 lg:col-span-3";
   }

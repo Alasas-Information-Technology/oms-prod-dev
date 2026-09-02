@@ -46,25 +46,27 @@ export function FlexisIntro() {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
-        className="flex flex-wrap justify-center items-start gap-4 md:gap-8 mt-12"
+        className="flex flex-wrap justify-center items-start gap-4 sm:gap-6 md:gap-8 mt-10 sm:mt-12"
       >
         {letters.map((item, index) => (
           <motion.div 
             key={item.char} 
             variants={itemVariants}
-            className="flex flex-col items-center"
+            className="flex flex-col items-center group"
           >
             <div 
               className={cn(
-                "w-16 h-16 md:w-20 md:h-20 rounded-md flex items-center justify-center shadow-sm border border-border/40",
-                index % 2 === 0 ? "bg-primary/10" : "bg-secondary"
+                "w-16 h-16 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center shadow-xs border transition-all duration-300 group-hover:scale-105 group-hover:shadow-md",
+                index % 2 === 0
+                  ? "bg-primary/10 border-primary/20 text-primary"
+                  : "bg-secondary border-border/60 text-heading"
               )}
             >
-              <span className="text-3xl md:text-4xl font-bold text-heading">
+              <span className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">
                 {item.char}
               </span>
             </div>
-            <span className="text-[10px] md:text-xs font-semibold text-muted-foreground uppercase tracking-widest mt-4">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-3 sm:mt-4 text-center">
               {item.label}
             </span>
           </motion.div>

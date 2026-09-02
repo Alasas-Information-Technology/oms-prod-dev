@@ -76,7 +76,7 @@ export function Capabilities() {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
       >
         {capabilities.map((cap, i) => {
           const Icon = cap.icon;
@@ -84,17 +84,19 @@ export function Capabilities() {
             <motion.div
               key={i}
               variants={itemVariants}
-              className="bg-card border border-border/60 rounded-md p-8 group flex flex-col h-full hover:shadow-lg hover:border-primary/20 hover:-translate-y-1 transition-all duration-300 ease-out"
+              className="bg-card border border-border/70 rounded-xl p-6 sm:p-8 group flex flex-col h-full hover:shadow-lg hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 ease-out"
             >
-              <div className="w-14 h-14 rounded-md bg-primary/8 flex items-center justify-center mb-6 group-hover:bg-primary/15 transition-colors duration-300">
-                <Icon className="size-6 text-primary" />
+              <div className="size-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors duration-300 text-primary">
+                <Icon className="size-6 transition-colors" />
               </div>
-              <h3 className="text-xl font-bold text-heading mb-3">{cap.title}</h3>
-              <p className="text-base text-muted-foreground leading-relaxed flex-grow mb-8">
+              <h3 className="text-lg sm:text-xl font-bold text-heading mb-2.5 leading-snug tracking-tight">
+                {cap.title}
+              </h3>
+              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed flex-grow mb-6 font-normal">
                 {cap.description}
               </p>
-              <div className="mt-auto">
-                <span className="inline-flex px-3 py-1 rounded-full bg-primary/8 text-primary text-xs font-bold uppercase tracking-wider">
+              <div className="mt-auto pt-2 border-t border-border/40">
+                <span className="inline-flex px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider">
                   {cap.metric}
                 </span>
               </div>

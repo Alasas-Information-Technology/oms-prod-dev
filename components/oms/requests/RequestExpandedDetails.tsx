@@ -6,8 +6,12 @@ import {
   MapPin,
   UserRound,
   Users,
+  HelpCircle,
+  ArrowRight,
 } from "lucide-react";
+import Link from "next/link";
 
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
@@ -73,7 +77,36 @@ export function RequestExpandedDetails({
   request,
 }: RequestExpandedDetailsProps) {
   return (
-    <div className="w-full max-w-full overflow-hidden whitespace-normal bg-card/60 dark:bg-card/40 px-4 py-5 md:px-6">
+    <div className="w-full max-w-full overflow-hidden whitespace-normal bg-card/60 dark:bg-card/40 px-4 py-5 md:px-6 space-y-5">
+      {/* HR Clarification Action Banner */}
+      {request.actionType === "CLARIFY" && (
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-500/5">
+          <div className="flex items-center gap-3">
+            <div className="size-8 rounded-lg bg-amber-500/20 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0">
+              <HelpCircle className="size-4.5" />
+            </div>
+            <div>
+              <p className="text-xs sm:text-sm font-semibold text-foreground">
+                HR Clarification Requested
+              </p>
+              <p className="text-xs text-muted-foreground">
+                HR has requested further information or updates on this requisition before proceeding.
+              </p>
+            </div>
+          </div>
+
+          <Link href={`/app/requests/${request.requestId}/clarifications/clar-001`}>
+            <Button
+              size="sm"
+              className="h-8 px-3.5 text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white shadow-xs shrink-0"
+            >
+              <span>Respond to Clarification</span>
+              <ArrowRight className="size-3.5 ml-1.5" />
+            </Button>
+          </Link>
+        </div>
+      )}
+
       <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm font-semibold text-foreground">

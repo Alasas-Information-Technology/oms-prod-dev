@@ -76,6 +76,7 @@ export type WidgetId =
   | "integrity-issues"
   | "elevated-accounts"
   | "jobs-failed-24h"
+  | "requisitor-action-stack"
   // Band B — Position (Charts)
   | "requests-by-lifecycle-stage"
   | "budget-exposure"
@@ -875,6 +876,7 @@ export interface WidgetDataMap {
   "integrity-issues": IntegrityIssuesData;
   "elevated-accounts": ElevatedAccountsData;
   "jobs-failed-24h": JobsFailed24hData;
+  "requisitor-action-stack": any;
   // Band B
   "requests-by-lifecycle-stage": RequestsByLifecycleStageData;
   "budget-exposure": BudgetExposureData;

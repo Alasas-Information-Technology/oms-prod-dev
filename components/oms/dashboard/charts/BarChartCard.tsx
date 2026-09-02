@@ -33,7 +33,7 @@ export interface BarChartCardProps {
   layout?: "horizontal" | "vertical";
   stacked?: boolean;
   /** Plot area height (default 130px per T3) */
-  height?: number;
+  height?: number | string;
   className?: string;
   hideLegend?: boolean;
   hideGrid?: boolean;

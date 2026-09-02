@@ -23,6 +23,7 @@ export function OnboardingCasesTile({
       isLoading={isLoading}
       zeroMeaning="GOOD"
       zeroLabel="No active cases"
+      className="h-full"
     />
   );
 }

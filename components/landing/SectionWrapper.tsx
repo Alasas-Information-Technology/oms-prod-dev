@@ -36,14 +36,14 @@ export function SectionWrapper({
       viewport={{ once: true, margin: "-80px" }}
       className={cn(
         "w-full",
-        !noPadding && "py-24 md:py-[120px]",
+        !noPadding && "py-20 sm:py-24 md:py-28 lg:py-32",
         dark
           ? "bg-heading text-white dark:bg-card"
           : "bg-background",
         className
       )}
     >
-      <div className="container mx-auto px-6 md:px-12 max-w-[1280px]">
+      <div className="container mx-auto px-6 sm:px-8 md:px-12 max-w-[1280px]">
         {children}
       </div>
     </motion.section>
@@ -64,14 +64,14 @@ export function SectionHeader({
   light?: boolean;
 }) {
   return (
-    <div className={cn("text-center max-w-3xl mx-auto mb-16 lg:mb-20", className)}>
+    <div className={cn("text-center max-w-3xl mx-auto mb-12 sm:mb-16 lg:mb-20", className)}>
       {badge && (
         <span
           className={cn(
-            "inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest mb-6",
+            "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 sm:mb-6",
             light
-              ? "bg-white/10 text-white/80 border border-white/10"
-              : "bg-primary/8 text-primary border border-primary/15"
+              ? "bg-white/10 text-white/90 border border-white/15"
+              : "bg-primary/10 text-primary border border-primary/20"
           )}
         >
           {badge}
@@ -79,7 +79,7 @@ export function SectionHeader({
       )}
       <h2
         className={cn(
-          "text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.15]",
+          "text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.15]",
           light ? "text-white" : "text-heading"
         )}
       >
@@ -88,8 +88,8 @@ export function SectionHeader({
       {description && (
         <p
           className={cn(
-            "mt-5 text-lg md:text-xl leading-relaxed",
-            light ? "text-white/60" : "text-muted-foreground"
+            "mt-4 sm:mt-5 text-base sm:text-lg lg:text-xl leading-relaxed max-w-2xl mx-auto",
+            light ? "text-white/70" : "text-muted-foreground"
           )}
         >
           {description}

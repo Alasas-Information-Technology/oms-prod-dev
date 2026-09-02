@@ -92,12 +92,12 @@
   /* Enterprise radii & shadows */
   --radius: 0.5rem;
 
-  --shadow-xs: 0px 1px 2px 0px rgba(0,0,0,0.05);
-  --shadow-sm: 0px 2px 4px 0px rgba(0,0,0,0.05), 0px 1px 2px -1px rgba(0,0,0,0.05);
-  --shadow: 0px 4px 6px -1px rgba(0,0,0,0.05), 0px 2px 4px -2px rgba(0,0,0,0.05);
-  --shadow-md: 0px 10px 15px -3px rgba(0,0,0,0.1), 0px 4px 6px -4px rgba(0,0,0,0.05);
-  --shadow-lg: 0px 20px 25px -5px rgba(0,0,0,0.1), 0px 8px 10px -6px rgba(0,0,0,0.05);
-  --shadow-xl: 0px 25px 50px -12px rgba(0,0,0,0.1);
+  --shadow-xs: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0px 2px 4px 0px rgba(0, 0, 0, 0.05), 0px 1px 2px -1px rgba(0, 0, 0, 0.05);
+  --shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.05), 0px 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0px 20px 25px -5px rgba(0, 0, 0, 0.1), 0px 8px 10px -6px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0px 25px 50px -12px rgba(0, 0, 0, 0.1);
 
   --tracking-normal: 0em;
   --spacing: 0.25rem;
@@ -198,6 +198,11 @@
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary-light: var(--secondary-light);
+  
+  --color-brand-teal: var(--brand-teal);
+  --color-brand-teal-foreground: var(--brand-teal-foreground);
+  --color-brand-teal-light: var(--brand-teal-light);
+  
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
@@ -253,55 +258,85 @@
   --animate-shine: shine 2s infinite linear;
 
   @keyframes shine {
-    0% { background-position: 0% 0%; }
-    50% { background-position: 100% 100%; }
-    to { background-position: 0% 0%; }
+    0% {
+      background-position: 0% 0%;
+    }
+
+    50% {
+      background-position: 100% 100%;
+    }
+
+    to {
+      background-position: 0% 0%;
+    }
   }
 }
 
 @layer base {
-  *, ::before, ::after {
+
+  *,
+  ::before,
+  ::after {
     @apply border-border outline-ring/50;
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 700ms;
   }
+
   body {
     @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
     font-family: var(--font-sans);
     line-height: 1.6;
   }
+
   html {
     scroll-behavior: smooth;
   }
-  html, body {
+
+  html,
+  body {
     overscroll-behavior: none !important;
   }
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply text-heading font-display font-bold;
   }
+
   h1 {
     @apply text-4xl tracking-tight;
   }
+
   h2 {
     @apply text-3xl;
   }
+
   h3 {
     @apply text-2xl;
   }
+
   h4 {
     @apply text-xl;
   }
+
   h5 {
     @apply text-lg;
   }
+
   h6 {
     @apply text-base;
   }
+
   p {
     @apply text-base leading-7;
   }
-  small, .text-sm {
+
+  small,
+  .text-sm {
     @apply text-sm leading-6;
   }
 
@@ -398,41 +433,52 @@
 @utility glass {
   @apply bg-white/70 backdrop-blur-xl border border-white/20 dark:bg-black/70 dark:border-white/10;
 }
+
 @utility glass-card {
   @apply glass shadow-md;
 }
+
 @utility glass-popover {
   @apply glass shadow-xl;
 }
+
 @utility premium-transition {
   @apply transition-all duration-300 ease-out;
 }
+
 @utility hover-scale {
   @apply premium-transition hover:scale-[1.02] active:scale-[0.98];
 }
+
 @utility section-container {
   @apply max-w-[1280px] mx-auto px-6 sm:px-8 lg:px-12;
 }
+
 @utility enterprise-heading {
   @apply text-3xl md:text-4xl lg:text-5xl font-display font-bold tracking-tight text-heading leading-[1.15];
 }
+
 @utility enterprise-body {
   @apply text-base md:text-lg text-foreground-secondary leading-relaxed;
 }
 
 /* Dashboard Band Heights */
-section[data-band-height="kpi"] > div {
-  height: 148px;
+section[data-band-height="kpi"]>div {
+  min-height: 148px;
 }
-section[data-band-height="hero"] > div {
-  height: 280px;
+
+section[data-band-height="hero"]>div {
+  min-height: 280px;
 }
-section[data-band-height="standard"] > div {
-  height: 215px;
+
+section[data-band-height="standard"]>div {
+  min-height: 215px;
 }
-section[data-band-height="strip"] > div {
-  height: 120px;
+
+section[data-band-height="strip"]>div {
+  min-height: 120px;
 }
-section[data-band-height="list"] > div {
-  height: 320px;
+
+section[data-band-height="list"]>div {
+  min-height: 320px;
 }

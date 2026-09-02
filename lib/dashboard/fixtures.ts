@@ -159,6 +159,15 @@ export const DASHBOARD_WIDGET_FIXTURES: {
     },
   },
 
+  "requisitor-action-stack": {
+    widgetId: "requisitor-action-stack",
+    scope: { level: "SELF", label: "My Items" },
+    period: "Active",
+    updatedAt: "2026-08-31T08:30:00.000Z",
+    link: "",
+    data: {},
+  },
+
   "vendor-submissions": {
     widgetId: "vendor-submissions",
     scope: { level: "DEPARTMENT", label: "Procurement & Sourcing" },
@@ -1913,7 +1922,8 @@ export const DASHBOARD_PERSONA_LAYOUTS: Record<DashboardPersona, DashboardLayout
         band: "B2",
         height: "standard",
         widgets: [
-          { id: "requests-by-lifecycle-stage", span: 6, priority: 10 },
+          { id: "requests-by-lifecycle-stage", span: 4, priority: 10 },
+          { id: "requisitor-action-stack", span: 2, priority: 15 },
           { id: "budget-exposure", span: 6, priority: 20 },
         ],
       },
@@ -1936,8 +1946,7 @@ export const DASHBOARD_PERSONA_LAYOUTS: Record<DashboardPersona, DashboardLayout
         band: "D",
         height: "standard",
         widgets: [
-          { id: "draft-expiry-watch", span: 6, priority: 10 },
-          { id: "onboarding-cases", span: 6, priority: 20 },
+          { id: "draft-expiry-watch", span: 12, priority: 10 },
         ],
       },
     ],
@@ -2050,8 +2059,8 @@ export const DASHBOARD_PERSONA_LAYOUTS: Record<DashboardPersona, DashboardLayout
         widgets: [
           { id: "needs-my-action", span: 3, priority: 10 },
           { id: "requests-in-approval", span: 3, priority: 20 },
-          { id: "expiring-documents", span: 3, priority: 30 },
-          { id: "open-exceptions", span: 3, priority: 40 },
+          { id: "candidates-awaiting-review", span: 3, priority: 30 },
+          { id: "onboarding-cases", span: 3, priority: 40 },
         ],
       },
       {
@@ -2090,7 +2099,7 @@ export const DASHBOARD_PERSONA_LAYOUTS: Record<DashboardPersona, DashboardLayout
         band: "C3",
         height: "list",
         widgets: [
-          { id: "upcoming-milestones", span: 6, priority: 10 },
+          { id: "interview-schedule", span: 6, priority: 10 },
           { id: "recent-activity", span: 6, priority: 20 },
         ],
       },
@@ -2239,17 +2248,11 @@ export const DASHBOARD_PERSONA_LAYOUTS: Record<DashboardPersona, DashboardLayout
         ],
       },
       {
-        band: "E5",
-        height: "standard",
-        widgets: [
-          { id: "configuration-drift", span: 12, priority: 10 },
-        ],
-      },
-      {
         band: "C",
         height: "list",
         widgets: [
-          { id: "recent-activity", span: 12, priority: 10 },
+          { id: "configuration-drift", span: 8, priority: 10 },
+          { id: "recent-activity", span: 4, priority: 20 },
         ],
       },
       {

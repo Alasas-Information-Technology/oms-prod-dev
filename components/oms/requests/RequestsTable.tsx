@@ -509,6 +509,15 @@ export function RequestsTable({
                               </Button>
                             </Link>
                           )
+                        ) : request.actionType === "CLARIFY" ? (
+                          <Link href={`/app/requests/${request.requestId}/clarifications/clar-001`}>
+                            <Button
+                              size="sm"
+                              className="h-8 w-32 rounded-lg px-2 text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white text-center justify-center shadow-xs"
+                            >
+                              Respond to HR
+                            </Button>
+                          </Link>
                         ) : (
                           <Button
                             variant="outline"

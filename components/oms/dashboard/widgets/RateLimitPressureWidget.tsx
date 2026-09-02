@@ -86,7 +86,7 @@ export function RateLimitPressureWidget({
                     <SegmentedBar
                       value={t.hits}
                       max={t.limit}
-                      color={t.hits > 0 ? "var(--color-amber-500, #f59e0b)" : undefined}
+                      color={t.hits > 0 ? "#34bcb2" : undefined}
                       showPercent={false}
                     />
                   </div>
@@ -95,7 +95,7 @@ export function RateLimitPressureWidget({
                   <div className="flex flex-col items-end shrink-0">
                     <span className={cn(
                       "text-[13px] font-semibold tabular-nums leading-tight",
-                      hasHits ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground"
+                      hasHits ? "text-[#34bcb2]" : "text-muted-foreground"
                     )}>
                       {t.hits} hit{t.hits === 1 ? "" : "s"}
                     </span>

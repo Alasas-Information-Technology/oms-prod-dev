@@ -1,18 +1,17 @@
-import { LandingNav } from "@/components/landing/LandingNav";
-import { HeroSection } from "@/components/landing/HeroSection";
-import { FlexisIntro } from "@/components/landing/FlexisIntro";
-import { FlexisExperience } from "@/components/landing/FlexisExperience";
-import { PlatformOverview } from "@/components/landing/PlatformOverview";
 import { Capabilities } from "@/components/landing/Capabilities";
+import { EnvironmentSwitcher } from "@/components/landing/EnvironmentSwitcher";
+import { FinalCTA } from "@/components/landing/FinalCTA";
+import { FlexisExperience } from "@/components/landing/FlexisExperience";
+import { FlexisIntro } from "@/components/landing/FlexisIntro";
+import { HeroSection } from "@/components/landing/HeroSection";
+import { ImplementationJourney } from "@/components/landing/ImplementationJourney";
+import { LandingFooter } from "@/components/landing/LandingFooter";
+import { LandingNav } from "@/components/landing/LandingNav";
+import { PlatformOverview } from "@/components/landing/PlatformOverview";
 import { ProcessJourney } from "@/components/landing/ProcessJourney";
-import { WhyDiez } from "@/components/landing/WhyDiez";
 import { SecuritySection } from "@/components/landing/SecuritySection";
 import { TechShowcase } from "@/components/landing/TechShowcase";
-import { IndustriesSection } from "@/components/landing/IndustriesSection";
-import { ImplementationJourney } from "@/components/landing/ImplementationJourney";
-import { FinalCTA } from "@/components/landing/FinalCTA";
-import { LandingFooter } from "@/components/landing/LandingFooter";
-import { EnvironmentSwitcher } from "@/components/landing/EnvironmentSwitcher";
+import { WhyDiez } from "@/components/landing/WhyDiez";
 
 export default function LandingPage() {
   return (

@@ -94,7 +94,7 @@ export function BudgetAllocationByDepartmentChart({
           <p className="text-sm">No department budget allocations recorded.</p>
         </div>
       ) : (
-        <div className="flex flex-col justify-between flex-1">
+        <div className="flex flex-col flex-1 h-full min-h-0 w-full pt-1 pb-2">
           <BarChartCard
             data={chartData.slice(0, 5)}
             series={[
@@ -105,7 +105,8 @@ export function BudgetAllocationByDepartmentChart({
             ]}
             xAxisKey="name"
             layout="vertical"
-            height={130}
+            height="100%"
+            className="flex-1 h-full min-h-0"
             hideLegend
             xAxisFormatter={(val) => `${val}%`}
             getCellColor={(entry) => getBarColor(entry)}
