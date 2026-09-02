@@ -37,9 +37,9 @@
   --secondary-foreground: #FFFFFF;
   --secondary-light: #E0E8F8;
 
-  /* Accent: Maintains brand personality */
-  --accent: #0C3A8F;
-  --accent-foreground: #FFFFFF;
+  /* Accent: Teal Branding */
+  --accent: #34bcb2;
+  --accent-foreground: #0F1419;
 
   /* Muted - Improved */
   --muted: #E2E8F0;
@@ -134,8 +134,13 @@
   --secondary-foreground: #0F1419;
   --secondary-light: #1A237E;
 
-  /* Accent */
-  --accent: #42A5F5;
+  /* Brand Teal - Dark Mode variant */
+  --brand-teal: #34bcb2;
+  --brand-teal-foreground: #0F1419;
+  --brand-teal-light: #064E3B;
+
+  /* Accent: Teal Branding */
+  --accent: #34bcb2;
   --accent-foreground: #0F1419;
 
   /* Muted - Dark Mode */
@@ -198,11 +203,11 @@
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary-light: var(--secondary-light);
-  
+
   --color-brand-teal: var(--brand-teal);
   --color-brand-teal-foreground: var(--brand-teal-foreground);
   --color-brand-teal-light: var(--brand-teal-light);
-  
+
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
