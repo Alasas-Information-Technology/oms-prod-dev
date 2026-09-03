@@ -1,436 +1,300 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import {
-  CheckCircle2,
-  ClipboardCheck,
-  Clock3,
-  Inbox,
-  ShieldAlert,
-} from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { CheckCircle2, ListFilter, Search } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { PageBarActions } from "@/components/ui/layouts/page-bar-context";
 
-import { BudgetPositionPanel } from "./BudgetPositionPanel";
 import { DepartmentApprovalTrail } from "./DepartmentApprovalTrail";
-import { HrDispositionPanel } from "./HrDispositionPanel";
-import {
-  HrReviewFilters,
-  HrReviewSlaFilter,
-  HrReviewStatusFilter,
-} from "./HrReviewFilters";
-import { HrReviewAttachments } from "./HrReviewAttachments";
-import { HrReviewAudit } from "./HrReviewAudit";
 import { HrReviewOverview } from "./HrReviewOverview";
 import { HrReviewQueue } from "./HrReviewQueue";
 import { HrReviewRequestSummary } from "./HrReviewRequestSummary";
 import { HrReviewTabs } from "./HrReviewTabs";
-import {
-  HR_DISPOSITION_ACTIONS,
-  MOCK_HR_REVIEW_REQUESTS,
-} from "./hr-review.mock-data";
-import {
-  HrDispositionSubmission,
-  HrReviewTab,
-} from "./hr-review.types";
-
-function MetricCard({
-  label,
-  value,
-  description,
-  icon: Icon,
-  tone = "default",
-}: {
-  label: string;
-  value: number;
-  description: string;
-  icon: React.ComponentType<{
-    className?: string;
-  }>;
-  tone?: "default" | "warning" | "danger";
-}) {
-  return (
-    <Card className="gap-3 rounded-xl bg-white p-4 shadow-xs hover:translate-y-0">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-medium text-muted-foreground">
-            {label}
-          </p>
-
-          <p className="mt-2 text-2xl font-semibold text-foreground">
-            {value}
-          </p>
-
-          <p className="mt-1 text-xs text-muted-foreground">
-            {description}
-          </p>
-        </div>
-
-        <span
-          className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${
-            tone === "danger"
-              ? "bg-red-100 text-red-700"
-              : tone === "warning"
-                ? "bg-amber-100 text-amber-700"
-                : "bg-primary/10 text-primary"
-          }`}
-        >
-          <Icon className="size-4" />
-        </span>
-      </div>
-    </Card>
-  );
-}
+import { HrReviewDecisionBar } from "./HrReviewDecisionBar";
+import { HrReviewShortcutOverlay } from "./HrReviewShortcutOverlay";
+import { HrReviewTab } from "@/types/hr-review";
+import { useHrReviewQueue, useHrReviewDetail, hrReviewKeys } from "@/hooks/useHrReview";
+import { hrReviewApi } from "@/lib/api/hr-review";
+import { useHrReviewShortcuts } from "@/hooks/useHrReviewShortcuts";
 
 export function HrReviewWorkspace() {
-  const [search, setSearch] =
-    useState("");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
 
-  const [status, setStatus] =
-    useState<HrReviewStatusFilter>(
-      "all"
-    );
+  const urlRequestId = searchParams.get("request");
 
-  const [sla, setSla] =
-    useState<HrReviewSlaFilter>(
-      "all"
-    );
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("all");
+  const [department, setDepartment] = useState("all");
+  const [overdueOnly, setOverdueOnly] = useState(false);
+  const [activeTab, setActiveTab] = useState<HrReviewTab>("overview");
+  const [isQueueOpen, setIsQueueOpen] = useState(false);
 
-  const [department, setDepartment] =
-    useState("all");
+  const [activeDialog, setActiveDialog] = useState<"APPROVE" | "SEND_BACK" | "PERM_HIRE" | "REJECT" | null>(null);
+  const [showShortcuts, setShowShortcuts] = useState(false);
 
-  const [selectedRequestId, setSelectedRequestId] =
-    useState<string | null>(
-      MOCK_HR_REVIEW_REQUESTS[0]?.requestId ??
-        null
-    );
+  const { data: queueData, isLoading: isQueueLoading } = useHrReviewQueue({
+    department: department !== "all" ? department : undefined,
+    status: overdueOnly ? "overdue" : undefined,
+  });
 
-  const [activeTab, setActiveTab] =
-    useState<HrReviewTab>("overview");
-
-  const departments = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          MOCK_HR_REVIEW_REQUESTS.map(
-            (request) =>
-              request.department
-          )
-        )
-      ).sort((first, second) =>
-        first.localeCompare(second)
-      ),
-    []
+  const { data: detailResponse, isLoading: isDetailLoading } = useHrReviewDetail(
+    urlRequestId || "",
+    { enabled: !!urlRequestId }
   );
 
-  const filteredRequests = useMemo(() => {
-    const normalizedSearch =
-      search.trim().toLowerCase();
+  const departments = useMemo(() => [
+    "Digital Security", "Data Management", "Project Management Office", "IT Infrastructure", "Procurement",
+  ].sort(), []);
 
-    return MOCK_HR_REVIEW_REQUESTS.filter(
-      (request) => {
-        const matchesSearch =
-          normalizedSearch === "" ||
-          request.requestId
-            .toLowerCase()
-            .includes(normalizedSearch) ||
-          request.position
-            .toLowerCase()
-            .includes(normalizedSearch) ||
-          request.department
-            .toLowerCase()
-            .includes(normalizedSearch);
+  const queueItems = queueData?.items ?? [];
 
-        const matchesStatus =
-          status === "all" ||
-          request.queueStatus === status;
-
-        const matchesSla =
-          sla === "all" ||
-          request.slaState === sla;
-
-        const matchesDepartment =
-          department === "all" ||
-          request.department === department;
-
-        return (
-          matchesSearch &&
-          matchesStatus &&
-          matchesSla &&
-          matchesDepartment
-        );
-      }
-    );
-  }, [
-    search,
-    status,
-    sla,
-    department,
-  ]);
-
-  useEffect(() => {
-    if (
-      selectedRequestId &&
-      filteredRequests.some(
-        (request) =>
-          request.requestId ===
-          selectedRequestId
-      )
-    ) {
-      return;
+  const processedQueueItems = useMemo(() => {
+    let items = [...queueItems];
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      items = items.filter(
+        (item) => item.requestId.toLowerCase().includes(q) || item.position.toLowerCase().includes(q) || item.department.name.toLowerCase().includes(q)
+      );
     }
+    if (overdueOnly) {
+      items = items.filter((item) => item.sla.breached);
+    }
+    items.sort((a, b) => {
+      if (a.sla.breached && !b.sla.breached) return -1;
+      if (!a.sla.breached && b.sla.breached) return 1;
+      if (a.returnedFromClarification && !b.returnedFromClarification) return -1;
+      if (!a.returnedFromClarification && b.returnedFromClarification) return 1;
+      return b.ageDays - a.ageDays;
+    });
+    return items;
+  }, [queueItems, search, overdueOnly]);
 
-    setSelectedRequestId(
-      filteredRequests[0]?.requestId ??
-        null
-    );
-  }, [
-    filteredRequests,
-    selectedRequestId,
-  ]);
+  const currentIndex = processedQueueItems.findIndex(i => i.requestId === urlRequestId);
+  const nextRequest = currentIndex >= 0 && currentIndex < processedQueueItems.length - 1 ? processedQueueItems[currentIndex + 1] : null;
+  const prevRequest = currentIndex > 0 ? processedQueueItems[currentIndex - 1] : null;
+  const currentPositionLabel = processedQueueItems.length > 0 && currentIndex >= 0
+    ? `${currentIndex + 1} of ${processedQueueItems.length}`
+    : processedQueueItems.length === 0 ? "Queue clear." : "";
 
-  const selectedRequest =
-    filteredRequests.find(
-      (request) =>
-        request.requestId ===
-        selectedRequestId
-    ) ?? null;
+  // Set default selection
+  useEffect(() => {
+    if (!urlRequestId && processedQueueItems.length > 0) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("request", processedQueueItems[0].requestId);
+      router.replace(`${pathname}?${params.toString()}`);
+    }
+  }, [urlRequestId, processedQueueItems, pathname, router, searchParams]);
 
-  const overdueCount =
-    MOCK_HR_REVIEW_REQUESTS.filter(
-      (request) =>
-        request.slaState === "overdue"
-    ).length;
+  // Prefetch next request
+  useEffect(() => {
+    if (nextRequest) {
+      queryClient.prefetchQuery({
+        queryKey: hrReviewKeys.detail(nextRequest.requestId),
+        queryFn: () => hrReviewApi.getDetail(nextRequest.requestId)
+      });
+    }
+  }, [nextRequest, queryClient]);
 
-  const dueSoonCount =
-    MOCK_HR_REVIEW_REQUESTS.filter(
-      (request) =>
-        request.slaState === "due-soon"
-    ).length;
+  const handleSelectRequest = (id: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("request", id);
+    router.push(`${pathname}?${params.toString()}`);
+    setActiveTab("overview");
+    setIsQueueOpen(false);
+  };
 
-  const reviewRequiredCount =
-    MOCK_HR_REVIEW_REQUESTS.filter(
-      (request) =>
-        request.complianceChecks.some(
-          (check) =>
-            check.state ===
-            "review-required"
-        )
-    ).length;
+  const handleDecisionSuccess = (actionMessage: string) => {
+    if (nextRequest) {
+      toast.success(actionMessage, {
+        description: `Moved to ${nextRequest.requestId}.`,
+      });
+      handleSelectRequest(nextRequest.requestId);
+    } else {
+      toast.success(actionMessage, {
+        description: "You've reached the end of the queue.",
+      });
+      // In a real app we'd refetch queue and maybe select nothing
+    }
+  };
 
-  function clearFilters() {
+  useHrReviewShortcuts({
+    onNext: () => nextRequest && handleSelectRequest(nextRequest.requestId),
+    onPrev: () => prevRequest && handleSelectRequest(prevRequest.requestId),
+    onApprove: () => detailResponse?.canDecide && setActiveDialog("APPROVE"),
+    onSendBack: () => detailResponse?.canDecide && setActiveDialog("SEND_BACK"),
+    onReject: () => detailResponse?.canDecide && setActiveDialog("REJECT"),
+    onEscape: () => {
+      setActiveDialog(null);
+      setShowShortcuts(false);
+    },
+    onToggleHelp: () => setShowShortcuts(prev => !prev),
+    enabled: true,
+  });
+
+  const hasActiveFilters = search.trim() !== "" || department !== "all" || status !== "all" || overdueOnly;
+
+  const handleClearFilters = () => {
     setSearch("");
     setStatus("all");
-    setSla("all");
     setDepartment("all");
-  }
+    setOverdueOnly(false);
+  };
 
-  async function handleDisposition(
-    submission: HrDispositionSubmission
-  ) {
-    // Design-only until the backend endpoint is added.
-    console.log(
-      "HR disposition submission:",
-      submission
-    );
-  }
+  const queueComponent = (
+    <HrReviewQueue
+      requests={processedQueueItems}
+      selectedRequestId={urlRequestId}
+      onSelect={handleSelectRequest}
+      totalCount={queueData?.counts?.total ?? 0}
+      overdueCount={queueData?.counts?.overdue ?? 0}
+      slaTargetDays={queueData?.slaTargetDays ?? 3}
+      isLoading={isQueueLoading}
+      positionLabel={currentPositionLabel}
+      hasActiveFilters={hasActiveFilters}
+      onClearFilters={handleClearFilters}
+    />
+  );
 
   return (
-    <div className="space-y-5">
-      <div className="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
-        <div>
-          <p className="text-sm font-medium text-primary">
-            Outsource Management
-            System
-          </p>
+    <div className="space-y-6">
+      <HrReviewShortcutOverlay open={showShortcuts} onOpenChange={setShowShortcuts} />
 
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
-            HR Review
-          </h1>
-
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-            Review approved workforce
-            requests, validate compliance
-            and funding, and submit the
-            final HR disposition.
-          </p>
-        </div>
-
-        <div className="inline-flex w-fit items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-xs text-muted-foreground shadow-xs">
-          <Clock3 className="size-4 text-primary" />
-
-          SLA target: 3 business days
-        </div>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <MetricCard
-          label="In Review Queue"
-          value={
-            MOCK_HR_REVIEW_REQUESTS.length
-          }
-          description="Requests requiring HR action"
-          icon={Inbox}
-        />
-
-        <MetricCard
-          label="Due Today"
-          value={dueSoonCount}
-          description="Requests at SLA target"
-          icon={Clock3}
-          tone="warning"
-        />
-
-        <MetricCard
-          label="Overdue"
-          value={overdueCount}
-          description="Requests beyond SLA target"
-          icon={ShieldAlert}
-          tone="danger"
-        />
-
-        <MetricCard
-          label="Policy Review"
-          value={reviewRequiredCount}
-          description="Requests with flagged checks"
-          icon={ClipboardCheck}
-          tone="warning"
-        />
-      </div>
-
-      <HrReviewFilters
-        search={search}
-        status={status}
-        sla={sla}
-        department={department}
-        departments={departments}
-        overdueCount={overdueCount}
-        onSearchChange={setSearch}
-        onStatusChange={setStatus}
-        onSlaChange={setSla}
-        onDepartmentChange={
-          setDepartment
-        }
-        onClear={clearFilters}
-      />
-
-      <div className="grid min-h-0 gap-5 xl:grid-cols-[360px_minmax(0,1fr)]">
-        <HrReviewQueue
-          requests={filteredRequests}
-          selectedRequestId={
-            selectedRequestId
-          }
-          onSelect={(requestId) => {
-            setSelectedRequestId(
-              requestId
-            );
-            setActiveTab("overview");
-          }}
-        />
-
-        {selectedRequest ? (
-          <div className="min-w-0 space-y-4">
-            <HrReviewRequestSummary
-              request={selectedRequest}
-            />
-
-            <HrReviewTabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              attachmentCount={
-                selectedRequest
-                  .attachments.length
-              }
-              auditCount={
-                selectedRequest.audit
-                  .length
-              }
-            />
-
-            <div className="grid min-w-0 gap-4 2xl:grid-cols-[minmax(0,1fr)_340px]">
-              <div className="min-w-0">
-                {activeTab ===
-                  "overview" && (
-                  <HrReviewOverview
-                    request={
-                      selectedRequest
-                    }
-                  />
-                )}
-
-                {activeTab ===
-                  "approval-trail" && (
-                  <DepartmentApprovalTrail
-                    items={
-                      selectedRequest
-                        .approvalTrail
-                    }
-                    detailed
-                  />
-                )}
-
-                {activeTab ===
-                  "budget" && (
-                  <BudgetPositionPanel
-                    budget={
-                      selectedRequest
-                        .budget
-                    }
-                    detailed
-                  />
-                )}
-
-                {activeTab ===
-                  "attachments" && (
-                  <HrReviewAttachments
-                    attachments={
-                      selectedRequest
-                        .attachments
-                    }
-                  />
-                )}
-
-                {activeTab ===
-                  "audit" && (
-                  <HrReviewAudit
-                    entries={
-                      selectedRequest
-                        .audit
-                    }
-                  />
-                )}
+      <PageBarActions>
+        <div className="flex flex-wrap items-center gap-4">
+          <Sheet open={isQueueOpen} onOpenChange={setIsQueueOpen}>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon" className="xl:hidden shrink-0">
+                <ListFilter className="size-4" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-95 p-0 border-none bg-transparent shadow-none">
+              <div className="p-4 h-full bg-slate-50/50 backdrop-blur-xl border-r">
+                {queueComponent}
               </div>
+            </SheetContent>
+          </Sheet>
 
-              <aside className="min-w-0">
-                <div className="2xl:sticky 2xl:top-4">
-                  <HrDispositionPanel
-                    request={
-                      selectedRequest
-                    }
-                    actions={
-                      HR_DISPOSITION_ACTIONS
-                    }
-                    onSubmit={
-                      handleDisposition
-                    }
-                  />
-                </div>
-              </aside>
+          <div className="hidden xl:flex items-center gap-2 px-3 h-8 rounded-md border border-border bg-white hover:bg-slate-50 shadow-xs">
+            <Switch id="overdue-only" checked={overdueOnly} onCheckedChange={setOverdueOnly} />
+            <Label htmlFor="overdue-only" className="text-[13px] font-medium cursor-pointer">Overdue only</Label>
+          </div>
+
+          <Select value={department} onValueChange={setDepartment}>
+            <SelectTrigger className="h-8 w-40 rounded-md border border-border bg-white shadow-xs hover:bg-slate-50 focus:ring-0">
+              <SelectValue placeholder="All Departments" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Departments</SelectItem>
+              {departments.map((dept) => <SelectItem key={dept} value={dept}>{dept}</SelectItem>)}
+            </SelectContent>
+          </Select>
+
+          <Select value={status} onValueChange={setStatus}>
+            <SelectTrigger className="h-8 w-40 rounded-md border border-border bg-white shadow-xs hover:bg-slate-50 focus:ring-0">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All statuses</SelectItem>
+              <SelectItem value="New">New</SelectItem>
+              <SelectItem value="Awaiting HR Review">Awaiting Review</SelectItem>
+              <SelectItem value="Clarification Returned">Clarification Returned</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search requests"
+              className="h-8 w-48 pl-9 rounded-md border border-border bg-white shadow-xs hover:bg-slate-50 focus-visible:ring-0"
+            />
+          </div>
+
+          <div className="ml-2 text-[13px] font-medium text-foreground-secondary border-l border-border pl-4 tabular-nums">
+            {processedQueueItems.length} requests
+          </div>
+        </div>
+      </PageBarActions>
+
+      <div className="grid min-h-0 gap-6 xl:grid-cols-[340px_minmax(0,1fr)]">
+        <div className="hidden xl:block">
+          {queueComponent}
+        </div>
+
+        {isDetailLoading ? (
+          <div className="flex h-64 items-center justify-center">
+            <p className="text-[13px] font-normal text-muted-foreground">Loading detail...</p>
+          </div>
+        ) : detailResponse ? (
+          <div className="min-w-0 space-y-6">
+            <div className="space-y-4">
+              <HrReviewRequestSummary request={detailResponse.request} />
+              <HrReviewTabs
+                value={activeTab}
+                onValueChange={setActiveTab}
+                attachmentCount={0}
+                auditCount={0}
+              />
             </div>
+
+            <div className="min-w-0">
+              {activeTab === "overview" && <HrReviewOverview detail={detailResponse} onNavigateTab={(tab) => setActiveTab(tab)} />}
+              {activeTab === "approval-trail" && (
+                <div className="rounded-xl border border-border bg-white p-6 shadow-xs">
+                  <h3 className="text-[14px] font-semibold text-foreground mb-4">Approval Trail</h3>
+                  <DepartmentApprovalTrail items={detailResponse.approvalTrail} detailed />
+                </div>
+              )}
+              {activeTab === "budget" && (
+                <div className="rounded-xl border border-border bg-white p-6 shadow-xs">
+                  <h3 className="text-[14px] font-semibold text-foreground mb-4">Budget Position</h3>
+                  <p className="text-[13px] font-normal text-muted-foreground">Full BudgetPositionPanel placeholder (Waiting for Budget component update)</p>
+                </div>
+              )}
+              {activeTab === "attachments" && (
+                <div className="rounded-xl border border-border bg-white p-6 shadow-xs">
+                  <h3 className="text-[14px] font-semibold text-foreground mb-4">Attachments</h3>
+                  <p className="text-[13px] font-normal text-muted-foreground">Attachments tab placeholder</p>
+                </div>
+              )}
+              {activeTab === "audit" && (
+                <div className="rounded-xl border border-border bg-white p-6 shadow-xs">
+                  <h3 className="text-[14px] font-semibold text-foreground mb-4">Audit Trail</h3>
+                  <p className="text-[13px] font-normal text-muted-foreground">Audit trail tab placeholder</p>
+                </div>
+              )}
+            </div>
+
+            <HrReviewDecisionBar
+              detail={detailResponse}
+              activeDialog={activeDialog}
+              setActiveDialog={setActiveDialog}
+              onSuccess={handleDecisionSuccess}
+            />
           </div>
         ) : (
           <Card className="flex min-h-[440px] items-center justify-center rounded-xl bg-white p-8 text-center shadow-xs hover:translate-y-0">
             <div>
               <CheckCircle2 className="mx-auto size-10 text-muted-foreground/50" />
-
-              <p className="mt-4 text-sm font-semibold text-foreground">
+              <p className="mt-4 text-[14px] font-semibold text-foreground">
                 No matching requests
               </p>
-
-              <p className="mt-2 text-sm text-muted-foreground">
-                Change or clear the
-                filters to view the HR
-                review queue.
+              <p className="mt-2 text-[13px] font-normal text-muted-foreground">
+                Change or clear the filters to view the HR review queue.
               </p>
             </div>
           </Card>

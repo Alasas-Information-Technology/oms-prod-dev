@@ -20,7 +20,7 @@ import {
 import {
   HrReviewQueueStatus,
   HrReviewSlaState,
-} from "./hr-review.types";
+} from "@/types/hr-review";
 
 export type HrReviewStatusFilter =
   | "all"
@@ -194,13 +194,13 @@ export function HrReviewFilters({
         )}
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+      <div className="mt-3 flex flex-wrap items-center gap-4 text-[12px] font-normal text-muted-foreground">
         <span className="inline-flex items-center gap-1.5">
           <SlidersHorizontal className="size-3.5" />
           Filter the HR review queue
         </span>
 
-        <span className="inline-flex items-center gap-1.5 font-medium text-red-600">
+        <span className="inline-flex items-center gap-1.5 font-medium text-destructive tabular-nums">
           <AlertTriangle className="size-3.5" />
           {overdueCount} overdue
         </span>

@@ -15,15 +15,17 @@ import {
   useSubmitClarification,
 } from "@/lib/clarification/api";
 import { ClarificationShell } from "./ClarificationShell";
-import { ClarificationAsksChecklist } from "./ClarificationAsksChecklist";
 import { ClarificationMessagePanel } from "./ClarificationMessagePanel";
-import { ClarificationThread } from "./ClarificationThread";
 import { ClarificationResponseComposer } from "./ClarificationResponseComposer";
 import { ClarificationInlineFieldEditors } from "./ClarificationInlineFieldEditors";
-import { ClarificationDiffPanel } from "./ClarificationDiffPanel";
-import { ClarificationRouteStepper } from "./ClarificationRouteStepper";
-import { ClarificationBudgetPanel } from "./ClarificationBudgetPanel";
 import { ClarificationSubmitDialog } from "./ClarificationSubmitDialog";
+import {
+  AskList,
+  ClarificationThread,
+  FieldDiffTable,
+  ReapprovalRoute,
+  BudgetImpactPanel,
+} from "@/components/oms/clarification";
 
 interface ClarificationWorkspaceProps {
   clarification: ClarificationDetail;
@@ -214,7 +216,8 @@ export function ClarificationWorkspace({
     <div className="space-y-6">
       {/* 1. What HR Needs Checklist (per Part 3.2, omitted if asks is empty) */}
       {asks && asks.length > 0 && (
-        <ClarificationAsksChecklist
+        <AskList
+          mode="read"
           asks={asks}
           preview={preview}
           clarification={clarification}
@@ -227,7 +230,7 @@ export function ClarificationWorkspace({
       {/* 3. Thread History (per Part 3.3, latest expanded, earlier collapsible) */}
       {clarification.thread && clarification.thread.length > 0 && (
         <ClarificationThread
-          thread={clarification.thread}
+          entries={clarification.thread}
           cycleNumber={clarification.cycleNumber}
         />
       )}
@@ -264,21 +267,24 @@ export function ClarificationWorkspace({
     rightColumnContent || (
       <div className="space-y-6">
         {/* 1. Live Diff Table per Part 3.6 */}
-        <ClarificationDiffPanel
-          diff={preview?.diff}
+        <FieldDiffTable
+          variant="live"
+          rows={preview?.diff}
           isLoading={isFetchingPreview}
         />
 
         {/* 2. Dynamic Route Stepper per Part 3.7 */}
-        <ClarificationRouteStepper
+        <ReapprovalRoute
+          variant="after-submit"
           route={preview?.route}
           isLoading={isFetchingPreview}
         />
 
         {/* 3. Budget Ledger Preview per Part 3.8 */}
         {preview?.budget && preview.budget.applicable && (
-          <ClarificationBudgetPanel
-            budget={preview.budget}
+          <BudgetImpactPanel
+            variant="revalidation"
+            figures={preview.budget}
             isLoading={isFetchingPreview}
           />
         )}

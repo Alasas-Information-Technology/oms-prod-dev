@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
-import { HrAttachment } from "./hr-review.types";
+import { HrAttachment } from "@/types/hr-review";
 
 interface HrReviewAttachmentsProps {
   attachments: HrAttachment[];
@@ -26,11 +26,11 @@ export function HrReviewAttachments({
           </span>
 
           <div>
-            <p className="text-sm font-semibold text-foreground">
+            <p className="text-[14px] font-semibold text-foreground">
               Attachments
             </p>
 
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-[12px] font-normal text-muted-foreground">
               Supporting documents submitted
               with this request.
             </p>
@@ -39,7 +39,7 @@ export function HrReviewAttachments({
 
         <Badge
           variant="secondary"
-          className="rounded-full"
+          className="rounded-full text-[11px] font-medium tabular-nums"
         >
           {attachments.length}
         </Badge>
@@ -50,7 +50,7 @@ export function HrReviewAttachments({
           <div className="flex min-h-40 flex-col items-center justify-center text-center">
             <Paperclip className="size-8 text-muted-foreground/50" />
 
-            <p className="mt-3 text-sm font-medium">
+            <p className="mt-3 text-[13px] font-medium">
               No attachments
             </p>
           </div>
@@ -72,11 +72,11 @@ export function HrReviewAttachments({
                   </span>
 
                   <div className="min-w-0">
-                    <p className="whitespace-normal break-words text-sm font-medium text-foreground">
+                    <p className="whitespace-normal break-words text-[13px] font-medium text-foreground">
                       {attachment.name}
                     </p>
 
-                    <p className="mt-1 whitespace-normal text-xs text-muted-foreground">
+                    <p className="mt-1 whitespace-normal text-[12px] font-normal text-muted-foreground">
                       {attachment.type} ·{" "}
                       {attachment.size} ·
                       Uploaded by{" "}
@@ -85,7 +85,7 @@ export function HrReviewAttachments({
                       }
                     </p>
 
-                    <p className="mt-1 text-xs text-muted-foreground">
+                    <p className="mt-1 text-[12px] font-normal text-muted-foreground tabular-nums">
                       {
                         attachment.uploadedAt
                       }

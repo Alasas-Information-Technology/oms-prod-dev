@@ -6,7 +6,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/components/ui/utils";
 
-import { HrReviewSlaState } from "./hr-review.types";
+import { HrReviewSlaState } from "@/types/hr-review";
 
 interface HrReviewSlaBadgeProps {
   state: HrReviewSlaState;
@@ -41,16 +41,16 @@ export function HrReviewSlaBadge({
     <Badge
       variant="outline"
       className={cn(
-        "rounded-md px-2 py-1 text-[11px] font-medium",
+        "rounded-md px-2 py-1 text-[11px] font-medium tabular-nums",
 
         state === "within-target" &&
-          "border-emerald-200 bg-emerald-50 text-emerald-700",
+          "border-success/30 bg-success-light text-success",
 
         state === "due-soon" &&
-          "border-amber-200 bg-amber-50 text-amber-700",
+          "border-warning/30 bg-warning-light text-warning",
 
         state === "overdue" &&
-          "border-red-200 bg-red-50 text-red-700",
+          "border-destructive/30 bg-destructive-light text-destructive",
 
         className
       )}

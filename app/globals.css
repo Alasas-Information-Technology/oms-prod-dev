@@ -37,8 +37,8 @@
   --secondary-foreground: #FFFFFF;
   --secondary-light: #E0E8F8;
 
-  /* Accent: Teal Branding */
-  --accent: #34bcb2;
+  /* Accent: Teal Branding with 0.3 Opacity */
+  --accent: rgba(52, 188, 178, 0.3);
   --accent-foreground: #0F1419;
 
   /* Muted - Improved */
@@ -139,9 +139,9 @@
   --brand-teal-foreground: #0F1419;
   --brand-teal-light: #064E3B;
 
-  /* Accent: Teal Branding */
-  --accent: #34bcb2;
-  --accent-foreground: #0F1419;
+  /* Accent: Teal Branding with 0.3 Opacity */
+  --accent: rgba(52, 188, 178, 0.3);
+  --accent-foreground: #F9FAFB;
 
   /* Muted - Dark Mode */
   --muted: #252D3D;

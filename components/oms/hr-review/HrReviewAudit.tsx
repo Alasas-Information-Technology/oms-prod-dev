@@ -7,7 +7,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
-import { HrAuditEntry } from "./hr-review.types";
+import { HrAuditEntry } from "@/types/hr-review";
 
 interface HrReviewAuditProps {
   entries: HrAuditEntry[];
@@ -25,11 +25,11 @@ export function HrReviewAudit({
           </span>
 
           <div>
-            <p className="text-sm font-semibold text-foreground">
+            <p className="text-[14px] font-semibold text-foreground">
               Audit History
             </p>
 
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-[12px] font-normal text-muted-foreground">
               Immutable activity history for
               this request.
             </p>
@@ -38,7 +38,7 @@ export function HrReviewAudit({
 
         <Badge
           variant="secondary"
-          className="rounded-full"
+          className="rounded-full text-[11px] font-medium tabular-nums"
         >
           {entries.length}
         </Badge>
@@ -65,24 +65,24 @@ export function HrReviewAudit({
 
               <div className="min-w-0 flex-1 rounded-xl border border-border/70 bg-slate-50/60 p-3">
                 <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
-                  <p className="whitespace-normal text-sm font-semibold text-foreground">
+                  <p className="whitespace-normal text-[13px] font-semibold text-foreground">
                     {entry.action}
                   </p>
 
-                  <span className="whitespace-nowrap text-xs text-muted-foreground">
+                  <span className="whitespace-nowrap text-[12px] font-normal text-muted-foreground tabular-nums">
                     {
                       entry.occurredAt
                     }
                   </span>
                 </div>
 
-                <p className="mt-2 whitespace-normal text-sm leading-6 text-foreground-secondary">
+                <p className="mt-2 whitespace-normal text-[13px] font-normal leading-6 text-foreground-secondary">
                   {
                     entry.description
                   }
                 </p>
 
-                <p className="mt-2 inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+                <p className="mt-2 inline-flex items-center gap-1.5 text-[12px] font-normal text-muted-foreground">
                   <UserRound className="size-3.5" />
 
                   {entry.actor}
