@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { ArrowRight, KeyRound, Shield, UserCheck, Users } from "lucide-react";
 import { WidgetShell } from "../WidgetShell";
+import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { PrivilegeChangesData, PrivilegeChangeType } from "@/types/dashboard";
 import { DeltaChip } from "../DeltaChip";
@@ -77,18 +78,24 @@ export function PrivilegeChangesWidget({
       minHeight={240}
       headerActions={
         <div className="flex items-center gap-2">
-          <span className="text-[11.5px] text-muted-foreground hidden sm:inline">7-day trend</span>
-          <DeltaChip
-            value={Math.abs(deltaPercent)}
-            direction={direction}
-            increaseIsGood={false}
+          <StatusTooltipIcon
+            status={deltaPercent > 0 ? "WARNING" : "SUCCESS"}
+            label={`${direction === "up" ? "↑" : "↓"} ${Math.abs(deltaPercent)}%`}
+            tooltipTitle="7-Day Privilege Delta"
+            tooltipDescription="Percentage change in role and scope grants compared to previous 7-day period."
+            tooltipDetails={[
+              { label: "This Week", value: `${trend.thisWeek} changes` },
+              { label: "Last Week", value: `${trend.lastWeek} changes` },
+              { label: "Trend", value: deltaPercent > 0 ? "Increased activity" : "Stable/Decreased" },
+            ]}
+            showBorder
           />
         </div>
       }
     >
-      <div className="space-y-1 select-none">
+      <div className="space-y-0.5 select-none">
         {changes.length === 0 ? (
-          <div className="py-8 text-center text-xs text-muted-foreground">
+          <div className="py-6 text-center text-xs text-muted-foreground">
             No privilege or role alterations in trailing 7 days.
           </div>
         ) : (
@@ -98,27 +105,29 @@ export function PrivilegeChangesWidget({
             return (
               <div
                 key={idx}
-                className="group flex items-center justify-between h-[44px] px-3.5 rounded-md hover:bg-muted/50 transition-colors border border-transparent hover:border-border/40"
+                className="group flex items-center justify-between h-[38px] px-2.5 sm:px-3 rounded-lg hover:bg-muted/40 transition-colors border border-transparent hover:border-border/30 dark:hover:border-white/[0.04]"
               >
                 {/* Left: Icon + What changed + Subject */}
-                <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
-                  <div className={cn(
-                    "w-6 h-6 rounded flex items-center justify-center shrink-0 text-xs",
-                    tone === "amber"
-                      ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
-                      : "bg-muted text-muted-foreground"
-                  )}>
-                    <KeyRound className="w-3.5 h-3.5" />
+                <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
+                  <div
+                    className={cn(
+                      "w-5.5 h-5.5 rounded-md flex items-center justify-center shrink-0 text-xs",
+                      tone === "amber"
+                        ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                        : "bg-muted/60 text-muted-foreground"
+                    )}
+                  >
+                    <KeyRound className="w-3 h-3" />
                   </div>
 
                   <div className="flex flex-col min-w-0">
-                    <div className="flex items-center gap-1.5 text-[13px] font-medium text-foreground truncate leading-tight">
-                      <span className="text-muted-foreground font-normal">{label}:</span>
+                    <div className="flex items-center gap-1.5 text-[12.5px] font-medium text-foreground/90 truncate leading-tight">
+                      <span className="text-muted-foreground font-normal text-[11px]">{label}:</span>
                       <span className="truncate">{change.detail}</span>
-                      <ArrowRight className="w-3 h-3 text-muted-foreground shrink-0" />
-                      <span className="font-semibold truncate">{change.subject.name}</span>
+                      <ArrowRight className="w-3 h-3 text-muted-foreground/60 shrink-0" />
+                      <span className="font-semibold text-foreground truncate">{change.subject.name}</span>
                     </div>
-                    <span className="text-[11px] text-muted-foreground truncate leading-tight mt-0.5">
+                    <span className="text-[10px] text-muted-foreground/70 truncate leading-tight mt-0.5">
                       Granted by {change.actor.name} · {formatRelativeTime(change.at)}
                     </span>
                   </div>
@@ -126,7 +135,7 @@ export function PrivilegeChangesWidget({
 
                 {/* Right: Timestamp tag */}
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-[11px] font-medium text-muted-foreground bg-muted/40 px-2 py-0.5 rounded border border-border/30">
+                  <span className="text-[10.5px] font-mono text-muted-foreground tabular-nums">
                     {formatRelativeTime(change.at)}
                   </span>
                 </div>
@@ -138,3 +147,4 @@ export function PrivilegeChangesWidget({
     </WidgetShell>
   );
 }
+

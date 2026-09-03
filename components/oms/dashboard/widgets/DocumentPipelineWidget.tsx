@@ -6,6 +6,7 @@
 import React from "react";
 import { AlertTriangle, CheckCircle2, FileCheck2, FileWarning, HardDrive, ShieldCheck } from "lucide-react";
 import { WidgetShell } from "../WidgetShell";
+import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { DocumentPipelineData } from "@/types/dashboard";
 import { cn } from "@/lib/utils";
@@ -44,18 +45,25 @@ export function DocumentPipelineWidget({
       onRetry={onRetry}
       minHeight={240}
       headerActions={
-        hasMalware ? (
-          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-600 dark:text-red-400 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20">
-            <AlertTriangle className="w-3 h-3" />
-            {malwareScanFailures} quarantined file{malwareScanFailures === 1 ? "" : "s"}
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-            <ShieldCheck className="w-3 h-3" />
-            Antivirus clean
-          </span>
-        )
+        <StatusTooltipIcon
+          status={hasMalware ? "FAILED" : "CLEAN"}
+          label={hasMalware ? `${malwareScanFailures} quarantined` : "Clean"}
+          tooltipTitle="Document Pipeline Security"
+          tooltipDescription={
+            hasMalware
+              ? `${malwareScanFailures} files failed automated malware scanning and were quarantined.`
+              : "All documents processed through the attachment pipeline passed antivirus validation."
+          }
+          tooltipDetails={[
+            { label: "Total Stored", value: `${totalStored} files` },
+            { label: "Storage Volume", value: formatBytes(totalStorageBytes) },
+            { label: "Expiring (30d)", value: `${expiringWithin30Days}` },
+            { label: "Virus Scanner", value: "Active" },
+          ]}
+          showBorder
+        />
       }
+
     >
       <div className="space-y-4 select-none">
         {/* Metric Cards */}

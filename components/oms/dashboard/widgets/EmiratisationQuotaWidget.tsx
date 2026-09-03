@@ -2,6 +2,7 @@
 
 import React from "react";
 import { WidgetShell } from "../WidgetShell";
+import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { EmiratisationQuotaData } from "@/types/dashboard";
 import { SegmentedBar } from "../SegmentedBar";
@@ -31,18 +32,25 @@ export function EmiratisationQuotaWidget({
       updatedAt={updatedAt}
       minHeight={215}
       headerActions={
-        <span
-          className={cn(
-            "px-2 py-0.5 text-[11px] font-semibold rounded border",
+        <StatusTooltipIcon
+          status={isCompliant ? "SUCCESS" : "WARNING"}
+          label={isCompliant ? "Compliant" : "Below target"}
+          tooltipTitle="Emiratisation Compliance Status"
+          tooltipDescription={
             isCompliant
-              ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20"
-              : "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20"
-          )}
-        >
-          {isCompliant ? "Compliant" : "Below Target"}
-        </span>
+              ? `National workforce participation is at ${currentPercent.toFixed(1)}%, exceeding the regulatory target of ${targetPercent.toFixed(1)}%.`
+              : `Current quota of ${currentPercent.toFixed(1)}% is below the required target of ${targetPercent.toFixed(1)}%. Remediation active.`
+          }
+          tooltipDetails={[
+            { label: "Current Rate", value: `${currentPercent.toFixed(1)}%` },
+            { label: "Regulatory Target", value: `${targetPercent.toFixed(1)}%` },
+            { label: "Compliance", value: isCompliant ? "Passed" : "Action Needed" },
+          ]}
+          showBorder
+        />
       }
     >
+
       {!data ? (
         <div className="flex items-center justify-center py-10 text-sm text-muted-foreground">
           No quota data available.

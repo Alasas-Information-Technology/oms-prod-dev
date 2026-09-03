@@ -38,7 +38,7 @@ function SnapshotCard({
   attention?: boolean;
 }) {
   return (
-    <Card className="gap-0 rounded-lg bg-white p-4 shadow-xs hover:translate-y-0">
+    <Card className="gap-0 rounded-lg bg-card border-border/60 dark:border-white/[0.08] p-4 shadow-xs hover:translate-y-0">
       <div className="flex items-center gap-3">
         <span
           className={cn(

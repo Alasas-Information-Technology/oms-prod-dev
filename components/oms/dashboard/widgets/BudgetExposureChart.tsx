@@ -76,8 +76,8 @@ export function BudgetExposureChart({
         Budget exposure summary for {periodLabel}: Total {currency} {formatAmount(totalFils)}, Consumed: {currency} {formatAmount(consumedFils)}, Locked: {currency} {formatAmount(lockedFils)}, Reserved: {currency} {formatAmount(reservedFils)}, Available: {currency} {formatAmount(availableFils)}.
       </span>
 
-      <div className="flex flex-col justify-center flex-1 w-full py-1">
-        <DistributionBar segments={segments} />
+      <div className="flex flex-col flex-1 w-full py-1 h-full pt-4">
+        <DistributionBar segments={segments} variant="detailed-legend" />
       </div>
     </WidgetShell>
   );

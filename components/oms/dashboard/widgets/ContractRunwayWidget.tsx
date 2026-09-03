@@ -2,6 +2,7 @@
 
 import React from "react";
 import { WidgetShell } from "../WidgetShell";
+import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { ContractRunwayData } from "@/types/dashboard";
 import { DashboardListRow } from "../DashboardListRow";
@@ -31,7 +32,23 @@ export function ContractRunwayWidget({
       error={error}
       onRetry={onRetry}
       minHeight={215}
+      headerActions={
+        replacementWindowCount > 0 ? (
+          <StatusTooltipIcon
+            status="WARNING"
+            label={`${replacementWindowCount} in window`}
+            tooltipTitle="Contract Expirations & Replacement Window"
+            tooltipDescription={`${replacementWindowCount} contractor engagement(s) are inside the replacement window (<60 days). Requisition creation recommended.`}
+            tooltipDetails={[
+              { label: "Inside Window", value: `${replacementWindowCount}` },
+              { label: "Active Vendors", value: `${vendors.length}` },
+            ]}
+            showBorder
+          />
+        ) : undefined
+      }
     >
+
       {!data ? (
         <div className="flex items-center justify-center py-10 text-sm text-muted-foreground">
           No contract runway data available.

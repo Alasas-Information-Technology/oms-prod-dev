@@ -22,6 +22,7 @@ const ROUTE_NAME_MAP: Record<string, string> = {
   "vendor-allocations": "Vendor allocations",
   requests: "OMS Requests",
   mine: "My Requests",
+  "hr-review": "HR Review",
   approvals: "Approvals",
   procurement: "Procurement",
   vendors: "Vendors",

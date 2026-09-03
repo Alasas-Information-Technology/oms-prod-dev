@@ -95,7 +95,7 @@ function SortableHeader({
       type="button"
       onClick={() => onSort(sortKey)}
       className={cn(
-        "inline-flex items-center gap-1 whitespace-nowrap text-xs font-semibold uppercase leading-4 tracking-wider text-slate-500 hover:text-foreground",
+        "inline-flex items-center gap-1 whitespace-nowrap text-xs font-semibold uppercase leading-4 tracking-wider text-muted-foreground hover:text-foreground transition-colors",
         align === "center" && "justify-center w-full",
         align === "right" && "justify-end w-full"
       )}
@@ -192,10 +192,10 @@ export function RequestsTable({
   };
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-border bg-white shadow-xs">
+    <div className="overflow-x-auto rounded-lg border border-border/60 dark:border-white/[0.08] bg-card shadow-xs">
       <Table className="w-full border-none">
-        <TableHeader className="border-b border-border bg-slate-50/80">
-          <TableRow className="hover:bg-slate-50/80">
+        <TableHeader className="border-b border-border/60 bg-muted/40">
+          <TableRow className="hover:bg-muted/40">
             <TableHead className="w-9 px-2">
               <span className="sr-only">Expand request</span>
             </TableHead>
@@ -274,7 +274,7 @@ export function RequestsTable({
               />
             </TableHead>
 
-            <TableHead className="px-3 py-3 text-right whitespace-nowrap min-w-[150px] text-xs font-semibold uppercase leading-4 tracking-wider text-slate-500">
+            <TableHead className="px-3 py-3 text-right whitespace-nowrap min-w-[150px] text-xs font-semibold uppercase leading-4 tracking-wider text-muted-foreground">
               Next Action
             </TableHead>
           </TableRow>
@@ -288,7 +288,7 @@ export function RequestsTable({
                 className="h-44 text-center py-10"
               >
                 <div className="flex flex-col items-center justify-center gap-2">
-                  <div className="size-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-1">
+                  <div className="size-10 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-1">
                     <CheckCircle2 className="size-5" />
                   </div>
                   <p className="text-sm font-semibold text-foreground">
@@ -310,15 +310,15 @@ export function RequestsTable({
 
               // SLA calculations
               const sla = request.sla;
-              let slaColor = "text-emerald-700 bg-emerald-50 border-emerald-200";
+              let slaColor = "text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20";
               let slaIcon = <Clock3 className="size-3" />;
 
               if (sla) {
                 if (sla.breached || sla.daysRemaining < 3) {
-                  slaColor = "text-red-700 bg-red-50 border-red-200";
+                  slaColor = "text-rose-700 dark:text-rose-400 bg-rose-500/10 border-rose-500/20";
                   slaIcon = <CircleAlert className="size-3" />;
                 } else if (sla.daysRemaining <= 7) {
-                  slaColor = "text-amber-700 bg-amber-50 border-amber-200";
+                  slaColor = "text-amber-700 dark:text-amber-400 bg-amber-500/10 border-amber-500/20";
                 }
               }
 
@@ -353,8 +353,8 @@ export function RequestsTable({
                       toggleExpanded(request.requestId);
                     }}
                     className={cn(
-                      "cursor-pointer border-slate-100 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/60",
-                      index % 2 === 1 && "bg-slate-50/40",
+                      "cursor-pointer border-border/40 hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/60 transition-colors",
+                      index % 2 === 1 && "bg-muted/15",
                       isExpanded && "bg-primary/5"
                     )}
                   >
@@ -381,13 +381,13 @@ export function RequestsTable({
 
                     <TableCell className="px-3 py-3 whitespace-nowrap">
                       <div className="flex flex-col gap-1">
-                        <span className="whitespace-nowrap font-mono text-xs font-semibold text-secondary">
+                        <span className="whitespace-nowrap font-mono text-xs font-semibold text-foreground/90">
                           {request.requestId}
                         </span>
                         {request.actingFor && (
                           <Badge
                             variant="outline"
-                            className="text-[9px] font-semibold bg-indigo-50 text-indigo-700 border-indigo-200 w-max px-1.5 py-0 truncate max-w-[130px]"
+                            className="text-[9px] font-semibold bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border-indigo-500/20 w-max px-1.5 py-0 truncate max-w-[130px]"
                             title={`Acting for ${request.actingFor.name}`}
                           >
                             Acting for {request.actingFor.name}
@@ -466,7 +466,7 @@ export function RequestsTable({
                                 >
                                   <Button
                                     size="sm"
-                                    className="h-8 w-32 rounded-lg px-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white text-center justify-center"
+                                    className="h-8 w-32 rounded-lg px-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white text-center justify-center shadow-xs"
                                   >
                                     Review & approve
                                   </Button>
@@ -482,7 +482,7 @@ export function RequestsTable({
                             ) : isClaimedByOther ? (
                               <Badge
                                 variant="outline"
-                                className="bg-slate-50 text-slate-600 text-xs py-1"
+                                className="bg-muted text-muted-foreground border-border/40 text-xs py-1"
                               >
                                 Claimed by {request.assignment?.claimedBy?.name}
                               </Badge>
@@ -503,12 +503,21 @@ export function RequestsTable({
                             >
                               <Button
                                 size="sm"
-                                className="h-8 w-32 rounded-lg px-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white text-center justify-center"
+                                className="h-8 w-32 rounded-lg px-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white text-center justify-center shadow-xs"
                               >
                                 Review & approve
                               </Button>
                             </Link>
                           )
+                        ) : request.actionType === "CLARIFY" ? (
+                          <Link href={`/app/requests/${request.requestId}/clarifications/clar-001`}>
+                            <Button
+                              size="sm"
+                              className="h-8 w-32 rounded-lg px-2 text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white text-center justify-center shadow-xs"
+                            >
+                              Respond to HR
+                            </Button>
+                          </Link>
                         ) : (
                           <Button
                             variant="outline"
@@ -524,7 +533,7 @@ export function RequestsTable({
                   </TableRow>
 
                   {isExpanded && (
-                    <TableRow className="border-primary/20 hover:bg-white">
+                    <TableRow className="border-primary/20 hover:bg-transparent">
                       <TableCell colSpan={10} className="whitespace-normal p-0">
                         <RequestExpandedDetails request={request} />
                       </TableCell>
@@ -537,7 +546,7 @@ export function RequestsTable({
         </TableBody>
       </Table>
 
-      <div className="flex flex-col items-center justify-between gap-3 border-t border-border bg-white px-4 py-3 sm:flex-row">
+      <div className="flex flex-col items-center justify-between gap-3 border-t border-border/60 bg-card px-4 py-3 sm:flex-row">
         <div className="flex items-center gap-3">
           <Select
             value={String(pageSize)}
@@ -546,7 +555,7 @@ export function RequestsTable({
               setPageIndex(0);
             }}
           >
-            <SelectTrigger className="h-8 w-[125px] bg-white text-xs">
+            <SelectTrigger className="h-8 w-[125px] bg-background/80 dark:bg-card/40 text-xs">
               <SelectValue />
             </SelectTrigger>
 

@@ -1,48 +1,29 @@
 "use client";
 
 import React from "react";
-import { ClockAlert } from "lucide-react";
-import { KpiTile } from "../KpiTile";
+import { SimpleKpiCard } from "@/components/budget/SimpleKpiCard";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { JobsFailed24hData } from "@/types/dashboard";
 
 export function JobsFailedTile({
-  scope,
   data,
   isLoading,
   error,
-  onRetry,
-  updatedAt,
 }: WidgetProps<JobsFailed24hData>) {
   const count = data?.count ?? 0;
   const totalRuns = data?.totalRuns ?? 18;
 
   return (
-    <KpiTile
+    <SimpleKpiCard
       title="Jobs failed (24h)"
-      scopeLabel={scope?.label}
       value={count}
-      badge={
-        count > 0
-          ? {
-              text: `${count} of ${totalRuns} runs failed`,
-              tone: "destructive",
-            }
-          : {
-              text: `${totalRuns} of ${totalRuns} runs ok`,
-              tone: "emerald",
-            }
-      }
+      description={count > 0 ? `${count} of ${totalRuns} runs failed` : `${totalRuns} of ${totalRuns} runs ok`}
       href="/app/administration/jobs"
-      icon={ClockAlert}
-      tone={count > 0 ? "destructive" : "default"}
-      sparklineData={data?.sparkline}
+      icon="lucide:clock-alert"
+      sparkline={data?.sparkline}
       isLoading={isLoading}
-      error={error}
-      onRetry={onRetry}
-      updatedAt={updatedAt}
       zeroMeaning="GOOD"
-      zeroMessage="All jobs completed"
+      zeroLabel="All jobs completed"
     />
   );
 }

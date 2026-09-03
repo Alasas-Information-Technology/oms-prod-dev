@@ -2,48 +2,51 @@
  * Chart Tokens
  *
  * Single source of truth for all dashboard chart aesthetics.
- * Enforces strict rules on categorical and semantic coloring.
+ * Curated executive multi-color palette and semantic tokens for an upmarket, clean aesthetic.
  */
 
+export const executivePalette = [
+  "#3b82f6", // Sapphire Blue
+  "#10b981", // Emerald Green
+  "#8b5cf6", // Royal Violet
+  "#f59e0b", // Warm Amber
+  "#06b6d4", // Cyan / Teal
+  "#ec4899", // Rose
+  "#6366f1", // Indigo
+  "#14b8a6", // Mint Teal
+];
+
 /**
- * Returns an array of CSS colors based on a single hue at descending opacities.
- * Categorical Scale per T6 / F1: 100%, 72%, 48%, 30%, 18%, 10%...
+ * Returns an array of CSS colors based on the executive multi-color palette.
  */
 export function categoricalScale(count: number): string[] {
-  const opacities = [100, 72, 48, 30, 18, 10, 6, 3];
-  
   const scale: string[] = [];
   for (let i = 0; i < count; i++) {
-    const opacity = opacities[i % opacities.length];
-    if (opacity === 100) {
-      scale.push("var(--primary)");
-    } else {
-      scale.push(`color-mix(in srgb, var(--primary) ${opacity}%, transparent)`);
-    }
+    scale.push(executivePalette[i % executivePalette.length]);
   }
-  
   return scale;
 }
 
 export const semanticColors = {
-  success: "var(--success)",
-  failure: "var(--destructive)",
-  warning: "var(--warning)",
+  success: "#10b981",
+  failure: "#f43f5e",
+  warning: "#f59e0b",
+  info: "#3b82f6",
   neutral: "var(--muted-foreground)",
 };
 
 /**
- * Gridlines per T11: Horizontal only, foreground at 4% opacity.
+ * Gridlines: Subtle horizontal only, foreground at 4% opacity.
  */
 export const gridStyle = {
   stroke: "var(--foreground)",
   strokeOpacity: 0.04,
-  vertical: false, // Enforce horizontal only
+  vertical: false,
   horizontal: true,
 };
 
 /**
- * Axis labels per T11: 11px muted, no axis line, no tick line.
+ * Axis labels: 11px muted, no axis line, no tick line.
  */
 export const axisStyle = {
   fontSize: 11,
@@ -54,14 +57,15 @@ export const axisStyle = {
 };
 
 /**
- * Default Tooltip style
+ * Tooltip style
  */
 export const tooltipStyle = {
   backgroundColor: "var(--popover)",
   border: "1px solid var(--border)",
   borderRadius: "var(--radius-md)",
   color: "var(--popover-foreground)",
-  boxShadow: "var(--shadow-md)",
+  boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
   fontSize: 12,
   fontFamily: "var(--font-mono)",
 };
+

@@ -89,6 +89,7 @@ import {
   VendorSubmissionsTile,
   SecurityEventsTile,
   RequestsByLifecycleStageChart,
+  RequisitorActionStackTile,
   BudgetExposureChart,
   BudgetBurnVsElapsedWidget,
   RequestThroughputWidget,
@@ -183,6 +184,15 @@ export const WIDGET_REGISTRY: Record<WidgetId, WidgetDefinition> = {
     defaultSpan: 3,
     minHeight: 120,
     component: ExpiringDocumentsTile as React.ComponentType<WidgetProps>,
+  },
+  "requisitor-action-stack": {
+    id: "requisitor-action-stack",
+    title: "Action Stack",
+    requiredPermissions: ["REQUISITION.VIEW"],
+    minimumScope: "SELF",
+    defaultSpan: 2,
+    minHeight: 240,
+    component: RequisitorActionStackTile as React.ComponentType<WidgetProps>,
   },
   "auto-close-watch": {
     id: "auto-close-watch",

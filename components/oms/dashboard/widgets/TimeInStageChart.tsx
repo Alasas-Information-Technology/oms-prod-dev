@@ -79,6 +79,9 @@ export function TimeInStageChart({
     },
   ];
 
+  // Stage colors: Blue, Indigo, Violet, Cyan, Amber/Rose
+  const stagePalette = ["#3b82f6", "#6366f1", "#8b5cf6", "#06b6d4", "#f59e0b"];
+
   return (
     <WidgetShell
       title="Time in stage"
@@ -88,18 +91,18 @@ export function TimeInStageChart({
       isLoading={isLoading}
       error={error}
       onRetry={onRetry}
-      minHeight={215}
+      minHeight={180}
     >
       <span className="sr-only">
         {caption}. Overall average is {overallAvg.toFixed(1)} days.
       </span>
 
       {stages.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
+        <div className="flex flex-col items-center justify-center py-6 text-center text-muted-foreground">
           <p className="text-sm">No workflow timing data recorded.</p>
         </div>
       ) : (
-        <div className="flex flex-col justify-between h-full p-5 gap-3 select-none font-sans">
+        <div className="flex flex-col justify-between h-full gap-2.5 select-none font-sans py-1">
           {/* Mobile Fallback Table (below 768px) */}
           <div className="block md:hidden overflow-hidden rounded-md border border-border/50">
             <DataTable
@@ -112,7 +115,7 @@ export function TimeInStageChart({
           </div>
 
           {/* Desktop Horizontal Bars View */}
-          <div className="hidden md:flex flex-col gap-2.5 w-full">
+          <div className="hidden md:flex flex-col gap-2 w-full">
             {stages.map((stage, idx) => {
               const isSlowest = stage.isSlowest || stage === slowestStage;
               const barPercent = Math.min(100, Math.max(5, (stage.avgDays / maxVal) * 100));
@@ -120,18 +123,18 @@ export function TimeInStageChart({
                 ? Math.min(100, (stage.targetDays / maxVal) * 100)
                 : null;
               const barColor = isSlowest
-                ? semanticColors.warning
-                : rankScale[idx] || "var(--primary)";
+                ? "#f43f5e"
+                : stagePalette[idx % stagePalette.length];
 
               return (
-                <div key={stage.stage || idx} className="flex flex-col gap-1 w-full">
+                <div key={stage.stage || idx} className="flex flex-col gap-0.5 w-full">
                   {/* Row Label & Numeric Values */}
                   <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">{stage.label}</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-medium text-foreground/90 text-[12px]">{stage.label}</span>
                       {isSlowest && (
-                        <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-1.5 py-0.2 rounded border border-amber-500/20">
-                          Slowest stage
+                        <span className="text-[9.5px] font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 px-1.5 py-0.2 rounded border border-rose-500/20">
+                          Slowest
                         </span>
                       )}
                     </div>
@@ -144,13 +147,13 @@ export function TimeInStageChart({
                   </div>
 
                   {/* Horizontal Bar Track with Target SLA Marker */}
-                  <div className="relative h-2.5 w-full bg-muted/40 rounded-[3px] overflow-hidden">
+                  <div className="relative h-2 w-full bg-muted/40 dark:bg-slate-800/60 rounded-full overflow-hidden">
                     <div
                       style={{
                         width: `${barPercent}%`,
                         backgroundColor: barColor,
                       }}
-                      className="h-full rounded-[3px] transition-all duration-300"
+                      className="h-full rounded-full transition-all duration-300 shadow-2xs"
                     />
                     {/* Target SLA dashed line */}
                     {targetPercent !== null && (
@@ -167,11 +170,11 @@ export function TimeInStageChart({
           </div>
 
           {/* Bottom Assessment & Contextual Caption */}
-          <div className="pt-2 border-t border-border/40 flex items-center justify-between text-xs">
-            <span className="font-medium text-amber-600 dark:text-amber-400">
+          <div className="pt-2 border-t border-border/30 dark:border-white/[0.05] flex items-center justify-between text-xs mt-auto">
+            <span className="font-medium text-[11.5px] text-amber-600 dark:text-amber-400">
               {caption}
             </span>
-            <span className="text-[11px] text-muted-foreground font-mono tabular-nums">
+            <span className="text-[10.5px] text-muted-foreground font-mono tabular-nums">
               Dept avg: {overallAvg.toFixed(1)}d
             </span>
           </div>

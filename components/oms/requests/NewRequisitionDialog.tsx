@@ -81,7 +81,7 @@ export function NewRequisitionDialog({
       open={open}
       onOpenChange={onOpenChange}
     >
-      <DialogContent className="max-h-[90vh] overflow-y-auto bg-white">
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             New requisition
