@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { ArrowUpRight, Clock, Coins, FileText, Trash2, Users } from "lucide-react";
 import { WidgetShell } from "../WidgetShell";
+import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { ScheduledActionsTonightData } from "@/types/dashboard";
 import { formatAbbreviated } from "@/lib/money";
@@ -68,29 +69,36 @@ export function ScheduledActionsTonightWidget({
       onRetry={onRetry}
       minHeight={240}
       headerActions={
-        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground bg-muted/60 px-2 py-0.5 rounded border border-border/40">
-          <Clock className="w-3 h-3 text-muted-foreground" />
-          {formatRunTime(data?.runsAt)}
-        </span>
+        <StatusTooltipIcon
+          status="INFO"
+          label={formatRunTime(data?.runsAt)}
+          tooltipTitle="Scheduled Execution Window"
+          tooltipDescription="Automated batch operations and financial release scripts scheduled to execute during off-peak maintenance hours."
+          tooltipDetails={[
+            { label: "Execution Time", value: formatRunTime(data?.runsAt) },
+            { label: "Queued Actions", value: `${actions.length} job types` },
+          ]}
+          showBorder
+        />
       }
     >
-      <div className="space-y-3 select-none">
+      <div className="space-y-2 select-none">
         {/* Prominent Financial Impact Banner */}
         {hasFunds && (
-          <div className="flex items-center justify-between p-3 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-900 dark:text-emerald-100">
+          <div className="flex items-center justify-between p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-900 dark:text-emerald-100">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-7 h-7 rounded bg-emerald-500/20 flex items-center justify-center shrink-0">
-                <Coins className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <div className="w-6 h-6 rounded-md bg-emerald-500/20 flex items-center justify-center shrink-0">
+                <Coins className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>
-                <div className="text-xs font-semibold">Scheduled Financial Release</div>
-                <div className="text-[11px] text-emerald-700/80 dark:text-emerald-300/80">
+                <div className="text-[12px] font-semibold">Scheduled Financial Release</div>
+                <div className="text-[10.5px] text-emerald-700/80 dark:text-emerald-300/80">
                   Unused funds automatically unlocked to departmental budgets
                 </div>
               </div>
             </div>
             <div className="text-right shrink-0">
-              <span className="text-[15px] font-bold text-emerald-700 dark:text-emerald-300 tabular-nums">
+              <span className="text-[14px] font-bold text-emerald-700 dark:text-emerald-300 tabular-nums">
                 {formatAbbreviated(totalFundsReleased)}
               </span>
             </div>
@@ -98,7 +106,7 @@ export function ScheduledActionsTonightWidget({
         )}
 
         {/* Actions List */}
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           {actions.length === 0 ? (
             <div className="py-6 text-center text-xs text-muted-foreground">
               No scheduled actions queued for tonight's run.
@@ -113,27 +121,27 @@ export function ScheduledActionsTonightWidget({
                 <Link
                   key={act.code}
                   href={link}
-                  className="group flex items-center justify-between h-[42px] px-3 rounded-md hover:bg-muted/60 transition-colors border border-transparent hover:border-border/40"
+                  className="group flex items-center justify-between h-[38px] px-2.5 sm:px-3 rounded-lg hover:bg-muted/40 transition-colors border border-transparent hover:border-border/30 dark:hover:border-white/[0.04]"
                 >
-                  <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
-                    <div className={cn("w-6 h-6 rounded flex items-center justify-center shrink-0", bg, color)}>
-                      <Icon className="w-3.5 h-3.5" />
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
+                    <div className={cn("w-5.5 h-5.5 rounded-md flex items-center justify-center shrink-0", bg, color)}>
+                      <Icon className="w-3 h-3" />
                     </div>
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-[13px] font-medium text-foreground group-hover:text-primary transition-colors truncate">
+                      <span className="text-[12.5px] font-medium text-foreground/90 group-hover:text-primary transition-colors truncate">
                         {act.count} {act.label.toLowerCase()}
                       </span>
                       {hasRowFunds && (
-                        <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20 tabular-nums shrink-0">
+                        <span className="text-[10.5px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20 tabular-nums shrink-0">
                           {formatAbbreviated(act.fundsReleased)}
                         </span>
                       )}
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5 text-muted-foreground group-hover:text-foreground text-xs shrink-0">
-                    <span className="text-[11px] hidden sm:inline group-hover:underline">View affected</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  <div className="flex items-center gap-1 text-muted-foreground/60 group-hover:text-foreground text-xs shrink-0">
+                    <span className="text-[10.5px] hidden sm:inline group-hover:underline">View</span>
+                    <ArrowUpRight className="w-3 h-3" />
                   </div>
                 </Link>
               );

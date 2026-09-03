@@ -64,15 +64,15 @@ export function HeroSection() {
             className="flex flex-col items-start text-left lg:pr-8"
           >
             <motion.div variants={itemVariants} className="mb-6">
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/60 bg-card shadow-sm text-xs font-semibold uppercase tracking-widest text-primary">
-                <span className="flex h-2 w-2 rounded-full bg-primary" />
+              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-border/80 bg-card shadow-xs text-xs font-bold uppercase tracking-wider text-primary">
+                <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" />
                 Enterprise Outsource Management
               </span>
             </motion.div>
 
             <motion.h1
               variants={itemVariants}
-              className="text-5xl lg:text-[56px] xl:text-[64px] font-bold tracking-tight leading-[1.1] text-heading mb-6"
+              className="text-4xl sm:text-5xl lg:text-6xl xl:text-[64px] font-extrabold tracking-tight leading-[1.12] text-heading mb-6"
             >
               Strategic Workforce <br className="hidden lg:block" />
               Orchestration. <br />
@@ -81,7 +81,7 @@ export function HeroSection() {
 
             <motion.p
               variants={itemVariants}
-              className="text-lg text-muted-foreground leading-relaxed mb-8 max-w-lg"
+              className="text-base sm:text-lg lg:text-xl text-muted-foreground leading-relaxed mb-8 max-w-xl font-normal"
             >
               A unified enterprise platform to govern workforce engagement, accredit service providers, and automate the complete procurement lifecycle with government-grade security.
             </motion.p>

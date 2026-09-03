@@ -3,6 +3,7 @@
 import React from "react";
 import { Archive, Calendar, Database, FileText, ShieldCheck } from "lucide-react";
 import { WidgetShell } from "../WidgetShell";
+import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { AuditRetentionData } from "@/types/dashboard";
 
@@ -39,10 +40,21 @@ export function AuditRetentionWidget({
       onRetry={onRetry}
       minHeight={240}
       headerActions={
-        <span className="text-[11.5px] font-medium text-muted-foreground bg-muted/50 px-2 py-0.5 rounded border border-border/30">
-          Retention: 365 days
-        </span>
+        <StatusTooltipIcon
+          status="INFO"
+          label="365d retention"
+          tooltipTitle="Audit Log Retention Policy"
+          tooltipDescription="Legal & regulatory compliance retention policy. Immutable audit records are retained for 365 days before archival."
+          tooltipDetails={[
+            { label: "Retention Window", value: "365 days" },
+            { label: "Ingested (24h)", value: eventsWritten24h.toLocaleString() },
+            { label: "Total Retained", value: totalRetained.toLocaleString() },
+            { label: "Next Scheduled Purge", value: formatDate(nextPurgeDate) },
+          ]}
+          showBorder
+        />
       }
+
     >
       <div className="space-y-3 select-none">
         {/* Top 2 Metric Cards */}

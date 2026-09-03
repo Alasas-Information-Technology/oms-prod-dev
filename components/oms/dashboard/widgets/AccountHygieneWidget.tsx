@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { AlertCircle, Clock, Lock, MailWarning, UserMinus, UserX, Users } from "lucide-react";
 import { WidgetShell } from "../WidgetShell";
+import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { AccountHygieneData } from "@/types/dashboard";
 import { cn } from "@/lib/utils";
@@ -81,16 +82,25 @@ export function AccountHygieneWidget({
       onRetry={onRetry}
       minHeight={240}
       headerActions={
-        totalHygieneIssues > 0 ? (
-          <span className="text-[11.5px] font-medium text-muted-foreground bg-muted/50 px-2 py-0.5 rounded border border-border/30">
-            {totalHygieneIssues} cleanup candidate{totalHygieneIssues === 1 ? "" : "s"}
-          </span>
-        ) : (
-          <span className="text-[11.5px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-            Directory clean
-          </span>
-        )
+        <StatusTooltipIcon
+          status={totalHygieneIssues > 0 ? "WARNING" : "CLEAN"}
+          label={totalHygieneIssues > 0 ? `${totalHygieneIssues} candidates` : "Clean"}
+          tooltipTitle="Account & Directory Hygiene"
+          tooltipDescription={
+            totalHygieneIssues > 0
+              ? `${totalHygieneIssues} user accounts require hygiene cleanup or review (dormant, unassigned, or locked out).`
+              : "All active accounts and user directories are healthy with no dormant or unassigned accounts."
+          }
+          tooltipDetails={[
+            { label: "Dormant (90d+)", value: `${dormant90Days}` },
+            { label: "Never Signed In", value: `${neverSignedIn}` },
+            { label: "Expired Invites", value: `${invitationsExpired}` },
+            { label: "Locked Out", value: `${lockedOut}` },
+          ]}
+          showBorder
+        />
       }
+
     >
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 select-none">
         {items.map((item) => {

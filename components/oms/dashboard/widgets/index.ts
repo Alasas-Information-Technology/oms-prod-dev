@@ -9,6 +9,7 @@ export * from "./VendorSubmissionsTile";
 export * from "./SecurityEventsTile";
 export * from "./FailingIntegrationsTile";
 export * from "./JobsFailedTile";
+export * from "./RequisitorActionStackTile";
 export * from "./IntegrityIssuesTile";
 export * from "./ElevatedAccountsTile";
 

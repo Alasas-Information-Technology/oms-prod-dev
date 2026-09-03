@@ -13,37 +13,37 @@ const securityFeatures = [
   {
     icon: FileText,
     title: "Audit Trails",
-    description: "Complete action logging",
+    description: "Complete immutable action logging",
   },
   {
     icon: GitBranch,
     title: "Approval Chains",
-    description: "Multi-level authorization",
+    description: "Multi-level delegation authorization",
   },
   {
     icon: Lock,
     title: "Encryption",
-    description: "End-to-end data protection",
+    description: "End-to-end data encryption in transit & rest",
   },
   {
     icon: Key,
     title: "SSO Integration",
-    description: "Azure AD & SAML support",
+    description: "Azure AD & SAML 2.0 enterprise support",
   },
   {
     icon: Eye,
     title: "Monitoring",
-    description: "Real-time security analytics",
+    description: "Real-time threat analytics & audit hooks",
   },
   {
     icon: Database,
     title: "Data Protection",
-    description: "Enterprise backup & recovery",
+    description: "Enterprise backup & disaster recovery",
   },
   {
     icon: Shield,
     title: "Compliance",
-    description: "UAE regulatory alignment",
+    description: "UAE federal regulatory alignment",
   },
 ];
 
@@ -81,7 +81,7 @@ export function SecuritySection() {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
-        className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-12"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-12"
       >
         {securityFeatures.map((feat, i) => {
           const Icon = feat.icon;
@@ -89,13 +89,17 @@ export function SecuritySection() {
             <motion.div
               key={i}
               variants={itemVariants}
-              className="bg-white/5 border border-white/10 rounded-md p-6 text-center backdrop-blur-sm hover:bg-white/10 hover:border-white/20 transition-all duration-300 ease-out"
+              className="bg-white/5 border border-white/10 rounded-xl p-6 text-center backdrop-blur-sm hover:bg-white/10 hover:border-white/20 transition-all duration-300 ease-out flex flex-col items-center"
             >
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/5 flex items-center justify-center">
-                <Icon className="size-7 text-[#A6DCE6]" />
+              <div className="size-14 mx-auto mb-4 rounded-xl bg-white/10 flex items-center justify-center text-[#A6DCE6]">
+                <Icon className="size-7" />
               </div>
-              <h3 className="text-sm md:text-base font-semibold text-white mb-2">{feat.title}</h3>
-              <p className="text-xs text-white/50">{feat.description}</p>
+              <h3 className="text-sm sm:text-base font-bold text-white mb-1.5 leading-snug tracking-tight">
+                {feat.title}
+              </h3>
+              <p className="text-xs text-white/60 leading-relaxed font-normal">
+                {feat.description}
+              </p>
             </motion.div>
           );
         })}

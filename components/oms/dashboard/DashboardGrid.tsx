@@ -107,11 +107,20 @@ export function getResponsiveSpanClasses(span: number): string {
       return "col-span-1 lg:col-span-9";
     case 8:
       return "col-span-1 lg:col-span-8";
+    case 7:
+      return "col-span-1 lg:col-span-7";
     case 6:
       return "col-span-1 lg:col-span-6";
+    case 5:
+      return "col-span-1 md:col-span-6 lg:col-span-5";
     case 4:
       return "col-span-1 md:col-span-6 lg:col-span-4";
     case 3:
+      return "col-span-1 sm:col-span-6 lg:col-span-3";
+    case 2:
+      return "col-span-1 sm:col-span-4 lg:col-span-2";
+    case 1:
+      return "col-span-1 sm:col-span-2 lg:col-span-1";
     default:
       return "col-span-1 sm:col-span-6 lg:col-span-3";
   }
@@ -164,21 +173,21 @@ export function DashboardGrid({
   }
 
   return (
-    <div className={cn("flex flex-col gap-6 w-full", className)}>
+    <div className={cn("flex flex-col gap-3.5 w-full", className)}>
       {activeBands.map((band) => {
         // Sort widgets within band by priority ascending
         const sortedWidgets = [...band.widgets].sort(
           (a, b) => (a.priority || 0) - (b.priority || 0)
         );
 
-        // Band A renders as a clean 4-column KPI strip
+        // Band A renders as a clean 4-column KPI strip with tight gap-3
         if (band.band === "A") {
           return (
             <section
               key={`dashboard-band-${band.band}`}
               aria-label="Attention Strip"
               data-band-height={band.height}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full items-stretch"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full items-stretch"
             >
               {sortedWidgets.map((placement) => {
                 const definition = getWidgetDefinition(placement.id);
@@ -213,7 +222,7 @@ export function DashboardGrid({
             key={`dashboard-band-${band.band}`}
             aria-label={`Dashboard Band ${band.band}`}
             data-band-height={band.height}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full items-stretch"
+            className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 w-full items-stretch"
           >
             {sortedWidgets.map((placement) => {
               const definition = getWidgetDefinition(placement.id);
@@ -262,3 +271,4 @@ export function DashboardGrid({
     </div>
   );
 }
+

@@ -59,51 +59,68 @@ export default function VisualLanguageDevPage() {
         </p>
       </div>
 
-      {/* 1. UNIFORM SECURITY DASHBOARD KPI CARDS */}
+      {/* 1. SIMPLE KPI CARDS: M1, M2, M3, M4 CAPABILITIES */}
       <section className="space-y-4">
         <div className="border-b border-border/60 pb-2">
-          <h2 className="text-xl font-bold">1. Uniform KPI Cards (Security Dashboard Standard)</h2>
+          <h2 className="text-xl font-bold">1. Upgraded SimpleKpiCard (M1 Delta, M2 Sparkline, M3 Numeral Contrast, M4 Zero State)</h2>
           <p className="text-xs text-muted-foreground">
-            Using the exact SimpleKpiCard component used in the Security Dashboard across all metrics.
+            Demonstrating 30px numeral weight contrast (T2), semantic deltas (M1), 28px sparklines with 12% hatch fills (M2), and non-empty zero states (M4).
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Card 1: Currency with M3 numeral weight contrast & M1 positive delta */}
           <SimpleKpiCard
-            title="Active Sessions"
-            value={1}
-            icon="mdi:shield-account"
-            description="Currently active"
-            color="text-blue-600"
-            bg="bg-blue-100 dark:bg-blue-900/30"
-            href="/app/administration/security-dashboard"
+            title="Approved Budget"
+            value={5400000}
+            isCurrency={true}
+            icon="lucide:wallet"
+            delta={{
+              value: 12.4,
+              direction: "up",
+              increaseIsGood: true,
+              label: "vs last month",
+            }}
+            sparkline={[3, 4, 3, 5, 4, 6, 5, 4, 6, 7, 6, 5, 7, 8, 7, 6, 7, 8, 9, 8, 7, 8, 7, 6, 7, 8, 9, 8, 7, 8]}
+            href="/app/budget"
           />
+
+          {/* Card 2: Consumed Budget where increase is RED (increaseIsGood: false) */}
           <SimpleKpiCard
-            title="Needs My Action"
-            value={4}
-            icon="mdi:inbox-arrow-down"
-            description="2 overdue"
-            color="text-indigo-600"
-            bg="bg-indigo-100 dark:bg-indigo-900/30"
-            href="/app/requests?tab=needs-my-action"
+            title="Budget Exposure"
+            value={2100000}
+            isCurrency={true}
+            icon="lucide:alert-circle"
+            delta={{
+              value: 18.2,
+              direction: "up",
+              increaseIsGood: false,
+              label: "outpacing plan",
+            }}
+            sparkline={[2, 2, 3, 2, 1, 2, 3, 4, 3, 2, 2, 3, 1, 2, 3, 4, 3, 2, 1, 2, 3, 3, 2, 4, 3, 2, 3, 4, 3, 4]}
+            href="/app/budget"
           />
+
+          {/* Card 3: Zero state with GOOD meaning (reassuring check, 30px 0) */}
           <SimpleKpiCard
-            title="Failed Logins"
+            title="Jobs Failed (24h)"
             value={0}
-            icon="mdi:alert-circle-outline"
-            description="Last 24 hours"
-            color="text-red-600"
-            bg="bg-red-100 dark:bg-red-900/30"
-            href="/app/administration/security-dashboard"
+            icon="lucide:clock-alert"
+            zeroMeaning="GOOD"
+            zeroLabel="All jobs completed"
+            sparkline={[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}
+            href="/app/administration/jobs"
           />
+
+          {/* Card 4: Zero state with NEEDS_ACTION meaning (amber alert, 30px 0) */}
           <SimpleKpiCard
-            title="Locked Accounts"
+            title="Elevated Accounts"
             value={0}
-            icon="mdi:lock-outline"
-            description="Requires admin unlock"
-            color="text-orange-600"
-            bg="bg-orange-100 dark:bg-orange-900/30"
-            href="/app/administration/security-dashboard"
+            icon="lucide:user-check"
+            zeroMeaning="NEEDS_ACTION"
+            zeroLabel="No administrators — lockout risk"
+            sparkline={[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}
+            href="/app/administration/users?filter=elevated"
           />
         </div>
       </section>

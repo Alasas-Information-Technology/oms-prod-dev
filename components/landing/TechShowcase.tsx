@@ -8,32 +8,32 @@ const techPillars = [
   {
     icon: Monitor,
     title: "Modern Frontend",
-    stack: "React 19, Next.js 16, TypeScript",
+    stack: "React 19, Next.js 16, TypeScript, Tailwind CSS",
   },
   {
     icon: Server,
     title: "Secure Backend",
-    stack: "Enterprise API Layer, Node.js",
+    stack: "Enterprise API Layer, Node.js, Microservices",
   },
   {
     icon: Database,
     title: "Enterprise Database",
-    stack: "Microsoft SQL Server, Redis",
+    stack: "Microsoft SQL Server, Redis Cache, ACID Integrity",
   },
   {
     icon: Shield,
-    title: "Authentication",
-    stack: "Azure AD, JWT, SSO",
+    title: "Identity & Access",
+    stack: "Azure AD, SAML 2.0, JWT, Multi-Factor Auth",
   },
   {
     icon: Cloud,
-    title: "Cloud Ready",
-    stack: "Azure, Scalable Infrastructure",
+    title: "Cloud Native",
+    stack: "Azure Cloud, Scalable Container Architecture",
   },
   {
     icon: Code,
-    title: "API Driven",
-    stack: "RESTful, Webhooks, Integrations",
+    title: "API First",
+    stack: "RESTful Endpoints, Webhooks, ERP Connectors",
   },
 ];
 
@@ -78,13 +78,19 @@ export function TechShowcase() {
             <motion.div
               key={i}
               variants={itemVariants}
-              className="bg-card border border-border/60 rounded-md p-8 text-center group hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-out"
+              className="bg-card border border-border/70 rounded-xl p-6 sm:p-7 flex items-start gap-4 hover:shadow-md hover:border-primary/30 transition-all duration-300 ease-out"
             >
-              <div className="w-16 h-16 mx-auto mb-5 rounded-md bg-primary/8 flex items-center justify-center group-hover:bg-primary/15 transition-colors duration-300">
-                <Icon className="size-7 text-primary" />
+              <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 text-primary">
+                <Icon className="size-6" />
               </div>
-              <h3 className="text-lg font-bold text-heading mb-2">{pillar.title}</h3>
-              <p className="text-sm font-medium text-muted-foreground">{pillar.stack}</p>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-base sm:text-lg font-bold text-heading mb-1 leading-snug tracking-tight">
+                  {pillar.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-normal">
+                  {pillar.stack}
+                </p>
+              </div>
             </motion.div>
           );
         })}

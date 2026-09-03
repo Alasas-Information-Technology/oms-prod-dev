@@ -9,11 +9,30 @@ import { MilestoneTimeline } from "../MilestoneTimeline";
 import { Users, UserPlus, FileClock, CalendarX, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const MILESTONE_ICONS: Record<MilestoneType, LucideIcon> = {
-  INTERVIEW: Users,
-  JOINING: UserPlus,
-  DOCUMENT_EXPIRY: FileClock,
-  CONTRACT_END: CalendarX,
+const MILESTONE_CONFIG: Record<
+  MilestoneType,
+  { icon: LucideIcon; iconBg: string; iconColor: string }
+> = {
+  INTERVIEW: {
+    icon: Users,
+    iconBg: "bg-blue-500/15 dark:bg-blue-500/20",
+    iconColor: "text-blue-600 dark:text-blue-400",
+  },
+  JOINING: {
+    icon: UserPlus,
+    iconBg: "bg-emerald-500/15 dark:bg-emerald-500/20",
+    iconColor: "text-emerald-600 dark:text-emerald-400",
+  },
+  DOCUMENT_EXPIRY: {
+    icon: FileClock,
+    iconBg: "bg-amber-500/15 dark:bg-amber-500/20",
+    iconColor: "text-amber-600 dark:text-amber-400",
+  },
+  CONTRACT_END: {
+    icon: CalendarX,
+    iconBg: "bg-purple-500/15 dark:bg-purple-500/20",
+    iconColor: "text-purple-600 dark:text-purple-400",
+  },
 };
 
 /**
@@ -41,23 +60,27 @@ export function UpcomingMilestonesWidget({
       isLoading={isLoading}
       error={error}
       onRetry={onRetry}
-      minHeight={280}
+      minHeight={215}
     >
       {milestones.length === 0 ? (
-        <div className="flex items-center justify-center py-10 text-sm text-muted-foreground">
+        <div className="flex items-center justify-center py-8 text-sm text-muted-foreground">
           No upcoming milestones.
         </div>
       ) : (
-        <div className="flex flex-col gap-3 w-full p-4 select-none">
+        <div className="flex flex-col gap-2.5 w-full select-none">
           {/* Desktop 60-day Timeline Strip (V4) — Hidden below 768px */}
           <div className="hidden md:block w-full">
             <MilestoneTimeline milestones={milestones} />
           </div>
 
           {/* Milestone List (Accessible detail view & Mobile fallback) */}
-          <div className="flex flex-col gap-1 w-full">
+          <div className="flex flex-col gap-0.5 w-full">
             {milestones.map((milestone) => {
-              const Icon = MILESTONE_ICONS[milestone.type] || Users;
+              const cfg = MILESTONE_CONFIG[milestone.type] || {
+                icon: Users,
+                iconBg: "bg-muted/40",
+                iconColor: "text-foreground/70",
+              };
               const isOverdue =
                 milestone.formattedDate.toLowerCase().includes("overdue") ||
                 milestone.formattedDate.toLowerCase() === "today";
@@ -65,12 +88,15 @@ export function UpcomingMilestonesWidget({
               return (
                 <DashboardListRow
                   key={milestone.id}
-                  icon={Icon}
+                  icon={cfg.icon}
+                  iconBg={cfg.iconBg}
+                  iconColor={cfg.iconColor}
                   title={milestone.label}
                   subtitle={milestone.detail}
                   trailing={
                     <span
                       className={cn(
+                        "text-[12px]",
                         isOverdue
                           ? "text-rose-600 dark:text-rose-400 font-semibold"
                           : "text-muted-foreground font-mono tabular-nums"
@@ -89,3 +115,4 @@ export function UpcomingMilestonesWidget({
     </WidgetShell>
   );
 }
+

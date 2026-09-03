@@ -1,12 +1,12 @@
 "use client";
 
-import React from "react";
-import { Activity, AlertTriangle, CheckCircle2, Info, ShieldAlert } from "lucide-react";
-import { WidgetShell } from "../WidgetShell";
 import { WidgetProps } from "@/lib/dashboard/registry";
-import { RateLimitPressureData } from "@/types/dashboard";
-import { SegmentedBar } from "../SegmentedBar";
 import { cn } from "@/lib/utils";
+import { RateLimitPressureData } from "@/types/dashboard";
+import { Info } from "lucide-react";
+import { SegmentedBar } from "../SegmentedBar";
+import { StatusTooltipIcon } from "../StatusTooltipIcon";
+import { WidgetShell } from "../WidgetShell";
 
 export function RateLimitPressureWidget({
   scope,
@@ -32,18 +32,23 @@ export function RateLimitPressureWidget({
       onRetry={onRetry}
       minHeight={240}
       headerActions={
-        totalHits > 0 ? (
-          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-            <Activity className="w-3 h-3" />
-            {totalHits} throttle hit{totalHits === 1 ? "" : "s"} in 24h
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-            <CheckCircle2 className="w-3 h-3" />
-            No throttling active
-          </span>
-        )
+        <StatusTooltipIcon
+          status={totalHits > 0 ? "WARNING" : "SUCCESS"}
+          label={totalHits > 0 ? `${totalHits} throttles` : "Normal"}
+          tooltipTitle="API Rate Limiting & Throttling"
+          tooltipDescription={
+            totalHits > 0
+              ? `${totalHits} requests throttled by rate limit enforcement rules in the trailing 24 hours.`
+              : "API traffic within safe thresholds. No rate limit throttling active."
+          }
+          tooltipDetails={[
+            { label: "Throttle Hits (24h)", value: `${totalHits}` },
+            { label: "Active Tiers", value: `${tiers.length} tiers` },
+          ]}
+          showBorder
+        />
       }
+
     >
       <div className="space-y-3 select-none">
         {/* Tier Rows */}
@@ -81,7 +86,7 @@ export function RateLimitPressureWidget({
                     <SegmentedBar
                       value={t.hits}
                       max={t.limit}
-                      color={t.hits > 0 ? "var(--color-amber-500, #f59e0b)" : undefined}
+                      color={t.hits > 0 ? "#34bcb2" : undefined}
                       showPercent={false}
                     />
                   </div>
@@ -90,7 +95,7 @@ export function RateLimitPressureWidget({
                   <div className="flex flex-col items-end shrink-0">
                     <span className={cn(
                       "text-[13px] font-semibold tabular-nums leading-tight",
-                      hasHits ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground"
+                      hasHits ? "text-[#34bcb2]" : "text-muted-foreground"
                     )}>
                       {t.hits} hit{t.hits === 1 ? "" : "s"}
                     </span>

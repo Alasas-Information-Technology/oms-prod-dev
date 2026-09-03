@@ -1,18 +1,14 @@
 "use client";
 
 import React from "react";
-import { UserCheck } from "lucide-react";
-import { KpiTile } from "../KpiTile";
+import { SimpleKpiCard } from "@/components/budget/SimpleKpiCard";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { ElevatedAccountsData } from "@/types/dashboard";
 
 export function ElevatedAccountsTile({
-  scope,
   data,
   isLoading,
   error,
-  onRetry,
-  updatedAt,
 }: WidgetProps<ElevatedAccountsData>) {
   const count = data?.count ?? 0;
   const sysAdmins = data?.systemAdminsCount ?? count;
@@ -21,31 +17,16 @@ export function ElevatedAccountsTile({
   const isZero = count === 0;
 
   return (
-    <KpiTile
+    <SimpleKpiCard
       title="Elevated accounts"
-      scopeLabel={scope?.label}
       value={count}
-      badge={
-        isZero
-          ? {
-              text: "Lockout risk",
-              tone: "destructive",
-            }
-          : {
-              text: `${sysAdmins} admins · ${globalScope} global`,
-              tone: "neutral",
-            }
-      }
+      description={isZero ? "Lockout risk" : `${sysAdmins} admins · ${globalScope} global`}
       href="/app/administration/users?filter=elevated"
-      icon={UserCheck}
-      tone={isZero ? "destructive" : "default"}
-      sparklineData={data?.sparkline}
+      icon="lucide:user-check"
+      sparkline={data?.sparkline}
       isLoading={isLoading}
-      error={error}
-      onRetry={onRetry}
-      updatedAt={updatedAt}
       zeroMeaning="NEEDS_ACTION"
-      zeroMessage="No administrators — this is a lockout risk."
+      zeroLabel="No administrators — this is a lockout risk."
     />
   );
 }

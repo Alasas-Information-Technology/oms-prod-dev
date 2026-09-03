@@ -7,7 +7,7 @@ const differentiators = [
   {
     metric: "100%",
     title: "Audit Trail",
-    description: "Every action, approval, and modification is permanently recorded with full traceability.",
+    description: "Every action, approval, and modification is permanently recorded with full governance traceability.",
   },
   {
     metric: "6",
@@ -16,17 +16,17 @@ const differentiators = [
   },
   {
     metric: "24/7",
-    title: "Real-Time",
+    title: "Real-Time Intelligence",
     description: "Live dashboards, instant notifications, and real-time workflow status updates.",
   },
   {
     metric: "∞",
-    title: "Scalable",
-    description: "Cloud-ready architecture designed to grow with your organization's needs.",
+    title: "Scalable Infrastructure",
+    description: "Cloud-ready architecture designed to scale seamlessly with your organization's growth.",
   },
   {
     metric: "360°",
-    title: "Compliance",
+    title: "Compliance Governance",
     description: "Built-in regulatory compliance aligned with UAE government procurement standards.",
   },
   {
@@ -76,13 +76,15 @@ export function WhyDiez() {
           <motion.div
             key={i}
             variants={itemVariants}
-            className="bg-card border border-border/60 rounded-md p-8 hover:shadow-lg hover:border-primary/20 transition-all duration-300 ease-out flex flex-col"
+            className="bg-card border border-border/70 rounded-xl p-7 sm:p-8 hover:shadow-lg hover:border-primary/30 transition-all duration-300 ease-out flex flex-col"
           >
-            <span className="text-4xl md:text-5xl font-bold text-primary mb-4 block">
+            <span className="text-4xl sm:text-5xl font-extrabold text-primary mb-3 block tracking-tight">
               {diff.metric}
             </span>
-            <h3 className="text-xl font-bold text-heading mb-3">{diff.title}</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <h3 className="text-lg sm:text-xl font-bold text-heading mb-2 leading-snug tracking-tight">
+              {diff.title}
+            </h3>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-normal">
               {diff.description}
             </p>
           </motion.div>

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { WidgetShell } from "../WidgetShell";
+import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { BudgetPeriodStatusData } from "@/types/dashboard";
 import { CheckCircle2, Circle } from "lucide-react";
@@ -31,7 +32,7 @@ export function BudgetPeriodStatusWidget({
     );
   }
 
-  const { status, periodName, approvalProgress, lastAmendedAt } = data || {};
+  const { status = "OPEN", periodName, approvalProgress, lastAmendedAt } = data || {};
   const { currentLevel = 0, totalLevels = 3 } = approvalProgress || {};
 
   return (
@@ -45,22 +46,21 @@ export function BudgetPeriodStatusWidget({
       updatedAt={updatedAt}
       minHeight={215}
       headerActions={
-        status && (
-          <span
-            className={cn(
-              "px-2 py-0.5 text-[11px] font-semibold rounded border",
-              status === "OPEN"
-                ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20"
-                : status === "CLOSED"
-                ? "bg-muted text-muted-foreground border-border/40"
-                : "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20"
-            )}
-          >
-            {status}
-          </span>
-        )
+        <StatusTooltipIcon
+          status={status}
+          label={status}
+          tooltipTitle={`Budget Period: ${periodName || "Current Fiscal Cycle"}`}
+          tooltipDescription={`Status: ${status}. Multi-level approval progress is at level ${currentLevel} of ${totalLevels}.`}
+          tooltipDetails={[
+            { label: "Cycle Status", value: status },
+            { label: "Approval Progress", value: `${currentLevel} / ${totalLevels} Levels` },
+            { label: "Last Amended", value: lastAmendedAt || "None" },
+          ]}
+          showBorder
+        />
       }
     >
+
       <div className="flex flex-col justify-between flex-1 gap-3 py-1">
         <div className="flex items-center justify-between">
           <span className="text-base font-bold text-foreground">{periodName}</span>

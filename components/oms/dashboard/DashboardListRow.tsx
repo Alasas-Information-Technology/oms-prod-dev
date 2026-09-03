@@ -54,32 +54,32 @@ export function DashboardListRow({
   const content = (
     <div
       className={cn(
-        "group flex items-center justify-between h-[46px] px-3.5 rounded-md hover:bg-muted/60 dark:hover:bg-slate-800/60 transition-all duration-150 select-none w-full",
-        (href || onClick) && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:translate-x-0.5",
+        "group flex items-center justify-between h-[42px] px-2.5 sm:px-3 rounded-lg hover:bg-muted/50 dark:hover:bg-white/[0.04] transition-all duration-150 select-none w-full",
+        (href || onClick) && "cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
         className
       )}
       onClick={onClick}
     >
-      {/* Left: 32px Icon Container + Title / Subtitle */}
-      <div className="flex items-center gap-3.5 min-w-0 flex-1 pr-3">
+      {/* Left: 28px Icon Container + Title / Subtitle */}
+      <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
         {Icon && (
           <div
             className={cn(
-              "w-8 h-8 rounded-md flex items-center justify-center shrink-0 border border-border/30 shadow-2xs",
-              iconBg || "bg-foreground/8",
+              "w-7 h-7 rounded-md flex items-center justify-center shrink-0 border border-border/30 dark:border-white/[0.08] shadow-2xs",
+              iconBg || "bg-muted/40 dark:bg-slate-800/60",
               iconColor || "text-foreground/70"
             )}
           >
-            <Icon className="w-4 h-4" />
+            <Icon className="w-3.5 h-3.5" />
           </div>
         )}
 
         <div className="flex flex-col min-w-0">
-          <div className="text-[13.5px] font-medium text-foreground truncate leading-tight group-hover:text-primary transition-colors">
+          <div className="text-[13px] font-medium text-foreground/90 truncate leading-tight group-hover:text-foreground transition-colors">
             {title}
           </div>
           {subtitle && (
-            <div className="text-[11.5px] text-muted-foreground truncate leading-tight mt-0.5">
+            <div className="text-[11px] text-muted-foreground truncate leading-tight mt-0.5">
               {subtitle}
             </div>
           )}
@@ -93,12 +93,12 @@ export function DashboardListRow({
       {(trailing || trailingSubtitle) && (
         <div className="flex flex-col items-end shrink-0 pl-2">
           {trailing && (
-            <div className="text-[13.5px] font-semibold text-foreground font-mono tabular-nums leading-tight">
+            <div className="text-[13px] font-semibold text-foreground font-mono tabular-nums leading-tight">
               {trailing}
             </div>
           )}
           {trailingSubtitle && (
-            <div className="text-[11px] text-muted-foreground truncate leading-tight mt-0.5">
+            <div className="text-[10.5px] text-muted-foreground truncate leading-tight mt-0.5">
               {trailingSubtitle}
             </div>
           )}

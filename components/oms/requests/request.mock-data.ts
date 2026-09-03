@@ -239,24 +239,24 @@ export const MOCK_REQUESTS: OmsRequest[] = [
     },
   }),
 
-  // 4. REVISE: Data Governance Specialist (Sent back by Line Manager)
+  // 4. CLARIFY: Data Governance Specialist (HR Clarification Requested)
   createRequest({
     requestId: "OMS-2026-0139",
     position: "Data Governance Specialist",
     resources: 1,
     actualStatus: "More Information Required",
     statusGroup: "needs-action",
-    currentStage: "Requisition",
-    currentStageIndex: 0,
-    currentOwner: "Mariam Al Mansoori",
-    budget: 285000,
-    updatedLabel: "Yesterday",
-    updatedAt: "2026-08-26",
-    nextAction: "Revise and resubmit",
-    actionType: "REVISE",
+    currentStage: "HR Review",
+    currentStageIndex: 1,
+    currentOwner: "Aisha Al Nuaimi",
+    budget: 240000,
+    updatedLabel: "5 Aug 2026",
+    updatedAt: "2026-08-05",
+    nextAction: "Respond to HR",
+    actionType: "CLARIFY",
     department: "Data Management",
     startDate: "2026-09-20",
-    endDate: "2027-09-19",
+    endDate: "2027-08-31",
     isMine: true,
     needsSlaAttention: true,
     sla: {
@@ -485,9 +485,3 @@ export function createMockDraft(
     isMine: true,
   });
 }
-
-export function getRequestById(requestId: string): OmsRequest | undefined {
-  return MOCK_REQUESTS.find(
-    (r) => r.requestId.toLowerCase() === requestId.toLowerCase()
-  );
-}

@@ -17,6 +17,7 @@ export interface DistributionSegment {
 export interface DistributionBarProps {
   segments: DistributionSegment[];
   className?: string;
+  variant?: "default" | "detailed-legend";
 }
 
 /**
@@ -27,7 +28,7 @@ export interface DistributionBarProps {
  * - Segments in one hue at 100% / 72% / 48% / 30%.
  * - Residual segment (Available / Other) uses HatchPattern with 1px outline at 30% opacity.
  */
-export function DistributionBar({ segments, className }: DistributionBarProps) {
+export function DistributionBar({ segments, className, variant = "default" }: DistributionBarProps) {
   const generatedId = useId().replace(/:/g, "");
   const hatchPatternId = `dist-hatch-${generatedId}`;
 
@@ -72,7 +73,7 @@ export function DistributionBar({ segments, className }: DistributionBarProps) {
         if (seg.isResidual) {
           color = undefined;
         } else {
-          color = scale[nonResidualIdx] || scale[0];
+          color = scale[nonResidualIdx % scale.length];
           nonResidualIdx++;
         }
       }
@@ -95,6 +96,7 @@ export function DistributionBar({ segments, className }: DistributionBarProps) {
     return { processedSegments: procs, hasNarrowSegment: anyNarrow };
   }, [segments, scale, containerWidth]);
 
+
   return (
     <div
       ref={containerRef}
@@ -112,8 +114,8 @@ export function DistributionBar({ segments, className }: DistributionBarProps) {
         </defs>
       </svg>
 
-      {/* Top Row: Labels & Values Left-Aligned to Segment Start (ONLY when ALL segments fit inline) */}
-      {!hasNarrowSegment && (
+      {/* Top Row: Labels & Values Left-Aligned to Segment Start (ONLY when ALL segments fit inline and variant is default) */}
+      {!hasNarrowSegment && variant === "default" && (
         <div className="flex w-full items-start min-h-[38px]">
           {processedSegments.map((seg, idx) => {
             return (
@@ -169,8 +171,8 @@ export function DistributionBar({ segments, className }: DistributionBarProps) {
         })}
       </div>
 
-      {/* Bottom Row: Percentages Left-Aligned (ONLY when ALL segments fit inline) */}
-      {!hasNarrowSegment && (
+      {/* Bottom Row: Percentages Left-Aligned (ONLY when ALL segments fit inline and variant is default) */}
+      {!hasNarrowSegment && variant === "default" && (
         <div className="flex w-full items-center min-h-[18px]">
           {processedSegments.map((seg, idx) => {
             return (
@@ -191,8 +193,8 @@ export function DistributionBar({ segments, className }: DistributionBarProps) {
         </div>
       )}
 
-      {/* ALL-OR-NOTHING Legend Row (Rendered when ANY segment is too narrow) */}
-      {hasNarrowSegment && (
+      {/* ALL-OR-NOTHING Legend Row (Rendered when ANY segment is too narrow and variant is default) */}
+      {hasNarrowSegment && variant === "default" && (
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1.5 border-t border-border/40 text-xs">
           {processedSegments.map((seg, idx) => (
             <div key={idx} className="flex items-center gap-1.5">
@@ -217,6 +219,45 @@ export function DistributionBar({ segments, className }: DistributionBarProps) {
               <span className="text-[11px] font-normal text-muted-foreground font-sans tabular-nums">
                 ({seg.percent.toFixed(1)}%)
               </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Detailed Vertical Legend */}
+      {variant === "detailed-legend" && (
+        <div className="flex flex-col gap-2.5 mt-3 pt-2 border-t border-border/40">
+          {processedSegments.map((seg, idx) => (
+            <div key={idx} className="flex items-center justify-between group">
+              <div className="flex items-center gap-2.5">
+                <div
+                  className={cn(
+                    "w-3 h-3 rounded-sm shrink-0 shadow-2xs",
+                    seg.isResidual && "border border-primary/30"
+                  )}
+                  style={{
+                    background: seg.isResidual ? `url(#${hatchPatternId})` : undefined,
+                    backgroundColor: seg.isResidual
+                      ? "color-mix(in srgb, var(--primary) 30%, transparent)"
+                      : seg.resolvedColor,
+                  }}
+                />
+                <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                  {seg.label}
+                </span>
+              </div>
+              <div className="flex items-center gap-3 text-right">
+                <span className="text-sm font-bold text-foreground tracking-tight tabular-nums">
+                  {seg.formatted !== undefined
+                    ? seg.formatted
+                    : typeof seg.value === "number"
+                    ? seg.value.toLocaleString()
+                    : seg.value.toString()}
+                </span>
+                <span className="text-[11px] font-semibold text-muted-foreground tabular-nums w-12 text-right">
+                  {seg.percent.toFixed(1)}%
+                </span>
+              </div>
             </div>
           ))}
         </div>

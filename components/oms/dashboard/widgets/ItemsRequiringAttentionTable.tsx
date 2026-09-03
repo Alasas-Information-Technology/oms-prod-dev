@@ -3,6 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { WidgetShell } from "../WidgetShell";
+import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { ItemsRequiringAttentionData } from "@/types/dashboard";
 import { DashboardListRow } from "../DashboardListRow";
@@ -24,6 +25,7 @@ export function ItemsRequiringAttentionTable({
   const displayItems = items.slice(0, 5);
   const totalItems = data?.totalItems ?? 0;
   const hasMore = totalItems > 5;
+  const overdueCount = items.filter(i => i.isOverdue || i.due === "Today").length;
 
   return (
     <WidgetShell
@@ -35,7 +37,27 @@ export function ItemsRequiringAttentionTable({
       error={error}
       onRetry={onRetry}
       minHeight={215}
+      headerActions={
+        totalItems > 0 ? (
+          <StatusTooltipIcon
+            status={overdueCount > 0 ? "WARNING" : "INFO"}
+            label={`${totalItems} action item${totalItems === 1 ? "" : "s"}`}
+            tooltipTitle="Approvals & Action Items"
+            tooltipDescription={
+              overdueCount > 0
+                ? `${overdueCount} item(s) are due today or overdue for review.`
+                : `${totalItems} requisition approval(s) pending in your active queue.`
+            }
+            tooltipDetails={[
+              { label: "Total Pending", value: `${totalItems}` },
+              { label: "Due / Overdue", value: `${overdueCount}` },
+            ]}
+            showBorder
+          />
+        ) : undefined
+      }
     >
+
       {items.length === 0 ? (
         <div className="flex items-center justify-center py-10 text-sm text-muted-foreground">
           No items currently require your attention.

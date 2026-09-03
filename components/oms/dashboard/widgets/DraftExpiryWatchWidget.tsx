@@ -2,6 +2,7 @@
 
 import React from "react";
 import { WidgetShell } from "../WidgetShell";
+import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { DraftExpiryWatchData } from "@/types/dashboard";
 import { DashboardListRow } from "../DashboardListRow";
@@ -32,12 +33,21 @@ export function DraftExpiryWatchWidget({
       minHeight={215}
       headerActions={
         count > 0 ? (
-          <span className="px-2 py-0.5 text-[11px] font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 rounded border border-rose-500/20">
-            {count} draft{count !== 1 ? "s" : ""} · {days}d left
-          </span>
+          <StatusTooltipIcon
+            status="WARNING"
+            label={`${count} expiring`}
+            tooltipTitle="Draft Requisitions Expiring Soon"
+            tooltipDescription={`${count} draft requisition(s) are nearing the automated 30-day purge threshold (soonest in ${days} days).`}
+            tooltipDetails={[
+              { label: "Expiring Drafts", value: `${count}` },
+              { label: "Soonest Deletion", value: `in ${days} days` },
+            ]}
+            showBorder
+          />
         ) : undefined
       }
     >
+
       {count === 0 ? (
         <div className="flex flex-col items-center justify-center py-10 text-center gap-1.5 text-muted-foreground">
           <Trash2 className="w-6 h-6 text-muted-foreground/40" />

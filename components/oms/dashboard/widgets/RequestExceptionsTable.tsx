@@ -3,6 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { WidgetShell } from "../WidgetShell";
+import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { RequestExceptionsData, RequestExceptionItem, RequestExceptionType } from "@/types/dashboard";
 import { DashboardListRow } from "../DashboardListRow";
@@ -60,6 +61,8 @@ export function RequestExceptionsTable({
 
   const items = data?.items || [];
   const displayItems = items.slice(0, 5);
+  const totalCount = items.length;
+  const highSeverityCount = items.filter(i => i.severity === "HIGH").length;
 
   const handleRowClick = (row: RequestExceptionItem) => {
     if (row.type === "RECONCILIATION_VARIANCE") {
@@ -79,6 +82,25 @@ export function RequestExceptionsTable({
       error={error}
       onRetry={onRetry}
       minHeight={215}
+      headerActions={
+        totalCount > 0 ? (
+          <StatusTooltipIcon
+            status={highSeverityCount > 0 ? "FAILED" : "WARNING"}
+            label={`${totalCount} exception${totalCount === 1 ? "" : "s"}`}
+            tooltipTitle="Requisition Workflow Exceptions"
+            tooltipDescription={
+              highSeverityCount > 0
+                ? `${highSeverityCount} high-severity exception(s) detected (SLA breaches, budget mismatches, or unavailable approvers).`
+                : `${totalCount} workflow exception(s) require review or reassignment.`
+            }
+            tooltipDetails={[
+              { label: "Total Exceptions", value: `${totalCount}` },
+              { label: "High Severity", value: `${highSeverityCount}` },
+            ]}
+            showBorder
+          />
+        ) : undefined
+      }
     >
       {items.length === 0 ? (
         <div className="flex items-center justify-center py-10 text-sm text-muted-foreground">
