@@ -16,7 +16,7 @@ export function AppTopbar() {
     const { totalCount } = getNeedsAttentionSummary();
 
     return (
-        <header className="h-12 md:h-13 shrink-0 fixed top-0 left-0 right-0 z-30 flex items-center px-4 bg-secondary dark:bg-[#111622]/95 backdrop-blur-md border-b border-border/50 text-white dark:text-foreground print:hidden">
+        <header className="h-12 md:h-13 shrink-0 fixed top-0 left-0 right-0 z-30 flex items-center px-4 bg-secondary/80 backdrop-blur-md border-b border-border/50 print:hidden">
 
             {/* Left section: Sidebar toggle + Logo */}
             <div className="flex items-center gap-0">
@@ -24,7 +24,7 @@ export function AppTopbar() {
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 p-0 text-white/80 dark:text-foreground/80 hover:text-white dark:hover:text-foreground hover:bg-white/10 dark:hover:bg-white/5"
+                    className="h-8 w-8 p-0"
                     onClick={toggleSidebar}
                     aria-label="Toggle sidebar"
                 >
