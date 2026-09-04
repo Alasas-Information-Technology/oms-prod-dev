@@ -1,13 +1,11 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { ArrowRight, KeyRound, Shield, UserCheck, Users } from "lucide-react";
+import { ArrowRight, KeyRound } from "lucide-react";
 import { WidgetShell } from "../WidgetShell";
 import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { PrivilegeChangesData, PrivilegeChangeType } from "@/types/dashboard";
-import { DeltaChip } from "../DeltaChip";
 import { cn } from "@/lib/utils";
 
 function formatRelativeTime(isoDate: string): string {

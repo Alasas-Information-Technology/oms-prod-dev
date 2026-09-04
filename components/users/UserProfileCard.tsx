@@ -1,24 +1,16 @@
 "use client";
 
 import * as React from "react";
-import {
-  Mail,
-  Copy,
-  MoreHorizontal,
-  Check,
-} from "lucide-react";
+
+
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { RoleChip } from "@/components/users/RoleChip";
 import { UserStatusBadge, computeUserStatus } from "@/components/users/UserStatusBadge";
 import { UserDetailDto } from "@/lib/types/authorization.types";
 import { cn } from "@/components/ui/utils";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
+
 import {
   AlertDialog,
   AlertDialogAction,

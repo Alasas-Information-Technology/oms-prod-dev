@@ -5,6 +5,7 @@ import { flushSync } from "react-dom"
 import { Icon, loadIcons } from "@iconify/react"
 
 import { cn } from "@/lib/utils"
+import { useTheme } from "next-themes"
 import { Button } from "./button"
 
 export type TransitionVariant =
@@ -139,6 +140,7 @@ export const AnimatedThemeToggler = ({
   fromCenter = false,
   ...props
 }: AnimatedThemeTogglerProps) => {
+  const { setTheme, resolvedTheme } = useTheme()
   const shape = variant ?? "circle"
   const [isDark, setIsDark] = useState(false)
   const [hasInteracted, setHasInteracted] = useState(false)
@@ -152,11 +154,12 @@ export const AnimatedThemeToggler = ({
 
   useEffect(() => {
     const updateTheme = () => {
-      setIsDark(document.documentElement.classList.contains("dark"))
+      const isDarkMode = resolvedTheme === "dark" || document.documentElement.classList.contains("dark")
+      setIsDark(isDarkMode)
+      setMounted(true)
     }
 
-    updateTheme()
-    setMounted(true)
+    queueMicrotask(updateTheme)
 
     const observer = new MutationObserver(updateTheme)
     observer.observe(document.documentElement, {
@@ -165,7 +168,7 @@ export const AnimatedThemeToggler = ({
     })
 
     return () => observer.disconnect()
-  }, [])
+  }, [resolvedTheme])
 
   const toggleTheme = useCallback((e?: React.MouseEvent<HTMLButtonElement>) => {
     const button = buttonRef.current
@@ -175,8 +178,8 @@ export const AnimatedThemeToggler = ({
 
     // Strictly calculate the center coordinate of the button in the viewport
     const rect = button.getBoundingClientRect()
-    const x = rect.width > 0 ? rect.left + rect.width / 2 : (e?.clientX ?? window.innerWidth - 60)
-    const y = rect.height > 0 ? rect.top + rect.height / 2 : (e?.clientY ?? 26)
+    const x = fromCenter || rect.width === 0 ? rect.left + rect.width / 2 : (e?.clientX ?? window.innerWidth - 60)
+    const y = fromCenter || rect.height === 0 ? rect.top + rect.height / 2 : (e?.clientY ?? 26)
 
     const viewportWidth = window.innerWidth
     const viewportHeight = window.innerHeight
@@ -190,7 +193,8 @@ export const AnimatedThemeToggler = ({
     const applyTheme = () => {
       const newTheme = !isDark
       setIsDark(newTheme)
-      document.documentElement.classList.toggle("dark")
+      setTheme(newTheme ? "dark" : "light")
+      document.documentElement.classList.toggle("dark", newTheme)
       localStorage.setItem("theme", newTheme ? "dark" : "light")
     }
 
@@ -228,7 +232,7 @@ export const AnimatedThemeToggler = ({
         )
       })
     }
-  }, [shape, duration, isDark])
+  }, [shape, duration, isDark, setTheme, fromCenter])
 
 
   // Select appropriate icon based on whether user just triggered a transition or initial mount

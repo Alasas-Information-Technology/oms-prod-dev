@@ -11,12 +11,10 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCreateOverride } from "@/hooks/useAuthorization";
 import { toast } from "sonner";
-import { Key, ShieldAlert, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
+import { Key, CheckCircle2, XCircle } from "lucide-react";
 
 interface AddOverrideDialogProps {
   open: boolean;

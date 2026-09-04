@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { HrReviewDetailResponse } from "@/types/hr-review";
 import {
   ApproveOmsDialog,
-  SendBackDialog,
   PermanentHireDialog,
   RejectDialog,
 } from "./HrReviewDecisionDialogs";
@@ -12,8 +11,8 @@ import { useRouter } from "next/navigation";
 
 interface HrReviewDecisionBarProps {
   detail: HrReviewDetailResponse;
-  activeDialog: "APPROVE" | "SEND_BACK" | "PERM_HIRE" | "REJECT" | null;
-  setActiveDialog: (dialog: "APPROVE" | "SEND_BACK" | "PERM_HIRE" | "REJECT" | null) => void;
+  activeDialog: "APPROVE" | "PERM_HIRE" | "REJECT" | null;
+  setActiveDialog: (dialog: "APPROVE" | "PERM_HIRE" | "REJECT" | null) => void;
   onSuccess: (action: string) => void;
 }
 
@@ -64,15 +63,6 @@ export function HrReviewDecisionBar({ detail, activeDialog, setActiveDialog, onS
           onOpenChange={(open) => !open && setActiveDialog(null)}
           detail={detail}
           onSuccess={() => onSuccess("Approved")}
-        />
-      )}
-
-      {activeDialog === "SEND_BACK" && (
-        <SendBackDialog
-          open={true}
-          onOpenChange={(open) => !open && setActiveDialog(null)}
-          detail={detail}
-          onSuccess={() => onSuccess("Sent back")}
         />
       )}
 

@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { format, differenceInDays } from "date-fns";
-import { CircleAlert, Clock3, Search } from "lucide-react";
+import { format } from "date-fns";
+import { CircleAlert, Clock3 } from "lucide-react";
 import { DataTable, ColumnDef } from "@/components/shared/DataTable";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { Button } from "@/components/ui/button";
@@ -145,7 +145,7 @@ export function ApprovalsTable({
           if (isClaimed) {
             return (
               <div className="flex justify-end items-center gap-2">
-                <Badge variant="outline" className="bg-slate-50 text-slate-600">
+                <Badge variant="outline" className="bg-muted text-muted-foreground border-border">
                   Claimed by {row.assignment.claimedBy?.name}
                 </Badge>
               </div>

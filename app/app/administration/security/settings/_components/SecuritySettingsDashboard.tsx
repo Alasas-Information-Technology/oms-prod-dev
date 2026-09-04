@@ -11,12 +11,8 @@ import {
   ShieldAlert,
   History,
   Activity,
-  Save,
   RotateCcw,
-  AlertCircle,
   CheckCircle2,
-  Lock,
-  Zap,
 } from "lucide-react";
 
 import { useSecurityMonitoring } from "@/hooks/useSecurityMonitoring";

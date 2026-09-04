@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Upload, FileSpreadsheet, Download, CheckCircle2, AlertCircle } from "lucide-react";
+import { Upload, FileSpreadsheet, Download } from "lucide-react";
 import {
   Dialog,
   DialogContent,

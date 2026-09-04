@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Handle, Position, NodeProps, Node } from "@xyflow/react";
-import { PlusCircle, Layers } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface CollapsedSiblingsData {

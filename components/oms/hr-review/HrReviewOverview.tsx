@@ -37,7 +37,7 @@ export function HrReviewOverview({
                   You asked for more information on {formatClarificationDate(cCtx.askedAt)}
                 </p>
                 <p className="mt-1 text-[13px] font-normal text-foreground-secondary">
-                  "{cCtx.askMessage}"
+                  &quot;{cCtx.askMessage}&quot;
                 </p>
               </div>
 

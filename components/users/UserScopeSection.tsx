@@ -162,10 +162,6 @@ export function UserScopeSection({
     });
   };
 
-  if (user.userType === "VENDOR") {
-    return null;
-  }
-
   // Generate mocked resolved list for display based on scope choice
   const resolvedDepartmentsList = React.useMemo(() => {
     if (selectedLevelDef.code === "SELF_ONLY") return [];
@@ -178,6 +174,10 @@ export function UserScopeSection({
     }
     return [];
   }, [selectedLevelDef.code, allDepartments, stagedScope, coveragePreview]);
+
+  if (user.userType === "VENDOR") {
+    return null;
+  }
 
   const departmentsToShow = isDepartmentsExpanded ? resolvedDepartmentsList : resolvedDepartmentsList.slice(0, 10);
   const hiddenCount = resolvedDepartmentsList.length - 10;

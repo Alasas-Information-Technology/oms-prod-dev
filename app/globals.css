@@ -58,6 +58,41 @@
   --destructive-foreground: #FFFFFF;
   --destructive-light: #FEE2E2;
 
+  /* ===== SEMANTIC TOKENS (UX 5.1 & Part 6) ===== */
+  /* Five meanings: accent, success, warning, danger, info */
+  /* Each defined with surface tint, border, and text value (15 tokens) */
+  --accent-surface: #EEF2FF;
+  --accent-border: #4F46E5;
+  --accent-text: #3730A3;
+
+  --success-surface: #ECFDF5;
+  --success-border: #059669;
+  --success-text: #065F46;
+
+  --warning-surface: #FFFBEB;
+  --warning-border: #B45309;
+  --warning-text: #78350F;
+
+  --danger-surface: #FFF1F2;
+  --danger-border: #E11D48;
+  --danger-text: #881337;
+
+  --info-surface: #F0F9FF;
+  --info-border: #0284C7;
+  --info-text: #075985;
+
+  /* Three surface elevations per Part 6 */
+  --surface-base: #FAFBFC;
+  --surface-card: #FFFFFF;
+  --surface-elevated: #F8FAFC;
+  --surface-popover: #FFFFFF;
+
+  /* Ratios / Alphas */
+  --border-alpha: 0.08;
+  --candidate-tint-alpha: 0.08;
+  --hatch-alpha: 0.18;
+  --disabled-text: #64748B;
+
   /* Border & Input - Lighter & more subtle */
   --border: #E2E8F0;
   --input: #F8FAFC;
@@ -160,6 +195,40 @@
   --destructive-foreground: #0F1419;
   --destructive-light: #7F1D1D;
 
+  /* ===== SEMANTIC TOKENS - DARK MODE (UX 5.1 & Part 6) ===== */
+  /* Desaturated ~20%, lightened ~10% to eliminate vibration on dark */
+  --accent-surface: #1E2540;
+  --accent-border: #818CF8;
+  --accent-text: #C7D2FE;
+
+  --success-surface: #142924;
+  --success-border: #34D399;
+  --success-text: #A7F3D0;
+
+  --warning-surface: #2E2416;
+  --warning-border: #FBBF24;
+  --warning-text: #FDE68A;
+
+  --danger-surface: #2E1B22;
+  --danger-border: #FB7185;
+  --danger-text: #FECDD3;
+
+  --info-surface: #142538;
+  --info-border: #38BDF8;
+  --info-text: #BAE6FD;
+
+  /* Three surface elevations per Part 6 (~4% lighter each step) */
+  --surface-base: #0B0F17;
+  --surface-card: #161B26; /* Cards lift off the page */
+  --surface-elevated: #212838; /* Elevated items, popovers */
+  --surface-popover: #2D364A; /* High elevations, modals */
+
+  /* Ratios / Alphas (Borders 14% up from 8%, Candidate tints 12% up from 8%, Hatch 24% up from 18%) */
+  --border-alpha: 0.14;
+  --candidate-tint-alpha: 0.12;
+  --hatch-alpha: 0.24;
+  --disabled-text: #9CA3AF;
+
   /* Border & Input - Subtle dark mode borders */
   --border: #222B3C;
   --input: #1A1F2E;
@@ -221,6 +290,35 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-destructive-light: var(--destructive-light);
+
+  /* Semantic Tokens (UX 5.1 & Part 6) */
+  --color-accent-surface: var(--accent-surface);
+  --color-accent-border: var(--accent-border);
+  --color-accent-text: var(--accent-text);
+
+  --color-success-surface: var(--success-surface);
+  --color-success-border: var(--success-border);
+  --color-success-text: var(--success-text);
+
+  --color-warning-surface: var(--warning-surface);
+  --color-warning-border: var(--warning-border);
+  --color-warning-text: var(--warning-text);
+
+  --color-danger-surface: var(--danger-surface);
+  --color-danger-border: var(--danger-border);
+  --color-danger-text: var(--danger-text);
+
+  --color-info-surface: var(--info-surface);
+  --color-info-border: var(--info-border);
+  --color-info-text: var(--info-text);
+
+  /* Surface Elevations (UX Part 6) */
+  --color-surface-base: var(--surface-base);
+  --color-surface-card: var(--surface-card);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-popover: var(--surface-popover);
+  --color-disabled-text: var(--disabled-text);
+
   --color-border: var(--border);
   --color-input: var(--input);
   --color-input-border: var(--input-border);
@@ -486,4 +584,13 @@ section[data-band-height="strip"]>div {
 
 section[data-band-height="list"]>div {
   min-height: 320px;
+}
+
+@keyframes shimmer-once {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
 }

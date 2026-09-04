@@ -9,16 +9,12 @@ import {
   RotateCcw,
   LogOut,
   AlertTriangle,
-  CheckCircle2,
-  ShieldAlert,
   Power,
-  Clock,
   Send,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
   AlertDialogAction,

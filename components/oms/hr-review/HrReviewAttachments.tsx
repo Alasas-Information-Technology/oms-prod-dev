@@ -18,7 +18,7 @@ export function HrReviewAttachments({
   attachments,
 }: HrReviewAttachmentsProps) {
   return (
-    <Card className="gap-4 rounded-xl bg-white p-5 shadow-xs hover:translate-y-0">
+    <Card className="gap-4 rounded-xl bg-card p-5 shadow-xs hover:translate-y-0">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex items-start gap-3">
           <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">

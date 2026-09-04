@@ -115,7 +115,7 @@ export function UserRolesSection({
               No roles assigned
             </p>
             <p className="text-amber-800/90 dark:text-amber-400 leading-relaxed">
-              They'll be able to sign in but won't be able to do anything.
+              They&apos;ll be able to sign in but won&apos;t be able to do anything.
             </p>
           </div>
         </div>

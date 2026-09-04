@@ -65,7 +65,7 @@ export function MultiSelect({
   return (
     <div className={cn("relative flex flex-col gap-1", className)} ref={containerRef}>
       {label && (
-        <label className="text-sm font-medium text-slate-700">{label}</label>
+        <label className="text-sm font-medium text-foreground">{label}</label>
       )}
       <button
         type="button"
@@ -87,7 +87,7 @@ export function MultiSelect({
           {selectedOptions.slice(0, maxDisplay).map((opt) => (
             <span
               key={opt.value}
-              className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-200/50 rounded px-1.5 py-0.5 text-xs font-medium shadow-sm"
+              className="inline-flex items-center gap-1 bg-primary/10 text-primary border border-primary/20 rounded px-1.5 py-0.5 text-xs font-medium shadow-sm"
             >
               {opt.label}
               <button
@@ -96,7 +96,7 @@ export function MultiSelect({
                   e.stopPropagation();
                   toggle(opt.value);
                 }}
-                className="hover:text-blue-900 focus:outline-none"
+                className="hover:text-primary/70 focus:outline-none"
               >
                 <X size={12} />
               </button>

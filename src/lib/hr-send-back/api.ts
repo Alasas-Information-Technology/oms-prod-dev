@@ -116,6 +116,42 @@ export const hrSendBackApi = {
         };
       }
 
+      // Simulation triggers for TASK 4 error verification
+      if (payload.message.includes("[test-locked-field]")) {
+        throw {
+          code: "SEND_BACK_FIELD_NOT_SELECTABLE",
+          fieldKey: payload.editableFieldKeys[0] || "budgetAmount",
+          fieldName: "Budget amount",
+          message: "Field may have been locked since the page loaded.",
+        };
+      }
+
+      if (payload.message.includes("[test-already-decided]")) {
+        throw {
+          code: "SEND_BACK_ALREADY_DECIDED",
+          decidedBy: "Omar Al Hashmi",
+          message: "This request was already decided by Omar Al Hashmi.",
+        };
+      }
+
+      if (payload.message.includes("[test-scan-pending]")) {
+        throw {
+          code: "ATTACHMENT_SCAN_PENDING",
+          message: "One attachment is still being checked.",
+        };
+      }
+
+      if (payload.message.includes("[test-budget-changed]")) {
+        throw {
+          code: "HR_REVIEW_BUDGET_CHANGED",
+          currentBudget: {
+            reserved: 28500000,
+            note: "Updated reservation based on concurrent financial change.",
+          },
+          message: "Budget figures have changed since review started.",
+        };
+      }
+
       if (payload.mode === "MORE_INFO" && payload.editableFieldKeys.length > 0) {
         throw {
           code: "INVALID_MODE_PAYLOAD",

@@ -16,7 +16,6 @@ import { UserDetailDto } from "@/lib/types/authorization.types";
 import { useForceChangePassword } from "@/hooks/useAuthorization";
 import { toast } from "sonner";
 import { KeyRound, ShieldAlert } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface ForceChangePasswordDialogProps {
   open: boolean;

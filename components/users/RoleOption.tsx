@@ -5,7 +5,6 @@ import { cn } from "@/components/ui/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import {
-  ROLE_DEFINITIONS,
   getRoleDisplayName,
   getRoleExplanation,
 } from "@/lib/constants/user-admin.constants";

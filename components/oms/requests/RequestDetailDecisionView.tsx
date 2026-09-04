@@ -30,9 +30,7 @@ import {
   FileText,
   Paperclip,
   Download,
-  History as HistoryIcon,
 } from "lucide-react";
-import { cn } from "@/components/ui/utils";
 
 interface RequestDetailDecisionViewProps {
   detail: ApprovalTaskDetail;

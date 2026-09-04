@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Lock, Info, RotateCcw } from "lucide-react";
+import { Lock, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePermission } from "@/hooks/usePermission";
 import { PERMISSIONS } from "@/lib/constants/permissions";

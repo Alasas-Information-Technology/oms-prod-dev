@@ -25,7 +25,7 @@ function BudgetMetric({
   value: number;
 }) {
   return (
-    <div className="min-w-0 rounded-xl border border-border bg-slate-50 p-3">
+    <div className="min-w-0 rounded-xl border border-border bg-muted/30 p-3">
       <p className="text-[12px] font-normal text-muted-foreground">
         {label}
       </p>
@@ -42,7 +42,7 @@ export function BudgetPositionPanel({
   detailed = false,
 }: BudgetPositionPanelProps) {
   return (
-    <Card className="gap-4 rounded-xl bg-white p-5 shadow-xs hover:translate-y-0 border border-border">
+    <Card className="gap-4 rounded-xl bg-card p-5 shadow-xs hover:translate-y-0 border border-border">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex items-start gap-3">
           <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">

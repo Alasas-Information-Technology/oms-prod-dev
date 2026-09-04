@@ -4,36 +4,16 @@ import * as React from "react";
 import {
   Search,
   Filter,
-  Users,
-  Layers,
-  ArrowRightLeft,
   Archive,
-  Trash2,
-  MoreHorizontal,
-  Plus,
-  Building2,
-  Briefcase,
-  FolderTree,
-  AlertCircle,
-  Clock,
   Sparkles,
-  ChevronRight,
-  ExternalLink,
 } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { StatusBadge } from "@/components/shared/StatusBadge";
-import { DataTable, ColumnDef, RowAction } from "@/components/shared/DataTable";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+
+import { DataTable, ColumnDef } from "@/components/shared/DataTable";
 import { OrgTypeIcon, UnitPath } from "@/components/organization";
 import {
   useOrgUnits,
@@ -43,7 +23,6 @@ import { usePermission } from "@/hooks/usePermission";
 import {
   OrgUnitSummaryDto,
   OrgUnitEntity,
-  ORG_PERMISSIONS,
 } from "@/lib/types/organization.types";
 import { cn } from "@/lib/utils";
 

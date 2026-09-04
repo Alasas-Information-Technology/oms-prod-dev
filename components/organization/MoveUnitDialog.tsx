@@ -10,9 +10,6 @@ import {
   AlertTriangle,
   Loader2,
   RefreshCw,
-  Layers,
-  Users,
-  CheckCircle2,
   AlertCircle,
   ExternalLink,
 } from "lucide-react";
@@ -36,7 +33,6 @@ import {
 import {
   OrgUnitDetailDto,
   OrgUnitSummaryDto,
-  OrgUnitEntity,
 } from "@/lib/types/organization.types";
 import { cn } from "@/lib/utils";
 
@@ -102,6 +98,23 @@ export function MoveUnitDialog({
     }
   }, [open]);
 
+  // Formatting paths
+  const oldPath = React.useMemo(() => {
+    if (!unit) return "";
+    if (!oldAncestors || oldAncestors.length === 0) {
+      return unit.parentName ? `DIEZ › ${unit.parentName}` : "DIEZ (Top level)";
+    }
+    return oldAncestors.map((a) => a.name).join(" › ") + (unit.parentName && !oldAncestors.some((a) => a.name === unit.parentName) ? ` › ${unit.parentName}` : "");
+  }, [oldAncestors, unit]);
+
+  const newPath = React.useMemo(() => {
+    if (!targetParentUnit) return "—";
+    if (!newAncestors || newAncestors.length === 0) {
+      return `DIEZ › ${targetParentUnit.name}`;
+    }
+    return [...newAncestors.map((a) => a.name), targetParentUnit.name].join(" › ");
+  }, [newAncestors, targetParentUnit]);
+
   if (!unit) return null;
 
   const currentDetail = liveDetail || unit;
@@ -119,22 +132,6 @@ export function MoveUnitDialog({
       : canonicalLevel === 2
       ? [1] // Business Unit can move under Org
       : undefined;
-
-  // Formatting paths
-  const oldPath = React.useMemo(() => {
-    if (!oldAncestors || oldAncestors.length === 0) {
-      return unit.parentName ? `DIEZ › ${unit.parentName}` : "DIEZ (Top level)";
-    }
-    return oldAncestors.map((a) => a.name).join(" › ") + (unit.parentName && !oldAncestors.some((a) => a.name === unit.parentName) ? ` › ${unit.parentName}` : "");
-  }, [oldAncestors, unit]);
-
-  const newPath = React.useMemo(() => {
-    if (!targetParentUnit) return "—";
-    if (!newAncestors || newAncestors.length === 0) {
-      return `DIEZ › ${targetParentUnit.name}`;
-    }
-    return [...newAncestors.map((a) => a.name), targetParentUnit.name].join(" › ");
-  }, [newAncestors, targetParentUnit]);
 
   // Counts & children
   const insideChildCount = childrenList?.length ?? currentDetail.childCount ?? 0;

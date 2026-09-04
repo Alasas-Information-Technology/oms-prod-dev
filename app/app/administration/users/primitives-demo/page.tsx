@@ -8,18 +8,12 @@ import {
   Layers,
   CheckCircle2,
   AlertTriangle,
-  ArrowRight,
-  Info,
   Clock,
-  Sparkles,
   Key,
   Building2,
-  Lock,
-  RotateCcw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   UserStatusBadge,
@@ -31,11 +25,8 @@ import {
   UserDetailPanel,
 } from "@/components/users";
 import {
-  ROLE_DEFINITIONS,
   ERROR_MESSAGES,
   getPlainErrorMessage,
-  getRoleExplanation,
-  getRoleDisplayName,
   getPermissionPlainName,
   getPermissionArea,
   PERMISSION_CAPABILITIES,

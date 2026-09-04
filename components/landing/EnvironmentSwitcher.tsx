@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useTheme } from "next-themes";
-import { Moon, Sun, Check, MonitorSmartphone, X } from "lucide-react";
+import { Moon, Sun, Check, X } from "lucide-react";
 import { cn } from "@/components/ui/utils";
 
 export function EnvironmentSwitcher() {
