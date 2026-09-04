@@ -31,7 +31,7 @@ const STATUS_CONFIG: Record<TimelineStatus, { icon: ReactNode; dotClass: string 
   },
   pending: {
     icon: <Clock size={12} />,
-    dotClass: "bg-white border-slate-300 text-slate-400",
+    dotClass: "bg-card border-border text-muted-foreground",
   },
   error: {
     icon: <AlertCircle size={12} />,
@@ -50,7 +50,7 @@ export function Timeline({ items, className }: TimelineProps) {
           <div key={item.id} className="relative flex gap-4">
             {!isLast && (
               <div
-                className="absolute left-4 top-9 bottom-0 w-px bg-slate-200"
+                className="absolute left-4 top-9 bottom-0 w-px bg-border"
                 style={{ zIndex: 0 }}
               />
             )}
@@ -69,14 +69,14 @@ export function Timeline({ items, className }: TimelineProps) {
             <div className={cn("flex-1 min-w-0", !isLast && "pb-6")}>
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
-                  <div className="text-sm font-semibold text-slate-900 leading-snug">
+                  <div className="text-sm font-semibold text-foreground leading-snug">
                     {item.title}
                   </div>
                   {item.user && (
                     <div className="text-xs text-muted-foreground mt-0.5">
                       {item.user.name}
                       {item.user.role && (
-                        <span className="text-slate-400"> · {item.user.role}</span>
+                        <span className="text-muted-foreground/70"> · {item.user.role}</span>
                       )}
                     </div>
                   )}
@@ -88,12 +88,12 @@ export function Timeline({ items, className }: TimelineProps) {
                     </div>
                   )}
                   {item.meta && (
-                    <div className="text-xs text-slate-400 mt-0.5">{item.meta}</div>
+                    <div className="text-xs text-muted-foreground/70 mt-0.5">{item.meta}</div>
                   )}
                 </div>
               </div>
               {item.description && (
-                <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">
+                <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
                   {item.description}
                 </p>
               )}

@@ -5,7 +5,6 @@ import { WidgetShell } from "../WidgetShell";
 import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { IntegrationHealthData } from "@/types/dashboard";
-import { cn } from "@/lib/utils";
 
 // TODO(integration-ops): wire to real health checks
 

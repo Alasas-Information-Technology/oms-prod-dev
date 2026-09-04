@@ -179,14 +179,17 @@ export interface HrSendBackSubmitResponse {
 }
 
 /**
- * HR Send-Back Specific Error Codes
+ * HR Send-Back Specific Error Codes (Part 5 & SB6 Task 4)
  */
 export type HrSendBackErrorCode =
+  | "SEND_BACK_FIELD_NOT_SELECTABLE"
+  | "SEND_BACK_ALREADY_DECIDED"
+  | "ATTACHMENT_SCAN_PENDING"
+  | "HR_REVIEW_BUDGET_CHANGED"
   | "FIELD_NOT_SELECTABLE"
   | "COMMENT_REQUIRED"
   | "MISSING_IDEMPOTENCY_KEY"
   | "INVALID_MODE_PAYLOAD"
-  | "ATTACHMENT_SCAN_PENDING"
   | "ATTACHMENT_SCAN_FAILED"
   | "HR_REVIEW_CLOSED"
   | "NOT_ASSIGNED_REVIEWER";
@@ -196,4 +199,10 @@ export interface HrSendBackError {
   message: string;
   filename?: string;
   fieldKey?: string;
+  fieldName?: string;
+  decidedBy?: string;
+  currentBudget?: {
+    reserved: number;
+    note?: string;
+  };
 }

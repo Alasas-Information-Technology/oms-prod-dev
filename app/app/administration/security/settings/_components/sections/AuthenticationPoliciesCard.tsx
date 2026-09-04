@@ -8,8 +8,6 @@ import {
   Fingerprint,
   Users,
   ShieldAlert,
-  Sliders,
-  CheckCircle2,
   Lock,
 } from "lucide-react";
 import {
@@ -32,7 +30,6 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { UpdateSecuritySettingsInput } from "@/lib/validations/security-settings.schema";
-import { cn } from "@/lib/utils";
 
 export function AuthenticationPoliciesCard() {
   const form = useFormContext<UpdateSecuritySettingsInput>();

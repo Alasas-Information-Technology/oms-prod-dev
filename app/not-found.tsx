@@ -10,8 +10,6 @@ import {
   FileText,
   Wallet,
   ShieldCheck,
-  Search,
-  Home,
   HelpCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";

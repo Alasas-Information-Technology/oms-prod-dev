@@ -4,13 +4,11 @@ import * as React from "react";
 import { useFormContext } from "react-hook-form";
 import Link from "next/link";
 import {
-  ShieldCheck,
   Users,
   RotateCcw,
   Ban,
   Activity,
   ArrowUpRight,
-  Sliders,
   Laptop,
 } from "lucide-react";
 import {

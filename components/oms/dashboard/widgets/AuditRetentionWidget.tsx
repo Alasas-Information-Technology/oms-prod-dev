@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Archive, Calendar, Database, FileText, ShieldCheck } from "lucide-react";
+import { Archive, Calendar, Database, FileText } from "lucide-react";
 import { WidgetShell } from "../WidgetShell";
 import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { SimpleKpiCard, GenericKpiCardProps } from "@/components/budget/SimpleKpiCard";
+import { SimpleKpiCard } from "@/components/budget/SimpleKpiCard";
 
 export type KpiTone = "default" | "amber" | "destructive" | "emerald" | "indigo" | "blue" | "purple" | "teal";
 export type ZeroMeaning = "GOOD" | "NEEDS_ACTION" | "NO_DATA";

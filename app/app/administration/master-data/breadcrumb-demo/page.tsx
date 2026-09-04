@@ -147,7 +147,7 @@ export default function BreadcrumbDemoPage() {
               />
             </div>
             <p className="text-[11px] text-muted-foreground">
-              Per Part 5: "Up to 4 crumbs: show all."
+              Per Part 5: &quot;Up to 4 crumbs: show all.&quot;
             </p>
           </CardContent>
         </Card>

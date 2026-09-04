@@ -4,10 +4,8 @@ import * as React from "react";
 import {
   Building2,
   Briefcase,
-  Building,
   Layers,
   Landmark,
-  FolderTree,
   Boxes,
   LucideIcon,
 } from "lucide-react";

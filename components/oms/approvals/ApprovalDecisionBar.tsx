@@ -82,7 +82,7 @@ export function ApprovalDecisionBar({
                   </span>
                 </TooltipTrigger>
                 {!canApprove && (
-                  <TooltipContent side="top" className="max-w-[280px] p-2.5 bg-slate-900 text-white text-xs">
+                  <TooltipContent side="top" className="max-w-[280px] p-2.5 bg-popover text-popover-foreground border border-border text-xs shadow-md">
                     <div className="flex items-start gap-2">
                       <ShieldAlert className="size-4 text-red-400 shrink-0 mt-0.5" />
                       <span>{disabledReason}</span>

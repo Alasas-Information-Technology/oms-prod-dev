@@ -32,8 +32,6 @@ import {
   LabelList,
   Line,
   LineChart,
-  Pie,
-  PieChart,
   XAxis,
   YAxis
 } from "recharts";

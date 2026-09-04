@@ -2,17 +2,12 @@
 
 import * as React from "react";
 import {
-  User,
   Mail,
   MapPin,
   Clock,
   Pencil,
-  Lock,
-  Phone,
-  Building2,
   BadgeCheck,
   KeyRound,
-  Shield,
 } from "lucide-react";
 import { ProfileTabs } from "./ProfileTabs";
 import { PersonalInfoCard } from "./mydetails/PersonalInfoCard";

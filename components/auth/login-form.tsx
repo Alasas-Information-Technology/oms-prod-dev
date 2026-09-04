@@ -117,7 +117,7 @@ export function LoginForm({
                       transition={{ duration: 0.3, ease: "easeInOut" }}
                       className="overflow-hidden"
                     >
-                      <div className="p-3 text-sm text-red-500 bg-red-100 rounded-md">
+                      <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
                         {error}
                       </div>
                     </motion.div>

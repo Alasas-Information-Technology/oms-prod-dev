@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CheckCircle2, AlertCircle, AlertTriangle, XCircle, Clock, Info } from "lucide-react";
+import { CheckCircle2, AlertTriangle, XCircle, Clock, Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 

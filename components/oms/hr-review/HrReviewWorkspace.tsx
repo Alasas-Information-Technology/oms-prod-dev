@@ -42,7 +42,7 @@ export function HrReviewWorkspace() {
   const [activeTab, setActiveTab] = useState<HrReviewTab>("overview");
   const [isQueueOpen, setIsQueueOpen] = useState(false);
 
-  const [activeDialog, setActiveDialog] = useState<"APPROVE" | "SEND_BACK" | "PERM_HIRE" | "REJECT" | null>(null);
+  const [activeDialog, setActiveDialog] = useState<"APPROVE" | "PERM_HIRE" | "REJECT" | null>(null);
   const [showShortcuts, setShowShortcuts] = useState(false);
 
   const { data: queueData, isLoading: isQueueLoading } = useHrReviewQueue({
@@ -55,32 +55,32 @@ export function HrReviewWorkspace() {
     { enabled: !!urlRequestId }
   );
 
+  const selectedRequestId = urlRequestId || (queueData?.items[0]?.requestId ?? null);
+
   const departments = useMemo(() => [
     "Digital Security", "Data Management", "Project Management Office", "IT Infrastructure", "Procurement",
   ].sort(), []);
 
-  const queueItems = queueData?.items ?? [];
-
   const processedQueueItems = useMemo(() => {
-    let items = [...queueItems];
+    if (!queueData?.items) return [];
+    let items = [...queueData.items];
     if (search.trim()) {
-      const q = search.trim().toLowerCase();
+      const q = search.toLowerCase();
       items = items.filter(
-        (item) => item.requestId.toLowerCase().includes(q) || item.position.toLowerCase().includes(q) || item.department.name.toLowerCase().includes(q)
+        i => i.requestId.toLowerCase().includes(q) || i.position.toLowerCase().includes(q)
       );
     }
     if (overdueOnly) {
-      items = items.filter((item) => item.sla.breached);
+      items = items.filter(i => i.sla.breached);
     }
+    // Age sort descending
     items.sort((a, b) => {
       if (a.sla.breached && !b.sla.breached) return -1;
       if (!a.sla.breached && b.sla.breached) return 1;
-      if (a.returnedFromClarification && !b.returnedFromClarification) return -1;
-      if (!a.returnedFromClarification && b.returnedFromClarification) return 1;
       return b.ageDays - a.ageDays;
     });
     return items;
-  }, [queueItems, search, overdueOnly]);
+  }, [queueData, search, overdueOnly]);
 
   const currentIndex = processedQueueItems.findIndex(i => i.requestId === urlRequestId);
   const nextRequest = currentIndex >= 0 && currentIndex < processedQueueItems.length - 1 ? processedQueueItems[currentIndex + 1] : null;
@@ -134,7 +134,12 @@ export function HrReviewWorkspace() {
     onNext: () => nextRequest && handleSelectRequest(nextRequest.requestId),
     onPrev: () => prevRequest && handleSelectRequest(prevRequest.requestId),
     onApprove: () => detailResponse?.canDecide && setActiveDialog("APPROVE"),
-    onSendBack: () => detailResponse?.canDecide && setActiveDialog("SEND_BACK"),
+    onSendBack: () => {
+      const targetId = urlRequestId || selectedRequestId;
+      if (detailResponse?.canDecide && targetId) {
+        router.push(`/app/hr-review/${encodeURIComponent(targetId)}/send-back`);
+      }
+    },
     onReject: () => detailResponse?.canDecide && setActiveDialog("REJECT"),
     onEscape: () => {
       setActiveDialog(null);
@@ -181,19 +186,19 @@ export function HrReviewWorkspace() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-95 p-0 border-none bg-transparent shadow-none">
-              <div className="p-4 h-full bg-slate-50/50 backdrop-blur-xl border-r">
+              <div className="p-4 h-full bg-card/80 backdrop-blur-xl border-r border-border">
                 {queueComponent}
               </div>
             </SheetContent>
           </Sheet>
 
-          <div className="hidden xl:flex items-center gap-2 px-3 h-8 rounded-md border border-border bg-white hover:bg-slate-50 shadow-xs">
+          <div className="hidden xl:flex items-center gap-2 px-3 h-8 rounded-md border border-border bg-card hover:bg-muted/50 shadow-xs">
             <Switch id="overdue-only" checked={overdueOnly} onCheckedChange={setOverdueOnly} />
             <Label htmlFor="overdue-only" className="text-[13px] font-medium cursor-pointer">Overdue only</Label>
           </div>
 
           <Select value={department} onValueChange={setDepartment}>
-            <SelectTrigger className="h-8 w-40 rounded-md border border-border bg-white shadow-xs hover:bg-slate-50 focus:ring-0">
+            <SelectTrigger className="h-8 w-40 rounded-md border border-border bg-card shadow-xs hover:bg-muted/50 focus:ring-0">
               <SelectValue placeholder="All Departments" />
             </SelectTrigger>
             <SelectContent>
@@ -203,7 +208,7 @@ export function HrReviewWorkspace() {
           </Select>
 
           <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger className="h-8 w-40 rounded-md border border-border bg-white shadow-xs hover:bg-slate-50 focus:ring-0">
+            <SelectTrigger className="h-8 w-40 rounded-md border border-border bg-card shadow-xs hover:bg-muted/50 focus:ring-0">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -220,7 +225,7 @@ export function HrReviewWorkspace() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search requests"
-              className="h-8 w-48 pl-9 rounded-md border border-border bg-white shadow-xs hover:bg-slate-50 focus-visible:ring-0"
+              className="h-8 w-48 pl-9 rounded-md border border-border bg-card shadow-xs hover:bg-muted/50 focus-visible:ring-0"
             />
           </div>
 
@@ -254,25 +259,25 @@ export function HrReviewWorkspace() {
             <div className="min-w-0">
               {activeTab === "overview" && <HrReviewOverview detail={detailResponse} onNavigateTab={(tab) => setActiveTab(tab)} />}
               {activeTab === "approval-trail" && (
-                <div className="rounded-xl border border-border bg-white p-6 shadow-xs">
+                <div className="rounded-xl border border-border bg-card p-6 shadow-xs">
                   <h3 className="text-[14px] font-semibold text-foreground mb-4">Approval Trail</h3>
                   <DepartmentApprovalTrail items={detailResponse.approvalTrail} detailed />
                 </div>
               )}
               {activeTab === "budget" && (
-                <div className="rounded-xl border border-border bg-white p-6 shadow-xs">
+                <div className="rounded-xl border border-border bg-card p-6 shadow-xs">
                   <h3 className="text-[14px] font-semibold text-foreground mb-4">Budget Position</h3>
                   <p className="text-[13px] font-normal text-muted-foreground">Full BudgetPositionPanel placeholder (Waiting for Budget component update)</p>
                 </div>
               )}
               {activeTab === "attachments" && (
-                <div className="rounded-xl border border-border bg-white p-6 shadow-xs">
+                <div className="rounded-xl border border-border bg-card p-6 shadow-xs">
                   <h3 className="text-[14px] font-semibold text-foreground mb-4">Attachments</h3>
                   <p className="text-[13px] font-normal text-muted-foreground">Attachments tab placeholder</p>
                 </div>
               )}
               {activeTab === "audit" && (
-                <div className="rounded-xl border border-border bg-white p-6 shadow-xs">
+                <div className="rounded-xl border border-border bg-card p-6 shadow-xs">
                   <h3 className="text-[14px] font-semibold text-foreground mb-4">Audit Trail</h3>
                   <p className="text-[13px] font-normal text-muted-foreground">Audit trail tab placeholder</p>
                 </div>
@@ -287,7 +292,7 @@ export function HrReviewWorkspace() {
             />
           </div>
         ) : (
-          <Card className="flex min-h-[440px] items-center justify-center rounded-xl bg-white p-8 text-center shadow-xs hover:translate-y-0">
+          <Card className="flex min-h-[440px] items-center justify-center rounded-xl bg-card p-8 text-center shadow-xs hover:translate-y-0">
             <div>
               <CheckCircle2 className="mx-auto size-10 text-muted-foreground/50" />
               <p className="mt-4 text-[14px] font-semibold text-foreground">

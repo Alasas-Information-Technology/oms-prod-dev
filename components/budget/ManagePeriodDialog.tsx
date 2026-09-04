@@ -9,10 +9,8 @@ import {
   Clock,
   ShieldCheck,
   Info,
-  AlertTriangle,
   RotateCcw,
   Edit3,
-  X,
   ArrowLeft,
   FileText,
   CircleDot,
@@ -20,10 +18,7 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
-  DialogDescription,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -364,7 +359,7 @@ export function ManagePeriodDialog({
                         )}
                         {step.comments && isApproved && (
                           <p className="text-[10px] text-muted-foreground/80 mt-0.5 italic leading-relaxed">
-                            "{step.comments}"
+                            &quot;{step.comments}&quot;
                           </p>
                         )}
                       </div>

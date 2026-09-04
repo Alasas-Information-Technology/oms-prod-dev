@@ -10,7 +10,6 @@ import {
   ChevronsUpDown,
   Clock3,
   CircleAlert,
-  ShieldCheck,
   CheckCircle2,
 } from "lucide-react";
 

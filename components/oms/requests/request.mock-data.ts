@@ -3,7 +3,6 @@ import {
   OmsRequest,
   RequestLifecycleStep,
   RequestStatusGroup,
-  NeedsActionType,
 } from "./request.types";
 
 export const REQUEST_LIFECYCLE_LABELS = [

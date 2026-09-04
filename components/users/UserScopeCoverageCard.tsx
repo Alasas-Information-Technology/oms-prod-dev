@@ -4,13 +4,9 @@ import * as React from "react";
 import {
   Globe,
   Building2,
-  Layers,
-  MapPin,
   Trash2,
   Plus,
-  CheckCircle2,
   Eye,
-  Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

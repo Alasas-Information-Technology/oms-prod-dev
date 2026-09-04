@@ -10,11 +10,8 @@ import {
   FileCode,
   Filter,
   X,
-  Clock,
-  User,
   ArrowRight,
   Inbox,
-  AlertTriangle,
 } from "lucide-react";
 import {
   IBudgetRequestDto,
@@ -26,8 +23,7 @@ import { useBudgetRequests } from "@/hooks/useBudget";
 import { Amount } from "./Amount";
 import { StatusBadge, OMSStatus } from "@/components/shared/StatusBadge";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 export interface BudgetRequestsSectionProps {

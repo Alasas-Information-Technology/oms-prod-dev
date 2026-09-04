@@ -6,7 +6,7 @@ import { Search, X, Lock, SlidersHorizontal, RotateCcw } from "lucide-react";
 import { OrgUnitPicker } from "@/components/organization/OrgUnitPicker";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/context/AuthContext";
 import { OrgUnitSummaryDto } from "@/lib/types/organization.types";
 

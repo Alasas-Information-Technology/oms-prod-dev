@@ -23,7 +23,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
-  Building2,
   CheckSquare,
   FileText,
   LayoutDashboard,

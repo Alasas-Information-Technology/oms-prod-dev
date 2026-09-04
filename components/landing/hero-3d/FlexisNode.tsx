@@ -2,7 +2,7 @@
 
 import { useRef, useState, useCallback } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Text, Html, MeshTransmissionMaterial } from "@react-three/drei";
+import { Html } from "@react-three/drei";
 import * as THREE from "three";
 
 interface FlexisNodeProps {

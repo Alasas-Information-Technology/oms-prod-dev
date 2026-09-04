@@ -18,7 +18,6 @@ import {
   Layers,
   Sparkles,
   Building2,
-  Briefcase,
   Landmark,
   Eye,
   CheckCircle2,

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { WidgetShell } from "../WidgetShell";
 import { WidgetProps } from "@/lib/dashboard/registry";
-import { BudgetAllocationByDepartmentData, DepartmentBudgetAllocationItem } from "@/types/dashboard";
+import { BudgetAllocationByDepartmentData } from "@/types/dashboard";
 import { formatAbbreviated } from "@/lib/money";
 import { BarChartCard } from "../charts/BarChartCard";
 import { semanticColors, categoricalScale } from "@/lib/dashboard/chart-tokens";

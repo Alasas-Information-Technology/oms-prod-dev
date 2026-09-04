@@ -3,9 +3,6 @@
 import * as React from "react";
 import { format } from "date-fns";
 import {
-  Users,
-  Calendar,
-  Clock,
   Trash2,
   Plus,
   AlertTriangle,
@@ -203,7 +200,7 @@ function DelegationRow({
         </div>
         {del.reason && (
           <p className="text-[13px] text-muted-foreground italic mt-2 truncate max-w-lg">
-            "{del.reason}"
+            &quot;{del.reason}&quot;
           </p>
         )}
       </div>

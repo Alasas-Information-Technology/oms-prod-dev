@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronRight, Home } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { OrgTypeIcon, OrgTypeKey } from "@/components/organization/OrgTypeIcon";
 import { cn } from "@/components/ui/utils";
 

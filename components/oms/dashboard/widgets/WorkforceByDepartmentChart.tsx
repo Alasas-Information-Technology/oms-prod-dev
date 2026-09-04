@@ -7,7 +7,6 @@ import { WidgetShell } from "../WidgetShell";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { WorkforceByDepartmentData } from "@/types/dashboard";
 import { DataTable, ColumnDef } from "@/components/shared/DataTable";
-import { cn } from "@/lib/utils";
 
 /**
  * V6 — Workforce by department, proportional per DASHBOARD-VISUAL-DEPTH.md:

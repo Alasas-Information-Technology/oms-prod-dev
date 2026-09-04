@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -17,7 +16,6 @@ import {
   GitFork,
   CreditCard,
   ShieldCheck,
-  Clock,
   Check,
   ChevronDown,
   X,

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Upload, CalendarCog, ChevronDown, CheckCircle2, Lock, AlertCircle } from "lucide-react";
+import { Upload, CalendarCog, ChevronDown, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,7 +10,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { usePermission } from "@/hooks/usePermission";

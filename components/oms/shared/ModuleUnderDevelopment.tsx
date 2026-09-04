@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   Sparkles,
   Calendar,
-  Layers,
   ArrowUpRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";

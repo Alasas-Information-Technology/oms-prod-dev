@@ -3,15 +3,13 @@
 import * as React from "react";
 import {
   ShieldCheck,
-  CheckCircle2,
   RefreshCw,
   Clock,
   Layers,
   Lock,
   RotateCcw,
-  Sparkles,
 } from "lucide-react";
-import { IBudgetSafeguardsResponseDto, ISafeguardItemDto } from "@/lib/types/budget.types";
+import { IBudgetSafeguardsResponseDto } from "@/lib/types/budget.types";
 import { useBudgetSafeguards } from "@/hooks/useBudget";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";

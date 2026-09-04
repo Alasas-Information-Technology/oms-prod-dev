@@ -15,11 +15,15 @@ import {
 interface ApprovalRouteStepperProps {
   route: ApprovalStage[];
   className?: string;
+  showCurrentBadge?: boolean;
+  currentBadgeLabel?: string;
 }
 
 export function ApprovalRouteStepper({
   route,
   className,
+  showCurrentBadge = true,
+  currentBadgeLabel = "In Review",
 }: ApprovalRouteStepperProps) {
   if (!route || route.length === 0) return null;
 
@@ -128,9 +132,9 @@ export function ApprovalRouteStepper({
                   </span>
                 )}
 
-                {isCurrent && (
+                {isCurrent && showCurrentBadge && (
                   <span className="mt-1 inline-flex items-center text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                    In Review
+                    {currentBadgeLabel}
                   </span>
                 )}
               </div>

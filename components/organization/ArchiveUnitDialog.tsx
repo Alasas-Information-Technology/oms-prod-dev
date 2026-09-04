@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { toast } from "sonner";
-import { Archive, RotateCcw, AlertTriangle, Loader2 } from "lucide-react";
+import { Archive, RotateCcw, Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
