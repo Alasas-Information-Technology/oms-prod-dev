@@ -16,10 +16,14 @@ import {
   InterviewEmailPreviewResponse,
   InterviewBypassRequestPayload,
   InterviewBypassRequestResponse,
+  InterviewSuggestionsResponse,
+  InterviewSuggestionsParams,
 } from "@/src/types/interview-planning";
 import {
   MOCK_INTERVIEW_PLANNING_FIXTURES,
   FIXTURE_INTERVIEW_REFERENCE,
+  MOCK_INTERVIEW_SUGGESTIONS_FIXTURES,
+  FIXTURE_SUGGESTIONS_REFERENCE,
 } from "./fixtures";
 import { useDebounce } from "@/hooks/useDebounce";
 
@@ -277,6 +281,46 @@ export const interviewPlanningApi = {
     }
     return res.json();
   },
+
+  /**
+   * GET /api/v1/requests/{requestId}/interviews/suggestions
+   * Server-side multi-variable ranking engine
+   */
+  async getSuggestions(
+    requestId: string,
+    params?: InterviewSuggestionsParams
+  ): Promise<InterviewSuggestionsResponse> {
+    if (USE_FIXTURES) {
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      const match =
+        MOCK_INTERVIEW_SUGGESTIONS_FIXTURES[requestId] ||
+        FIXTURE_SUGGESTIONS_REFERENCE;
+      return JSON.parse(JSON.stringify(match));
+    }
+
+    const searchParams = new URLSearchParams();
+    if (params?.from) searchParams.set("from", params.from);
+    if (params?.durationMinutes) searchParams.set("durationMinutes", String(params.durationMinutes));
+    if (params?.method) searchParams.set("method", params.method);
+    if (params?.interviewerIds && params.interviewerIds.length > 0) {
+      searchParams.set("interviewerIds", params.interviewerIds.join(","));
+    }
+    if (params?.candidateRef) searchParams.set("candidateRef", params.candidateRef);
+    if (params?.limit) searchParams.set("limit", String(params.limit));
+
+    const res = await fetch(
+      `/api/v1/requests/${encodeURIComponent(requestId)}/interviews/suggestions?${searchParams.toString()}`
+    );
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw {
+        statusCode: res.status,
+        code: errorData.code || "FETCH_SUGGESTIONS_ERROR",
+        message: errorData.message || "Failed to fetch interview suggestions",
+      };
+    }
+    return res.json();
+  },
 };
 
 /**
@@ -290,6 +334,8 @@ export const interviewPlanningKeys = {
     [...interviewPlanningKeys.all, "draft", requestId, candidateRef] as const,
   previewEmail: (requestId: string, candidateRef: string) =>
     [...interviewPlanningKeys.all, "previewEmail", requestId, candidateRef] as const,
+  suggestions: (requestId: string, params?: InterviewSuggestionsParams) =>
+    [...interviewPlanningKeys.all, "suggestions", requestId, params] as const,
 };
 
 /**
@@ -416,3 +462,23 @@ export function useBypassInterview(requestId: string) {
     },
   });
 }
+
+/**
+ * Hook 6: Interview Suggestions Hook with in-place keepPreviousData re-ranking
+ * Note: Keeps previous suggestions during recomputation to prevent list blanking.
+ */
+export function useInterviewSuggestions(
+  requestId: string,
+  params?: InterviewSuggestionsParams,
+  options?: Partial<UseQueryOptions<InterviewSuggestionsResponse>>
+) {
+  return useQuery({
+    queryKey: interviewPlanningKeys.suggestions(requestId, params),
+    queryFn: () => interviewPlanningApi.getSuggestions(requestId, params),
+    enabled: Boolean(requestId),
+    placeholderData: (prev) => prev,
+    staleTime: 30 * 1000,
+    ...options,
+  });
+}
+

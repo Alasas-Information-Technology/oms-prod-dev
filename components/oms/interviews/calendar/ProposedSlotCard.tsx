@@ -1,8 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { X, Users } from "lucide-react";
+import { X, Users, Link2 } from "lucide-react";
 import { InterviewProposedSlot, SlotCollision } from "@/src/types/interview-planning";
+import { getCandidateColor } from "@/src/lib/interview-planning/candidate-colors";
 import {
   TOTAL_MINUTES,
   utcIsoToMinutesFrom8am,
@@ -16,22 +17,32 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-interface ProposedSlotCardProps {
+export interface ProposedSlotCardProps {
   slot: InterviewProposedSlot;
+  candidateRef: string;
+  candidateIndex?: number;
+  candidateTimezone?: string;
+  isOffshore?: boolean;
+  isActiveCandidate?: boolean;
   collision?: SlotCollision;
-  candidateTimezone: string;
-  isOffshore: boolean;
-  onRemove: (startUtc: string) => void;
+  onRemove: (startUtc: string, candidateRef: string) => void;
   isReadOnly?: boolean;
+  overlapIndex?: number;
+  overlapCount?: number;
 }
 
 export const ProposedSlotCard = React.memo(function ProposedSlotCard({
   slot,
+  candidateRef,
+  candidateIndex = 0,
+  candidateTimezone = "Asia/Dubai",
+  isOffshore = false,
+  isActiveCandidate = false,
   collision,
-  candidateTimezone,
-  isOffshore,
   onRemove,
   isReadOnly = false,
+  overlapIndex = 0,
+  overlapCount = 1,
 }: ProposedSlotCardProps) {
   const minutesFrom8am = utcIsoToMinutesFrom8am(slot.start);
   const topPercent = (minutesFrom8am / TOTAL_MINUTES) * 100;
@@ -42,53 +53,89 @@ export const ProposedSlotCard = React.memo(function ProposedSlotCard({
     ? formatSlotTimeRange(slot.start, slot.durationMinutes, candidateTimezone)
     : null;
 
+  const color = getCandidateColor(candidateIndex);
+
+  // Position calculation for overlapping slots on the same day
+  const isMultiOverlap = overlapCount > 1;
+  const widthStyle = isMultiOverlap
+    ? `calc(${(1 / overlapCount) * 100}% - 4px)`
+    : undefined;
+  const leftStyle = isMultiOverlap
+    ? `calc(${(overlapIndex / overlapCount) * 100}% + 2px)`
+    : undefined;
+
   return (
     <div
       style={{
         top: `${Math.max(0, topPercent)}%`,
-        height: `${Math.max(3.5, heightPercent)}%`,
+        height: `${Math.max(4.2, heightPercent)}%`,
+        ...(isMultiOverlap && {
+          width: widthStyle,
+          left: leftStyle,
+        }),
       }}
       className={cn(
-        "absolute inset-x-1 z-20 rounded-md bg-primary text-primary-foreground p-1.5 shadow-sm select-none flex flex-col justify-between overflow-hidden group transition-all",
-        collision && "ring-2 ring-amber-400 dark:ring-amber-500"
+        "absolute z-20 rounded-md p-1.5 shadow-2xs select-none flex flex-col justify-between overflow-hidden group transition-all",
+        !isMultiOverlap && "inset-x-1",
+        color.classes.borderLeft,
+        color.classes.surface,
+        "border border-border/70 border-l-0",
+        isActiveCandidate && "ring-1 ring-primary/40 shadow-xs",
+        collision && "ring-2 ring-amber-400/90 dark:ring-amber-500/90"
       )}
+      role="article"
+      aria-label={`Slot for ${candidateRef} at ${gstRange}`}
     >
+      {/* Top Header: Candidate Ref Badge & Remove Button */}
       <div className="flex items-start justify-between gap-1">
-        <div className="min-w-0 leading-tight">
-          <span className="font-semibold text-[11px] block truncate text-primary-foreground">
+        <div className="flex items-center gap-1 min-w-0">
+          <span
+            className={cn(
+              "px-1 py-0.2 rounded font-mono font-bold text-[9px] tracking-tight shrink-0 shadow-2xs",
+              color.classes.avatar
+            )}
+          >
+            {candidateRef}
+          </span>
+          <span className="font-semibold text-[10.5px] text-foreground block truncate leading-tight">
             {gstRange}
           </span>
-          {candidateRange && (
-            <span className="text-[10px] text-primary-foreground/80 block truncate font-medium">
-              {candidateRange}
-            </span>
-          )}
         </div>
 
         {!isReadOnly && (
           <button
             type="button"
-            title="Remove proposed slot"
+            title={`Remove slot for ${candidateRef}`}
             onClick={(e) => {
               e.stopPropagation();
-              onRemove(slot.start);
+              onRemove(slot.start, candidateRef);
             }}
-            className="rounded p-0.5 text-primary-foreground/80 hover:text-white hover:bg-black/20 shrink-0 transition-colors cursor-pointer"
+            className="rounded p-0.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 shrink-0 transition-colors cursor-pointer"
           >
-            <X className="size-3.5" />
+            <X className="size-3" />
           </button>
         )}
       </div>
 
-      <div className="flex items-center justify-between text-[10px] text-primary-foreground/85 mt-auto pt-0.5">
-        <span className="font-mono tabular-nums">{slot.durationMinutes}m</span>
+      {/* Middle: Offshore Local Time if applicable */}
+      {candidateRange && (
+        <div className="text-[9.5px] text-muted-foreground block truncate font-medium pl-0.5">
+          {candidateRange}
+        </div>
+      )}
+
+      {/* Bottom Footer: Duration & Collision Indicator */}
+      <div className="flex items-center justify-between text-[10px] text-muted-foreground mt-auto pt-0.5">
+        <span className="font-mono tabular-nums text-[9.5px]">
+          {slot.durationMinutes}m
+        </span>
 
         {collision && (
-          <TooltipProvider delayDuration={200}>
+          <TooltipProvider delayDuration={150}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <span className="inline-flex items-center gap-0.5 px-1 py-0.2 rounded bg-amber-400/30 text-white font-medium text-[9px]">
-                  <Users className="size-2.5" />
+                <span className="inline-flex items-center gap-0.5 px-1 py-0.2 rounded bg-amber-200/60 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 font-medium text-[8.5px] border border-amber-300 dark:border-amber-700/60">
+                  <Link2 className="size-2.5" />
                   <span>{collision.alsoOfferedTo.join(", ")}</span>
                 </span>
               </TooltipTrigger>

@@ -327,6 +327,100 @@ POST /api/v1/requests/{requestId}/interviews/planning/{candidateRef}/bypass-requ
 
 ---
 
+### 6. Get Interview Slot Suggestions (Automated Ranking Engine)
+
+Computes real-time calendar intersection and multi-factor ranking across all panel interviewers and candidate constraints.
+
+> 🚨 **REQUIREMENT 1 (MANDATORY INVARIANT) — RANKING IS SERVER-SIDE:**  
+> **The client NEVER scores, filters, or sorts suggestions.** Ranking, weighting, and tie-breaking are executed strictly on the server. If ranking were performed client-side, the ordering would inevitably diverge from the algorithmic reasons displayed beside each card, causing the interviewer to trust an invalid recommendation.
+
+> 🚨 **REQUIREMENT 5 (MANDATORY INVARIANT) — DISCONNECTED AVAILABILITY HANDLING:**  
+> **When interviewer calendar availability is not connected (`availabilityConnected: false`), the server MUST return an EMPTY list (`"suggestions": []`).**  
+> **NEVER return every slot as free.** Returning all slots as free when availability is unchecked is an active falsehood that causes immediate double-booking and calendar conflicts.
+
+```http
+GET /api/v1/requests/{requestId}/interviews/suggestions?from=2026-08-10T00:00:00Z&durationMinutes=45&method=ONLINE&interviewerIds=usr-091,usr-104,usr-118&candidateRef=C-014&limit=10
+```
+
+#### Query Parameters
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `from` | string (ISO UTC) | Yes | Earliest date to search from (defaults to 2 working days out) |
+| `durationMinutes` | number | Yes | Interview duration in minutes (e.g. 45, 60) |
+| `method` | string | Yes | `ONLINE` or `PHYSICAL` |
+| `interviewerIds` | string | Yes | Comma-separated user IDs of required panel interviewers |
+| `candidateRef` | string | No | Candidate reference to factor in specific working hours / timezone |
+| `limit` | number | No | Maximum number of suggestions to return (default: 10) |
+
+#### Response (`200 OK`)
+```jsonc
+{
+  "suggestions": [
+    {
+      "slotId": "sug-20260811-1000",
+      "start": "2026-08-11T06:00:00Z", // 10:00 GST
+      "durationMinutes": 45,
+      "score": 0.96,
+      "rank": 1,
+      "isBestMatch": true, // Top card ONLY
+      "availability": [
+        { "userId": "usr-091", "name": "Noura Al Mazrouei", "free": true },
+        { "userId": "usr-104", "name": "Yousef Al Falasi", "free": true },
+        { "userId": "usr-118", "name": "Omar Al Hashmi", "free": true }
+      ],
+      "allFree": true,
+      "reasons": ["ALL_INTERVIEWERS_FREE", "MORNING", "FOUR_DAYS_OUT", "WITHIN_CANDIDATE_HOURS"],
+      "candidateLocalTime": {
+        "timezone": "Asia/Kolkata",
+        "start": "11:30",
+        "end": "12:15"
+      },
+      "warnings": []
+    },
+    {
+      "slotId": "sug-20260810-1100",
+      "start": "2026-08-10T07:00:00Z", // 11:00 GST
+      "durationMinutes": 45,
+      "score": 0.78,
+      "rank": 4,
+      "isBestMatch": false,
+      "availability": [
+        { "userId": "usr-091", "name": "Noura Al Mazrouei", "free": true },
+        { "userId": "usr-104", "name": "Yousef Al Falasi", "free": true },
+        { "userId": "usr-118", "name": "Omar Al Hashmi", "free": false, "reason": "Budget Review" }
+      ],
+      "allFree": false,
+      "reasons": ["MORNING", "TWO_DAYS_OUT"],
+      "warnings": ["Omar Al Hashmi is busy (Budget Review)"]
+    }
+  ],
+  "totalFound": 9,
+  "availabilityConnected": true,
+  "computedAt": "2026-08-06T09:12:00Z"
+}
+```
+
+#### Disconnected Response (`200 OK`)
+When calendar integration is disconnected, the server safely responds with:
+```jsonc
+{
+  "suggestions": [],
+  "totalFound": 0,
+  "availabilityConnected": false,
+  "computedAt": "2026-08-06T09:12:00Z"
+}
+```
+
+#### The Six Suggestion Engine Requirements & Rationale
+1. **Ranking is Server-Side:** Ranking is governed by multi-variable optimization (overlap count, working hour boundaries, day-of-week clustering, proximity to earliest date). The client renders cards according to their server rank and NEVER re-sorts.
+2. **`reasons` are Codes, Not Hardcoded Sentences:** The server returns standardized token codes (`ALL_INTERVIEWERS_FREE`, `MORNING`, `FOUR_DAYS_OUT`, `WITHIN_CANDIDATE_HOURS`, `BACK_TO_BACK`). The client owns the presentation string to enable locale translations, formatting, and responsive abbreviation.
+3. **Honours Candidate Working Hours & Timezone:** Converts proposed UTC slots to the candidate’s timezone. Slots falling outside standard candidate hours (08:00–18:00 local) are penalized or omitted.
+4. **Slots Already in a Plan are Excluded:** The engine queries existing drafts and confirmations across all candidates in the requisition. Any slot currently in a plan is excluded from suggestion calculation to eliminate self-collisions.
+5. **Empty List When Disconnected:** If the calendar provider integration is down or unauthorized (`availabilityConnected: false`), the server returns `[]`. It is forbidden to assume interviewers are free when data cannot be verified.
+6. **Recompute on Every Frame Change (No Stale Cross-Parameter Caching):** Every modification to the panel, duration, date, or method triggers a fresh recompute. Results are not cached across differing parameter sets.
+
+---
+
 ## Server Requirements & Architectural Rationale
 
 ### 1. All Slot Times Are UTC ISO Strings

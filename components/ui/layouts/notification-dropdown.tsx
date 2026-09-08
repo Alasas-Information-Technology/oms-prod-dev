@@ -55,7 +55,7 @@ export default function NotificationsDrawer() {
             type="button"
             variant="ghost"
             size="icon"
-            className="h-8 w-8 p-0 text-white/40 hover:text-white rounded-lg cursor-pointer"
+            className="h-8 w-8 p-0 text-white/80 dark:text-foreground/80 hover:text-white dark:hover:text-foreground hover:bg-white/10 dark:hover:bg-white/5 rounded-lg cursor-pointer"
             aria-label="Notifications"
           >
             <Icon icon="line-md:bell-filled" className="h-4.5 w-4.5" />

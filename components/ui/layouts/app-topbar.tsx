@@ -24,7 +24,7 @@ export function AppTopbar() {
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 p-0"
+                    className="h-8 w-8 p-0 text-white/80 dark:text-foreground/80 hover:text-white dark:hover:text-foreground hover:bg-white/10 dark:hover:bg-white/5 cursor-pointer"
                     onClick={toggleSidebar}
                     aria-label="Toggle sidebar"
                 >

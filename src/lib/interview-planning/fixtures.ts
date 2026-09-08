@@ -557,3 +557,243 @@ export const MOCK_INTERVIEW_PLANNING_FIXTURES: Record<string, InterviewPlanningR
   "OMS-2026-RESCHEDULE": FIXTURE_INTERVIEW_RESCHEDULING,
   "OMS-2026-READONLY": FIXTURE_INTERVIEW_READONLY,
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Task 2: Suggestions Fixtures (UX Parts 1.1, 4.2, 9)
+// ─────────────────────────────────────────────────────────────────────────────
+
+import { InterviewSuggestionsResponse, InterviewSuggestion } from "@/src/types/interview-planning";
+
+export const MOCK_SUGGESTIONS_NINE: InterviewSuggestion[] = [
+  // 3 suggestions with ALL interviewers free (allFree: true)
+  {
+    slotId: "sug-20260811-1000",
+    start: "2026-08-11T06:00:00Z", // Tue 11 Aug 10:00 GST
+    durationMinutes: 45,
+    score: 0.96,
+    rank: 1,
+    isBestMatch: true, // "Best match" on the top card ONLY
+    availability: [
+      { userId: "usr-091", name: "Noura Al Mazrouei", free: true },
+      { userId: "usr-104", name: "Yousef Al Falasi", free: true },
+      { userId: "usr-118", name: "Omar Al Hashmi", free: true },
+    ],
+    allFree: true,
+    reasons: ["ALL_INTERVIEWERS_FREE", "MORNING", "FOUR_DAYS_OUT", "WITHIN_CANDIDATE_HOURS"],
+    candidateLocalTime: {
+      timezone: "Asia/Kolkata",
+      start: "11:30",
+      end: "12:15",
+    },
+    warnings: [],
+  },
+  {
+    slotId: "sug-20260812-1030",
+    start: "2026-08-12T06:30:00Z", // Wed 12 Aug 10:30 GST
+    durationMinutes: 45,
+    score: 0.92,
+    rank: 2,
+    isBestMatch: false,
+    availability: [
+      { userId: "usr-091", name: "Noura Al Mazrouei", free: true },
+      { userId: "usr-104", name: "Yousef Al Falasi", free: true },
+      { userId: "usr-118", name: "Omar Al Hashmi", free: true },
+    ],
+    allFree: true,
+    reasons: ["ALL_INTERVIEWERS_FREE", "MORNING", "FIVE_DAYS_OUT", "WITHIN_CANDIDATE_HOURS"],
+    candidateLocalTime: {
+      timezone: "Asia/Kolkata",
+      start: "12:00",
+      end: "12:45",
+    },
+    warnings: [],
+  },
+  {
+    slotId: "sug-20260813-1400",
+    start: "2026-08-13T10:00:00Z", // Thu 13 Aug 14:00 GST
+    durationMinutes: 45,
+    score: 0.88,
+    rank: 3,
+    isBestMatch: false,
+    availability: [
+      { userId: "usr-091", name: "Noura Al Mazrouei", free: true },
+      { userId: "usr-104", name: "Yousef Al Falasi", free: true },
+      { userId: "usr-118", name: "Omar Al Hashmi", free: true },
+    ],
+    allFree: true,
+    reasons: ["ALL_INTERVIEWERS_FREE", "AFTERNOON", "WITHIN_CANDIDATE_HOURS"],
+    candidateLocalTime: {
+      timezone: "Asia/Kolkata",
+      start: "15:30",
+      end: "16:15",
+    },
+    warnings: [],
+  },
+
+  // 4 suggestions with ONE interviewer busy (rendered at 85% opacity, naming who is busy)
+  {
+    slotId: "sug-20260810-1100",
+    start: "2026-08-10T07:00:00Z", // Mon 10 Aug 11:00 GST
+    durationMinutes: 45,
+    score: 0.79,
+    rank: 4,
+    isBestMatch: false,
+    availability: [
+      { userId: "usr-091", name: "Noura Al Mazrouei", free: true },
+      { userId: "usr-104", name: "Yousef Al Falasi", free: true },
+      { userId: "usr-118", name: "Omar Al Hashmi", free: false, reason: "Budget Review" },
+    ],
+    allFree: false,
+    reasons: ["MORNING", "TWO_DAYS_OUT", "WITHIN_CANDIDATE_HOURS"],
+    candidateLocalTime: {
+      timezone: "Asia/Kolkata",
+      start: "12:30",
+      end: "13:15",
+    },
+    warnings: ["Omar Al Hashmi is busy (Budget Review)"],
+  },
+  {
+    slotId: "sug-20260811-1400",
+    start: "2026-08-11T10:00:00Z", // Tue 11 Aug 14:00 GST
+    durationMinutes: 45,
+    score: 0.75,
+    rank: 5,
+    isBestMatch: false,
+    availability: [
+      { userId: "usr-091", name: "Noura Al Mazrouei", free: true },
+      { userId: "usr-104", name: "Yousef Al Falasi", free: false, reason: "Client Onboarding" },
+      { userId: "usr-118", name: "Omar Al Hashmi", free: true },
+    ],
+    allFree: false,
+    reasons: ["AFTERNOON", "FOUR_DAYS_OUT", "WITHIN_CANDIDATE_HOURS"],
+    candidateLocalTime: {
+      timezone: "Asia/Kolkata",
+      start: "15:30",
+      end: "16:15",
+    },
+    warnings: ["Yousef Al Falasi is busy (Client Onboarding)"],
+  },
+  {
+    slotId: "sug-20260812-1500",
+    start: "2026-08-12T11:00:00Z", // Wed 12 Aug 15:00 GST
+    durationMinutes: 45,
+    score: 0.72,
+    rank: 6,
+    isBestMatch: false,
+    availability: [
+      { userId: "usr-091", name: "Noura Al Mazrouei", free: true },
+      { userId: "usr-104", name: "Yousef Al Falasi", free: true },
+      { userId: "usr-118", name: "Omar Al Hashmi", free: false, reason: "Department All-Hands" },
+    ],
+    allFree: false,
+    reasons: ["AFTERNOON", "FIVE_DAYS_OUT", "WITHIN_CANDIDATE_HOURS"],
+    candidateLocalTime: {
+      timezone: "Asia/Kolkata",
+      start: "16:30",
+      end: "17:15",
+    },
+    warnings: ["Omar Al Hashmi is busy (Department All-Hands)"],
+  },
+  {
+    slotId: "sug-20260813-1100",
+    start: "2026-08-13T07:00:00Z", // Thu 13 Aug 11:00 GST
+    durationMinutes: 45,
+    score: 0.70,
+    rank: 7,
+    isBestMatch: false,
+    availability: [
+      { userId: "usr-091", name: "Noura Al Mazrouei", free: false, reason: "Architecture Guild" },
+      { userId: "usr-104", name: "Yousef Al Falasi", free: true },
+      { userId: "usr-118", name: "Omar Al Hashmi", free: true },
+    ],
+    allFree: false,
+    reasons: ["MORNING", "WITHIN_CANDIDATE_HOURS"],
+    candidateLocalTime: {
+      timezone: "Asia/Kolkata",
+      start: "12:30",
+      end: "13:15",
+    },
+    warnings: ["Noura Al Mazrouei is busy (Architecture Guild)"],
+  },
+
+  // 2 suggestions with TWO interviewers busy (rendered at 85% opacity, naming who is busy)
+  {
+    slotId: "sug-20260810-1500",
+    start: "2026-08-10T11:00:00Z", // Mon 10 Aug 15:00 GST
+    durationMinutes: 45,
+    score: 0.55,
+    rank: 8,
+    isBestMatch: false,
+    availability: [
+      { userId: "usr-091", name: "Noura Al Mazrouei", free: true },
+      { userId: "usr-104", name: "Yousef Al Falasi", free: false, reason: "Vendor Sync" },
+      { userId: "usr-118", name: "Omar Al Hashmi", free: false, reason: "Steering Committee" },
+    ],
+    allFree: false,
+    reasons: ["AFTERNOON", "TWO_DAYS_OUT"],
+    candidateLocalTime: {
+      timezone: "Asia/Kolkata",
+      start: "16:30",
+      end: "17:15",
+    },
+    warnings: ["Yousef Al Falasi and Omar Al Hashmi are busy"],
+  },
+  {
+    slotId: "sug-20260812-0900",
+    start: "2026-08-12T05:00:00Z", // Wed 12 Aug 09:00 GST
+    durationMinutes: 45,
+    score: 0.50,
+    rank: 9,
+    isBestMatch: false,
+    availability: [
+      { userId: "usr-091", name: "Noura Al Mazrouei", free: false, reason: "Executive Standup" },
+      { userId: "usr-104", name: "Yousef Al Falasi", free: false, reason: "Weekly Audit" },
+      { userId: "usr-118", name: "Omar Al Hashmi", free: true },
+    ],
+    allFree: false,
+    reasons: ["MORNING"],
+    candidateLocalTime: {
+      timezone: "Asia/Kolkata",
+      start: "10:30",
+      end: "11:15",
+    },
+    warnings: ["Noura Al Mazrouei and Yousef Al Falasi are busy"],
+  },
+];
+
+export const FIXTURE_SUGGESTIONS_REFERENCE: InterviewSuggestionsResponse = {
+  suggestions: MOCK_SUGGESTIONS_NINE,
+  totalFound: 9,
+  availabilityConnected: true,
+  computedAt: "2026-08-06T09:12:00Z",
+};
+
+export const FIXTURE_SUGGESTIONS_OFFSHORE: InterviewSuggestionsResponse = {
+  suggestions: MOCK_SUGGESTIONS_NINE.map((s) => ({
+    ...s,
+    candidateLocalTime: {
+      timezone: "Asia/Kolkata",
+      start: s.candidateLocalTime?.start || "11:30",
+      end: s.candidateLocalTime?.end || "12:15",
+    },
+  })),
+  totalFound: 9,
+  availabilityConnected: true,
+  computedAt: "2026-08-06T09:12:00Z",
+};
+
+export const FIXTURE_SUGGESTIONS_DISCONNECTED: InterviewSuggestionsResponse = {
+  suggestions: [], // EMPTY list when availability is not connected per Requirement 5
+  totalFound: 0,
+  availabilityConnected: false,
+  computedAt: "2026-08-06T09:12:00Z",
+};
+
+export const MOCK_INTERVIEW_SUGGESTIONS_FIXTURES: Record<string, InterviewSuggestionsResponse> = {
+  "OMS-2026-0148": FIXTURE_SUGGESTIONS_REFERENCE,
+  "OMS-2026-OFFSHORE": FIXTURE_SUGGESTIONS_OFFSHORE,
+  "OMS-2026-DISCONNECTED": FIXTURE_SUGGESTIONS_DISCONNECTED,
+  "OMS-2026-RESCHEDULE": FIXTURE_SUGGESTIONS_REFERENCE,
+  "OMS-2026-READONLY": FIXTURE_SUGGESTIONS_REFERENCE,
+};
+
