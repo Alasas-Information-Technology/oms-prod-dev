@@ -6,3 +6,6 @@ export * from "./calendar";
 export * from "./settings";
 export * from "./preview";
 export * from "./dialogs";
+export * from "./suggestions";
+export * from "./tray";
+

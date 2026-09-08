@@ -54,6 +54,7 @@ interface InterviewProgressRailProps {
   totalSteps?: number; // default 5
   stepLabel?: string; // default "Propose slots"
   className?: string;
+  steps?: LifecycleStep[];
 }
 
 export function InterviewProgressRail({
@@ -61,8 +62,10 @@ export function InterviewProgressRail({
   totalSteps = 5,
   stepLabel = "Propose slots",
   className,
+  steps,
 }: InterviewProgressRailProps) {
   const [isOpen, setIsOpen] = React.useState(false);
+  const activeSteps = steps || LIFECYCLE_STEPS;
 
   return (
     <div
@@ -133,7 +136,7 @@ export function InterviewProgressRail({
             {/* Label right-aligned: 11px muted */}
             <div className="flex items-center gap-1.5 shrink-0 ml-auto text-[11px] text-muted-foreground group-hover:text-foreground transition-colors font-medium">
               <span>
-                {stepLabel} · {currentStep} of {totalSteps}
+                {`${stepLabel} · ${currentStep} of ${totalSteps}`}
               </span>
             </div>
           </button>
@@ -158,7 +161,7 @@ export function InterviewProgressRail({
           </div>
 
           <div className="space-y-2.5">
-            {LIFECYCLE_STEPS.map((step) => {
+            {activeSteps.map((step) => {
               const isCompleted = step.number < currentStep;
               const isCurrent = step.number === currentStep;
 

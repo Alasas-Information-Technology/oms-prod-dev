@@ -9,34 +9,47 @@ import {
   AlertCircle,
   RotateCcw,
   ArrowRight,
+  Sparkles,
+  Calendar as CalendarIcon,
 } from "lucide-react";
 import {
   useInterviewPlanning,
   useInterviewDraft,
   useBypassInterview,
   useSendInterviewSlots,
+  useInterviewSuggestions,
 } from "@/src/lib/interview-planning/api";
 import {
   InterviewProposedSlot,
   InterviewProposalSettings,
   InterviewCandidateStatus,
+  SlotCollision,
 } from "@/src/types/interview-planning";
 import {
   PageBarBreadcrumbs,
   PageBarActions,
 } from "@/components/ui/layouts/page-bar-context";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { CandidateRail } from "./CandidateRail";
 import { InterviewProgressRail } from "./rail/InterviewProgressRail";
 import { InterviewFrameBar, InterviewFrameState } from "./frame/InterviewFrameBar";
 import {
   WeekCalendar,
   ProposedSlotsList,
+  CalendarCandidateSlot,
   formatSlotTimeRange,
   getSlotDateLabel,
 } from "./calendar";
+import { SuggestionList } from "./suggestions";
+import { InterviewPlanTray } from "./tray";
+import { getCandidateColor } from "@/src/lib/interview-planning/candidate-colors";
 import { InterviewSettingsPanel } from "./settings";
-import { SendConfirmationModal, SendErrorState } from "./dialogs";
+import {
+  SendConfirmationModal,
+  SendErrorState,
+  InterviewShortcutsModal,
+} from "./dialogs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -120,10 +133,76 @@ export function InterviewPlanningWorkspace({
   >({});
   const [justSentCandidateRef, setJustSentCandidateRef] = React.useState<string | null>(null);
 
+  // Tab state with per-user persistence per TASK 1 & UX §4.4
+  const TAB_STORAGE_KEY = "oms_interview_planning_tab";
+  const [activeTab, setActiveTab] = React.useState<"suggested" | "calendar">("suggested");
+
+  React.useEffect(() => {
+    try {
+      const savedTab = localStorage.getItem(TAB_STORAGE_KEY);
+      if (savedTab === "suggested" || savedTab === "calendar") {
+        setActiveTab(savedTab);
+      }
+    } catch {
+      // LocalStorage might be restricted
+    }
+  }, []);
+
+  const handleSelectTab = React.useCallback((tab: "suggested" | "calendar") => {
+    setActiveTab(tab);
+    try {
+      localStorage.setItem(TAB_STORAGE_KEY, tab);
+    } catch {
+      // Ignore
+    }
+  }, []);
+
   // Map of candidateRef -> InterviewProposedSlot[] to track in-progress changes per candidate
   const [candidateSlotsMap, setCandidateSlotsMap] = React.useState<
     Record<string, InterviewProposedSlot[]>
   >({});
+
+  // 20-step undo history stack covering all plan changes (TASK 4)
+  interface PlanHistorySnapshot {
+    candidateSlotsMap: Record<string, InterviewProposedSlot[]>;
+    dismissedSlotIds: string[];
+    description: string;
+  }
+  const [undoStack, setUndoStack] = React.useState<PlanHistorySnapshot[]>([]);
+
+  // Suggestion list dismissals & keyboard navigation state (TASK 3 & 5)
+  const [dismissedSlotIds, setDismissedSlotIds] = React.useState<string[]>([]);
+  const [focusedSuggestionIndex, setFocusedSuggestionIndex] = React.useState<number>(-1);
+  const [showShortcutsModal, setShowShortcutsModal] = React.useState<boolean>(false);
+
+  // Push a state snapshot before mutation (max 20 steps)
+  const pushUndoSnapshot = React.useCallback(
+    (description: string) => {
+      setUndoStack((prev) => {
+        const snapshot: PlanHistorySnapshot = {
+          candidateSlotsMap: JSON.parse(JSON.stringify(candidateSlotsMap)),
+          dismissedSlotIds: [...dismissedSlotIds],
+          description,
+        };
+        return [...prev.slice(-19), snapshot];
+      });
+    },
+    [candidateSlotsMap, dismissedSlotIds]
+  );
+
+  // Undo the last plan change (TASK 4)
+  const handleUndo = React.useCallback(() => {
+    if (undoStack.length === 0) {
+      toast.info("Nothing to undo.");
+      return;
+    }
+    const last = undoStack[undoStack.length - 1];
+    setUndoStack((prev) => prev.slice(0, -1));
+    setCandidateSlotsMap(last.candidateSlotsMap);
+    setDismissedSlotIds(last.dismissedSlotIds);
+    setHasUnsavedChanges(true);
+    toast.success(`Undid: ${last.description}`);
+  }, [undoStack]);
 
   // Active candidate object
   const activeCandidate = React.useMemo(() => {
@@ -154,11 +233,14 @@ export function InterviewPlanningWorkspace({
   const [frameOverrides, setFrameOverrides] = React.useState<Partial<InterviewFrameState>>({});
   const [isRecomputing, setIsRecomputing] = React.useState(false);
 
+  const defaultInterviewerIds = React.useMemo(() => {
+    return data?.interviewers?.map((i) => i.userId) || [];
+  }, [data?.interviewers]);
+
   const effectiveFrame: InterviewFrameState = React.useMemo(() => {
     return {
       selectedInterviewerIds:
-        frameOverrides.selectedInterviewerIds ??
-        (data?.interviewers?.map((i) => i.userId) || []),
+        frameOverrides.selectedInterviewerIds ?? defaultInterviewerIds,
       durationMinutes: frameOverrides.durationMinutes ?? 45,
       method:
         frameOverrides.method ??
@@ -172,7 +254,7 @@ export function InterviewPlanningWorkspace({
     };
   }, [
     frameOverrides,
-    data?.interviewers,
+    defaultInterviewerIds,
     data?.settings?.locations,
     activeCandidate?.methodPreference,
   ]);
@@ -193,14 +275,266 @@ export function InterviewPlanningWorkspace({
   const handleSlotsChange = React.useCallback(
     (newSlots: InterviewProposedSlot[]) => {
       if (!activeCandidate) return;
+      pushUndoSnapshot(`Update slots for ${activeCandidate.candidateRef}`);
       setCandidateSlotsMap((prev) => ({
         ...prev,
         [activeCandidate.candidateRef]: newSlots,
       }));
       setHasUnsavedChanges(true);
     },
-    [activeCandidate]
+    [activeCandidate, pushUndoSnapshot]
   );
+
+  // Suggestions query parameters derived from effective frame
+  const suggestionsParams = React.useMemo(() => {
+    return {
+      from: effectiveFrame.earliestDate,
+      durationMinutes: effectiveFrame.durationMinutes,
+      method: effectiveFrame.method,
+      interviewerIds: effectiveFrame.selectedInterviewerIds,
+      candidateRef: activeCandidate?.candidateRef,
+      limit: 10,
+    };
+  }, [
+    effectiveFrame.earliestDate,
+    effectiveFrame.durationMinutes,
+    effectiveFrame.method,
+    effectiveFrame.selectedInterviewerIds,
+    activeCandidate?.candidateRef,
+  ]);
+
+  // Fetch server-ranked suggestions with keepPreviousData for in-place re-ranking
+  const {
+    data: suggestionsData,
+    isLoading: isSuggestionsLoading,
+    isFetching: isSuggestionsFetching,
+  } = useInterviewSuggestions(requestId, suggestionsParams);
+
+  // Handle adding a slot (from suggestion or calendar) to a candidate's plan
+  const handleAddSuggestionToPlan = React.useCallback(
+    (
+      slot: { start: string; durationMinutes: number },
+      targetCandidateRef: string
+    ) => {
+      const existingSlots =
+        candidateSlotsMap[targetCandidateRef] ??
+        data?.candidates.find((c) => c.candidateRef === targetCandidateRef)
+          ?.proposal?.slots ??
+        [];
+
+      // Guard against duplicate slots
+      if (existingSlots.some((s) => s.start === slot.start)) {
+        toast.info(`Slot is already proposed for ${targetCandidateRef}.`);
+        return;
+      }
+
+      // Guard against exceeding maximum 3 proposed slots
+      if (existingSlots.length >= 3) {
+        toast.warning(
+          `${targetCandidateRef} already has 3 interview slots proposed.`
+        );
+        return;
+      }
+
+      pushUndoSnapshot(
+        `Add ${getSlotDateLabel(slot.start, effectiveFrame.timezone)} to ${targetCandidateRef}`
+      );
+
+      const updated = [...existingSlots, slot];
+      setCandidateSlotsMap((prev) => ({
+        ...prev,
+        [targetCandidateRef]: updated,
+      }));
+      setHasUnsavedChanges(true);
+      toast.success(
+        `Added ${getSlotDateLabel(slot.start, effectiveFrame.timezone)} to ${targetCandidateRef}`
+      );
+    },
+    [candidateSlotsMap, data?.candidates, effectiveFrame.timezone, pushUndoSnapshot]
+  );
+
+  // Handle removing a slot from a candidate's plan
+  const handleRemoveSlot = React.useCallback(
+    (startUtc: string, targetCandidateRef?: string) => {
+      const targetRef = targetCandidateRef || selectedCandidateRef;
+      if (!targetRef) return;
+
+      const existingSlots =
+        candidateSlotsMap[targetRef] ??
+        data?.candidates.find((c) => c.candidateRef === targetRef)?.proposal?.slots ??
+        [];
+
+      pushUndoSnapshot(`Remove slot from ${targetRef}`);
+
+      setCandidateSlotsMap((prev) => ({
+        ...prev,
+        [targetRef]: existingSlots.filter((s) => s.start !== startUtc),
+      }));
+      setHasUnsavedChanges(true);
+      toast.info(`Removed slot from ${targetRef}`);
+    },
+    [selectedCandidateRef, candidateSlotsMap, data?.candidates, pushUndoSnapshot]
+  );
+
+  // Handle dismissing a suggestion with undo support
+  const handleDismissSuggestion = React.useCallback(
+    (slotId: string) => {
+      pushUndoSnapshot("Dismiss suggestion");
+      setDismissedSlotIds((prev) => [...prev, slotId]);
+      toast.info("Suggestion dismissed.", {
+        action: {
+          label: "Undo",
+          onClick: handleUndo,
+        },
+      });
+    },
+    [handleUndo, pushUndoSnapshot]
+  );
+
+  // Handle restoring all dismissed suggestions with undo support
+  const handleRestoreDismissed = React.useCallback(() => {
+    pushUndoSnapshot("Restore dismissed suggestions");
+    setDismissedSlotIds([]);
+    toast.success("Restored dismissed suggestions.");
+  }, [pushUndoSnapshot]);
+
+  // Handle slots change from tray drag-and-drop
+  const handleTraySlotsChange = React.useCallback(
+    (cRef: string, newSlots: InterviewProposedSlot[]) => {
+      pushUndoSnapshot(`Update slots for ${cRef}`);
+      setCandidateSlotsMap((prev) => ({
+        ...prev,
+        [cRef]: newSlots,
+      }));
+      setHasUnsavedChanges(true);
+    },
+    [pushUndoSnapshot]
+  );
+
+  // Global keyboard shortcuts per UX Part 8 & UI §3.2 (TASK 3)
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // 1. Inertness guard: inert while a dialog or text input has focus
+      const activeEl = document.activeElement;
+      const isInput =
+        activeEl instanceof HTMLInputElement ||
+        activeEl instanceof HTMLTextAreaElement ||
+        (activeEl as HTMLElement)?.isContentEditable;
+      const isDialogOpen =
+        Boolean(document.querySelector('[role="dialog"]')) ||
+        Boolean(document.querySelector('[role="alertdialog"]'));
+
+      if (isInput || isDialogOpen) {
+        return;
+      }
+
+      // 2. ⌘Z / Ctrl+Z (Undo last plan change)
+      if ((e.metaKey || e.ctrlKey) && (e.key === "z" || e.key === "Z") && !e.shiftKey) {
+        e.preventDefault();
+        handleUndo();
+        return;
+      }
+
+      // 3. 'C' (Toggle Calendar / Suggested times tabs)
+      if ((e.key === "c" || e.key === "C") && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        handleSelectTab(activeTab === "suggested" ? "calendar" : "suggested");
+        return;
+      }
+
+      // 4. '?' (Shortcut overlay)
+      if (e.key === "?" && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        setShowShortcutsModal(true);
+        return;
+      }
+
+      // 5. Tab (Switch active candidate in the tray)
+      if (
+        e.key === "Tab" &&
+        !e.metaKey &&
+        !e.ctrlKey &&
+        data?.candidates &&
+        data.candidates.length > 0
+      ) {
+        e.preventDefault();
+        const cands = data.candidates;
+        const currentIdx = cands.findIndex((c) => c.candidateRef === selectedCandidateRef);
+        const nextIdx = e.shiftKey
+          ? (currentIdx - 1 + cands.length) % cands.length
+          : (currentIdx + 1) % cands.length;
+        const nextCand = cands[nextIdx];
+        if (nextCand) {
+          setCandidateOverride(nextCand.candidateRef);
+          toast.info(`Active candidate: ${nextCand.candidateRef}`, { duration: 1500 });
+        }
+        return;
+      }
+
+      // 6. Suggestions tab specific shortcuts (only active in 'suggested' view)
+      if (activeTab === "suggested") {
+        const currentSuggestions = (suggestionsData?.suggestions || []).filter(
+          (s) => !dismissedSlotIds.includes(s.slotId)
+        );
+
+        // Arrow navigation (↑ / ↓)
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          setFocusedSuggestionIndex((prev) =>
+            prev < 0 ? 0 : Math.min(currentSuggestions.length - 1, prev + 1)
+          );
+          return;
+        }
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          setFocusedSuggestionIndex((prev) => (prev <= 0 ? 0 : prev - 1));
+          return;
+        }
+
+        // 'X' dismisses the focused suggestion
+        if ((e.key === "x" || e.key === "X") && !e.metaKey && !e.ctrlKey) {
+          if (currentSuggestions.length > 0) {
+            e.preventDefault();
+            const target =
+              currentSuggestions[focusedSuggestionIndex] || currentSuggestions[0];
+            if (target) {
+              handleDismissSuggestion(target.slotId);
+            }
+          }
+          return;
+        }
+
+        // '1' - '9' adds that suggestion to active candidate
+        const num = parseInt(e.key, 10);
+        if (!isNaN(num) && num >= 1 && num <= 9 && !e.metaKey && !e.ctrlKey) {
+          const target = currentSuggestions[num - 1];
+          if (target && activeCandidate) {
+            e.preventDefault();
+            handleAddSuggestionToPlan(
+              { start: target.start, durationMinutes: target.durationMinutes },
+              activeCandidate.candidateRef
+            );
+          }
+          return;
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    activeTab,
+    activeCandidate,
+    data?.candidates,
+    selectedCandidateRef,
+    suggestionsData?.suggestions,
+    dismissedSlotIds,
+    focusedSuggestionIndex,
+    handleAddSuggestionToPlan,
+    handleDismissSuggestion,
+    handleSelectTab,
+    handleUndo,
+  ]);
 
   // Next candidate with NOT_SENT status for post-send transition (Task 7)
   const otherNotSentCandidate = React.useMemo(() => {
@@ -230,6 +564,50 @@ export function InterviewPlanningWorkspace({
       };
     });
   }, [data, candidateSlotsMap, candidateStatusMap]);
+
+  // Multi-candidate slot entries across all candidates for the unified calendar (TASK 2)
+  const calendarCandidateSlots = React.useMemo<CalendarCandidateSlot[]>(() => {
+    if (!data?.candidates) return [];
+    const result: CalendarCandidateSlot[] = [];
+    data.candidates.forEach((c, idx) => {
+      const slots = candidateSlotsMap[c.candidateRef] ?? c.proposal?.slots ?? [];
+      slots.forEach((s) => {
+        result.push({
+          slot: s,
+          candidateRef: c.candidateRef,
+          candidateIndex: idx,
+          candidateTimezone: c.timezone,
+          isOffshore: c.isOffshore,
+          isActiveCandidate: c.candidateRef === selectedCandidateRef,
+        });
+      });
+    });
+    return result;
+  }, [data?.candidates, candidateSlotsMap, selectedCandidateRef]);
+
+  // Collisions computed dynamically across all planned candidate slots
+  const allCollisions = React.useMemo<SlotCollision[]>(() => {
+    const slotMap: Record<string, string[]> = {};
+    if (!data?.candidates) return data?.collisions || [];
+
+    data.candidates.forEach((c) => {
+      const slots = candidateSlotsMap[c.candidateRef] ?? c.proposal?.slots ?? [];
+      slots.forEach((s) => {
+        if (!slotMap[s.start]) slotMap[s.start] = [];
+        if (!slotMap[s.start].includes(c.candidateRef)) {
+          slotMap[s.start].push(c.candidateRef);
+        }
+      });
+    });
+
+    const collisions: SlotCollision[] = [];
+    for (const [start, refs] of Object.entries(slotMap)) {
+      if (refs.length > 1) {
+        collisions.push({ slotStart: start, alsoOfferedTo: refs });
+      }
+    }
+    return collisions.length > 0 ? collisions : data?.collisions || [];
+  }, [data?.candidates, data?.collisions, candidateSlotsMap]);
 
   // Map of candidateRef -> InterviewProposalSettings to track settings per candidate (Task 6)
   const [candidateSettingsMap, setCandidateSettingsMap] = React.useState<
@@ -472,7 +850,7 @@ export function InterviewPlanningWorkspace({
   const proposedSlotsCount = currentSlots.length;
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
+    <div className="flex flex-col min-h-full flex-1 bg-background text-foreground">
       {/* 1. Page Bar Breadcrumbs (Acts as page title per APP-SHELL-SPEC.md) */}
       <PageBarBreadcrumbs crumbs={breadcrumbs} />
 
@@ -480,6 +858,16 @@ export function InterviewPlanningWorkspace({
       {data.isMainInterviewer && (
         <PageBarActions>
           <div className="flex items-center gap-2">
+            {data.bypass?.available && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowBypassModal(true)}
+                className="h-9 px-3 text-xs font-medium text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/40 cursor-pointer"
+              >
+                Request bypass
+              </Button>
+            )}
             <Button
               variant="outline"
               size="sm"
@@ -530,16 +918,69 @@ export function InterviewPlanningWorkspace({
       {/* 3. Progress Rail per UX Part 3: 4px progress rail directly beneath breadcrumbs */}
       <InterviewProgressRail currentStep={2} totalSteps={5} stepLabel="Propose slots" />
 
-      {/* 4. Sub-line Header Band: Position & Shortlisted count */}
-      <div className="px-6 py-2 bg-muted/10 border-b border-border flex flex-wrap items-center justify-between gap-3 text-xs shrink-0">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="font-semibold text-foreground truncate">
-            {data.request.position}
-          </span>
-          <span className="text-muted-foreground">·</span>
-          <span className="text-muted-foreground font-medium whitespace-nowrap">
-            {data.request.shortlistedCount ?? data.candidates.length} shortlisted
-          </span>
+      {/* 4. Sub-line Header Band: Position & Shortlisted count & Candidate Quick Switcher */}
+      <div className="px-6 py-2.5 bg-muted/10 border-b border-border flex flex-wrap items-center justify-between gap-3 text-xs shrink-0">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-foreground truncate">
+              {data.request.position}
+            </span>
+            <span className="text-muted-foreground">·</span>
+            <span className="text-muted-foreground font-medium whitespace-nowrap">
+              {data.request.shortlistedCount ?? data.candidates.length} shortlisted
+            </span>
+          </div>
+
+          {/* Candidate Switcher Chips with prominent active highlight */}
+          {data.candidates && data.candidates.length > 0 && (
+            <div className="flex items-center gap-1.5 overflow-x-auto py-0.5" role="tablist" aria-label="Select active candidate">
+              <span className="text-muted-foreground text-[11px] font-medium mr-0.5 hidden sm:inline">Candidate:</span>
+              {data.candidates.map((cand, idx) => {
+                const isSelected = cand.candidateRef === selectedCandidateRef;
+                const candColor = getCandidateColor(idx);
+                const slotCount = candidateSlotsMap[cand.candidateRef]?.length ?? cand.proposal?.slots?.length ?? 0;
+                return (
+                  <button
+                    key={cand.candidateRef}
+                    type="button"
+                    onClick={() => handleCandidateSelection(cand.candidateRef)}
+                    role="tab"
+                    aria-selected={isSelected}
+                    className={cn(
+                      "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all cursor-pointer select-none",
+                      isSelected
+                        ? "bg-primary text-primary-foreground shadow-xs font-semibold ring-2 ring-primary/30"
+                        : "bg-muted/70 hover:bg-muted text-muted-foreground hover:text-foreground border border-border/80"
+                    )}
+                    title={`Select candidate ${cand.candidateRef} (or press Tab)`}
+                  >
+                    <span
+                      className={cn(
+                        "size-2 rounded-full shrink-0",
+                        isSelected ? "bg-primary-foreground" : candColor.classes.avatar
+                      )}
+                    />
+                    <span className="font-mono">{cand.candidateRef}</span>
+                    <span
+                      className={cn(
+                        "text-[10px] px-1 rounded-full font-mono",
+                        isSelected
+                          ? "bg-primary-foreground/20 text-primary-foreground"
+                          : "bg-muted text-muted-foreground"
+                      )}
+                    >
+                      {slotCount}/3
+                    </span>
+                    {isSelected && (
+                      <span className="text-[10px] uppercase font-bold tracking-wider opacity-90">
+                        Active
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {lastSavedAt && data.isMainInterviewer && (
@@ -599,17 +1040,8 @@ export function InterviewPlanningWorkspace({
           isRecomputing && "opacity-75"
         )}
       >
-        <div className="grid min-h-0 gap-6 xl:grid-cols-[280px_minmax(0,1fr)_320px]">
-          {/* Column 1: Candidate Rail (280px, own scroll) */}
-          <CandidateRail
-            candidates={candidatesWithLocalSlots}
-            selectedCandidateRef={selectedCandidateRef}
-            onSelectCandidate={handleCandidateSelection}
-            bypass={data.bypass}
-            onBypassClick={() => setShowBypassModal(true)}
-          />
-
-          {/* Column 2: Calendar Workspace & Proposed Slots List (IV3) */}
+        <div className="grid min-h-0 gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
+          {/* Main Working Area: Suggestions / Calendar */}
           <div className="min-w-0 flex flex-col">
             {/* Reschedule Banner (Task 5 & Fixture D) */}
             {activeCandidate?.status === "RESCHEDULING" && activeCandidate.withdrawnSlot && (
@@ -676,46 +1108,192 @@ export function InterviewPlanningWorkspace({
               </div>
             )}
 
-            <WeekCalendar
-              slots={currentSlots}
-              onSlotsChange={handleSlotsChange}
-              availability={data.availability}
-              interviewers={data.interviewers}
-              collisions={data.collisions}
-              candidateTimezone={activeCandidate?.timezone || "Asia/Dubai"}
-              isOffshore={activeCandidate?.isOffshore || false}
-              defaultDurationMinutes={data.settings.defaultDurationMinutes || 45}
-              isReadOnly={!data.isMainInterviewer}
-            />
+            {/* View Switcher: Underline Tab Pair per UX §4.4 & TASK 1 */}
+            <div className="flex items-center justify-between gap-4 mb-6 border-b border-border">
+              <div className="flex items-center gap-6">
+                <button
+                  type="button"
+                  onClick={() => handleSelectTab("suggested")}
+                  className={cn(
+                    "relative pb-3 pt-1 text-sm font-semibold transition-colors cursor-pointer flex items-center gap-2",
+                    activeTab === "suggested"
+                      ? "text-foreground after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-primary"
+                      : "text-muted-foreground hover:text-foreground after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-transparent"
+                  )}
+                  aria-label="View system proposed interview times"
+                >
+                  <Sparkles className="size-4 text-primary" />
+                  <span>Suggested times</span>
+                  {suggestionsData && (
+                    <Badge
+                      variant="secondary"
+                      className="text-[10px] px-1.5 py-0 h-4 font-mono font-bold"
+                    >
+                      {
+                        suggestionsData.suggestions.filter(
+                          (s) => !dismissedSlotIds.includes(s.slotId)
+                        ).length
+                      }
+                    </Badge>
+                  )}
+                </button>
 
-            <ProposedSlotsList
-              slots={currentSlots}
-              collisions={data.collisions}
-              candidateRef={activeCandidate?.candidateRef || ""}
-              candidateTimezone={activeCandidate?.timezone || "Asia/Dubai"}
-              isOffshore={activeCandidate?.isOffshore || false}
-              onRemoveSlot={(startUtc) => {
-                handleSlotsChange(currentSlots.filter((s) => s.start !== startUtc));
-              }}
-              isReadOnly={!data.isMainInterviewer}
-            />
+                <button
+                  type="button"
+                  onClick={() => handleSelectTab("calendar")}
+                  className={cn(
+                    "relative pb-3 pt-1 text-sm font-semibold transition-colors cursor-pointer flex items-center gap-2",
+                    activeTab === "calendar"
+                      ? "text-foreground after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-primary"
+                      : "text-muted-foreground hover:text-foreground after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-transparent"
+                  )}
+                  aria-label="View manual calendar grid"
+                >
+                  <CalendarIcon className="size-4" />
+                  <span>Calendar</span>
+                  {calendarCandidateSlots.length > 0 && (
+                    <Badge
+                      variant="outline"
+                      className="text-[10px] px-1.5 py-0 h-4 font-mono font-bold"
+                    >
+                      {calendarCandidateSlots.length}
+                    </Badge>
+                  )}
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2 text-[11px] text-muted-foreground pb-3">
+                {undoStack.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleUndo}
+                    className="hidden sm:inline-flex items-center gap-1 hover:text-foreground transition-colors cursor-pointer mr-2"
+                    title="Undo last change (⌘Z)"
+                  >
+                    <RotateCcw className="size-3" />
+                    <span>Undo ({undoStack.length})</span>
+                  </button>
+                )}
+                <span className="hidden md:inline-flex items-center gap-1.5 font-medium">
+                  Press <kbd className="px-1.5 py-0.5 rounded bg-muted border font-mono text-[10px] text-foreground">C</kbd> to toggle
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowShortcutsModal(true)}
+                  className="inline-flex items-center gap-1 hover:text-foreground transition-colors cursor-pointer ml-1"
+                  title="Keyboard shortcuts (?)"
+                >
+                  <kbd className="px-1.5 py-0.5 rounded bg-muted border font-mono text-[10px] text-foreground">?</kbd>
+                  <span className="hidden sm:inline">Shortcuts</span>
+                </button>
+              </div>
+            </div>
+
+            {/* TAB 1: Suggested Slots (Primary Surface per UX 1.1 & 4.2) */}
+            {activeTab === "suggested" && (
+              <div className="space-y-6">
+                <SuggestionList
+                  suggestions={suggestionsData?.suggestions || []}
+                  totalFound={suggestionsData?.totalFound || 0}
+                  availabilityConnected={suggestionsData?.availabilityConnected ?? true}
+                  isLoading={isSuggestionsLoading || isSuggestionsFetching}
+                  candidates={candidatesWithLocalSlots}
+                  activeCandidateRef={selectedCandidateRef}
+                  focusedIndex={focusedSuggestionIndex}
+                  dismissedSlotIds={dismissedSlotIds}
+                  onAddToPlan={handleAddSuggestionToPlan}
+                  onDismissSuggestion={handleDismissSuggestion}
+                  onRestoreDismissed={handleRestoreDismissed}
+                  onSwitchToCalendarTab={() => handleSelectTab("calendar")}
+                  onOpenShortcutsModal={() => setShowShortcutsModal(true)}
+                  onWidenDates={() => {
+                    toast.info("Widening date range by 3 days...");
+                    handleFrameChange({
+                      ...effectiveFrame,
+                      earliestDate: getTwoWorkingDaysOut(),
+                    });
+                  }}
+                  onDropInterviewer={() => {
+                    if (effectiveFrame.selectedInterviewerIds.length > 1) {
+                      const updated = effectiveFrame.selectedInterviewerIds.slice(0, -1);
+                      handleFrameChange({
+                        ...effectiveFrame,
+                        selectedInterviewerIds: updated,
+                      });
+                      toast.info("Dropped an interviewer from requirement.");
+                    } else {
+                      toast.warning("At least one interviewer must remain on panel.");
+                    }
+                  }}
+                  timezone={effectiveFrame.timezone}
+                />
+
+                {/* Proposed Slots for Current Active Candidate (Compact Summary) */}
+                {currentSlots.length > 0 && (
+                  <div className="pt-4 border-t border-border">
+                    <ProposedSlotsList
+                      slots={currentSlots}
+                      collisions={allCollisions}
+                      candidateRef={activeCandidate?.candidateRef || ""}
+                      candidateTimezone={activeCandidate?.timezone || "Asia/Dubai"}
+                      isOffshore={activeCandidate?.isOffshore || false}
+                      onRemoveSlot={(startUtc) => handleRemoveSlot(startUtc, activeCandidate?.candidateRef)}
+                      isReadOnly={!data.isMainInterviewer}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB 2: Calendar Workspace (Secondary Surface per UX 4.4 & TASK 2) */}
+            {activeTab === "calendar" && (
+              <>
+                <WeekCalendar
+                  candidateSlots={calendarCandidateSlots}
+                  activeCandidateRef={selectedCandidateRef}
+                  onAddSlot={(slot, cRef) => handleAddSuggestionToPlan(slot, cRef || selectedCandidateRef)}
+                  onRemoveSlot={(startUtc, cRef) => handleRemoveSlot(startUtc, cRef)}
+                  availability={data.availability}
+                  interviewers={data.interviewers}
+                  collisions={allCollisions}
+                  candidateTimezone={activeCandidate?.timezone || "Asia/Dubai"}
+                  isOffshore={activeCandidate?.isOffshore || false}
+                  defaultDurationMinutes={effectiveFrame.durationMinutes || data.settings.defaultDurationMinutes || 45}
+                  isReadOnly={!data.isMainInterviewer}
+                />
+
+                <ProposedSlotsList
+                  slots={currentSlots}
+                  collisions={allCollisions}
+                  candidateRef={activeCandidate?.candidateRef || ""}
+                  candidateTimezone={activeCandidate?.timezone || "Asia/Dubai"}
+                  isOffshore={activeCandidate?.isOffshore || false}
+                  onRemoveSlot={(startUtc) => handleRemoveSlot(startUtc, activeCandidate?.candidateRef)}
+                  isReadOnly={!data.isMainInterviewer}
+                />
+              </>
+            )}
           </div>
 
-          {/* Column 3: Interview Settings Panel (IV4) */}
-          {activeCandidate && currentSettings && (
-            <InterviewSettingsPanel
-              candidate={activeCandidate}
-              position={data.request.position}
-              settings={currentSettings}
-              onSettingsChange={handleSettingsChange}
-              proposedSlots={currentSlots}
-              onSlotsChange={handleSlotsChange}
-              globalSettings={data.settings}
-              availability={data.availability}
-              interviewers={data.interviewers}
-              isReadOnly={!data.isMainInterviewer}
-            />
-          )}
+          {/* Right Column: Sticky 340px Plan Tray per UX §4.3 */}
+          <InterviewPlanTray
+            candidates={candidatesWithLocalSlots}
+            candidateSlotsMap={candidateSlotsMap}
+            targetSlotsPerCandidate={3}
+            selectedCandidateRef={selectedCandidateRef}
+            onSelectCandidate={handleCandidateSelection}
+            isReadOnly={!data.isMainInterviewer}
+            onSlotsChange={handleTraySlotsChange}
+            onReviewAndSend={() => {
+              setIdempotencyKey(
+                typeof crypto !== "undefined" && crypto.randomUUID
+                  ? crypto.randomUUID()
+                  : `idemp-${Date.now()}`
+              );
+              setSendError(null);
+              setShowSendModal(true);
+            }}
+          />
         </div>
 
         {/* Footnote per Part 2 */}
@@ -819,6 +1397,12 @@ export function InterviewPlanningWorkspace({
           idempotencyKey={idempotencyKey}
         />
       )}
+
+      {/* Keyboard Shortcuts Overlay (TASK 5 & UX Part 8) */}
+      <InterviewShortcutsModal
+        isOpen={showShortcutsModal}
+        onClose={() => setShowShortcutsModal(false)}
+      />
     </div>
   );
 }

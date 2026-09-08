@@ -392,14 +392,7 @@
     line-height: 1.6;
   }
 
-  html {
-    scroll-behavior: smooth;
-  }
 
-  html,
-  body {
-    overscroll-behavior: none !important;
-  }
 
   h1,
   h2,
@@ -592,5 +585,29 @@ section[data-band-height="list"]>div {
   }
   100% {
     transform: translateX(200%);
+  }
+}
+
+@keyframes review-ready-lift {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slot-chip-enter {
+  0% {
+    opacity: 0;
+    transform: scale(0.96) translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }

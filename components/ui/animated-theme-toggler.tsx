@@ -252,7 +252,7 @@ export const AnimatedThemeToggler = ({
       ref={buttonRef}
       onClick={toggleTheme}
       className={cn(
-        "h-8 w-8 p-0 text-white/40! hover:text-white! rounded-lg cursor-pointer hover:bg-accent/50 transition-colors",
+        "h-8 w-8 p-0 text-white/80! dark:text-foreground/80! hover:text-white! dark:hover:text-foreground! rounded-lg cursor-pointer hover:bg-white/10 dark:hover:bg-white/5 transition-colors",
         className
       )}
       {...props}

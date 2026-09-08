@@ -314,3 +314,78 @@ export interface InterviewError {
   earliestSlot?: string;
   latestReplyDate?: string;
 }
+
+/**
+ * Reason codes returned by server-side suggestion ranking engine
+ */
+export type InterviewSuggestionReasonCode =
+  | "ALL_INTERVIEWERS_FREE"
+  | "MORNING"
+  | "AFTERNOON"
+  | "TWO_DAYS_OUT"
+  | "THREE_DAYS_OUT"
+  | "FOUR_DAYS_OUT"
+  | "FIVE_DAYS_OUT"
+  | "WITHIN_CANDIDATE_HOURS"
+  | "BACK_TO_BACK"
+  | "PREFERRED_METHOD"
+  | "PARTIAL_AVAILABILITY";
+
+/**
+ * Individual interviewer free/busy status for a suggested slot
+ */
+export interface InterviewerSlotAvailability {
+  userId: string;
+  name: string;
+  free: boolean;
+  reason?: string;
+}
+
+/**
+ * Converted candidate local time information for offshore scheduling
+ */
+export interface CandidateLocalTimeInfo {
+  timezone: string;
+  start: string; // e.g. "11:30"
+  end: string;   // e.g. "12:15"
+}
+
+/**
+ * Individual slot suggestion produced by server-side ranking engine
+ */
+export interface InterviewSuggestion {
+  slotId: string;
+  start: string; // UTC ISO-8601 string
+  durationMinutes: number;
+  score: number; // 0.00 to 1.00
+  rank: number; // 1-indexed
+  isBestMatch: boolean; // True for top card ONLY
+  availability: InterviewerSlotAvailability[];
+  allFree: boolean;
+  reasons: (InterviewSuggestionReasonCode | string)[];
+  candidateLocalTime?: CandidateLocalTimeInfo;
+  warnings?: string[];
+}
+
+/**
+ * GET /api/v1/requests/{requestId}/interviews/suggestions response
+ */
+export interface InterviewSuggestionsResponse {
+  suggestions: InterviewSuggestion[];
+  totalFound: number;
+  availabilityConnected: boolean;
+  computedAt: string;
+}
+
+/**
+ * Query parameters for fetching interview suggestions
+ */
+export interface InterviewSuggestionsParams {
+  from?: string;
+  durationMinutes?: number;
+  method?: InterviewMethod;
+  interviewerIds?: string[];
+  candidateRef?: string;
+  limit?: number;
+}
+

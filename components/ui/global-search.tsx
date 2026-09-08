@@ -46,13 +46,13 @@ export function GlobalSearch() {
         onClick={() => setOpen(true)}
         variant="outline"
         size="sm"
-        className="hidden lg:flex w-full max-w-105 h-10 px-3 text-xs justify-between items-center bg-white/10 dark:bg-muted/40 hover:bg-white/15 dark:hover:bg-muted/60 text-white/90 dark:text-foreground border border-white/10 dark:border-border/60 rounded-sm transition-colors cursor-pointer shadow-none"
+        className="hidden lg:flex w-full max-w-105 h-10 px-3 text-xs justify-between items-center bg-muted/30 hover:bg-muted/40 text-white border-border/20! rounded-sm transition-colors cursor-pointer shadow-none"
       >
         <div className="flex items-center gap-2 truncate">
-          <Search className="h-3.5 w-3.5 text-white/60 dark:text-muted-foreground shrink-0" />
+          <Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
           <span className="truncate">Search master data, actions, pages...</span>
         </div>
-        <kbd className="pointer-events-none inline-flex h-4.5 select-none items-center gap-0.5 rounded border border-white/20 dark:border-border/80 bg-white/10 dark:bg-background/80 px-1.5 font-mono text-[11px] font-medium text-white/80 dark:text-muted-foreground shrink-0 shadow-2xs">
+        <kbd className="pointer-events-none inline-flex h-4.5 select-none items-center gap-0.5 rounded border border-border/80 bg-background/80 px-1.5 font-mono text-[11px] font-medium text-muted-foreground shrink-0 shadow-2xs">
           <span>⌘</span>K
         </kbd>
       </Button>
