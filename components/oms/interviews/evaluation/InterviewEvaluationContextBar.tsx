@@ -60,14 +60,14 @@ export function InterviewEvaluationContextBar({
         return (
           <span className="flex items-center gap-1.5 font-semibold text-amber-700 dark:text-amber-300">
             <AlertCircle className="size-4 shrink-0 text-amber-600 dark:text-amber-400" aria-hidden="true" />
-            <span>Due tomorrow ({dueDateStr})</span>
+            <span>{`Due tomorrow (${dueDateStr})`}</span>
           </span>
         );
       case "WARNING":
         return (
           <span className="flex items-center gap-1.5 font-semibold text-amber-700 dark:text-amber-300">
             <Clock className="size-4 shrink-0 text-amber-600 dark:text-amber-400" aria-hidden="true" />
-            <span>Due today ({dueDateStr})</span>
+            <span>{`Due today (${dueDateStr})`}</span>
           </span>
         );
       case "NORMAL":
@@ -75,10 +75,9 @@ export function InterviewEvaluationContextBar({
         return (
           <span className="flex items-center gap-1.5 text-muted-foreground">
             <Clock className="size-4 shrink-0 text-muted-foreground/80" aria-hidden="true" />
-            <span>
-              Due in {deadline.daysRemaining} {deadline.daysRemaining === 1 ? "day" : "days"} (
-              {dueDateStr})
-            </span>
+            <span>{`Due in ${deadline.daysRemaining} ${
+              deadline.daysRemaining === 1 ? "day" : "days"
+            } (${dueDateStr})`}</span>
           </span>
         );
     }

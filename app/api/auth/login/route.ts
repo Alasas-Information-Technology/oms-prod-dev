@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-const BACKEND_BASE_URL = process.env.BACKEND_BASE_URL || "http://localhost:4000";
+const BACKEND_BASE_URL = (process.env.BACKEND_BASE_URL || "http://localhost:4000").replace(/\/+$/, "");
 
 export async function POST(request: NextRequest) {
     const forwarded = request.headers.get("x-forwarded-for");
@@ -32,7 +32,22 @@ export async function POST(request: NextRequest) {
             cache: "no-store",
         });
 
-        const data = await backendResponse.json();
+        const contentType = backendResponse.headers.get("content-type") || "";
+        let data: any = null;
+
+        if (contentType.includes("application/json")) {
+            data = await backendResponse.json();
+        } else {
+            const rawText = await backendResponse.text();
+            console.error(`[Login Proxy Error]: Backend at ${BACKEND_BASE_URL} returned non-JSON response (${backendResponse.status}):`, rawText.slice(0, 300));
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: `Backend service at ${BACKEND_BASE_URL} returned non-JSON response (${backendResponse.status}). Ensure backend is running on the expected port.`,
+                },
+                { status: backendResponse.status || 502 }
+            );
+        }
 
         if (!backendResponse.ok) {
             const errorPayload = data?.error || data || { message: "Authentication failed" };

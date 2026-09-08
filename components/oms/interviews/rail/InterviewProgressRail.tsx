@@ -136,7 +136,7 @@ export function InterviewProgressRail({
             {/* Label right-aligned: 11px muted */}
             <div className="flex items-center gap-1.5 shrink-0 ml-auto text-[11px] text-muted-foreground group-hover:text-foreground transition-colors font-medium">
               <span>
-                {stepLabel} · {currentStep} of {totalSteps}
+                {`${stepLabel} · ${currentStep} of ${totalSteps}`}
               </span>
             </div>
           </button>
