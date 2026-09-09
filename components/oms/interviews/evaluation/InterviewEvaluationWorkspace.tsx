@@ -1,8 +1,10 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { getAmendment } from "@/src/lib/demo-data";
 import {
   PageBarBreadcrumbs,
   PageBarActions,
@@ -87,6 +89,9 @@ export function InterviewEvaluationWorkspace({
   initialFixtureKey,
   className,
 }: InterviewEvaluationWorkspaceProps) {
+  const router = useRouter();
+  const linkedAmendment = React.useMemo(() => getAmendment(requestId), [requestId]);
+
   // Allow switching fixture in testing
   const [activeFixtureKey, setActiveFixtureKey] = React.useState<string | undefined>(
     initialFixtureKey
@@ -334,6 +339,13 @@ export function InterviewEvaluationWorkspace({
       const res = await submitMutation.mutateAsync(payload);
       toast.success(res.message);
       setIsConfirmModalOpen(false);
+
+      // TASK 4: Over-budget Qualify -> real Amendment page for that candidate
+      if (payload.outcome === "QUALIFY" && data.cost.status === "OVER_BUDGET") {
+        const targetAmendmentId = linkedAmendment?.id || "amd-2026-0089";
+        toast.info(`Candidate qualified over budget. Navigating to Budget Amendment (${targetAmendmentId})...`);
+        router.push(`/app/requests/${requestId}/amendments/${targetAmendmentId}`);
+      }
     } catch (err: unknown) {
       const errorObj = err as Partial<InterviewEvaluationError>;
       setSubmitError({
@@ -565,6 +577,8 @@ export function InterviewEvaluationWorkspace({
               <EvaluationCostCard
                 cost={data.cost}
                 positions={data.positions}
+                requestId={requestId}
+                amendmentId={linkedAmendment?.id}
               />
 
               {/* OUTCOME BLOCK (TASK 1, 2, 6 / EV6): Kept LAST so flow reads rate -> decide */}

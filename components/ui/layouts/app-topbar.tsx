@@ -10,6 +10,7 @@ import { useSidebar } from "../sidebar";
 import { Menu, CheckSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getNeedsAttentionSummary } from "@/lib/fixtures/dashboard-attention.fixtures";
+import { PersonaSwitcher } from "@/components/oms/demo";
 
 export function AppTopbar() {
     const { toggleSidebar } = useSidebar();
@@ -46,6 +47,9 @@ export function AppTopbar() {
 
             {/* Right section: Utilities + Avatar */}
             <div className="flex items-center gap-3">
+                {/* Global Demo Persona Switcher */}
+                <PersonaSwitcher />
+
                 {/* Needs Attention Global Header Badge */}
                 {totalCount > 0 && (
                     <Link

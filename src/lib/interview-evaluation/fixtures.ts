@@ -474,3 +474,27 @@ export const MOCK_INTERVIEW_EVALUATION_FIXTURES: Record<
   "non-main": FIXTURE_EVALUATION_NON_MAIN,
   "OMS-2026-0148-C-014": FIXTURE_EVALUATION_REFERENCE,
 };
+
+import { getRequisition, getCandidate, getEvaluation } from "@/src/lib/demo-data";
+import { mapToInterviewEvaluationWorkspace } from "./mappers";
+
+/**
+ * Demo-data backed Interview Evaluation fixture.
+ * Returns null if the requisition or candidate does not exist in demo-data (real 404).
+ */
+export function getInterviewEvaluationFixture(
+  requestId: string,
+  candidateRef: string,
+  activeUserId?: string
+): InterviewEvaluationWorkspace | null {
+  if (!requestId || !candidateRef) return null;
+  const req = getRequisition(requestId);
+  if (!req) return null;
+
+  const candidate = getCandidate(requestId, candidateRef);
+  if (!candidate) return null;
+
+  const evalRecord = getEvaluation(requestId, candidateRef);
+  return mapToInterviewEvaluationWorkspace(req, candidate, evalRecord, activeUserId);
+}
+

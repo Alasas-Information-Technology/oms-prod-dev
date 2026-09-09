@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { AlertCircle, CheckCircle2, TrendingDown, TrendingUp, Users } from "lucide-react";
+import Link from "next/link";
+import { AlertCircle, ArrowRight, CheckCircle2, TrendingDown, TrendingUp, Users } from "lucide-react";
 import {
   EvaluationCostSummary,
   PositionProgress,
@@ -12,6 +13,8 @@ import { cn } from "@/lib/utils";
 interface EvaluationCostCardProps {
   cost: EvaluationCostSummary;
   positions?: PositionProgress;
+  requestId?: string;
+  amendmentId?: string;
   className?: string;
 }
 
@@ -33,6 +36,8 @@ interface EvaluationCostCardProps {
 export function EvaluationCostCard({
   cost,
   positions,
+  requestId,
+  amendmentId,
   className,
 }: EvaluationCostCardProps) {
   const isOverBudget = cost.status === "OVER_BUDGET";
@@ -131,8 +136,17 @@ export function EvaluationCostCard({
 
       {/* Over budget consequence notice if present */}
       {isOverBudget && cost.overBudgetConsequence && (
-        <div className="p-2.5 rounded-md bg-amber-500/10 border border-amber-500/25 text-amber-900 dark:text-amber-200 text-[11px] leading-relaxed">
-          {cost.overBudgetConsequence}
+        <div className="p-2.5 rounded-md bg-amber-500/10 border border-amber-500/25 text-amber-900 dark:text-amber-200 text-[11px] leading-relaxed space-y-2">
+          <p>{cost.overBudgetConsequence}</p>
+          {amendmentId && requestId && (
+            <Link
+              href={`/app/requests/${requestId}/amendments/${amendmentId}`}
+              className="inline-flex items-center gap-1 font-semibold text-amber-800 dark:text-amber-300 hover:underline pt-0.5"
+            >
+              <span>View Budget Amendment ({amendmentId})</span>
+              <ArrowRight className="size-3" />
+            </Link>
+          )}
         </div>
       )}
 

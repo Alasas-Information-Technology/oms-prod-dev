@@ -21,8 +21,15 @@ export async function proxy(request: NextRequest) {
         pathname.startsWith('/favicon.ico') ||
         pathname.startsWith('/public') ||
         pathname.startsWith('/app/dev') ||
-        pathname.startsWith('/app/candidates/interviews/plan') ||
-        pathname.startsWith('/app/candidates/interviews/evaluate') ||
+        pathname.startsWith('/app/candidates') ||
+        pathname.startsWith('/app/requests') ||
+        pathname.startsWith('/app/approvals') ||
+        pathname.startsWith('/app/hr-review') ||
+        pathname.startsWith('/app/workforce') ||
+        pathname.startsWith('/app/onboarding') ||
+        pathname.startsWith('/app/vendors') ||
+        pathname.startsWith('/app/budget') ||
+        pathname.startsWith('/vendor') ||
         pathname === '/api/auth/login' ||
         pathname === '/api/auth/refresh'
     ) {

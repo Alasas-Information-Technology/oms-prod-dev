@@ -30,6 +30,10 @@ import {
   FileText,
   Paperclip,
   Download,
+  HelpCircle,
+  ExternalLink,
+  Users,
+  Briefcase,
 } from "lucide-react";
 
 interface RequestDetailDecisionViewProps {
@@ -154,6 +158,67 @@ export function RequestDetailDecisionView({
               Submitted {format(new Date(task.submittedAt), "MMM d, yyyy")}
             </span>
           </div>
+        </div>
+
+        {/* Cross-Domain Navigation Banners (Part 5 Requirements) */}
+        {detail.linkedAmendment && (
+          <div className="p-3.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-xs">
+            <div className="flex items-center gap-2.5">
+              <FileText className="size-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+              <span className="text-indigo-950 dark:text-indigo-200">
+                <strong>Budget Amendment Active:</strong> Candidate qualification exceeds budget
+                {detail.linkedAmendment.variancePercent ? ` by ${detail.linkedAmendment.variancePercent}%` : ""}. Amendment ({detail.linkedAmendment.id}) is in review.
+              </span>
+            </div>
+            <Link
+              href={detail.linkedAmendment.url}
+              className="inline-flex items-center gap-1 font-semibold text-indigo-700 dark:text-indigo-300 hover:underline shrink-0"
+            >
+              <span>View Amendment</span>
+              <ExternalLink className="size-3" />
+            </Link>
+          </div>
+        )}
+
+        {detail.linkedClarification && (
+          <div className="p-3.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-xs">
+            <div className="flex items-center gap-2.5">
+              <HelpCircle className="size-4 text-amber-600 dark:text-amber-400 shrink-0" />
+              <span className="text-amber-950 dark:text-amber-200">
+                <strong>Clarification Notice:</strong> This requisition has an active clarification inquiry ({detail.linkedClarification.id}).
+              </span>
+            </div>
+            <Link
+              href={detail.linkedClarification.url}
+              className="inline-flex items-center gap-1 font-semibold text-amber-700 dark:text-amber-300 hover:underline shrink-0"
+            >
+              <span>View Clarification Response</span>
+              <ExternalLink className="size-3" />
+            </Link>
+          </div>
+        )}
+
+        {/* Quick Links Row for Associated Entities */}
+        <div className="flex flex-wrap items-center gap-2 pt-1 pb-1">
+          {detail.linkedCandidatesCount !== undefined && detail.linkedCandidatesCount > 0 && (
+            <Link
+              href="/app/candidates"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors border border-border/50"
+            >
+              <Users className="size-3.5 text-primary" />
+              <span>Candidates ({detail.linkedCandidatesCount})</span>
+            </Link>
+          )}
+
+          {detail.linkedOnboarding && (
+            <Link
+              href={detail.linkedOnboarding.url}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors border border-border/50"
+            >
+              <Briefcase className="size-3.5 text-emerald-600" />
+              <span>Vendor Onboarding ({detail.linkedOnboarding.id})</span>
+            </Link>
+          )}
         </div>
 
         {/* Requirement 1 & 2: Route Stepper below header for everyone in scope */}

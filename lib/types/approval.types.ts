@@ -130,6 +130,10 @@ export interface ApprovalTaskDetail {
   impact: RequisitionImpact;
   preflight: PreflightResult;
   availableActions: DecisionAction[];
+  linkedClarification?: { id: string; url: string; type: string; status?: string } | null;
+  linkedAmendment?: { id: string; url: string; status?: string; variancePercent?: number } | null;
+  linkedCandidatesCount?: number;
+  linkedOnboarding?: { id: string; url: string } | null;
 }
 
 export interface ApprovalsListResponse {

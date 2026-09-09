@@ -17,6 +17,7 @@ import {
 import {
   MOCK_HR_SEND_BACK_FIXTURES,
   FIXTURE_HR_SEND_BACK_OMS_2026_0139,
+  getHrSendBackOptionsFixture,
 } from "./fixtures";
 import { useDebounce } from "@/hooks/useDebounce";
 
@@ -35,9 +36,14 @@ export const hrSendBackApi = {
   async getOptions(requestId: string): Promise<HrSendBackOptionsResponse> {
     if (USE_FIXTURES) {
       await new Promise((resolve) => setTimeout(resolve, 300));
-      const match =
-        MOCK_HR_SEND_BACK_FIXTURES[requestId] ||
-        FIXTURE_HR_SEND_BACK_OMS_2026_0139;
+      const match = getHrSendBackOptionsFixture(requestId);
+      if (!match) {
+        throw {
+          statusCode: 404,
+          code: "NOT_FOUND",
+          message: `Requisition ${requestId} not found`,
+        };
+      }
       return JSON.parse(JSON.stringify(match));
     }
 

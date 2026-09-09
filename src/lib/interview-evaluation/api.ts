@@ -20,6 +20,7 @@ import {
 import {
   MOCK_INTERVIEW_EVALUATION_FIXTURES,
   FIXTURE_EVALUATION_REFERENCE,
+  getInterviewEvaluationFixture,
 } from "./fixtures";
 import { useDebounce } from "@/hooks/useDebounce";
 
@@ -41,15 +42,24 @@ export const interviewEvaluationApi = {
     fixtureKey?: string
   ): Promise<InterviewEvaluationWorkspace> {
     if (USE_FIXTURES) {
-      await new Promise((resolve) => setTimeout(resolve, 250));
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
-      const key = fixtureKey || `${requestId}-${candidateRef}`;
-      const match =
-        MOCK_INTERVIEW_EVALUATION_FIXTURES[key] ||
-        MOCK_INTERVIEW_EVALUATION_FIXTURES[fixtureKey || ""] ||
-        FIXTURE_EVALUATION_REFERENCE;
+      // 1. Try demo-data query first
+      const fixture = getInterviewEvaluationFixture(requestId, candidateRef);
+      if (fixture) {
+        return JSON.parse(JSON.stringify(fixture));
+      }
 
-      return JSON.parse(JSON.stringify(match));
+      // 2. Check explicit fixture key override
+      if (fixtureKey && MOCK_INTERVIEW_EVALUATION_FIXTURES[fixtureKey]) {
+        return JSON.parse(JSON.stringify(MOCK_INTERVIEW_EVALUATION_FIXTURES[fixtureKey]));
+      }
+
+      throw {
+        statusCode: 404,
+        code: "NOT_FOUND",
+        message: `Evaluation for candidate ${candidateRef} on requisition ${requestId} not found`,
+      };
     }
 
     const res = await fetch(
