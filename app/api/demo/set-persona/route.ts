@@ -4,41 +4,20 @@ import { signPersonaToken } from "@/src/lib/demo-data/persona-auth";
 
 export const dynamic = "force-dynamic";
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const personaId = body?.personaId;
-
-    if (!personaId || !CAST[personaId]) {
-      return NextResponse.json(
-        { success: false, message: `Invalid personaId: ${personaId}` },
-        { status: 400 }
-      );
-    }
-
-    const person = CAST[personaId];
-    const token = body?.token || (await signPersonaToken(person));
-
-    const response = NextResponse.json({
-      success: true,
-      persona: person,
-      token,
-    });
-
-    // Set cookie across the entire domain
-    response.cookies.set("oms_access_token", token, {
-      path: "/",
-      maxAge: 2592000, // 30 days
-      sameSite: "lax",
-      httpOnly: false, // Accessible to client scripts and HTTP requests alike
-    });
-
-    return response;
-  } catch (error: any) {
-    console.error("[set-persona error]:", error);
-    return NextResponse.json(
-      { success: false, message: error?.message || "Internal Server Error" },
-      { status: 500 }
-    );
-  }
+/**
+ * RETIRED: Persona Switcher Cookie Injection Endpoint
+ *
+ * Superseded by docs/PORTAL-SEPARATION-AND-USERS.md Part 4 & 5.
+ * Real authentication through /api/auth/login with seeded credentials (Demo@2026!)
+ * is the single source of truth for user sessions.
+ */
+export async function POST() {
+  return NextResponse.json(
+    {
+      success: false,
+      message:
+        "The persona switcher cookie injection mechanism has been retired per docs/PORTAL-SEPARATION-AND-USERS.md Part 5. Please authenticate via the real login page (/login) with seeded credentials.",
+    },
+    { status: 410 }
+  );
 }

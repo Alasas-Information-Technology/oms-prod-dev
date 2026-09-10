@@ -1,5 +1,5 @@
-import { AppSidebar } from "@/components/ui/layouts/app-sidebar";
-import { AppTopbar } from "@/components/ui/layouts/app-topbar";
+import { InternalSidebar } from "@/components/ui/layouts/InternalSidebar";
+import { InternalHeader } from "@/components/ui/layouts/InternalHeader";
 import { AppBreadcrumb } from "@/components/ui/layouts/app-breadcrumb";
 import { PageBarProvider } from "@/components/ui/layouts/page-bar-context";
 import {
@@ -21,14 +21,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <PageBarProvider>
         <LayoutGroup id="main-layout">
           {/* Global bar: 52px fixed, z-30 (Part 3) */}
-          <AppTopbar />
+          <InternalHeader />
 
           {/* Shell container: h-screen, scroll-locked, offset for fixed global bar (Part 8) */}
           <div className="h-screen pt-12 md:pt-13 flex flex-col overflow-hidden w-full print:h-auto print:pt-0 print:overflow-visible">
 
             {/* Sidebar + Content Column */}
             <div className="flex flex-1 min-h-0 overflow-hidden w-full print:overflow-visible">
-              <AppSidebar />
+              <InternalSidebar />
 
               <SidebarInset className="flex flex-1 min-h-0 flex-col overflow-hidden min-w-0 bg-background print:overflow-visible">
 

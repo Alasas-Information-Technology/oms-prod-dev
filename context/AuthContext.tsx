@@ -27,7 +27,7 @@ interface AuthContextType {
     username: string,
     password: string,
     confirmRevokeOldest?: boolean
-  ) => Promise<void>;
+  ) => Promise<UserSession | null>;
 
   logout: () => Promise<void>;
 
@@ -240,9 +240,13 @@ export function AuthProvider({
           const session =
             await getAuthSession();
   
-          setUser(
-            session !== "REFRESH_REQUIRED" ? session : null
-          );
+          const resolvedSession =
+            session !== "REFRESH_REQUIRED"
+              ? session
+              : (response.data?.session ?? null);
+
+          setUser(resolvedSession);
+          return resolvedSession;
         } catch (error: any) {
           if (error.response?.data?.code === "CONFIRM_REVOKE_OLDEST") {
             const customError = new Error("CONFIRM_REVOKE_OLDEST");

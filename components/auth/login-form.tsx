@@ -69,8 +69,8 @@ export function LoginForm({
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     setError(null);
     try {
-      await login(data.Username, data.Password);
-      window.location.href = "/app";
+      const session = await login(data.Username, data.Password);
+      window.location.href = session?.userType === "VENDOR" ? "/vendor" : "/app";
     } catch (err: any) {
       if (err.code === "CONFIRM_REVOKE_OLDEST" || err.message === "CONFIRM_REVOKE_OLDEST") {
         setShowRevokeConfirm(true);
@@ -84,8 +84,8 @@ export function LoginForm({
     setShowRevokeConfirm(false);
     setError(null);
     try {
-      await login(form.getValues().Username, form.getValues().Password, true);
-      window.location.href = "/app";
+      const session = await login(form.getValues().Username, form.getValues().Password, true);
+      window.location.href = session?.userType === "VENDOR" ? "/vendor" : "/app";
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred");
     }
