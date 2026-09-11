@@ -890,4 +890,60 @@ export interface VendorInterviewProposalData {
   alternativeRequestNote?: string | null;
 }
 
+export interface VendorCoordinator {
+  id: string; // e.g. "usr-layla"
+  name: string;
+  email: string;
+  phone: string;
+  role: string;
+  isPrimary: boolean;
+  status: "ACTIVE" | "INACTIVE";
+  addedAt: string;
+}
+
+export interface VendorProfileData {
+  vendorId: string;
+  companyName: string;
+  tradeLicenceNumber: string;
+  taxRegistrationNumber: string; // TRN
+  jurisdiction: string;
+  businessAddress: string;
+  primaryEmail: string;
+  primaryPhone: string;
+  tier: string;
+  status: "ACTIVE" | "INACTIVE" | "PENDING";
+  website: string;
+  primaryContact: {
+    name: string;
+    role: string;
+    email: string;
+    phone: string;
+  };
+  coordinators: VendorCoordinator[];
+  complianceScore: number;
+  activeContractsCount: number;
+}
+
+export interface VendorSupportAttachment {
+  id: string;
+  name: string;
+  sizeBytes: number;
+  url?: string;
+  mimeType?: string;
+}
+
+export interface VendorSupportMessage {
+  id: string;
+  vendorId: string;
+  senderName: string;
+  senderRole: string;
+  isVendor: boolean;
+  subject: string;
+  body: string;
+  sentAt: string;
+  category: "GENERAL_INQUIRY" | "TECHNICAL_ISSUE" | "CONTRACT_QUERY" | "BILLING";
+  attachments?: VendorSupportAttachment[];
+}
+
+
 

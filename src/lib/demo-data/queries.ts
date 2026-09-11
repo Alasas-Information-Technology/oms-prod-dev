@@ -38,6 +38,8 @@ import {
   VendorSubmissionStatusLabel,
   VendorInterviewProposalSlot,
   VendorInterviewProposalData,
+  VendorProfileData,
+  VendorSupportMessage,
 } from "./entities";
 import { CAST, USER_ALIASES, CAST_LIST } from "./cast";
 import { ORG_UNITS, BUDGET_LINES, VENDORS, ORG_UNITS_LIST, BUDGET_LINES_LIST, VENDORS_LIST } from "./org";
@@ -65,6 +67,8 @@ import {
   VENDOR_COMPLIANCE_DOCUMENTS_LIST,
   VENDOR_CONTRACTS,
   VENDOR_CONTRACTS_LIST,
+  VENDOR_PROFILES,
+  VENDOR_SUPPORT_MESSAGES,
 } from "./seed";
 
 // ============================================================================
@@ -1229,4 +1233,55 @@ export function listVendorOnboardingCases(vendorId: string = "ven-falcon"): Onbo
 
   return cases;
 }
+
+export function getVendorProfile(vendorId: string = "ven-falcon"): VendorProfileData | null {
+  return VENDOR_PROFILES[vendorId] || null;
+}
+
+export function listVendorSupportMessages(vendorId: string = "ven-falcon"): VendorSupportMessage[] {
+  return VENDOR_SUPPORT_MESSAGES[vendorId] || [];
+}
+
+export function sendVendorSupportMessage(
+  payload: Omit<VendorSupportMessage, "id" | "sentAt">
+): VendorSupportMessage {
+  const list = VENDOR_SUPPORT_MESSAGES[payload.vendorId] || [];
+  const newMsg: VendorSupportMessage = {
+    ...payload,
+    id: `msg-sup-${Date.now()}`,
+    sentAt: new Date().toISOString(),
+  };
+  list.push(newMsg);
+  VENDOR_SUPPORT_MESSAGES[payload.vendorId] = list;
+  return newMsg;
+}
+
+export function uploadOrReplaceVendorComplianceDocument(
+  docId: string,
+  file: {
+    id: string;
+    name: string;
+    sizeBytes: number;
+    uploadedAt?: string;
+  },
+  vendorId: string = "ven-falcon"
+): VendorComplianceDocument {
+  const doc = VENDOR_COMPLIANCE_DOCUMENTS[docId];
+  if (!doc || doc.vendorId !== vendorId) {
+    throw new Error(`Compliance document ${docId} not found.`);
+  }
+  doc.file = {
+    id: file.id,
+    name: file.name,
+    sizeBytes: file.sizeBytes,
+    uploadedAt: file.uploadedAt || new Date().toISOString(),
+  };
+  doc.status = "ACTIVE";
+  const idx = VENDOR_COMPLIANCE_DOCUMENTS_LIST.findIndex((d) => d.id === docId);
+  if (idx >= 0) {
+    VENDOR_COMPLIANCE_DOCUMENTS_LIST[idx] = doc;
+  }
+  return doc;
+}
+
 

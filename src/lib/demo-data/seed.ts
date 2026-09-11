@@ -21,6 +21,8 @@ import {
   RateCard,
   VendorComplianceDocument,
   VendorContract,
+  VendorProfileData,
+  VendorSupportMessage,
 } from "./entities";
 
 // ============================================================================
@@ -2652,4 +2654,93 @@ export const VENDOR_CONTRACTS: Record<string, VendorContract> = {
 };
 
 export const VENDOR_CONTRACTS_LIST: VendorContract[] = Object.values(VENDOR_CONTRACTS);
+
+// ============================================================================
+// 14. Vendor Company Profiles (VENDOR-PORTAL-UI.md Part 4.10 & Domain 3 Rule V8)
+// ============================================================================
+
+export const VENDOR_PROFILES: Record<string, VendorProfileData> = {
+  "ven-falcon": {
+    vendorId: "ven-falcon",
+    companyName: "Falcon Tech Resourcing LLC",
+    tradeLicenceNumber: "DET-849201",
+    taxRegistrationNumber: "100-3492-9102-0003",
+    jurisdiction: "Dubai Economy & Tourism (DET) / DIEZ Approved",
+    businessAddress: "Office 804, Building 2, Dubai Silicon Oasis, Dubai, UAE",
+    primaryEmail: "onboarding@falcontech.ae",
+    primaryPhone: "+971 4 398 1122",
+    tier: "Tier 1 Strategic IT Staffing Partner",
+    status: "ACTIVE",
+    website: "https://www.falcontech-resourcing.ae",
+    primaryContact: {
+      name: "Layla Hassan",
+      role: "Senior Account Coordinator & Authorized Representative",
+      email: "layla.hassan@falcontech.ae",
+      phone: "+971 50 492 8811",
+    },
+    coordinators: [
+      {
+        id: "usr-layla",
+        name: "Layla Hassan",
+        email: "layla.hassan@falcontech.ae",
+        phone: "+971 50 492 8811",
+        role: "Primary Coordinator",
+        isPrimary: true,
+        status: "ACTIVE",
+        addedAt: "2024-01-15T08:00:00Z",
+      },
+      {
+        id: "coord-kareem-01",
+        name: "Kareem Mostafa",
+        email: "kareem.mostafa@falcontech.ae",
+        phone: "+971 52 771 9022",
+        role: "Technical Account Coordinator",
+        isPrimary: false,
+        status: "ACTIVE",
+        addedAt: "2025-03-10T11:30:00Z",
+      },
+    ],
+    complianceScore: 98,
+    activeContractsCount: 1,
+  },
+};
+
+// ============================================================================
+// 15. Vendor Support Threads (VENDOR-PORTAL-UI.md Part 4.11)
+// ============================================================================
+
+export const VENDOR_SUPPORT_MESSAGES: Record<string, VendorSupportMessage[]> = {
+  "ven-falcon": [
+    {
+      id: "msg-sup-001",
+      vendorId: "ven-falcon",
+      senderName: "Layla Hassan",
+      senderRole: "Vendor Coordinator",
+      isVendor: true,
+      subject: "Annual Trade Licence Renewal Submission & Verification",
+      body: "Good afternoon Procurement Team. We have initiated the renewal for Commercial Trade Licence DET-849201 which expires on 04 October 2026. Attached is the provisional renewal receipt from DET. Please advise once the updated certificate needs to be formally recorded.",
+      sentAt: "2026-09-08T09:30:00Z",
+      category: "GENERAL_INQUIRY",
+      attachments: [
+        {
+          id: "att-sup-01",
+          name: "DET_Renewal_Application_Receipt.pdf",
+          sizeBytes: 1240000,
+        },
+      ],
+    },
+    {
+      id: "msg-sup-002",
+      vendorId: "ven-falcon",
+      senderName: "Aisha Al Nuaimi",
+      senderRole: "DIEZ Procurement Operations",
+      isVendor: false,
+      subject: "RE: Annual Trade Licence Renewal Submission & Verification",
+      body: "Dear Layla, thank you for proactively sharing the provisional receipt. Please upload the final attested trade licence PDF directly to your Vendor Documents compliance repository once DET completes the stamp. Your MSA DIEZ-MSA-2025-0042 remains fully in force.",
+      sentAt: "2026-09-08T14:15:00Z",
+      category: "GENERAL_INQUIRY",
+    },
+  ],
+};
+
 
