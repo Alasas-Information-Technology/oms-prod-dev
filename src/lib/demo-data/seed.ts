@@ -18,6 +18,9 @@ import {
   OnboardingCase,
   WorkforceMember,
   ReconciliationVariance,
+  RateCard,
+  VendorComplianceDocument,
+  VendorContract,
 } from "./entities";
 
 // ============================================================================
@@ -1094,7 +1097,7 @@ export const CANDIDATES: Record<string, Candidate> = {
     fullName: "Elena Rostova",
     anonymisedRef: "Candidate C-021",
     priority: "P2",
-    status: "SHORTLISTED",
+    status: "INTERVIEW_PENDING",
     nationality: "Kazakhstan",
     residentStatus: "ONSHORE",
     timezone: "Asia/Dubai",
@@ -1227,24 +1230,28 @@ export const INTERVIEW_PLANS: Record<string, InterviewPlan> = {
     id: "int-plan-0148-C-021",
     requisitionId: "OMS-2026-0148",
     candidateRef: "C-021",
-    status: "NOT_SENT",
-    daysWaiting: 0,
-    methodPreference: "NO_PREFERENCE",
+    status: "AWAITING_REPLY",
+    daysWaiting: 1,
+    methodPreference: "ONLINE",
     timezone: "Asia/Dubai",
     isOffshore: false,
     rescheduleCount: 0,
     withdrawnSlot: null,
     proposal: {
-      slots: [],
+      slots: [
+        { start: "2026-09-12T08:30:00Z", durationMinutes: 45 },
+        { start: "2026-09-13T10:00:00Z", durationMinutes: 45 },
+        { start: "2026-09-14T09:00:00Z", durationMinutes: 45 },
+      ],
       settings: {
         method: "ONLINE",
         platform: "MICROSOFT_TEAMS",
         location: null,
-        replyByDate: "2026-09-16",
+        replyByDate: "2026-09-12",
         allowAlternatives: true,
         allowReschedule: true,
       },
-      sentAt: null,
+      sentAt: "2026-09-10T09:00:00Z",
     },
     interviewers: [
       { userId: "usr-noura", name: "Noura Al Mazrouei", initials: "NA", role: "Lead Security Architect", isMain: true },
@@ -2372,3 +2379,174 @@ export const RECONCILIATION_VARIANCE_RECORD: ReconciliationVariance = {
   recordedAt: "2026-09-01T08:00:00Z",
   status: "UNRESOLVED",
 };
+
+// ============================================================================
+// 11. Rate Cards (VENDOR-PORTAL-UI.md Part 4.7 & Part 6)
+// ============================================================================
+
+export const RATE_CARDS: Record<string, RateCard> = {
+  "rc-falcon-001": {
+    id: "rc-falcon-001",
+    vendorId: "ven-falcon",
+    code: "RC-FT-2026",
+    name: "Falcon Tech IT Specialist Rate Card 2026",
+    template: "DIEZA_PREMISES",
+    status: "PUBLISHED",
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2026-12-31",
+    currency: "AED",
+    grades: [
+      {
+        gradeCode: "G6",
+        level: "Junior",
+        roleTitle: "Associate Systems / Security Analyst",
+        minSalary: 1400000,
+        maxSalary: 1800000,
+        serviceChargePercent: 15,
+        monthlyRate: 2070000, // AED 20,700.00
+        dailyRate: 95000,     // AED 950.00
+      },
+      {
+        gradeCode: "G7",
+        level: "Mid-Level",
+        roleTitle: "Cybersecurity Analyst / Infrastructure Engineer",
+        minSalary: 1800000,
+        maxSalary: 2400000,
+        serviceChargePercent: 15,
+        monthlyRate: 2760000, // AED 27,600.00
+        dailyRate: 125000,    // AED 1,250.00
+      },
+      {
+        gradeCode: "G8",
+        level: "Senior",
+        roleTitle: "Senior Cybersecurity Specialist / Systems Architect",
+        minSalary: 2400000,
+        maxSalary: 3200000,
+        serviceChargePercent: 14,
+        monthlyRate: 3648000, // AED 36,480.00
+        dailyRate: 165000,    // AED 1,650.00
+      },
+      {
+        gradeCode: "G9",
+        level: "Lead",
+        roleTitle: "Principal Security Architect / Project Director",
+        minSalary: 3200000,
+        maxSalary: 4200000,
+        serviceChargePercent: 12,
+        monthlyRate: 4704000, // AED 47,040.00
+        dailyRate: 215000,    // AED 2,150.00
+      },
+    ],
+  },
+};
+
+export const RATE_CARDS_LIST: RateCard[] = Object.values(RATE_CARDS);
+
+// ============================================================================
+// 12. Vendor Compliance Documents (VENDOR-PORTAL-UI.md Part 4.9 & Part 6)
+// ============================================================================
+
+export const VENDOR_COMPLIANCE_DOCUMENTS: Record<string, VendorComplianceDocument> = {
+  "doc-tl-001": {
+    id: "doc-tl-001",
+    vendorId: "ven-falcon",
+    documentType: "TRADE_LICENCE",
+    title: "Commercial Trade Licence",
+    issuingAuthority: "Dubai Economy & Tourism (DET)",
+    licenceNumber: "DET-849201",
+    status: "EXPIRING_SOON",
+    expiresOn: "2026-10-04",
+    daysRemaining: 24,
+    severity: "WARNING",
+    file: {
+      id: "f-tl-2026",
+      name: "Falcon_Tech_Trade_Licence_2026.pdf",
+      sizeBytes: 1482092,
+      uploadedAt: "2025-10-05T09:00:00Z",
+    },
+  },
+  "doc-tax-001": {
+    id: "doc-tax-001",
+    vendorId: "ven-falcon",
+    documentType: "TAX_REGISTRATION",
+    title: "VAT Registration Certificate (TRN)",
+    issuingAuthority: "Federal Tax Authority (FTA)",
+    licenceNumber: "100-3492-9102-0003",
+    status: "ACTIVE",
+    expiresOn: "2027-12-31",
+    daysRemaining: 477,
+    severity: "NORMAL",
+    file: {
+      id: "f-tax-2026",
+      name: "Falcon_Tech_TRN_Certificate.pdf",
+      sizeBytes: 814920,
+      uploadedAt: "2024-01-10T11:00:00Z",
+    },
+  },
+  "doc-ins-001": {
+    id: "doc-ins-001",
+    vendorId: "ven-falcon",
+    documentType: "INSURANCE",
+    title: "Commercial General Liability Insurance",
+    issuingAuthority: "Oman Insurance Company (Sukoon)",
+    licenceNumber: "POL-GL-2026-9912",
+    status: "ACTIVE",
+    expiresOn: "2027-04-15",
+    daysRemaining: 217,
+    severity: "NORMAL",
+    file: {
+      id: "f-ins-2026",
+      name: "Falcon_Tech_CGL_Insurance_Schedule.pdf",
+      sizeBytes: 2314902,
+      uploadedAt: "2026-04-15T14:30:00Z",
+    },
+  },
+  "doc-iso-001": {
+    id: "doc-iso-001",
+    vendorId: "ven-falcon",
+    documentType: "ISO_CERTIFICATE",
+    title: "ISO 27001:2022 Information Security Management",
+    issuingAuthority: "BSI Middle East",
+    licenceNumber: "ISMS-774912",
+    status: "ACTIVE",
+    expiresOn: "2028-06-30",
+    daysRemaining: 659,
+    severity: "NORMAL",
+    file: {
+      id: "f-iso-2026",
+      name: "Falcon_Tech_ISO27001_Certificate.pdf",
+      sizeBytes: 1948210,
+      uploadedAt: "2025-06-30T10:00:00Z",
+    },
+  },
+};
+
+export const VENDOR_COMPLIANCE_DOCUMENTS_LIST: VendorComplianceDocument[] = Object.values(VENDOR_COMPLIANCE_DOCUMENTS);
+
+// ============================================================================
+// 13. Vendor Contracts (VENDOR-PORTAL-UI.md Part 4.6 & RFP Step 4)
+// ============================================================================
+
+export const VENDOR_CONTRACTS: Record<string, VendorContract> = {
+  "ct-falcon-001": {
+    id: "ct-falcon-001",
+    contractCode: "DIEZ-MSA-2025-0042",
+    vendorId: "ven-falcon",
+    title: "Master IT & Cybersecurity Professional Services Agreement",
+    status: "ACTIVE",
+    template: "DIEZA_PREMISES",
+    validFrom: "2025-01-01",
+    validTo: "2027-12-31",
+    preAgreedMonthlyRate: 3100000, // AED 31,000.00 / month pre-agreed contract rate
+    preAgreedDailyRate: 140000,   // AED 1,400.00 / day
+    applicablePositions: [
+      "Cloud Security Engineer",
+      "Penetration Tester",
+      "Senior Cybersecurity Analyst",
+      "SOC Analyst",
+    ],
+  },
+};
+
+export const VENDOR_CONTRACTS_LIST: VendorContract[] = Object.values(VENDOR_CONTRACTS);
+

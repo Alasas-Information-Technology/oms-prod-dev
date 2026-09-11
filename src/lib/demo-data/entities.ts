@@ -208,6 +208,7 @@ export interface Candidate {
   vendorHidden: boolean; // true during blind candidate review
   email: string;
   mobile: string;
+  submittedAt?: string; // e.g. "2026-08-15T09:00:00Z"
   rejectionDetails?: {
     reasonCode: "NOT_SUITABLE_KEEP_CV" | "NOT_SUITABLE_DELETE_CV" | "DUPLICATE_CV";
     label: string;
@@ -226,7 +227,9 @@ export type InterviewSchedulingStatus =
   | "AWAITING_REPLY"
   | "DECLINED"
   | "CONFIRMED"
+  | "SCHEDULED"
   | "RESCHEDULING"
+  | "ALTERNATIVE_REQUESTED"
   | "AWAITING_OUTCOME"
   | "BYPASS_REQUESTED";
 
@@ -254,6 +257,7 @@ export interface InterviewPlan {
   timezone: string;
   isOffshore: boolean;
   rescheduleCount: number;
+  alternativeRequestNote?: string | null;
   withdrawnSlot?: {
     start: string;
     durationMinutes: number;
@@ -635,3 +639,255 @@ export interface ReconciliationVariance {
   recordedAt: string;
   status: "UNRESOLVED" | "UNDER_REVIEW" | "RESOLVED";
 }
+
+// ============================================================================
+// 12. Vendor Portal Entities (docs/VENDOR-PORTAL-UI.md Part 5 & 6)
+// ============================================================================
+
+export type RateCardTemplate =
+  | "DIEZA_PREMISES"
+  | "UAE_REMOTE_WFH"
+  | "UAE_REMOTE_OFFICE"
+  | "REMOTE_ABROAD"
+  | "PRE_AGREED";
+
+export type RateCardStatus = "DRAFT" | "SUBMITTED" | "PUBLISHED" | "ARCHIVED";
+
+export interface RateCardGrade {
+  gradeCode: string; // e.g. "G6", "G7", "G8", "G9"
+  level: string; // "Junior", "Mid", "Senior", "Lead"
+  roleTitle: string;
+  minSalary: number; // in fils
+  maxSalary: number; // in fils
+  serviceChargePercent: number; // percentage e.g. 14
+  monthlyRate: number; // in fils
+  dailyRate: number; // in fils
+}
+
+export interface RateCard {
+  id: string; // e.g. "rc-falcon-001"
+  vendorId: string; // "ven-falcon"
+  code: string; // "RC-FT-2026"
+  name: string;
+  template: RateCardTemplate;
+  status: RateCardStatus;
+  effectiveFrom: string; // YYYY-MM-DD
+  effectiveTo: string; // YYYY-MM-DD
+  currency: "AED";
+  grades: RateCardGrade[];
+}
+
+export interface VendorComplianceDocument {
+  id: string; // e.g. "doc-tl-001"
+  vendorId: string; // "ven-falcon"
+  documentType: "TRADE_LICENCE" | "TAX_REGISTRATION" | "INSURANCE" | "ISO_CERTIFICATE";
+  title: string;
+  issuingAuthority: string;
+  licenceNumber?: string;
+  status: "ACTIVE" | "EXPIRING_SOON" | "EXPIRED" | "PENDING_VERIFICATION";
+  expiresOn: string; // YYYY-MM-DD
+  daysRemaining: number;
+  severity: "NORMAL" | "WARNING" | "CRITICAL";
+  file: {
+    id: string;
+    name: string;
+    sizeBytes: number;
+    uploadedAt: string;
+  };
+}
+
+export interface VendorRequisition {
+  id: string; // "OMS-2026-0141", "OMS-2026-0161", "OMS-2026-0148"
+  positionTitle: string;
+  departmentName: string;
+  positions: {
+    required: number;
+    filled: number;
+    inProgress: number;
+  };
+  engagementMonths: number;
+  workLocation: string;
+  expectedStartDate: string;
+  salaryGrade: string;
+  justification: string;
+  submissionWindow: {
+    opensAt: string;
+    closesAt: string;
+    daysRemaining: number;
+    isOpen: boolean;
+    maxBatchSize: number;
+    closedReason?: string;
+  };
+  mySubmissionsCount: number;
+  requiredSkills: string[];
+  experienceYearsRequired?: number;
+  responsibilities?: string[];
+  jobDescriptionHtml?: string;
+}
+
+export interface VendorContract {
+  id: string; // e.g. "ct-falcon-001"
+  contractCode: string; // e.g. "DIEZ-MSA-2025-0042"
+  vendorId: string; // "ven-falcon"
+  title: string;
+  status: "ACTIVE" | "EXPIRED" | "TERMINATED";
+  template: RateCardTemplate;
+  validFrom: string;
+  validTo: string;
+  preAgreedMonthlyRate: number; // in fils
+  preAgreedDailyRate: number; // in fils
+  applicablePositions: string[];
+}
+
+export type CostEntryMode = "FIXED" | "NEGOTIABLE" | "PRE_AGREED";
+
+export interface CandidateSubmissionPayload {
+  requisitionId: string;
+  vendorId: string;
+  candidate: {
+    fullName: string;
+    email: string;
+    mobile: string;
+    nationality: string;
+    residentStatus: "ONSHORE" | "OFFSHORE";
+    experienceYears: number;
+    noticePeriod: string;
+  };
+  cvAttachment: {
+    id: string;
+    name: string;
+    sizeBytes: number;
+    url?: string;
+  };
+  costMode: CostEntryMode;
+  rateCardGradeCode?: string; // required if costMode === "NEGOTIABLE"
+  fixedAmount?: number; // required if costMode === "FIXED", in fils
+  contractId?: string; // required if costMode === "PRE_AGREED"
+  leadTimeDays: number;
+  specialTerms?: string;
+}
+
+export interface CandidateSubmissionReceipt {
+  success: boolean;
+  candidateRef: string; // e.g. "C-041"
+  requisitionId: string;
+  positionTitle: string;
+  costMode: CostEntryMode;
+  resolvedAmountFils: number;
+  resolvedMonthlyFils: number;
+  leadTimeDays: number;
+  batchSubmissionNumber: number; // e.g. 1 (of 10)
+  maxBatchSize: number;
+  submittedAt: string;
+  message: string;
+}
+
+export interface VendorActionItem {
+  id: string;
+  type: "INTERVIEW_PROPOSAL" | "ONBOARDING_DOCUMENT" | "SUBMISSION_WINDOW" | "COMPLIANCE_EXPIRY";
+  subjectRef: string; // e.g. "C-021", "ONB-2026-0119", "OMS-2026-0161", "DOC-TL-2026"
+  title: string;
+  context: string;
+  status: string;
+  urgency: "NORMAL" | "HIGH" | "CRITICAL";
+  daysRemaining: number;
+  dueAt: string;
+  href: string;
+}
+
+export interface VendorDashboardData {
+  kpis: {
+    openRequirements: number;
+    candidatesAwaitingReview: number;
+    interviewsToRespond: number;
+    onboardingInProgress: number;
+    documentsExpiringSoon: number;
+  };
+  actionItems: VendorActionItem[];
+}
+
+export type VendorSubmissionStatus =
+  | "SUBMITTED"
+  | "UNDER_REVIEW"
+  | "SHORTLISTED"
+  | "INTERVIEW_PROPOSED"
+  | "INTERVIEW_CONFIRMED"
+  | "QUALIFIED"
+  | "NOT_SELECTED";
+
+export type VendorSubmissionStatusLabel =
+  | "Submitted"
+  | "Under review"
+  | "Shortlisted"
+  | "Interview proposed"
+  | "Interview confirmed"
+  | "Qualified"
+  | "Not selected";
+
+/**
+ * Server Requirement 3: Rejection reasons are never sent.
+ * Only the status code NOT_SELECTED is exposed.
+ * Absolutely no ratings, scores, internal comments, or priority fields.
+ */
+export interface VendorSubmissionItem {
+  candidateRef: string;
+  candidateName: string;
+  requisitionId: string;
+  positionTitle: string;
+  departmentName: string;
+  vendorStatus: VendorSubmissionStatus;
+  vendorStatusLabel: VendorSubmissionStatusLabel;
+  quotedCost: number; // in fils (exact minor units)
+  leadTimeDays: number;
+  submittedAt: string;
+  interviewSlotId?: string;
+  interviewPlanId?: string;
+  actionRequired?: boolean;
+  confirmedInterviewSlot?: {
+    start: string;
+    durationMinutes: number;
+  } | null;
+}
+
+export interface VendorInterviewProposalSlot {
+  slotId: string;
+  start: string; // ISO 8601 UTC
+  durationMinutes: number;
+  dateLabel: string; // e.g. "Sat 12 Sep"
+  timeRange: string; // e.g. "12:30 – 13:15 GST"
+}
+
+/**
+ * Server Requirement 4: Interviewer identity is never sent on the interview-response route.
+ * Renders strictly as "The hiring team for {Position}."
+ * Absolutely no interviewer names, initials, emails, or user IDs.
+ */
+export interface VendorInterviewProposalData {
+  planId: string;
+  candidateRef: string;
+  candidateName: string;
+  requisitionId: string;
+  positionTitle: string;
+  departmentName: string;
+  hiringTeam: string; // Strictly "The hiring team for {Position}."
+  status: "AWAITING_REPLY" | "CONFIRMED" | "ALTERNATIVE_REQUESTED";
+  statusLabel: string;
+  method: "ONLINE" | "PHYSICAL" | "HYBRID" | "NO_PREFERENCE";
+  platform?: string | null; // e.g. "MICROSOFT_TEAMS"
+  location?: string | null;
+  replyByDate: string; // e.g. "2026-09-12"
+  daysRemaining: number;
+  isUrgent: boolean;
+  urgencySeverity: "normal" | "amber" | "red"; // amber under 2 days, red under 1
+  proposedSlots: VendorInterviewProposalSlot[];
+  scheduledSlot?: {
+    start: string;
+    durationMinutes: number;
+    dateLabel: string;
+    timeRange: string;
+  } | null;
+  confirmedAt?: string | null;
+  alternativeRequestNote?: string | null;
+}
+
+

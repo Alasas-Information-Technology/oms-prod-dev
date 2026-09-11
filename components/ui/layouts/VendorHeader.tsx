@@ -73,16 +73,28 @@ export function VendorHeader() {
         {/* Center section: High-level Vendor Navigation */}
         <nav className="hidden md:flex items-center gap-1.5 text-xs">
           <Link
-            href="/vendor/onboarding"
-            className="px-3 py-1.5 rounded-md font-medium text-white/90 dark:text-foreground/90 bg-white/10 dark:bg-white/5 hover:bg-white/15 transition-colors"
+            href="/vendor"
+            className="px-3 py-1.5 rounded-md font-medium text-white/90 dark:text-foreground/90 hover:text-white dark:hover:text-foreground hover:bg-white/10 transition-colors"
           >
-            Onboarding
+            Dashboard
           </Link>
           <Link
-            href="/vendor/compliance"
-            className="px-3 py-1.5 rounded-md font-medium text-white/70 dark:text-muted-foreground hover:text-white dark:hover:text-foreground hover:bg-white/5 transition-colors"
+            href="/vendor/requisitions"
+            className="px-3 py-1.5 rounded-md font-medium text-white/70 dark:text-muted-foreground hover:text-white dark:hover:text-foreground hover:bg-white/10 transition-colors"
           >
-            Compliance
+            Requirements
+          </Link>
+          <Link
+            href="/vendor/submissions"
+            className="px-3 py-1.5 rounded-md font-medium text-white/70 dark:text-muted-foreground hover:text-white dark:hover:text-foreground hover:bg-white/10 transition-colors"
+          >
+            Submissions
+          </Link>
+          <Link
+            href="/vendor/onboarding"
+            className="px-3 py-1.5 rounded-md font-medium text-white/70 dark:text-muted-foreground hover:text-white dark:hover:text-foreground hover:bg-white/10 transition-colors"
+          >
+            Onboarding
           </Link>
         </nav>
 
