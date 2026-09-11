@@ -86,13 +86,25 @@ export function CandidateSubmissionForm({
     [vendorId]
   );
 
-  const activeRateCard = React.useMemo(
-    () => rateCards.find((rc) => rc.status === "PUBLISHED") || rateCards[0],
+  const publishedRateCards = React.useMemo(
+    () => rateCards.filter((rc) => rc.status === "PUBLISHED"),
     [rateCards]
   );
 
+  const [selectedRateCardId, setSelectedRateCardId] = React.useState<string>(
+    () => publishedRateCards[0]?.id || ""
+  );
+
+  const activeRateCard = React.useMemo(
+    () =>
+      publishedRateCards.find((rc) => rc.id === selectedRateCardId) ||
+      publishedRateCards[0] ||
+      null,
+    [publishedRateCards, selectedRateCardId]
+  );
+
   const activeContract = React.useMemo(
-    () => contracts.find((c) => c.status === "ACTIVE") || contracts[0],
+    () => contracts.find((c) => c.status === "ACTIVE") || contracts[0] || null,
     [contracts]
   );
 
@@ -207,9 +219,15 @@ export function CandidateSubmissionForm({
       setFormError("Please enter a valid fixed annual cost amount in AED.");
       return false;
     }
-    if (costMode === "NEGOTIABLE" && !selectedGrade) {
-      setFormError("Please select a valid grade from your published rate card.");
-      return false;
+    if (costMode === "NEGOTIABLE") {
+      if (!activeRateCard) {
+        setFormError("Negotiable cost mode requires an approved, published rate card with DIEZ Procurement.");
+        return false;
+      }
+      if (!selectedGrade) {
+        setFormError("Please select a valid grade from your published rate card.");
+        return false;
+      }
     }
     if (!leadTimeDays || leadTimeDays < 0) {
       setFormError("Lead time in days is required.");
@@ -768,35 +786,87 @@ export function CandidateSubmissionForm({
 
             {costMode === "NEGOTIABLE" && (
               <div className="p-4 rounded-lg bg-teal-500/5 border border-teal-500/30 space-y-3">
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="grade-select" className="text-xs font-medium text-foreground">
-                      Select Published Rate Card Grade <span className="text-destructive">*</span>
-                    </Label>
-                    <span className="text-[11px] text-teal-600 dark:text-teal-400 font-mono">
-                      Card: {activeRateCard?.code} · Status: PUBLISHED
-                    </span>
+                {!activeRateCard ? (
+                  <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30 text-xs space-y-2">
+                    <div className="flex items-center gap-2 font-bold text-amber-700 dark:text-amber-400">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      <span>No Approved & Published Rate Card Available</span>
+                    </div>
+                    <p className="text-muted-foreground">
+                      Negotiable mode resolves strictly against Procurement-approved rate cards.
+                      Your rate cards currently in Draft or Submitted status cannot be used until approved and published by DIEZ Procurement.
+                    </p>
+                    <div className="pt-1">
+                      <Link
+                        href="/vendor/rates"
+                        className="text-teal-600 hover:text-teal-700 dark:text-teal-400 font-semibold underline text-xs"
+                      >
+                        View Rate Cards Master Data & Status &rarr;
+                      </Link>
+                    </div>
                   </div>
+                ) : (
+                  <>
+                    {publishedRateCards.length > 1 && (
+                      <div className="space-y-1.5 pb-2 border-b border-border/40">
+                        <Label htmlFor="rate-card-select" className="text-xs font-medium text-foreground">
+                          Select Published Rate Card
+                        </Label>
+                        <Select
+                          value={selectedRateCardId}
+                          onValueChange={(val) => {
+                            setSelectedRateCardId(val);
+                            const card = publishedRateCards.find((c) => c.id === val);
+                            if (card && card.grades.length > 0) {
+                              setSelectedGradeCode(card.grades[0].gradeCode);
+                            }
+                          }}
+                        >
+                          <SelectTrigger id="rate-card-select" className="w-full text-xs h-9 font-medium">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {publishedRateCards.map((rc) => (
+                              <SelectItem key={rc.id} value={rc.id} className="text-xs">
+                                {rc.code} — {rc.name} ({rc.template})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
 
-                  <Select value={selectedGradeCode} onValueChange={setSelectedGradeCode}>
-                    <SelectTrigger id="grade-select" className="w-full text-xs h-10 font-medium">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {activeRateCard?.grades.map((grade) => (
-                        <SelectItem key={grade.gradeCode} value={grade.gradeCode} className="text-xs py-2">
-                          <div className="flex items-center justify-between gap-4 w-full">
-                            <span className="font-bold">{grade.gradeCode} ({grade.level})</span>
-                            <span>{grade.roleTitle}</span>
-                            <span className="font-mono text-teal-600 font-semibold">
-                              AED {formatAmount(grade.monthlyRate)}/mo
-                            </span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="grade-select" className="text-xs font-medium text-foreground">
+                          Select Published Rate Card Grade <span className="text-destructive">*</span>
+                        </Label>
+                        <span className="text-[11px] text-teal-600 dark:text-teal-400 font-mono">
+                          Card: {activeRateCard.code} · Status: PUBLISHED
+                        </span>
+                      </div>
+
+                      <Select value={selectedGradeCode} onValueChange={setSelectedGradeCode}>
+                        <SelectTrigger id="grade-select" className="w-full text-xs h-10 font-medium">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {activeRateCard.grades.map((grade) => (
+                            <SelectItem key={grade.gradeCode} value={grade.gradeCode} className="text-xs py-2">
+                              <div className="flex items-center justify-between gap-4 w-full">
+                                <span className="font-bold">{grade.gradeCode} ({grade.level})</span>
+                                <span>{grade.roleTitle}</span>
+                                <span className="font-mono text-teal-600 font-semibold">
+                                  AED {formatAmount(grade.monthlyRate)}/mo
+                                </span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
+                )}
 
                 {/* Resolved Grade Details (Hand-typing disabled) */}
                 {selectedGrade && (

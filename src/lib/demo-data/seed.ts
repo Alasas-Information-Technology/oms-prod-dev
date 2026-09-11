@@ -2438,6 +2438,92 @@ export const RATE_CARDS: Record<string, RateCard> = {
       },
     ],
   },
+  "rc-falcon-002": {
+    id: "rc-falcon-002",
+    vendorId: "ven-falcon",
+    code: "RC-FT-WFH-2026",
+    name: "Falcon Tech UAE Remote (WFH) Software Engineering Rate Card",
+    template: "UAE_REMOTE_WFH",
+    status: "SUBMITTED",
+    effectiveFrom: "2026-06-01",
+    effectiveTo: "2027-05-31",
+    currency: "AED",
+    grades: [
+      {
+        gradeCode: "G6",
+        level: "Junior",
+        roleTitle: "Remote Software QA Analyst",
+        minSalary: 1200000,
+        maxSalary: 1600000,
+        serviceChargePercent: 12,
+        monthlyRate: 1568000, // AED 15,680.00
+        dailyRate: 72000,     // AED 720.00
+      },
+      {
+        gradeCode: "G7",
+        level: "Mid-Level",
+        roleTitle: "Remote Full Stack / DevOps Engineer",
+        minSalary: 1600000,
+        maxSalary: 2200000,
+        serviceChargePercent: 12,
+        monthlyRate: 2128000, // AED 21,280.00
+        dailyRate: 97000,     // AED 970.00
+      },
+      {
+        gradeCode: "G8",
+        level: "Senior",
+        roleTitle: "Remote Senior Backend Engineer",
+        minSalary: 2100000,
+        maxSalary: 2800000,
+        serviceChargePercent: 11,
+        monthlyRate: 2719500, // AED 27,195.00
+        dailyRate: 124000,    // AED 1,240.00
+      },
+      {
+        gradeCode: "G9",
+        level: "Lead",
+        roleTitle: "Remote Cloud Solutions Architect",
+        minSalary: 2800000,
+        maxSalary: 3800000,
+        serviceChargePercent: 10,
+        monthlyRate: 3630000, // AED 36,300.00
+        dailyRate: 165000,    // AED 1,650.00
+      },
+    ],
+  },
+  "rc-falcon-003": {
+    id: "rc-falcon-003",
+    vendorId: "ven-falcon",
+    code: "RC-FT-ABROAD-2026",
+    name: "Falcon Tech Offshore Remote (Abroad) Specialists Draft",
+    template: "REMOTE_ABROAD",
+    status: "DRAFT",
+    effectiveFrom: "2026-09-01",
+    effectiveTo: "2027-08-31",
+    currency: "AED",
+    grades: [
+      {
+        gradeCode: "G6",
+        level: "Junior",
+        roleTitle: "Offshore Data Migration Assistant",
+        minSalary: 800000,
+        maxSalary: 1100000,
+        serviceChargePercent: 10,
+        monthlyRate: 1045000, // AED 10,450.00
+        dailyRate: 48000,     // AED 480.00
+      },
+      {
+        gradeCode: "G7",
+        level: "Mid-Level",
+        roleTitle: "Offshore Systems Developer",
+        minSalary: 1100000,
+        maxSalary: 1500000,
+        serviceChargePercent: 10,
+        monthlyRate: 1430000, // AED 14,300.00
+        dailyRate: 65000,     // AED 650.00
+      },
+    ],
+  },
 };
 
 export const RATE_CARDS_LIST: RateCard[] = Object.values(RATE_CARDS);
@@ -2544,6 +2630,23 @@ export const VENDOR_CONTRACTS: Record<string, VendorContract> = {
       "Penetration Tester",
       "Senior Cybersecurity Analyst",
       "SOC Analyst",
+    ],
+  },
+  "ct-falcon-002": {
+    id: "ct-falcon-002",
+    contractCode: "DIEZ-MSA-2023-0019",
+    vendorId: "ven-falcon",
+    title: "Enterprise Remote Software Engineering & Maintenance Support",
+    status: "EXPIRED",
+    template: "UAE_REMOTE_WFH",
+    validFrom: "2023-01-01",
+    validTo: "2024-12-31",
+    preAgreedMonthlyRate: 2400000, // AED 24,000.00 / month pre-agreed rate
+    preAgreedDailyRate: 110000,   // AED 1,100.00 / day
+    applicablePositions: [
+      "Full Stack Engineer",
+      "DevOps Engineer",
+      "Software QA Automation Specialist",
     ],
   },
 };

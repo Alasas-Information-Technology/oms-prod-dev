@@ -22,6 +22,9 @@ import {
   Vendor,
   RequisitionStage,
   RateCard,
+  RateCardTemplate,
+  RateCardStatus,
+  RateCardGrade,
   VendorComplianceDocument,
   VendorRequisition,
   VendorActionItem,
@@ -1045,6 +1048,164 @@ export function getVendorRateCard(id: string, vendorId: string = "ven-falcon"): 
   const card = RATE_CARDS[id];
   if (!card || card.vendorId !== vendorId) return null;
   return card;
+}
+
+export function createOrUpdateVendorRateCard(card: RateCard): RateCard {
+  RATE_CARDS[card.id] = card;
+  const idx = RATE_CARDS_LIST.findIndex((rc) => rc.id === card.id);
+  if (idx >= 0) {
+    RATE_CARDS_LIST[idx] = card;
+  } else {
+    RATE_CARDS_LIST.unshift(card);
+  }
+  return card;
+}
+
+export function submitVendorRateCardForApproval(
+  id: string,
+  vendorId: string = "ven-falcon"
+): RateCard {
+  const card = RATE_CARDS[id];
+  if (!card || card.vendorId !== vendorId) {
+    throw new Error(`Rate card ${id} not found.`);
+  }
+  if (card.status !== "DRAFT") {
+    throw new Error(
+      `Only rate cards in Draft status can be submitted for approval (current status: ${card.status}).`
+    );
+  }
+  card.status = "SUBMITTED";
+  const idx = RATE_CARDS_LIST.findIndex((rc) => rc.id === id);
+  if (idx >= 0) {
+    RATE_CARDS_LIST[idx] = card;
+  }
+  return card;
+}
+
+export function publishVendorRateCard(
+  id: string,
+  vendorId: string = "ven-falcon"
+): RateCard {
+  const card = RATE_CARDS[id];
+  if (!card || card.vendorId !== vendorId) {
+    throw new Error(`Rate card ${id} not found.`);
+  }
+  card.status = "PUBLISHED";
+  const idx = RATE_CARDS_LIST.findIndex((rc) => rc.id === id);
+  if (idx >= 0) {
+    RATE_CARDS_LIST[idx] = card;
+  }
+  return card;
+}
+
+export function exportRateCardTemplateCsv(): string {
+  const header =
+    "Template,GradeCode,Level,RoleTitle,MinSalaryAED,MaxSalaryAED,ServiceChargePercent,EffectiveFrom,EffectiveTo";
+  const rows = [
+    "DIEZA_PREMISES,G6,Junior,Associate Systems / Security Analyst,14000,18000,15,2026-01-01,2026-12-31",
+    "DIEZA_PREMISES,G7,Mid-Level,Cybersecurity Analyst / Infrastructure Engineer,18000,24000,15,2026-01-01,2026-12-31",
+    "DIEZA_PREMISES,G8,Senior,Senior Cybersecurity Specialist / Systems Architect,24000,32000,14,2026-01-01,2026-12-31",
+    "DIEZA_PREMISES,G9,Lead,Principal Security Architect / Project Director,32000,42000,12,2026-01-01,2026-12-31",
+  ];
+  return [header, ...rows].join("\n");
+}
+
+export function parseRateCardCsv(
+  csvContent: string,
+  vendorId: string = "ven-falcon"
+): {
+  template: RateCardTemplate;
+  effectiveFrom: string;
+  effectiveTo: string;
+  grades: RateCardGrade[];
+} {
+  const lines = csvContent
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith("#"));
+
+  if (lines.length < 2) {
+    throw new Error("CSV must contain at least a header row and one grade data row.");
+  }
+
+  // Parse header
+  const header = lines[0].split(",").map((col) => col.trim().toLowerCase());
+  const templateIdx = header.findIndex((h) => h.includes("template"));
+  const gradeIdx = header.findIndex((h) => h.includes("grade"));
+  const levelIdx = header.findIndex((h) => h.includes("level"));
+  const titleIdx = header.findIndex((h) => h.includes("role") || h.includes("title"));
+  const minSalIdx = header.findIndex((h) => h.includes("min"));
+  const maxSalIdx = header.findIndex((h) => h.includes("max"));
+  const serviceChargeIdx = header.findIndex((h) => h.includes("service") || h.includes("charge"));
+  const effectiveFromIdx = header.findIndex((h) => h.includes("from") || h.includes("start"));
+  const effectiveToIdx = header.findIndex((h) => h.includes("to") || h.includes("end"));
+
+  const grades: RateCardGrade[] = [];
+  let detectedTemplate: RateCardTemplate = "DIEZA_PREMISES";
+  let detectedFrom = "2026-01-01";
+  let detectedTo = "2026-12-31";
+
+  for (let i = 1; i < lines.length; i++) {
+    const cols = lines[i].split(",").map((c) => c.trim());
+    if (cols.length < 4) continue;
+
+    if (templateIdx >= 0 && cols[templateIdx]) {
+      const rawTmpl = cols[templateIdx].toUpperCase().replace(/\s+/g, "_");
+      if (
+        rawTmpl === "DIEZA_PREMISES" ||
+        rawTmpl === "UAE_REMOTE_WFH" ||
+        rawTmpl === "UAE_REMOTE_OFFICE" ||
+        rawTmpl === "REMOTE_ABROAD" ||
+        rawTmpl === "PRE_AGREED"
+      ) {
+        detectedTemplate = rawTmpl as RateCardTemplate;
+      }
+    }
+
+    if (effectiveFromIdx >= 0 && cols[effectiveFromIdx]) {
+      detectedFrom = cols[effectiveFromIdx];
+    }
+    if (effectiveToIdx >= 0 && cols[effectiveToIdx]) {
+      detectedTo = cols[effectiveToIdx];
+    }
+
+    const gradeCode = (gradeIdx >= 0 && cols[gradeIdx] ? cols[gradeIdx] : `G${i + 5}`).toUpperCase();
+    const level = levelIdx >= 0 && cols[levelIdx] ? cols[levelIdx] : (i <= 2 ? "Junior" : "Senior");
+    const roleTitle = titleIdx >= 0 && cols[titleIdx] ? cols[titleIdx] : `IT Specialist (${gradeCode})`;
+    const minSalaryAed = parseFloat(minSalIdx >= 0 ? cols[minSalIdx] : "15000") || 15000;
+    const maxSalaryAed = parseFloat(maxSalIdx >= 0 ? cols[maxSalIdx] : "20000") || 20000;
+    const serviceChargePercent = parseFloat(serviceChargeIdx >= 0 ? cols[serviceChargeIdx] : "15") || 15;
+
+    // Convert AED to fils (1 AED = 100 fils)
+    const minSalary = Math.round(minSalaryAed * 100);
+    const maxSalary = Math.round(maxSalaryAed * 100);
+    const midSalaryAed = (minSalaryAed + maxSalaryAed) / 2;
+    const monthlyRateAed = midSalaryAed * (1 + serviceChargePercent / 100);
+    const monthlyRate = Math.round(monthlyRateAed * 100);
+    const dailyRate = Math.round(monthlyRate / 22);
+
+    grades.push({
+      gradeCode,
+      level,
+      roleTitle,
+      minSalary,
+      maxSalary,
+      serviceChargePercent,
+      monthlyRate,
+      dailyRate,
+    });
+  }
+
+  if (grades.length === 0) {
+    throw new Error("No valid grade entries could be parsed from the CSV file.");
+  }
+
+  return {
+    template: detectedTemplate,
+    effectiveFrom: detectedFrom,
+    effectiveTo: detectedTo,
+    grades,
+  };
 }
 
 export function getVendorComplianceDocuments(vendorId: string = "ven-falcon"): VendorComplianceDocument[] {
