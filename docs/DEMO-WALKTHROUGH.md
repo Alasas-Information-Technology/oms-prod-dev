@@ -360,6 +360,99 @@ This document is the authoritative presenter's script for demonstrating the inte
 
 ---
 
+## Storyline H: Vendor Portal End-to-End Operations & Flagship Cross-Portal Synchronization
+
+**Demonstration Objective**: Walk the external vendor experience as Layla Hassan (Falcon Tech Resourcing LLC). Demonstrate open requirement discovery, RFP rate-card candidate submission with published grade resolution against `OMS-2026-0141`, responding to proposed interview slots for flagship candidate `C-021` on `OMS-2026-0148` while strictly preserving interviewer anonymity, verifying cross-portal synchronization with internal Interview Planning (`Noura Al Mazrouei`), and monitoring onboarding document health for `C-030` and `C-031`.
+
+- **Primary Entities**:
+  - Vendor Persona: **Layla Hassan** (`usr-layla`, `layla.hassan@falcontech.ae`, Falcon Tech Resourcing LLC).
+  - Open Sourcing Requirement: `OMS-2026-0141` (*Cloud Security Engineer*, Digital Security).
+  - Flagship Sourcing Requisition: `OMS-2026-0148` (*Senior Cybersecurity Analyst*), Candidate `C-021`.
+  - Onboarding Cases: `ONB-2026-0119` (*Tariq Al Hammadi*, Onshore) & `ONB-2026-0102` (*Priya Sharma*, Offshore).
+  - Published Rate Card: `RC-FT-2026` (`rc-falcon-001`, Template: *DIEZA Premises*).
+
+### Detailed Click Path
+
+#### Step 1: External Vendor Authentication & Portal Redirection
+1. **Authentication**: Log in as `layla.hassan@falcontech.ae` / `Demo@2026!` (Layla Hassan, Vendor Coordinator).
+2. **Starting URL**: `/vendor`
+3. **Presenter Talking Points**:
+   - Notice the automatic portal redirection: As a `VENDOR` user, Layla is routed strictly to `/vendor`.
+   - Any attempt to reach internal routes (`/app/*`) is immediately intercepted and redirected back to `/vendor`.
+   - **Zero-Budget Concealment**: Highlight that throughout the vendor portal, approved budgets and financial reserves are completely concealed. The vendor sees role details, required headcount, and submission deadlines, but never DIEZ's internal financial ceiling.
+
+#### Step 2: Open Sourcing Windows & Rate Card Submission (OMS-2026-0141)
+1. **Starting URL**: `/vendor/requisitions`
+2. **Actions**:
+   - Review the open requirements list:
+     - `OMS-2026-0141` (*Cloud Security Engineer*): 3 days left in submission window, 0 of 10 CVs submitted by Falcon Tech.
+     - `OMS-2026-0161` (*DevOps Engineer*): Re-sourcing following PDPL rejection, 4 days remaining.
+     - `OMS-2026-0119` (*SOC Analyst*): Marked read-only (*"Submission window closed — Candidate selected & in onboarding"*).
+   - Click **Submit Candidate** on `OMS-2026-0141` (navigates to `/vendor/submissions?requisitionId=OMS-2026-0141`).
+   - CV Upload: Upload `Nasser_AlKaabi_Cloud_Security_CV.pdf` via `AttachmentList` (shows simulated upload progress and clean malware scan).
+   - Candidate Details:
+     - Full Name: *Nasser Al-Kaabi*
+     - Nationality: *Emirati*
+     - Resident Status: *Onshore (UAE Resident)*
+     - Experience: *7 years*
+     - Notice Period: *Immediate*
+     - Lead Time: *14 calendar days*
+   - **RFP Cost Entry Selection (Negotiable Mode)**:
+     - Select cost mode: **Negotiable**.
+     - Select Grade: **G8** from Published Rate Card `RC-FT-2026`.
+     - Watch the cost fields resolve automatically:
+       - Quoted Monthly Rate: **AED 36,480.00** (`3,648,000` fils).
+       - Quoted Annual Cost: **AED 437,760.00** (`43,776,000` fils).
+     - Presenter notes: This is not an editable free-text input; it is strictly resolved server-side from Falcon Tech's published rate card.
+   - **Batch Limit Indicator**:
+     - Point out the prominent indicator: *"Falcon Tech Batch Usage: 0 of 10 CVs submitted"*.
+   - Click **Submit Candidate to DIEZ**.
+   - Review the blind-boundary confirmation modal stating that the submission is visible only to DIEZ evaluators under blind review, and confirm submission.
+
+#### Step 3: Flagship Candidate Interview Slot Response (C-021 on OMS-2026-0148)
+1. **Starting URL**: `/vendor/submissions/history`
+2. **Actions**:
+   - Locate candidate `C-021` (*Farah Al-Nuaimi*, Senior Cybersecurity Analyst).
+   - Point out that rows with status **Interview proposed** sort to the top with a high-visibility amber badge.
+   - Click the action button: **Respond to Interview Slots →**.
+   - Lands on `/vendor/submissions/C-021/interview`.
+3. **Presenter Talking Points & Verifications**:
+   - **Interviewer Anonymity (Server Requirement 4)**: Point out the interviewer card: *"The hiring team for Senior Cybersecurity Analyst."* Evaluator names (`Noura Al Mazrouei`, `Yousef Al Falasi`) are completely concealed from the DOM and network payloads.
+   - **Underlying Slot Options**: The 3 slots proposed by the internal suggestion engine appear with exact GST time ranges:
+     - Slot 1: *Sat 12 Sept · 12:30 – 13:15 GST* (Online / Microsoft Teams)
+     - Slot 2: *Sun 13 Sept · 14:00 – 14:45 GST* (Online / Microsoft Teams)
+     - Slot 3: *Mon 14 Sept · 13:00 – 13:45 GST* (Online / Microsoft Teams)
+   - Select **Slot 1 (Sat 12 Sept, 12:30 – 13:15 GST)**.
+   - Click **Confirm Selected Slot**.
+   - The workspace immediately locks into read-only confirmed state with a green confirmation chip (*"Interview confirmed"*), scheduled time details, and a calendar-add action.
+
+#### Step 4: Cross-Portal Synchronization Proof Point (Internal Verification)
+1. **Authentication**: Log in as `noura.almazrouei@diez.ae` / `Demo@2026!` (Noura Al Mazrouei, Main Interviewer).
+2. **Starting URL**: `/app/candidates` (or directly open Interview Planning for `C-021`).
+3. **Actions**:
+   - Filter candidates by `OMS-2026-0148`.
+   - Open candidate `C-021`.
+4. **Presenter Talking Points**:
+   - The internal interview plan (`int-plan-0148-C-021`) shows status **SCHEDULED** with the exact slot confirmed by Layla Hassan (*Sat 12 Sept 2026, 12:30–13:15 GST*).
+   - Demonstrates that both portals share the exact same underlying demo dataset (`src/lib/demo-data/seed.ts`), proving end-to-end integration without isolated mocks.
+
+#### Step 5: Onboarding Lifecycle & Document Compliance Monitoring
+1. **Authentication**: Switch back to Layla Hassan (`layla.hassan@falcontech.ae`).
+2. **Starting URL**: `/vendor/onboarding`
+3. **Actions**:
+   - Review the candidate onboarding table:
+     - **OMS-2026-0119 (Tariq Al Hammadi, Onshore)**:
+       - Document Completion: strictly **3 of 4** (derived from `computeDocumentHealth`: Passport, Emirates ID, Police Clearance uploaded; NDA pending candidate signature).
+       - Signature Status: `Pending Signature (SENT)`.
+     - **OMS-2026-0102 (Priya Sharma, Offshore)**:
+       - Document Completion: strictly **3 of 3** (100% complete: Passport, Degree, Cross-Border Remote Authorization).
+       - Signature Status: `Fully Executed (SIGNED)`.
+   - Click **View & Upload Documents** on Tariq Al Hammadi's row to open `/vendor/onboarding/case-onb-0119/documents`.
+4. **Presenter Talking Points**:
+   - Document completion ratios are calculated dynamically via the unified document health algorithm, ensuring mathematical consistency between internal HR and external vendor views.
+
+---
+
 ## Verification Sign-Off Matrix
 
 | Storyline | Core Requisition / Entity | Primary Cast Persona | Key Verification Indicator | Status |
@@ -371,7 +464,9 @@ This document is the authoritative presenter's script for demonstrating the inte
 | **E: Vendor Onboarding** | `ONB-2026-0119`, `0102` | Layla Hassan (Vendor Coordinator) | Domain 3 portal redirection enforced; 6-doc onshore vs 3-doc offshore compliance packages | **PASS** |
 | **F: Workforce Lineage** | `wm-2026-0081`, `0074` | Mariam & Aisha | Runway countdown bucket triggers review; terminated BA links to `0074-R` | **PASS** |
 | **G: System Administration**| `OMS-2026-0131` | Ahmed Al Dhaheri (Admin) | 16 cast members verified; Oracle reconciliation variance flagged at AED 45,000.00 | **PASS** |
+| **H: Vendor Portal Operations**| `OMS-2026-0141`, `0148` (`C-021`), `0119`, `0102` | Layla Hassan (Vendor) & Noura (Interviewer) | Zero budget/interviewer leaks; rate card G8 resolves AED 36,480.00; cross-portal slot sync | **PASS** |
 
 ---
 
 *End of Presenter Script.*
+
