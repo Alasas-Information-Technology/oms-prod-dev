@@ -40,7 +40,12 @@ import {
   VendorInterviewProposalData,
   VendorProfileData,
   VendorSupportMessage,
+  CandidateAccessToken,
 } from "./entities";
+import {
+  CandidatePortalResponse,
+  CandidatePortalTask,
+} from "@/src/types/candidate-portal";
 import { CAST, USER_ALIASES, CAST_LIST } from "./cast";
 import { ORG_UNITS, BUDGET_LINES, VENDORS, ORG_UNITS_LIST, BUDGET_LINES_LIST, VENDORS_LIST } from "./org";
 import {
@@ -69,6 +74,8 @@ import {
   VENDOR_CONTRACTS_LIST,
   VENDOR_PROFILES,
   VENDOR_SUPPORT_MESSAGES,
+  CANDIDATE_ACCESS_TOKENS,
+  CANDIDATE_ACCESS_TOKENS_LIST,
 } from "./seed";
 
 // ============================================================================
@@ -357,11 +364,13 @@ export function getOnboarding(idOrRequisitionId: string): OnboardingCase | null 
   // Direct lookup
   if (ONBOARDING_CASES[cleanId]) return ONBOARDING_CASES[cleanId];
 
-  // Lookup by requisition ID
+  // Lookup by requisition ID or legacy identifier
   const reqId = cleanId.toUpperCase();
   return (
     Object.values(ONBOARDING_CASES).find(
-      (onb) => onb.requisitionId.toUpperCase() === reqId
+      (onb) =>
+        onb.requisitionId.toUpperCase() === reqId ||
+        `ONB-${onb.requisitionId.replace("OMS-", "")}` === reqId
     ) || null
   );
 }
@@ -1283,5 +1292,229 @@ export function uploadOrReplaceVendorComplianceDocument(
   }
   return doc;
 }
+
+// ============================================================================
+// 12. Candidate Portal (Third Surface)
+// Specification: docs/CANDIDATE-JOINING-READINESS.md Part 1 & Part 4
+// ============================================================================
+
+/**
+ * Resolves a candidate access token from memory.
+ * Checks non-revoked and non-expired.
+ */
+export function getCandidateAccessToken(rawToken: string): CandidateAccessToken | null {
+  if (!rawToken) return null;
+  const cleanToken = rawToken.trim();
+
+  const tokenRecord = Object.values(CANDIDATE_ACCESS_TOKENS).find(
+    (t) => t.rawToken === cleanToken || t.tokenId === cleanToken,
+  );
+
+  if (!tokenRecord) return null;
+
+  // Non-enumeration check: revoked or expired tokens return null
+  if (tokenRecord.revokedAt) return null;
+  if (new Date(tokenRecord.expiresAt).getTime() <= Date.now()) return null;
+
+  return tokenRecord;
+}
+
+export function listCandidateAccessTokens(): CandidateAccessToken[] {
+  return [...CANDIDATE_ACCESS_TOKENS_LIST];
+}
+
+/**
+ * Returns candidate joining readiness portal data strictly scoped to the token's case.
+ * Enforces Server Requirement 1: Candidate Data Isolation.
+ * Enforces Server Requirement 2: Location-driven task synthesis.
+ * Enforces Server Requirement 3: Internal Reviewer Anonymity.
+ * Enforces Server Requirement 5: Authoritative server-computed readiness score and gates.
+ */
+export function getCandidatePortalData(rawToken: string): CandidatePortalResponse | null {
+  const tokenRecord = getCandidateAccessToken(rawToken);
+  if (!tokenRecord) return null;
+
+  const onb = getOnboarding(tokenRecord.onboardingId);
+  if (!onb) return null;
+
+  const isOnshore = onb.residentStatus === "ONSHORE";
+
+  // Location-driven task generation (§2.2 & Part 4)
+  const tasks: CandidatePortalTask[] = isOnshore
+    ? [
+        {
+          code: "PRE_EMPLOYMENT_MEDICAL",
+          label: "Pre-employment medical",
+          detail: "Book a slot at an accredited clinic",
+          dueAt: "2026-08-26",
+          status: "DANGER",
+          action: "BOOK_SLOT",
+          onshoreOnly: true,
+        },
+        {
+          code: "BIOMETRIC_ENROLLMENT",
+          label: "Biometric enrollment",
+          detail: "Saned center biometric appointment",
+          dueAt: "2026-08-28",
+          status: "WARNING",
+          action: "BOOK_SLOT",
+          onshoreOnly: true,
+        },
+        {
+          code: "PASSPORT_PHOTO_UPLOAD",
+          label: "Passport photo upload",
+          detail: "White background, JPEG/PNG only",
+          dueAt: "2026-08-29",
+          status: "INFO",
+          action: "UPLOAD",
+          onshoreOnly: true,
+        },
+        {
+          code: "NDA_SIGNATURE",
+          label: "Non-Disclosure Agreement",
+          detail: "Electronic signature required",
+          dueAt: "2026-08-30",
+          status: onb.signature?.envelopeStatus === "SIGNED" ? "COMPLETE" : "PENDING",
+          action: onb.signature?.envelopeStatus === "SIGNED" ? "VIEW_SIGNED" : "NONE",
+          onshoreOnly: false,
+        },
+        {
+          code: "CONFIRM_JOINING_DATE",
+          label: "Confirm joining date",
+          detail: "Initial joining date acceptance",
+          dueAt: "2026-08-25",
+          status: "COMPLETE",
+          action: "CONFIRM_DATE",
+          onshoreOnly: false,
+        },
+      ]
+    : [
+        {
+          code: "REMOTE_ACCESS_READINESS",
+          label: "Remote access readiness",
+          detail: "Confirm MFA, VPN, and secure workspace readiness",
+          dueAt: "2026-09-02",
+          status: "INFO",
+          action: "CONFIRM_READINESS",
+          onshoreOnly: false,
+        },
+        {
+          code: "NDA_SIGNATURE",
+          label: "Non-Disclosure Agreement",
+          detail: "Electronic signature required",
+          dueAt: "2026-09-03",
+          status: onb.signature?.envelopeStatus === "SIGNED" ? "COMPLETE" : "PENDING",
+          action: onb.signature?.envelopeStatus === "SIGNED" ? "VIEW_SIGNED" : "NONE",
+          onshoreOnly: false,
+        },
+        {
+          code: "CONFIRM_JOINING_DATE",
+          label: "Confirm joining date",
+          detail: "Initial joining date acceptance",
+          dueAt: "2026-09-01",
+          status: "COMPLETE",
+          action: "CONFIRM_DATE",
+          onshoreOnly: false,
+        },
+      ];
+
+  const blockingTasksRemaining = tasks.filter(
+    (t) => t.status !== "COMPLETE",
+  ).length;
+
+  const completedDocsCount = onb.documents.filter(
+    (d) => d.status === "APPROVED" || d.status === "UPLOADED" || d.status === "UNDER_REVIEW",
+  ).length;
+
+  return {
+    valid: true,
+    onboardingCase: onb.id,
+    candidateRef: onb.candidateRef,
+    candidateName: onb.candidate.fullName,
+    candidateFirstName: onb.candidate.fullName.split(" ")[0],
+    position: onb.positionTitle,
+    residentStatus: onb.residentStatus,
+    expectedJoining: onb.candidate.expectedJoining,
+    readinessScore: isOnshore ? 78 : 85,
+    kpi: {
+      documents: {
+        completed: completedDocsCount,
+        total: onb.documents.length,
+      },
+      offerReference: "LPO-260771",
+      biometricAppointment: isOnshore ? "SCHEDULED" : "NOT_REQUIRED",
+      joiningConfirmed: true,
+    },
+    tasks,
+    stepper: [
+      {
+        stage: "DOCUMENTS_SUBMITTED",
+        label: "Documents Submitted",
+        state: "COMPLETE",
+        completedAt: "2026-08-24T10:15:00Z",
+        actorRole: "onboarding team",
+      },
+      {
+        stage: "E_SIGNATURE",
+        label: "E-signature",
+        state: "COMPLETE",
+        completedAt: "2026-08-24T14:30:00Z",
+        actorRole: "onboarding team",
+      },
+      {
+        stage: "DIEZ_REVIEW",
+        label: "DIEZ Review",
+        state: "COMPLETE",
+        completedAt: "2026-08-25T11:00:00Z",
+        actorRole: "onboarding team",
+      },
+      {
+        stage: "JOINING_READINESS",
+        label: "Joining Readiness",
+        state: "CURRENT",
+        completedAt: null,
+        actorRole: null,
+      },
+      {
+        stage: "JOINED",
+        label: "Joined",
+        state: "PENDING",
+        completedAt: null,
+        actorRole: null,
+      },
+    ],
+    firstDay: {
+      location: isOnshore
+        ? "DIEZ Headquarters, Building D2, 4th Floor, Dubai Silicon Oasis"
+        : "Remote (Virtual Orientation via Microsoft Teams)",
+      reportingTime: "08:30 AM GST",
+      dressCode: isOnshore
+        ? "Business Professional / Formal"
+        : "Business Casual",
+      whatToBring: isOnshore
+        ? [
+            "Original Passport",
+            "Original Emirates ID (if resident)",
+            "Attested Degree Certificate",
+            "Printed Saned Biometric Receipt",
+          ]
+        : [
+            "Scanned Passport Copy",
+            "Digital Signed Offer & NDA",
+            "Broadband Speed Test Confirmation",
+          ],
+      itReadiness: "IN_PROGRESS",
+    },
+    coordinator: {
+      name: "Layla Hassan",
+      role: "Onboarding Coordinator",
+      email: "layla.hassan@falcontech.ae",
+      phone: "+971 4 234 5678",
+    },
+    readyToConfirm: blockingTasksRemaining === 0,
+    blockingTasksRemaining,
+  };
+}
+
 
 

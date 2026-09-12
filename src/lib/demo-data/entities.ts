@@ -945,5 +945,16 @@ export interface VendorSupportMessage {
   attachments?: VendorSupportAttachment[];
 }
 
+export interface CandidateAccessToken {
+  tokenId: string;
+  onboardingId: string;
+  rawToken: string;
+  tokenHash: string;
+  expiresAt: string;
+  consumedCount: number;
+  revokedAt?: string | null;
+  createdAt: string;
+}
+
 
 
