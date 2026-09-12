@@ -6,16 +6,9 @@ import { AppLogo } from "./AppLogo";
 import { AnimatedThemeToggler } from "../animated-theme-toggler";
 import { Badge } from "@/components/ui/badge";
 import { ShieldCheck, Menu } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "../sidebar";
+import { AccountDropdown } from "./AccountDropdown";
 
 /**
  * Vendor Portal Header Component (Part 1 & VENDOR-PORTAL-UI.md)
@@ -24,7 +17,7 @@ import { useSidebar } from "../sidebar";
  * - Persistent thin secondary-tone top bar (muted teal: bg-teal-500) visible on any screenshot
  * - Distinct Wordmark: "DIEZ · Vendor Portal" + Accredited Partner badge
  * - Fixed Vendor IA links
- * - Vendor TLS Session indicator and Vendor account dropdown
+ * - Vendor TLS Session indicator and Vendor account dropdown matching internal portal design
  */
 export function VendorHeader() {
   const sidebarContext = useSidebar();
@@ -98,7 +91,7 @@ export function VendorHeader() {
           </Link>
         </nav>
 
-        {/* Right section: Utilities + Vendor Profile */}
+        {/* Right section: Utilities + Vendor Account Dropdown */}
         <div className="flex items-center gap-2.5 shrink-0">
           <div className="hidden lg:flex items-center gap-1.5 text-xs text-white/70 dark:text-muted-foreground font-mono text-[11px] pr-2 border-r border-border/40">
             <ShieldCheck className="size-3.5 text-teal-400" />
@@ -108,42 +101,8 @@ export function VendorHeader() {
           {/* Theme toggle: 32px hit area */}
           <AnimatedThemeToggler variant="circle" duration={600} />
 
-          {/* Vendor Account Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 gap-2 px-2 text-white/85 dark:text-foreground/85 hover:text-white dark:hover:text-foreground hover:bg-white/10 dark:hover:bg-white/5 cursor-pointer text-xs"
-              >
-                <div className="size-6 rounded-full bg-teal-600/30 border border-teal-500/40 flex items-center justify-center text-teal-200 font-bold text-[11px]">
-                  V
-                </div>
-                <span className="hidden sm:inline-block max-w-[120px] truncate font-medium">
-                  Falcon Tech Resourcing
-                </span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 text-xs">
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="font-semibold text-xs text-foreground">Falcon Tech Resourcing</p>
-                  <p className="text-[11px] text-muted-foreground">layla.hassan@falcontech.ae</p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild className="cursor-pointer">
-                <Link href="/vendor/profile">Organization Profile</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild className="cursor-pointer">
-                <Link href="/vendor/compliance">Accreditation Documents</Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild className="cursor-pointer text-destructive focus:text-destructive">
-                <Link href="/api/auth/logout">Sign out</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Vendor Account Dropdown (matching Internal Portal design) */}
+          <AccountDropdown portal="vendor" showLabel />
         </div>
       </div>
     </header>

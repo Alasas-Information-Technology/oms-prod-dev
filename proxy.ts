@@ -22,7 +22,8 @@ export async function proxy(request: NextRequest) {
         pathname.startsWith('/public') ||
         pathname.startsWith('/app/dev') ||
         pathname === '/api/auth/login' ||
-        pathname === '/api/auth/refresh'
+        pathname === '/api/auth/refresh' ||
+        pathname === '/api/auth/logout'
     ) {
         return NextResponse.next();
     }
