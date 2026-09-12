@@ -3,13 +3,11 @@
 /* MARKER-MAKE-KIT-INVOKED */
 import { useState, type ReactNode } from "react";
 import {
-    Building2, Bell, Search, Filter,
-    DollarSign, AlertCircle, CheckCircle, Clock, Info, Plus,
+    Building2, Bell, Search, Filter, AlertCircle, CheckCircle, Clock, Info, Plus,
     Download, Eye, Edit, Trash2, Copy, Palette, Type, MousePointer,
-    Tag, LayoutGrid, GitBranch, ChevronRight, ArrowUpRight,
-    ArrowDownRight, Shield, Loader, FormInput, FileCheck2,
-    X, LayoutDashboard, BarChart3, Settings, FileText, Users,
-    Layers, SlidersHorizontal, Wallet,
+    Tag, LayoutGrid, GitBranch, ChevronRight, Shield, Loader, FormInput, FileCheck2,
+    X, LayoutDashboard, BarChart3, FileText,
+    Layers, Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,7 +40,6 @@ import { ApprovalWorkflow, type ApprovalStep } from "@/components/shared/Approva
 import { NotificationPanel, type Notification } from "@/components/shared/NotificationPanel";
 import { cn } from "@/components/ui/utils";
 import { SimpleKpiCard, BudgetKpiCard } from "@/components/budget";
-import { formatCompactNumber } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -380,9 +377,9 @@ function ActionsSection() {
             <div>
                 <SL>Button Groups & Segmented Controls</SL>
                 <div className="flex gap-5 flex-wrap items-start">
-                    <div className="flex rounded overflow-hidden border border-slate-300 w-fit">
+                    <div className="flex rounded overflow-hidden border border-border w-fit">
                         {["All", "Active", "Pending", "Expired"].map((label, i) => (
-                            <button key={label} className={cn("px-3 py-1.5 text-sm font-medium transition-colors border-r last:border-r-0 border-slate-300", i === 0 ? "bg-primary text-white" : "bg-white text-slate-600 hover:bg-slate-50")}>
+                            <button key={label} className={cn("px-3 py-1.5 text-sm font-medium transition-colors border-r last:border-r-0 border-border", i === 0 ? "bg-primary text-white" : "bg-card text-muted-foreground hover:bg-muted/50")}>
                                 {label}
                             </button>
                         ))}
@@ -1259,7 +1256,7 @@ function ExtrasSection() {
             {/* ── Calendar ─────────────────────────────────────── */}
             <div>
                 <SL>Calendar</SL>
-                <div className="border rounded-md inline-block bg-white p-3">
+                <div className="border border-border rounded-md inline-block bg-card p-3">
                     <Calendar mode="single" className="rounded-md border" />
                 </div>
             </div>

@@ -51,10 +51,10 @@ const STATUS_CONFIG: Record<
   },
   waiting: {
     Icon: Clock,
-    iconClass: "text-slate-500",
-    dotClass: "bg-slate-100 border border-slate-300",
+    iconClass: "text-muted-foreground",
+    dotClass: "bg-muted border border-border",
     label: "Waiting",
-    textClass: "text-slate-500",
+    textClass: "text-muted-foreground",
   },
   "on-hold": {
     Icon: AlertCircle,
@@ -83,22 +83,22 @@ export function ApprovalWorkflow({
   className,
 }: ApprovalWorkflowProps) {
   return (
-    <div className={cn("rounded-lg border border-slate-200 overflow-hidden bg-card", className)}>
+    <div className={cn("rounded-lg border border-border overflow-hidden bg-card", className)}>
       {(title || referenceNumber || requestedBy) && (
-        <div className="flex items-start justify-between px-5 py-4 border-b border-slate-100">
+        <div className="flex items-start justify-between px-5 py-4 border-b border-border/60">
           <div>
-            {title && <div className="text-sm font-semibold text-slate-900">{title}</div>}
+            {title && <div className="text-sm font-semibold text-foreground">{title}</div>}
             {referenceNumber && (
               <div className="text-xs text-muted-foreground mt-0.5">Ref: {referenceNumber}</div>
             )}
           </div>
           {requestedBy && (
             <div className="text-right">
-              <div className="text-xs font-medium text-slate-700">{requestedBy.name}</div>
+              <div className="text-xs font-medium text-foreground">{requestedBy.name}</div>
               <div className="text-xs text-muted-foreground">
                 {requestedBy.role} · {requestedBy.department}
               </div>
-              <div className="text-[11px] text-slate-400 mt-0.5">{requestedBy.date}</div>
+              <div className="text-[11px] text-muted-foreground/70 mt-0.5">{requestedBy.date}</div>
             </div>
           )}
         </div>
@@ -130,13 +130,13 @@ export function ApprovalWorkflow({
                       )}
                     </div>
 
-                    <div className="text-xs font-semibold text-slate-900 leading-tight max-w-[130px] truncate">
+                    <div className="text-xs font-semibold text-foreground leading-tight max-w-[130px] truncate">
                       {step.approverName}
                     </div>
                     <div className="text-[11px] text-muted-foreground truncate max-w-[130px]">
                       {step.approverRole}
                     </div>
-                    <div className="text-[11px] text-slate-400 truncate max-w-[130px]">
+                    <div className="text-[11px] text-muted-foreground/70 truncate max-w-[130px]">
                       {step.department}
                     </div>
 
@@ -144,11 +144,11 @@ export function ApprovalWorkflow({
                       className={cn(
                         "inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium",
                         config.textClass,
-                        step.status === "approved" && "bg-emerald-50",
-                        step.status === "rejected" && "bg-red-50",
-                        step.status === "pending" && "bg-amber-50",
-                        step.status === "waiting" && "bg-slate-50",
-                        step.status === "on-hold" && "bg-orange-50"
+                        step.status === "approved" && "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400",
+                        step.status === "rejected" && "bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400",
+                        step.status === "pending" && "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400",
+                        step.status === "waiting" && "bg-muted text-muted-foreground",
+                        step.status === "on-hold" && "bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400"
                       )}
                     >
                       <Icon size={10} />
@@ -156,12 +156,12 @@ export function ApprovalWorkflow({
                     </div>
 
                     {step.timestamp && (
-                      <div className="text-[10px] text-slate-400 mt-1">{step.timestamp}</div>
+                      <div className="text-[10px] text-muted-foreground/70 mt-1">{step.timestamp}</div>
                     )}
                   </div>
 
                   {!isLast && (
-                    <div className="flex items-center pb-8 text-slate-300">
+                    <div className="flex items-center pb-8 text-border">
                       <ChevronRight size={16} />
                     </div>
                   )}
@@ -180,7 +180,7 @@ export function ApprovalWorkflow({
                 <div key={step.id} className="relative flex items-start gap-4">
                   {!isLast && (
                     <div
-                      className="absolute left-4 top-9 bottom-0 w-px bg-slate-200"
+                      className="absolute left-4 top-9 bottom-0 w-px bg-border"
                       style={{ zIndex: 0 }}
                     />
                   )}
@@ -203,7 +203,7 @@ export function ApprovalWorkflow({
                   <div className={cn("flex-1 min-w-0", !isLast && "pb-4")}>
                     <div className="flex items-center justify-between gap-2">
                       <div>
-                        <div className="text-sm font-semibold text-slate-900">
+                        <div className="text-sm font-semibold text-foreground">
                           {step.approverName}
                         </div>
                         <div className="text-xs text-muted-foreground">
@@ -215,18 +215,18 @@ export function ApprovalWorkflow({
                           className={cn(
                             "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium",
                             config.textClass,
-                            step.status === "approved" && "bg-emerald-50",
-                            step.status === "rejected" && "bg-red-50",
-                            step.status === "pending" && "bg-amber-50",
-                            step.status === "waiting" && "bg-slate-50",
-                            step.status === "on-hold" && "bg-orange-50"
+                            step.status === "approved" && "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400",
+                            step.status === "rejected" && "bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400",
+                            step.status === "pending" && "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400",
+                            step.status === "waiting" && "bg-muted text-muted-foreground",
+                            step.status === "on-hold" && "bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400"
                           )}
                         >
                           <Icon size={10} />
                           {config.label}
                         </div>
                         {step.timestamp && (
-                          <div className="text-[11px] text-slate-400 mt-0.5">
+                          <div className="text-[11px] text-muted-foreground/70 mt-0.5">
                             {step.timestamp}
                           </div>
                         )}
@@ -234,8 +234,8 @@ export function ApprovalWorkflow({
                     </div>
 
                     {step.comments && (
-                      <div className="mt-2 flex items-start gap-2 p-2.5 rounded bg-slate-50 text-xs text-slate-600 border border-slate-100">
-                        <MessageSquare size={13} className="text-slate-400 shrink-0 mt-0.5" />
+                      <div className="mt-2 flex items-start gap-2 p-2.5 rounded bg-muted/40 text-xs text-muted-foreground border border-border/60">
+                        <MessageSquare size={13} className="text-muted-foreground/70 shrink-0 mt-0.5" />
                         <span className="italic">{step.comments}</span>
                       </div>
                     )}

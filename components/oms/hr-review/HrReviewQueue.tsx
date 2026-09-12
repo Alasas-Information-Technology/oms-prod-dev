@@ -33,7 +33,7 @@ export function HrReviewQueue({
   onClearFilters,
 }: HrReviewQueueProps) {
   return (
-    <Card className="sticky top-6 flex h-[calc(100vh-156px)] min-h-[500px] flex-col overflow-hidden rounded-xl bg-white p-0 shadow-xs hover:translate-y-0">
+    <Card className="sticky top-6 flex h-[calc(100vh-156px)] min-h-[500px] flex-col overflow-hidden rounded-xl bg-card p-0 shadow-xs hover:translate-y-0">
       <div className="flex items-center justify-between border-b border-border px-4 py-3 shrink-0">
         <div>
           <p className="text-[14px] font-[600] text-foreground">Review queue</p>
@@ -99,7 +99,7 @@ export function HrReviewQueue({
                   Nothing waiting for review.
                 </p>
                 <p className="mt-1 text-[12px] font-normal text-muted-foreground">
-                  You're all caught up!
+                  You&apos;re all caught up!
                 </p>
               </>
             )}
@@ -176,7 +176,7 @@ export function HrReviewQueue({
                       {request.returnedFromClarification && (
                         <Badge
                           variant="outline"
-                          className="rounded-md border-transparent bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-foreground-secondary"
+                          className="rounded-md border-transparent bg-muted px-2 py-0.5 text-[11px] font-medium text-foreground-secondary"
                         >
                           Returned
                         </Badge>
@@ -185,7 +185,7 @@ export function HrReviewQueue({
                       {request.flags.includes("NEW") && (
                         <Badge
                           variant="outline"
-                          className="rounded-md border-transparent bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-foreground-secondary"
+                          className="rounded-md border-transparent bg-muted px-2 py-0.5 text-[11px] font-medium text-foreground-secondary"
                         >
                           New
                         </Badge>
@@ -208,13 +208,13 @@ export function HrReviewQueue({
         )}
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border bg-slate-50/70 px-4 py-3 shrink-0">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border bg-muted/30 px-4 py-3 shrink-0">
         <span className="inline-flex items-center gap-1.5 text-[12px] font-normal text-muted-foreground tabular-nums">
           SLA target: {slaTargetDays} business days
         </span>
         <div className="flex items-center gap-4 text-[12px] font-normal tabular-nums">
           {positionLabel && <span className="text-foreground">{positionLabel}</span>}
-          <span className="text-muted-foreground hidden sm:inline-block">Press <kbd className="font-mono bg-white border border-border px-1 rounded mx-0.5">?</kbd> for shortcuts</span>
+          <span className="text-muted-foreground hidden sm:inline-block">Press <kbd className="font-mono bg-card border border-border px-1 rounded mx-0.5">?</kbd> for shortcuts</span>
         </div>
       </div>
     </Card>

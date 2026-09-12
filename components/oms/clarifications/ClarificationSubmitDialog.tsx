@@ -19,17 +19,13 @@ import {
   AlertTriangle,
   Send,
   Loader2,
-  CheckCircle2,
   GitFork,
   Landmark,
   FileCheck,
   ArrowRight,
   ShieldAlert,
-  Clock,
-  Ban,
 } from "lucide-react";
 import { formatAmount } from "@/lib/money";
-import { cn } from "@/lib/utils";
 
 interface ClarificationSubmitDialogProps {
   open: boolean;

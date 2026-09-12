@@ -11,6 +11,7 @@ import {
   IBudgetLinesQueryDto,
   IBudgetRequestsQueryDto,
 } from "../types/budget.types";
+import { RECONCILIATION_VARIANCE_RECORD } from "@/src/lib/demo-data";
 
 /**
  * Budget Control Center — Reference Fixtures
@@ -570,16 +571,16 @@ export const mockBudgetRequests: IBudgetRequestDto[] = [
   },
   {
     id: "req-0131",
-    requestCode: "OMS-2026-0131",
+    requestCode: RECONCILIATION_VARIANCE_RECORD.id,
     type: "EXCEPTION",
     typeLabel: "Reconciliation Exception",
-    description: "Oracle ERP PO Variance on Rate Card reconciliation",
-    amountFils: 450000, // AED 4,500.00
+    description: RECONCILIATION_VARIANCE_RECORD.description,
+    amountFils: RECONCILIATION_VARIANCE_RECORD.varianceAmount, // AED 45,000.00
     status: "EXCEPTION",
     ownerName: "Finance Reconciliation Queue",
-    departmentName: "Digital Transformation",
-    requestedOn: "2026-08-05T08:12:00.000Z",
-    budgetLineCode: "CS-DIG-002",
+    departmentName: RECONCILIATION_VARIANCE_RECORD.departmentName, // "Digital Security"
+    requestedOn: RECONCILIATION_VARIANCE_RECORD.recordedAt,
+    budgetLineCode: RECONCILIATION_VARIANCE_RECORD.budgetLineCode, // "CS-DIG-001"
   },
   {
     id: "req-0141",

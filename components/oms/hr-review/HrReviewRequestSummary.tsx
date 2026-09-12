@@ -58,8 +58,8 @@ export function HrReviewRequestSummary({
                 className={cn(
                   "rounded-md px-2 py-0.5 text-[11px] font-medium",
                   badge === "BUDGET_VERIFIED" && "border-success/30 bg-success-light text-success",
-                  badge === "NEW" && "border-transparent bg-slate-100 text-foreground-secondary",
-                  badge === "RETURNED" && "border-transparent bg-slate-100 text-foreground-secondary"
+                  badge === "NEW" && "border-transparent bg-muted text-foreground-secondary",
+                  badge === "RETURNED" && "border-transparent bg-muted text-foreground-secondary"
                 )}
               >
                 {badge === "BUDGET_VERIFIED"
@@ -70,11 +70,11 @@ export function HrReviewRequestSummary({
               </Badge>
             ))}
 
-            <Badge variant="outline" className="rounded-md font-medium text-[11px] border-transparent bg-slate-100 text-foreground-secondary">
+            <Badge variant="outline" className="rounded-md font-medium text-[11px] border-transparent bg-muted text-foreground-secondary">
               {request.candidateRoute}
             </Badge>
 
-            <Badge variant="outline" className="rounded-md font-medium text-[11px] border-transparent bg-slate-100 text-foreground-secondary">
+            <Badge variant="outline" className="rounded-md font-medium text-[11px] border-transparent bg-muted text-foreground-secondary">
               <MapPin className="size-3 mr-1" />
               {request.workLocation}
             </Badge>

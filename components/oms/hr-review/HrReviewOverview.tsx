@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FileText, ArrowRight, Info, ExternalLink } from "lucide-react";
 import { HrReviewDetailResponse } from "@/types/hr-review";
 import { DepartmentApprovalTrail } from "./DepartmentApprovalTrail";
@@ -37,7 +38,7 @@ export function HrReviewOverview({
                   You asked for more information on {formatClarificationDate(cCtx.askedAt)}
                 </p>
                 <p className="mt-1 text-[13px] font-normal text-foreground-secondary">
-                  "{cCtx.askMessage}"
+                  &quot;{cCtx.askMessage}&quot;
                 </p>
               </div>
 
@@ -51,14 +52,12 @@ export function HrReviewOverview({
                   </span>
                 </p>
                 
-                <a 
+                <Link 
                   href={cCtx.diffLink} 
-                  target="_blank" 
-                  rel="noreferrer"
                   className="mt-2 inline-flex items-center gap-1.5 text-[13px] font-medium text-primary hover:underline underline-offset-2"
                 >
                   View what changed <ExternalLink className="size-3" />
-                </a>
+                </Link>
               </div>
             </div>
           </div>

@@ -178,7 +178,7 @@ describe("Org Chart Canvas - 15 Point Specification Verification", () => {
     };
 
     let targetX = 100;
-    let targetY = 100;
+    const targetY = 100;
 
     expect(isOverlapping(targetX, targetY)).toBe(true);
 

@@ -58,10 +58,6 @@ export function UnitPath({
     return rawNodes;
   }, [rawNodes, showCurrent, currentName]);
 
-  if (allNodes.length === 0) {
-    return null;
-  }
-
   // Handle truncation if segments exceed maxSegments
   const displayNodes: (UnitPathNode | "ELLIPSIS")[] = React.useMemo(() => {
     if (allNodes.length <= maxSegments) {
@@ -71,6 +67,10 @@ export function UnitPath({
     // Keep first item, ellipsis, and last 2 items
     return [allNodes[0], "ELLIPSIS", ...allNodes.slice(-2)];
   }, [allNodes, maxSegments]);
+
+  if (allNodes.length === 0) {
+    return null;
+  }
 
   const fullPathTitle = allNodes
     .map((n) => (showCodes && n.code ? `${n.name} (${n.code})` : n.name))

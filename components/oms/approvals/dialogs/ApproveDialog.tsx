@@ -15,7 +15,6 @@ import { ApprovalTaskDetail, ApprovalApiError } from "@/lib/types/approval.types
 import { formatAmount } from "@/lib/money";
 import { approvalsApi } from "@/lib/api/approvals";
 import { Loader2, CheckCircle2, AlertCircle, ArrowRight, ShieldCheck } from "lucide-react";
-import { cn } from "@/components/ui/utils";
 
 interface ApproveDialogProps {
   open: boolean;
@@ -147,7 +146,7 @@ export function ApproveDialog({
               </div>
 
               {error.code === "APPROVAL_BUDGET_CHANGED" && error.newImpact && (
-                <div className="mt-1 p-2.5 rounded bg-white border border-red-200 text-[11px] grid grid-cols-2 gap-2 text-foreground">
+                <div className="mt-1 p-2.5 rounded bg-card border border-destructive/30 text-[11px] grid grid-cols-2 gap-2 text-foreground">
                   <div>
                     <span className="text-muted-foreground">New Available Before:</span>{" "}
                     <strong className="tabular-nums font-semibold">

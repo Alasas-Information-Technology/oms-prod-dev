@@ -20,8 +20,18 @@ import {
   SessionsCreatedPerDayDto
 } from "@/lib/types/security.types";
 import { format } from "date-fns";
-import { Activity, KeyRound, ShieldAlert, ShieldBan, ShieldCheck, ShieldX } from "lucide-react";
-import { useMemo, ReactNode } from "react";
+import {
+  Activity,
+  KeyRound,
+  Shield,
+  ShieldAlert,
+  ShieldBan,
+  ShieldCheck,
+  ShieldX,
+  Radio,
+  Filter,
+} from "lucide-react";
+import { useMemo, useState, ReactNode } from "react";
 import {
   Area,
   AreaChart,
@@ -32,12 +42,10 @@ import {
   LabelList,
   Line,
   LineChart,
-  Pie,
-  PieChart,
   XAxis,
   YAxis
 } from "recharts";
-import { RawSecurityEvent } from "./columns";
+import { RawSecurityEvent, RawFailedLogin } from "./columns";
 
 export interface ChartsDataProps {
   chartsData: {
@@ -50,6 +58,19 @@ export interface ChartsDataProps {
     lockedAccounts?: LockedAccountsDto[];
     sessionsCreatedPerDay?: SessionsCreatedPerDayDto[];
   } | null;
+}
+
+export interface SocPanelProps {
+  recentEvents: RawSecurityEvent[];
+  threatSummary?: {
+    failedLogins24Hours?: number;
+    lockedUsers?: number;
+    refreshTokenReplayEvents24Hours?: number;
+    rateLimitEvents24Hours?: number;
+    activeSessions?: number;
+  };
+  streamConnected?: boolean;
+  lastUpdated?: Date | null;
 }
 
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6", "#06b6d4"];
@@ -86,70 +107,204 @@ const ChartCard = ({ title, desc, icon: Icon, h = "h-[220px]", isEmpty, emptyMsg
   </Card>
 );
 
-export function SocPanel({ recentEvents }: { recentEvents: RawSecurityEvent[] }) {
-  const socEvents = useMemo(() => recentEvents.slice(0, 20).map(event => {
-    const type = event.EventType;
-    let style = { badge: "bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/20", iconBg: "bg-blue-500/10", iconColor: "text-blue-600 dark:text-blue-400", label: type, Icon: KeyRound };
+export function SocPanel({
+  recentEvents,
+  threatSummary,
+  streamConnected = true,
+  lastUpdated,
+}: SocPanelProps) {
+  const [filter, setFilter] = useState<"ALL" | "THREATS" | "AUTH">("ALL");
 
-    if (type === "REFRESH_TOKEN_REPLAY")
-      style = { badge: "bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20", iconBg: "bg-rose-500/10", iconColor: "text-rose-600 dark:text-rose-400", label: "REPLAY ATTEMPT", Icon: ShieldAlert };
-    else if (["ACCOUNT_LOCKED", "FAILED_LOGIN_LIMIT_EXCEEDED", "ACCOUNT_LOCKOUT"].includes(type))
-      style = { badge: "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20", iconBg: "bg-amber-500/10", iconColor: "text-amber-600 dark:text-amber-400", label: "ACCOUNT LOCKED", Icon: ShieldBan };
-    else if (type === "LOGIN_FAILURE" || type === "LOGIN_FAILED")
-      style = { badge: "bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20", iconBg: "bg-rose-500/10", iconColor: "text-rose-600 dark:text-rose-400", label: "LOGIN FAILED", Icon: ShieldAlert };
-    else if (type === "SESSION_REVOKED" || type.includes("REVOK"))
-      style = { badge: "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20", iconBg: "bg-amber-500/10", iconColor: "text-amber-600 dark:text-amber-400", label: "SESSION REVOKED", Icon: ShieldX };
-    else if (type === "LOGIN_SUCCESS")
-      style = { badge: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20", iconBg: "bg-emerald-500/10", iconColor: "text-emerald-600 dark:text-emerald-400", label: "LOGIN SUCCESS", Icon: ShieldCheck };
+  const threatPosture = useMemo(() => {
+    const replay = threatSummary?.refreshTokenReplayEvents24Hours || 0;
+    const locked = threatSummary?.lockedUsers || 0;
+    const failed = threatSummary?.failedLogins24Hours || 0;
+    const rateLimit = threatSummary?.rateLimitEvents24Hours || 0;
+
+    if (replay > 0 || locked > 0) {
+      return {
+        level: "HIGH ALERT",
+        statusText: replay > 0 ? `${replay} Replay Attack(s) Detected` : `${locked} Account(s) Locked`,
+        badgeColor: "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30",
+        dotColor: "bg-rose-500",
+        pingColor: "bg-rose-400",
+      };
+    }
+    if (failed > 5 || rateLimit > 0) {
+      return {
+        level: "ELEVATED",
+        statusText: `${failed} Failed Logins in 24h`,
+        badgeColor: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30",
+        dotColor: "bg-amber-500",
+        pingColor: "bg-amber-400",
+      };
+    }
+    return {
+      level: "SECURE",
+      statusText: "Telemetry within expected thresholds",
+      badgeColor: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
+      dotColor: "bg-emerald-500",
+      pingColor: "bg-emerald-400",
+    };
+  }, [threatSummary]);
+
+  const socEvents = useMemo(() => (recentEvents || []).map(event => {
+    const type = event.EventType || (event as any).eventType || "UNKNOWN";
+    let style = {
+      badge: "bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/20",
+      iconBg: "bg-blue-500/10",
+      iconColor: "text-blue-600 dark:text-blue-400",
+      label: type.replace(/_/g, " "),
+      Icon: KeyRound,
+      isThreat: false
+    };
+
+    if (type === "REFRESH_TOKEN_REPLAY") {
+      style = { badge: "bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20", iconBg: "bg-rose-500/10", iconColor: "text-rose-600 dark:text-rose-400", label: "REPLAY ATTEMPT", Icon: ShieldAlert, isThreat: true };
+    } else if (["ACCOUNT_LOCKED", "FAILED_LOGIN_LIMIT_EXCEEDED", "ACCOUNT_LOCKOUT"].includes(type)) {
+      style = { badge: "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20", iconBg: "bg-amber-500/10", iconColor: "text-amber-600 dark:text-amber-400", label: "ACCOUNT LOCKED", Icon: ShieldBan, isThreat: true };
+    } else if (type === "LOGIN_FAILURE" || type === "LOGIN_FAILED") {
+      style = { badge: "bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20", iconBg: "bg-rose-500/10", iconColor: "text-rose-600 dark:text-rose-400", label: "LOGIN FAILED", Icon: ShieldAlert, isThreat: true };
+    } else if (type === "SESSION_REVOKED" || type.includes("REVOK")) {
+      style = { badge: "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20", iconBg: "bg-amber-500/10", iconColor: "text-amber-600 dark:text-amber-400", label: "SESSION REVOKED", Icon: ShieldX, isThreat: true };
+    } else if (type === "LOGIN_SUCCESS") {
+      style = { badge: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20", iconBg: "bg-emerald-500/10", iconColor: "text-emerald-600 dark:text-emerald-400", label: "LOGIN SUCCESS", Icon: ShieldCheck, isThreat: false };
+    }
 
     return { ...event, ...style };
   }), [recentEvents]);
 
+  const threatCount = useMemo(() => socEvents.filter(e => e.isThreat).length, [socEvents]);
+  const authCount = useMemo(() => socEvents.filter(e => !e.isThreat).length, [socEvents]);
+
+  const filteredEvents = useMemo(() => {
+    if (filter === "THREATS") return socEvents.filter(e => e.isThreat);
+    if (filter === "AUTH") return socEvents.filter(e => !e.isThreat);
+    return socEvents;
+  }, [socEvents, filter]);
+
   return (
-    <Card className="flex flex-col h-[550px] shadow-none border border-border/60 bg-card rounded-xl overflow-hidden w-full">
-      <CardHeader className="h-11 min-h-[44px] px-5 py-0 flex flex-row items-center justify-between shrink-0 select-none">
-        <div className="flex items-center gap-2">
-          <Activity className="w-4 h-4 text-primary" />
-          <CardTitle className="text-[14px] font-semibold text-foreground">Enterprise SOC Panel</CardTitle>
+    <Card className="flex flex-col h-full shadow-none border border-border/70 bg-card rounded-xl overflow-hidden w-full select-none">
+      {/* Top Header */}
+      <CardHeader className="p-4 pb-3 border-b border-border/50 shrink-0 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+              <Shield className="w-4 h-4" />
+            </div>
+            <div>
+              <CardTitle className="text-sm font-semibold text-foreground tracking-tight">
+                Enterprise SOC
+              </CardTitle>
+              <CardDescription className="text-[11px] leading-tight">
+                Live Security Operations
+              </CardDescription>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="flex h-2.5 w-2.5 relative">
+              {streamConnected && (
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${threatPosture.pingColor} opacity-75`} />
+              )}
+              <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${streamConnected ? threatPosture.dotColor : "bg-muted-foreground"}`} />
+            </span>
+            <span className="text-[11px] font-mono font-medium text-muted-foreground uppercase tracking-wider">
+              {streamConnected ? "Live" : "Polling"}
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] text-muted-foreground font-medium">Real-time</span>
-          <span className="flex h-2 w-2 relative">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+
+        {/* Threat Level Banner */}
+        <div className={`flex items-center justify-between px-3 py-2 rounded-lg border text-xs ${threatPosture.badgeColor}`}>
+          <div className="flex items-center gap-2">
+            <Activity className="w-3.5 h-3.5" />
+            <span className="font-semibold tracking-wide text-[11px]">
+              {threatPosture.level}
+            </span>
+          </div>
+          <span className="text-[11px] opacity-90 truncate max-w-[170px]">
+            {threatPosture.statusText}
           </span>
         </div>
+
+        {/* Filter Pills */}
+        <div className="flex items-center gap-1.5 p-1 bg-muted/40 rounded-lg text-xs">
+          <button
+            type="button"
+            onClick={() => setFilter("ALL")}
+            className={`flex-1 py-1 px-2 rounded-md text-[11px] font-medium transition-all ${
+              filter === "ALL"
+                ? "bg-background text-foreground shadow-xs"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            All ({socEvents.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilter("THREATS")}
+            className={`flex-1 py-1 px-2 rounded-md text-[11px] font-medium transition-all ${
+              filter === "THREATS"
+                ? "bg-background text-foreground shadow-xs"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Threats ({threatCount})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilter("AUTH")}
+            className={`flex-1 py-1 px-2 rounded-md text-[11px] font-medium transition-all ${
+              filter === "AUTH"
+                ? "bg-background text-foreground shadow-xs"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Auth ({authCount})
+          </button>
+        </div>
       </CardHeader>
+
+      {/* Live Event Stream List */}
       <CardContent className="flex-1 p-2 min-h-0">
         <ScrollArea className="h-full w-full pr-2">
-          {socEvents.length === 0 ? (
-            <div className="text-center text-muted-foreground py-12 text-xs">No recent security events</div>
+          {filteredEvents.length === 0 ? (
+            <div className="flex flex-col items-center justify-center text-center text-muted-foreground py-16 px-4 space-y-2">
+              <ShieldCheck className="w-8 h-8 text-muted-foreground/40" />
+              <p className="text-xs font-medium">No events matching this filter</p>
+              <p className="text-[11px] text-muted-foreground/70">
+                Incoming security events will appear here in real-time.
+              </p>
+            </div>
           ) : (
-            <div className="flex flex-col gap-1">
-              {socEvents.map((event, idx) => (
+            <div className="flex flex-col gap-1.5">
+              {filteredEvents.map((event, idx) => (
                 <div
                   key={event.SecurityEventID || idx}
-                  className="group flex items-start justify-between p-2.5 rounded-[8px] hover:bg-foreground/[0.03] transition-colors select-none"
+                  className={`group flex items-start justify-between p-2.5 rounded-lg border border-transparent hover:border-border/60 hover:bg-muted/40 transition-all select-none ${
+                    idx === 0 ? "bg-muted/20 border-border/40" : ""
+                  }`}
                 >
-                  <div className="flex items-start gap-3 min-w-0 flex-1 pr-2">
+                  <div className="flex items-start gap-2.5 min-w-0 flex-1 pr-2">
                     <div className={`w-7 h-7 rounded-md ${event.iconBg} ${event.iconColor} flex items-center justify-center shrink-0 mt-0.5`}>
                       <event.Icon className="w-4 h-4" />
                     </div>
-                    <div className="space-y-0.5 flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className={`px-1.5 py-0.2 rounded text-[10px] font-semibold border ${event.badge}`}>
+                    <div className="space-y-1 flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold border ${event.badge}`}>
                           {event.label}
                         </span>
-                        <span className="text-[11px] text-muted-foreground font-mono">
-                          IP: {event.IPAddress || "Local"}
+                        <span className="text-[10px] text-muted-foreground font-mono bg-muted/60 px-1.5 py-0.5 rounded">
+                          {event.IPAddress || "Local"}
                         </span>
                       </div>
                       <p className="font-medium text-foreground text-xs leading-snug break-words">
-                        {event.EventDescription}
+                        {event.EventDescription || "No description provided"}
                       </p>
                     </div>
                   </div>
-                  <span className="text-muted-foreground text-[11px] font-mono tabular-nums whitespace-nowrap shrink-0 pt-0.5">
+                  <span className="text-muted-foreground text-[10px] font-mono tabular-nums whitespace-nowrap shrink-0 pt-0.5">
                     {event.CreatedAt ? safeFormatDate(event.CreatedAt, "HH:mm:ss") : "-"}
                   </span>
                 </div>
@@ -158,20 +313,64 @@ export function SocPanel({ recentEvents }: { recentEvents: RawSecurityEvent[] })
           )}
         </ScrollArea>
       </CardContent>
+
+      {/* Footer Info */}
+      <div className="p-2.5 px-4 border-t border-border/50 shrink-0 flex items-center justify-between text-[11px] text-muted-foreground font-mono bg-muted/20">
+        <span>Displaying {filteredEvents.length} events</span>
+        <span>
+          {lastUpdated ? `Sync: ${format(lastUpdated, "HH:mm:ss")}` : "Connecting..."}
+        </span>
+      </div>
     </Card>
   );
 }
 
-export function FailedLoginsChart({ chartsData }: ChartsDataProps) {
-  const data = useMemo(() => Array.from({ length: 7 }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (6 - i));
-    const match = chartsData?.failedLogins?.find(r => r.date === format(d, "yyyy-MM-dd"));
-    return { day: format(d, "do EEE"), count: match?.count || 0 };
-  }), [chartsData?.failedLogins]);
+export function FailedLoginsChart({
+  chartsData,
+  fallbackEvents
+}: ChartsDataProps & { fallbackEvents?: RawFailedLogin[] }) {
+  const data = useMemo(() => {
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (6 - i));
+      const targetDateStr = format(d, "yyyy-MM-dd");
+
+      const match = chartsData?.failedLogins?.find(r => {
+        if (!r.date) return false;
+        const rStr = typeof r.date === "string" ? r.date.slice(0, 10) : format(new Date(r.date), "yyyy-MM-dd");
+        return rStr === targetDateStr;
+      });
+
+      let count = match?.count;
+
+      // Realtime fallback: if chartsData has 0 or is missing for today, check fallbackEvents
+      if ((count === undefined || count === 0) && fallbackEvents && fallbackEvents.length > 0) {
+        const localMatches = fallbackEvents.filter(f => {
+          const attemptDate = f.AttemptedAt || (f as any).attemptedAt;
+          if (!attemptDate) return false;
+          try {
+            const attemptDateStr = format(new Date(attemptDate), "yyyy-MM-dd");
+            return attemptDateStr === targetDateStr;
+          } catch {
+            return false;
+          }
+        });
+        if (localMatches.length > 0) {
+          count = localMatches.length;
+        }
+      }
+
+      return { day: format(d, "do EEE"), count: count || 0 };
+    });
+  }, [chartsData?.failedLogins, fallbackEvents]);
 
   return (
-    <ChartCard title="Failed Logins (7 Days)" desc="Authentication failures for brute force detection" isEmpty={data.length === 0} emptyMsg="No failed logins recorded">
+    <ChartCard
+      title="Failed Logins (7 Days)"
+      desc="Authentication failures for brute force detection"
+      isEmpty={data.length === 0}
+      emptyMsg="No failed logins recorded"
+    >
       <ChartContainer config={{ count: { label: "Failed Attempts", color: "#ef4444" } }} className="h-full w-full">
         <AreaChart data={data} margin={{ left: -20, right: 10, top: 10, bottom: 0 }}>
           <defs>
@@ -211,7 +410,7 @@ export function EventsByTypeChart({ chartsData }: ChartsDataProps) {
   }, [chartsData?.securityEventsByType]);
 
   return (
-    <ChartCard title="Events by Type" desc="Top security event distribution" h="h-[300px] pl-0" isEmpty={data.length === 0} emptyMsg="No security events found">
+    <ChartCard title="Events by Type" desc="Top security event distribution" h="h-[220px] pl-0" isEmpty={data.length === 0} emptyMsg="No security events found">
       <ChartContainer config={{ count: { label: "Event Count", color: "#8b5cf6" } }} className="h-full w-full">
         <BarChart className="w-full" data={data} layout="vertical" margin={{ left: 5, right: 25, top: 10, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} className="stroke-muted" />

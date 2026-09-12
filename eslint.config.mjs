@@ -12,6 +12,12 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Standalone manual-test/debug scripts, not part of the app build.
+    "sample.js",
+    "test-fetch.js",
+    "test-stream.js",
+    "test-users.js",
+    "scripts/test-org-data-layer.js",
   ]),
 ]);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { UserCheck } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -81,7 +81,7 @@ export function HrConfirmationsPanel({
           const state = localState[conf.code] || { confirmed: false, note: "" };
           
           return (
-            <div key={conf.code} className="rounded-lg border border-border p-4 bg-white shadow-xs">
+            <div key={conf.code} className="rounded-lg border border-border p-4 bg-card shadow-xs">
               <div className="flex items-start gap-3">
                 <Checkbox
                   id={`conf-${conf.code}`}
@@ -115,7 +115,7 @@ export function HrConfirmationsPanel({
                           }))
                         }
                         onBlur={(e) => handleNoteBlur(conf.code, e.target.value)}
-                        className="h-20 text-[13px] font-normal resize-none bg-slate-50"
+                        className="h-20 text-[13px] font-normal resize-none bg-muted/30"
                       />
                     </div>
                   )}

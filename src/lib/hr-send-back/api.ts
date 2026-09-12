@@ -17,6 +17,7 @@ import {
 import {
   MOCK_HR_SEND_BACK_FIXTURES,
   FIXTURE_HR_SEND_BACK_OMS_2026_0139,
+  getHrSendBackOptionsFixture,
 } from "./fixtures";
 import { useDebounce } from "@/hooks/useDebounce";
 
@@ -35,9 +36,14 @@ export const hrSendBackApi = {
   async getOptions(requestId: string): Promise<HrSendBackOptionsResponse> {
     if (USE_FIXTURES) {
       await new Promise((resolve) => setTimeout(resolve, 300));
-      const match =
-        MOCK_HR_SEND_BACK_FIXTURES[requestId] ||
-        FIXTURE_HR_SEND_BACK_OMS_2026_0139;
+      const match = getHrSendBackOptionsFixture(requestId);
+      if (!match) {
+        throw {
+          statusCode: 404,
+          code: "NOT_FOUND",
+          message: `Requisition ${requestId} not found`,
+        };
+      }
       return JSON.parse(JSON.stringify(match));
     }
 
@@ -113,6 +119,42 @@ export const hrSendBackApi = {
         throw {
           code: "MISSING_IDEMPOTENCY_KEY",
           message: "Idempotency key is mandatory.",
+        };
+      }
+
+      // Simulation triggers for TASK 4 error verification
+      if (payload.message.includes("[test-locked-field]")) {
+        throw {
+          code: "SEND_BACK_FIELD_NOT_SELECTABLE",
+          fieldKey: payload.editableFieldKeys[0] || "budgetAmount",
+          fieldName: "Budget amount",
+          message: "Field may have been locked since the page loaded.",
+        };
+      }
+
+      if (payload.message.includes("[test-already-decided]")) {
+        throw {
+          code: "SEND_BACK_ALREADY_DECIDED",
+          decidedBy: "Omar Al Hashmi",
+          message: "This request was already decided by Omar Al Hashmi.",
+        };
+      }
+
+      if (payload.message.includes("[test-scan-pending]")) {
+        throw {
+          code: "ATTACHMENT_SCAN_PENDING",
+          message: "One attachment is still being checked.",
+        };
+      }
+
+      if (payload.message.includes("[test-budget-changed]")) {
+        throw {
+          code: "HR_REVIEW_BUDGET_CHANGED",
+          currentBudget: {
+            reserved: 28500000,
+            note: "Updated reservation based on concurrent financial change.",
+          },
+          message: "Budget figures have changed since review started.",
         };
       }
 

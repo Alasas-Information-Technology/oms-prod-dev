@@ -6,29 +6,16 @@ import {
   Store,
   ArrowLeft,
   UserPlus,
-  Building2,
-  Shield,
-  Trash2,
   UserX,
-  Mail,
   Search,
-  MoreHorizontal,
-  ExternalLink,
-  Power,
   RefreshCw,
   AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Card, CardContent } from "@/components/ui/card";
+
+
 import {
   Dialog,
   DialogContent,
@@ -82,6 +69,25 @@ export default function VendorUsersPage() {
   const createMutation = useCreateVendorUser();
   const deactivateUserMutation = useDeactivateVendorUser();
   const deactivateVendorAllMutation = useDeactivateVendorAll();
+
+  const filteredUsers = React.useMemo<VendorUserDto[]>(() => {
+    const list: VendorUserDto[] = Array.isArray(vendorUsers)
+      ? vendorUsers
+      : Array.isArray((vendorUsers as any)?.data)
+        ? (vendorUsers as any).data
+        : Array.isArray((vendorUsers as any)?.items)
+          ? (vendorUsers as any).items
+          : [];
+    return list.filter((u) => {
+      const match =
+        !searchTerm ||
+        u.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        u.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        u.profile?.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        u.vendorId?.toLowerCase().includes(searchTerm.toLowerCase());
+      return match;
+    });
+  }, [vendorUsers, searchTerm]);
 
   if (!can("VENDORUSER.MANAGE")) {
     return (
@@ -150,25 +156,6 @@ export default function VendorUsersPage() {
       toast.error(err?.response?.data?.message || err?.message || "Failed to deactivate vendor");
     }
   };
-
-  const filteredUsers = React.useMemo<VendorUserDto[]>(() => {
-    const list: VendorUserDto[] = Array.isArray(vendorUsers)
-      ? vendorUsers
-      : Array.isArray((vendorUsers as any)?.data)
-        ? (vendorUsers as any).data
-        : Array.isArray((vendorUsers as any)?.items)
-          ? (vendorUsers as any).items
-          : [];
-    return list.filter((u) => {
-      const match =
-        !searchTerm ||
-        u.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.profile?.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.vendorId?.toLowerCase().includes(searchTerm.toLowerCase());
-      return match;
-    });
-  }, [vendorUsers, searchTerm]);
 
   return (
     <div className="p-6 space-y-6 w-full">

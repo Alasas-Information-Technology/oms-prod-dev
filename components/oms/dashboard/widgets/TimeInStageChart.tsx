@@ -4,9 +4,8 @@ import React, { useMemo } from "react";
 import { WidgetShell } from "../WidgetShell";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { TimeInStageData } from "@/types/dashboard";
-import { categoricalScale, semanticColors } from "@/lib/dashboard/chart-tokens";
+import { categoricalScale } from "@/lib/dashboard/chart-tokens";
 import { DataTable, ColumnDef } from "@/components/shared/DataTable";
-import { cn } from "@/lib/utils";
 
 /**
  * V5 — Time in stage with bottleneck per DASHBOARD-VISUAL-DEPTH.md:

@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { cn } from "@/components/ui/utils";
-import { SectionWrapper, SectionHeader } from "./SectionWrapper";
+import { SectionWrapper } from "./SectionWrapper";
 import { X, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

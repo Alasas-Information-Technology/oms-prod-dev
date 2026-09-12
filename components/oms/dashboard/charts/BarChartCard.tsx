@@ -9,7 +9,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  LabelList,
   Cell,
 } from "recharts";
 import { gridStyle, axisStyle, categoricalScale } from "@/lib/dashboard/chart-tokens";

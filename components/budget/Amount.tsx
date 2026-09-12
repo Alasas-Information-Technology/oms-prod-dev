@@ -14,6 +14,8 @@ export interface AmountProps extends React.HTMLAttributes<HTMLSpanElement> {
   value: MinorUnitInput;
   /** Visual presentation variant per T2 */
   variant?: "display" | "table" | "inline";
+  /** Font size for display variant (default "xl" = 30px) */
+  size?: "sm" | "md" | "lg" | "xl";
   /** Whether to abbreviate (e.g. "AED 24.80M") */
   abbreviate?: boolean;
   /** Currency code (default "AED") */
@@ -30,11 +32,12 @@ export interface AmountProps extends React.HTMLAttributes<HTMLSpanElement> {
  * Rules:
  * - Always receives integer fils.
  * - Tabular numbers with decimal alignment.
- * - variant="display": 12px muted currency, 30px/600 bold integer, 30px/400 muted decimal.
+ * - variant="display": muted currency, bold integer, muted decimals with T2 weight contrast.
  */
 export function Amount({
   value,
   variant = "inline",
+  size = "xl",
   abbreviate = false,
   currency = "AED",
   showCurrency = true,
@@ -54,6 +57,29 @@ export function Amount({
       ? formatAbbreviatedParts(filsBigInt, { currency, showCurrency })
       : formatAmountParts(filsBigInt, { currency, showCurrency });
 
+    const sizeClasses = {
+      sm: {
+        currency: "text-[10px] font-normal text-muted-foreground mr-1",
+        integer: "text-xs font-bold text-foreground",
+        decimal: "text-[11px] font-normal text-muted-foreground",
+      },
+      md: {
+        currency: "text-[11px] font-normal text-muted-foreground mr-1",
+        integer: "text-sm font-bold text-foreground",
+        decimal: "text-xs font-normal text-muted-foreground",
+      },
+      lg: {
+        currency: "text-xs font-normal text-muted-foreground mr-1",
+        integer: "text-lg font-bold text-foreground",
+        decimal: "text-sm font-normal text-muted-foreground",
+      },
+      xl: {
+        currency: "text-[12px] font-normal text-muted-foreground mr-1",
+        integer: "text-[30px] font-semibold text-foreground tracking-tight",
+        decimal: "text-[30px] font-normal text-muted-foreground",
+      },
+    }[size];
+
     return (
       <span
         data-slot="amount-display"
@@ -66,14 +92,14 @@ export function Amount({
         {...props}
       >
         {parts.currency && (
-          <span className="text-[12px] font-normal text-muted-foreground mr-1">
+          <span className={sizeClasses.currency}>
             {parts.currency}
           </span>
         )}
-        <span className="text-[30px] font-semibold text-foreground tracking-tight">
+        <span className={sizeClasses.integer}>
           {parts.integer}
         </span>
-        <span className="text-[30px] font-normal text-muted-foreground">
+        <span className={sizeClasses.decimal}>
           {parts.decimalOrSuffix}
         </span>
       </span>

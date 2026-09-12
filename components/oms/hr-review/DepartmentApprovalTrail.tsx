@@ -40,7 +40,7 @@ export function DepartmentApprovalTrail({
 
             {/* Step Circle */}
             <span
-              className="relative z-10 flex size-5 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[11px] font-medium text-muted-foreground mt-0.5"
+              className="relative z-10 flex size-5 shrink-0 items-center justify-center rounded-full bg-muted text-[11px] font-medium text-muted-foreground mt-0.5"
             >
               {index + 1}
             </span>
@@ -60,8 +60,8 @@ export function DepartmentApprovalTrail({
               </span>
               
               {detailed && item.comment && (
-                <div className="mt-2 rounded-lg bg-slate-50 p-3 text-[13px] font-normal text-foreground-secondary italic">
-                  "{item.comment}"
+                <div className="mt-2 rounded-lg bg-muted/40 border border-border/60 p-3 text-[13px] font-normal text-foreground-secondary italic">
+                  &ldquo;{item.comment}&rdquo;
                 </div>
               )}
             </div>

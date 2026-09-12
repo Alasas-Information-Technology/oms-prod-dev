@@ -4,7 +4,7 @@
 // Note: Domain 3 invitations and SLA reminder alerts depend on this service.
 
 import React from "react";
-import { AlertCircle, CheckCircle2, Clock, Mail, RefreshCw, Send } from "lucide-react";
+import { AlertCircle, Clock, Mail, RefreshCw, Send } from "lucide-react";
 import { WidgetShell } from "../WidgetShell";
 import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";

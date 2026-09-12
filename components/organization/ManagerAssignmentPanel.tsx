@@ -12,7 +12,6 @@ import {
   Clock,
   Crown,
   Loader2,
-  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +33,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { StatusBadge, OMSStatus } from "@/components/shared/StatusBadge";
+import { StatusBadge } from "@/components/shared/StatusBadge";
 import { Timeline, TimelineItem } from "@/components/shared/Timeline";
 import {
   useOrgUnitManagers,

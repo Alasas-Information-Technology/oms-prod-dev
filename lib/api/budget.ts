@@ -11,7 +11,6 @@ import {
   IBudgetSafeguardsResponseDto,
 } from "../types/budget.types";
 import {
-  mockBudgetSummary,
   getMockBudgetSummaryResponse,
   getMockBudgetLinesResponse,
   mockFundMovementsLine002,

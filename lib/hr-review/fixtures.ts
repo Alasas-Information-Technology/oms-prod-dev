@@ -2,6 +2,73 @@ import {
   HrReviewQueueResponse,
   HrReviewDetailResponse,
 } from "@/types/hr-review";
+import {
+  getRequisition,
+  listRequisitions,
+  getClarificationsForRequisition,
+} from "@/src/lib/demo-data";
+import { mapToHrReviewDetail, mapToHrReviewQueueItem } from "./mappers";
+
+export interface HrReviewQueueFilterParams {
+  department?: string;
+  status?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+/**
+ * Demo-data backed HR Review Queue.
+ * Renders ONLY requisitions currently at HR Review stage (0139, 0128).
+ */
+export function getHrReviewQueueFixture(
+  params?: HrReviewQueueFilterParams
+): HrReviewQueueResponse {
+  // Only requisitions currently at HR_REVIEW
+  let hrReqs = listRequisitions().filter(
+    (req) => req.currentStage === "HR_REVIEW"
+  );
+
+  if (params?.department && params.department !== "all") {
+    hrReqs = hrReqs.filter((r) => r.departmentId === params.department);
+  }
+
+  if (params?.status === "overdue") {
+    hrReqs = hrReqs.filter((r) => r.sla?.breached);
+  }
+
+  const items = hrReqs.map(mapToHrReviewQueueItem);
+  const overdueCount = items.filter((i) => i.sla.breached).length;
+  const returnedCount = items.filter((i) => i.returnedFromClarification).length;
+
+  const page = params?.page ?? 1;
+  const pageSize = params?.pageSize ?? 10;
+  const startIndex = (page - 1) * pageSize;
+  const paginatedItems = items.slice(startIndex, startIndex + pageSize);
+
+  return {
+    items: paginatedItems,
+    counts: {
+      total: items.length,
+      overdue: overdueCount,
+      returned: returnedCount,
+    },
+    slaTargetDays: 3,
+  };
+}
+
+/**
+ * Demo-data backed HR Review Detail.
+ * Unknown IDs return null (real 404, never fallback).
+ */
+export function getHrReviewDetailFixture(
+  requestId: string
+): HrReviewDetailResponse | null {
+  const req = getRequisition(requestId);
+  if (!req) return null;
+
+  const clarifications = getClarificationsForRequisition(req.id);
+  return mapToHrReviewDetail(req, clarifications[0] || null);
+}
 
 export const MOCK_HR_QUEUE: HrReviewQueueResponse = {
   items: [

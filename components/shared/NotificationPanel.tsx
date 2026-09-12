@@ -70,14 +70,14 @@ export function NotificationPanel({
   return (
     <div
       className={cn(
-        "flex flex-col bg-white rounded-lg border border-slate-200 overflow-hidden",
+        "flex flex-col bg-card rounded-lg border border-border overflow-hidden",
         className
       )}
     >
-      <div className="flex items-center justify-between px-4 py-3 pr-12 border-b border-slate-100 bg-slate-50/50">
+      <div className="flex items-center justify-between px-4 py-3 pr-12 border-b border-border/60 bg-muted/30">
         <div className="flex items-center gap-2.5">
-          <Bell size={15} className="text-slate-700" />
-          <span className="text-sm font-semibold text-slate-900">Notifications</span>
+          <Bell size={15} className="text-muted-foreground" />
+          <span className="text-sm font-semibold text-foreground">Notifications</span>
           {unread > 0 && (
             <span className="inline-flex items-center justify-center px-1.5 min-w-[20px] h-5 rounded-full bg-primary text-primary-foreground text-xs font-semibold">
               {unread}
@@ -95,12 +95,12 @@ export function NotificationPanel({
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto divide-y divide-slate-50 max-h-[480px]">
+      <div className="flex-1 overflow-y-auto divide-y divide-border/40 max-h-[480px]">
         {notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <Bell size={32} className="text-slate-300 mb-2" />
-            <p className="text-sm font-medium text-slate-600">No notifications</p>
-            <p className="text-xs text-slate-400 mt-0.5">You&apos;re all caught up!</p>
+            <Bell size={32} className="text-muted-foreground/40 mb-2" />
+            <p className="text-sm font-medium text-muted-foreground">No notifications</p>
+            <p className="text-xs text-muted-foreground/60 mt-0.5">You&apos;re all caught up!</p>
           </div>
         ) : (
           notifications.map((n) => {
@@ -112,7 +112,7 @@ export function NotificationPanel({
                 key={n.id}
                 className={cn(
                   "flex items-start gap-3 p-4 transition-colors",
-                  !n.read && "bg-slate-50/70"
+                  !n.read && "bg-muted/40"
                 )}
               >
                 <div
@@ -126,7 +126,7 @@ export function NotificationPanel({
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-slate-900 truncate">
+                    <span className="text-xs font-semibold text-foreground truncate">
                       {n.title}
                     </span>
                     {!n.read && (
@@ -135,15 +135,15 @@ export function NotificationPanel({
                       />
                     )}
                   </div>
-                  <p className="text-xs text-slate-600 mt-0.5 line-clamp-2">
+                  <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
                     {n.description}
                   </p>
-                  <div className="flex items-center gap-3 mt-2 text-[11px] text-slate-400">
+                  <div className="flex items-center gap-3 mt-2 text-[11px] text-muted-foreground/70">
                     <span>{n.timestamp}</span>
                     {n.module && (
                       <>
                         <span>•</span>
-                        <span className="font-medium text-slate-500">{n.module}</span>
+                        <span className="font-medium text-muted-foreground">{n.module}</span>
                       </>
                     )}
                   </div>
@@ -161,7 +161,7 @@ export function NotificationPanel({
                   {onDismiss && (
                     <button
                       onClick={() => onDismiss(n.id)}
-                      className="text-slate-400 hover:text-slate-600 p-1"
+                      className="text-muted-foreground/70 hover:text-foreground p-1"
                     >
                       <X size={12} />
                     </button>
@@ -174,7 +174,7 @@ export function NotificationPanel({
       </div>
 
       {!hideViewAll && onViewAll && (
-        <div className="p-3 border-t border-slate-100 bg-slate-50/30 text-center">
+        <div className="p-3 border-t border-border/60 bg-muted/20 text-center">
           <button
             onClick={onViewAll}
             className="text-xs text-primary hover:underline font-medium"

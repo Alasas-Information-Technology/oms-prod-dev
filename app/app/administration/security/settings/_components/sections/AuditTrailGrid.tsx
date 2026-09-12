@@ -2,14 +2,9 @@
 
 import * as React from "react";
 import {
-  FileSpreadsheet,
   Search,
   Download,
-  Filter,
   History,
-  ShieldCheck,
-  User,
-  Calendar,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";

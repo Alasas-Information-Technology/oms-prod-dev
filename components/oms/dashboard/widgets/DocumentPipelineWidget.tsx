@@ -4,7 +4,7 @@
 // Note: Attachment scanning and document storage services pending backend infrastructure.
 
 import React from "react";
-import { AlertTriangle, CheckCircle2, FileCheck2, FileWarning, HardDrive, ShieldCheck } from "lucide-react";
+import { CheckCircle2, FileCheck2, FileWarning, HardDrive, ShieldCheck } from "lucide-react";
 import { WidgetShell } from "../WidgetShell";
 import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";

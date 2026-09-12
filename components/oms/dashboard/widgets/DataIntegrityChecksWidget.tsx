@@ -2,11 +2,11 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { AlertCircle, CheckCircle2, ChevronRight, Play, RefreshCw, ShieldAlert, ShieldCheck } from "lucide-react";
+import { ChevronRight, RefreshCw } from "lucide-react";
 import { WidgetShell } from "../WidgetShell";
 import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
-import { DataIntegrityChecksData, DataIntegrityCheckItem } from "@/types/dashboard";
+import { DataIntegrityChecksData } from "@/types/dashboard";
 import { cn } from "@/lib/utils";
 
 function formatRelativeTime(isoDate: string): string {

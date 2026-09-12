@@ -5,10 +5,7 @@ import { useFormContext } from "react-hook-form";
 import {
   FileText,
   Calendar,
-  ShieldCheck,
   Database,
-  Sliders,
-  CheckCircle2,
   Clock,
 } from "lucide-react";
 import {

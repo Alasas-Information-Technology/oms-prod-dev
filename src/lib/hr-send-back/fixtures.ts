@@ -7,6 +7,17 @@
  */
 
 import { HrSendBackOptionsResponse } from "@/src/types/hr-send-back";
+import { getRequisition } from "@/src/lib/demo-data";
+import { mapToHrSendBackOptions } from "./mappers";
+
+/**
+ * Demo-data backed send-back options fixture. Unknown IDs return null.
+ */
+export function getHrSendBackOptionsFixture(requestId: string): HrSendBackOptionsResponse | null {
+  const req = getRequisition(requestId);
+  if (!req) return null;
+  return mapToHrSendBackOptions(req);
+}
 
 /**
  * Fixture (a): OMS-2026-0139 — Full Case (Cycle 2)

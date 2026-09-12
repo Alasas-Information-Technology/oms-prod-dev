@@ -1,5 +1,11 @@
 import api from './axios';
 import {
+  getCastUsersResponse,
+  getCastVendorUsers,
+  mapPersonToUserDetail,
+} from '@/src/lib/administration/mappers';
+import { getPerson } from '@/src/lib/demo-data';
+import {
   PaginatedResponse,
   ApiSuccessResponse,
   UserSummaryDto,
@@ -58,65 +64,82 @@ export const usersApi = {
    * Retrieves paginated list of internal users with search/filter criteria.
    */
   getUsers: async (query?: UserListQueryDto): Promise<PaginatedResponse<UserSummaryDto>> => {
-    const response = await api.get('/authorization/users', { params: query });
-    const res = response.data;
-    if (Array.isArray(res)) {
-      return {
-        data: res,
-        meta: {
-          total: res.length,
-          page: query?.page || 1,
-          pageSize: query?.pageSize || 10,
-          totalPages: 1,
-        },
-      };
+    try {
+      const response = await api.get('/authorization/users', { params: query });
+      const res = response.data;
+      if (Array.isArray(res) && res.length > 0) {
+        return {
+          data: res,
+          meta: {
+            total: res.length,
+            page: query?.page || 1,
+            pageSize: query?.pageSize || 10,
+            totalPages: 1,
+          },
+        };
+      }
+      if (Array.isArray(res?.data) && res.data.length > 0) {
+        return {
+          data: res.data,
+          meta: res.meta?.pagination || res.meta || {
+            total: res.data.length,
+            page: query?.page || 1,
+            pageSize: query?.pageSize || 10,
+            totalPages: 1,
+          },
+        };
+      }
+      if (Array.isArray(res?.data?.items) && res.data.items.length > 0) {
+        return {
+          data: res.data.items,
+          meta: {
+            total: res.data.total ?? res.data.items.length,
+            page: res.data.page ?? query?.page ?? 1,
+            pageSize: res.data.limit ?? res.data.pageSize ?? query?.pageSize ?? 10,
+            totalPages: res.data.totalPages ?? 1,
+          },
+        };
+      }
+      if (Array.isArray(res?.items) && res.items.length > 0) {
+        return {
+          data: res.items,
+          meta: {
+            total: res.total ?? res.items.length,
+            page: res.page ?? query?.page ?? 1,
+            pageSize: res.limit ?? res.pageSize ?? query?.pageSize ?? 10,
+            totalPages: res.totalPages ?? 1,
+          },
+        };
+      }
+    } catch {
+      // Fallback to canonical cast members
     }
-    if (Array.isArray(res?.data)) {
-      return {
-        data: res.data,
-        meta: res.meta?.pagination || res.meta || {
-          total: res.data.length,
-          page: query?.page || 1,
-          pageSize: query?.pageSize || 10,
-          totalPages: 1,
-        },
-      };
-    }
-    if (Array.isArray(res?.data?.items)) {
-      return {
-        data: res.data.items,
-        meta: {
-          total: res.data.total ?? res.data.items.length,
-          page: res.data.page ?? query?.page ?? 1,
-          pageSize: res.data.limit ?? res.data.pageSize ?? query?.pageSize ?? 10,
-          totalPages: res.data.totalPages ?? 1,
-        },
-      };
-    }
-    if (Array.isArray(res?.items)) {
-      return {
-        data: res.items,
-        meta: {
-          total: res.total ?? res.items.length,
-          page: res.page ?? query?.page ?? 1,
-          pageSize: res.limit ?? res.pageSize ?? query?.pageSize ?? 10,
-          totalPages: res.totalPages ?? 1,
-        },
-      };
-    }
-    return {
-      data: res?.data || [],
-      meta: res?.meta || { total: 0, page: 1, pageSize: 10, totalPages: 1 },
-    };
+
+    return getCastUsersResponse({
+      search: query?.search,
+      departmentId: query?.departmentId,
+      userType: query?.userType as string,
+      page: query?.page,
+      pageSize: query?.pageSize,
+    });
   },
 
   /**
    * Retrieves single user details including profile, roles, and scopes.
    */
   getUserById: async (id: string): Promise<UserDetailDto> => {
-    const response = await api.get(`/authorization/users/${id}`);
-    const res = response.data;
-    return res?.data ?? res;
+    try {
+      const response = await api.get(`/authorization/users/${id}`);
+      const res = response.data;
+      if (res?.userId) return res?.data ?? res;
+    } catch {
+      // Fallback to demo-data cast
+    }
+    const person = getPerson(id);
+    if (person) {
+      return mapPersonToUserDetail(person);
+    }
+    throw new Error(`User ${id} not found`);
   },
 
   /**
@@ -435,22 +458,34 @@ export const vendorUsersApi = {
    * Lists all active vendor users (isolated from internal users).
    */
   getVendorUsers: async (): Promise<VendorUserDto[]> => {
-    const response = await api.get('/authorization/vendor-users');
-    const res = response.data;
-    if (Array.isArray(res)) return res;
-    if (Array.isArray(res?.data)) return res.data;
-    if (Array.isArray(res?.data?.items)) return res.data.items;
-    if (Array.isArray(res?.items)) return res.items;
-    return [];
+    try {
+      const response = await api.get('/authorization/vendor-users');
+      const res = response.data;
+      if (Array.isArray(res) && res.length > 0) return res;
+      if (Array.isArray(res?.data) && res.data.length > 0) return res.data;
+      if (Array.isArray(res?.data?.items) && res.data.items.length > 0) return res.data.items;
+      if (Array.isArray(res?.items) && res.items.length > 0) return res.items;
+    } catch {
+      // Fallback
+    }
+    return getCastVendorUsers();
   },
 
   /**
    * Retrieves single vendor user details.
    */
   getVendorUserById: async (id: string): Promise<VendorUserDto> => {
-    const response = await api.get(`/authorization/vendor-users/${id}`);
-    const res = response.data;
-    return res?.data ?? res;
+    try {
+      const response = await api.get(`/authorization/vendor-users/${id}`);
+      const res = response.data;
+      if (res?.userId) return res?.data ?? res;
+    } catch {
+      // Fallback
+    }
+    const vendorUsers = getCastVendorUsers();
+    const found = vendorUsers.find((u) => u.userId === id);
+    if (found) return found;
+    throw new Error(`Vendor user ${id} not found`);
   },
 
   /**

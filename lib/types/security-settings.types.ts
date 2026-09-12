@@ -26,4 +26,4 @@ export interface SecuritySettingsResponseDto {
     failedLoginRetention: number;
 }
 
-export interface UpdateSecuritySettingsDto extends SecuritySettingsResponseDto {}
+export type UpdateSecuritySettingsDto = SecuritySettingsResponseDto;

@@ -10,6 +10,8 @@ import {
   MOCK_HR_DETAIL_REFERENCE,
   MOCK_HR_DETAIL_RETURNED,
   MOCK_HR_QUEUE,
+  getHrReviewQueueFixture,
+  getHrReviewDetailFixture,
 } from "../hr-review/fixtures";
 
 export interface HrReviewQueueQuery {
@@ -21,46 +23,14 @@ export interface HrReviewQueueQuery {
 
 export const hrReviewApi = {
   async getQueue(query?: HrReviewQueueQuery): Promise<HrReviewQueueResponse> {
-    await new Promise((resolve) => setTimeout(resolve, 600));
-
-    let items = [...MOCK_HR_QUEUE.items];
-
-    if (query?.department && query.department !== "all") {
-      items = items.filter((item) => item.department.id === query.department);
-    }
-    if (query?.status === "overdue") {
-      items = items.filter((item) => item.sla.breached);
-    }
-
-    const page = query?.page ?? 1;
-    const pageSize = query?.pageSize ?? 10;
-    const startIndex = (page - 1) * pageSize;
-    const paginatedItems = items.slice(startIndex, startIndex + pageSize);
-
-    return {
-      items: paginatedItems,
-      counts: MOCK_HR_QUEUE.counts,
-      slaTargetDays: MOCK_HR_QUEUE.slaTargetDays,
-    };
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return getHrReviewQueueFixture(query);
   },
 
   async getDetail(requestId: string): Promise<HrReviewDetailResponse> {
-    await new Promise((resolve) => setTimeout(resolve, 600));
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
-    const idMap: Record<string, HrReviewDetailResponse> = {
-      "OMS-2026-0148": MOCK_HR_DETAIL_REFERENCE,
-      "OMS-2026-0128": MOCK_HR_DETAIL_OVERDUE,
-      "OMS-2026-0139": MOCK_HR_DETAIL_RETURNED,
-      "OMS-2026-0143": MOCK_HR_DETAIL_FAILED_CHECK,
-    };
-
-    const detail = idMap[requestId] || {
-      ...MOCK_HR_DETAIL_REFERENCE,
-      request: {
-        ...MOCK_HR_DETAIL_REFERENCE.request,
-        id: requestId,
-      },
-    };
+    const detail = getHrReviewDetailFixture(requestId);
 
     if (!detail) {
       throw new Error("404 Not Found");

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ChevronDown, ChevronUp, User, Users, AlertCircle } from "lucide-react";
+import { ChevronDown, ChevronUp, User, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { OrgTypeIcon, OrgTypeKey, getOrgTypeConfig } from "@/components/organization/OrgTypeIcon";

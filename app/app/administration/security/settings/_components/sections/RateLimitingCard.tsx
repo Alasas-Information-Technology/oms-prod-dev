@@ -6,8 +6,6 @@ import {
   Sliders,
   Shield,
   CheckCircle2,
-  Lock,
-  ArrowRight,
   Info,
 } from "lucide-react";
 import {

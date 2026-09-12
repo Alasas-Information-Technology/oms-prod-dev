@@ -2,12 +2,11 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowUpRight, Globe, Key, Shield, UserCheck, Users } from "lucide-react";
+import { ArrowUpRight, Globe, Key, Shield, Users } from "lucide-react";
 import { WidgetShell } from "../WidgetShell";
 import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { ElevatedAccessRegisterData } from "@/types/dashboard";
-import { cn } from "@/lib/utils";
 
 export function ElevatedAccessRegisterWidget({
   scope,

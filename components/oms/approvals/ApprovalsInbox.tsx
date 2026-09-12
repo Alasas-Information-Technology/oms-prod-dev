@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useMyApprovals } from "@/hooks/useApprovals";
 import { ApprovalsTabs, ApprovalsTab } from "./ApprovalsTabs";
 import { ApprovalsTable } from "./ApprovalsTable";
-import { Loader2 } from "lucide-react";
 
 export function ApprovalsInbox() {
   const currentUserId = "u-101"; // Mock ID for Khalid Al Suwaidi

@@ -1,4 +1,4 @@
-import { UserProfile, Session } from "./profile.types";
+import { UserProfile } from "./profile.types";
 
 export const mockUserProfile: UserProfile = {
     id: "1",

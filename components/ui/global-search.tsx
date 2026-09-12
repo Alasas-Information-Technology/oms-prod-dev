@@ -63,7 +63,7 @@ export function GlobalSearch() {
         onClick={() => setOpen(true)}
         variant="ghost"
         size="icon"
-        className="flex lg:hidden h-8 w-8 p-0 text-muted-foreground hover:text-foreground cursor-pointer"
+        className="flex lg:hidden h-8 w-8 p-0 text-white/80 dark:text-foreground/80 hover:text-white dark:hover:text-foreground hover:bg-white/10 dark:hover:bg-white/5 cursor-pointer"
         aria-label="Search"
       >
         <Search className="h-[18px] w-[18px]" />

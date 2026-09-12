@@ -4,26 +4,21 @@ import * as React from "react";
 import {
   ChevronRight,
   ChevronDown,
-  Building2,
-  FolderTree,
   MoreVertical,
   Plus,
   ArrowRightLeft,
   Trash2,
   Power,
-  ExternalLink,
   Search,
   X,
   Lock,
   RefreshCw,
   Eye,
-  SlidersHorizontal,
 } from "lucide-react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,

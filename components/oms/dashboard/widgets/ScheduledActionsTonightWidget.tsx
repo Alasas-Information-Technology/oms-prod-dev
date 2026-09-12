@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowUpRight, Clock, Coins, FileText, Trash2, Users } from "lucide-react";
+import { ArrowUpRight, Coins, FileText, Trash2, Users } from "lucide-react";
 import { WidgetShell } from "../WidgetShell";
 import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
@@ -109,7 +109,7 @@ export function ScheduledActionsTonightWidget({
         <div className="space-y-0.5">
           {actions.length === 0 ? (
             <div className="py-6 text-center text-xs text-muted-foreground">
-              No scheduled actions queued for tonight's run.
+              No scheduled actions queued for tonight&apos;s run.
             </div>
           ) : (
             actions.map((act) => {

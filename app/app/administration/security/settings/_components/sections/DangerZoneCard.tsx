@@ -8,9 +8,7 @@ import {
   Download,
   LogOut,
   ShieldAlert,
-  Lock,
   FileJson,
-  CheckCircle2,
 } from "lucide-react";
 import {
   Card,

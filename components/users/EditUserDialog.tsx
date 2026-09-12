@@ -17,7 +17,7 @@ import { OrgUnitSummaryDto } from "@/lib/types/organization.types";
 import { UserDetailDto } from "@/lib/types/authorization.types";
 import { useUpdateUser } from "@/hooks/useAuthorization";
 import { toast } from "sonner";
-import { User, Building2 } from "lucide-react";
+import { User } from "lucide-react";
 
 interface EditUserDialogProps {
   open: boolean;

@@ -28,7 +28,6 @@ import {
 import {
   formatAmount,
   formatAbbreviated,
-  formatPercent,
   toBigIntFils,
 } from "@/lib/money";
 import { FundState } from "@/lib/types/budget.types";

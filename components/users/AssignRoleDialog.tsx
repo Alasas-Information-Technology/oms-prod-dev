@@ -7,9 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAssignRole, useMasterRoles } from "@/hooks/useAuthorization";
-import { ROLE_DEFINITIONS, getRoleDisplayName, getRoleExplanation } from "@/lib/constants/user-admin.constants";
+import { getRoleDisplayName, getRoleExplanation } from "@/lib/constants/user-admin.constants";
 import { toast } from "sonner";
-import { Shield, Clock, Calendar, CheckCircle2 } from "lucide-react";
+import { Shield } from "lucide-react";
 
 interface AssignRoleDialogProps {
   open: boolean;

@@ -13,6 +13,39 @@ import {
   MoreInfoClarificationDetail,
   AmendClarificationDetail,
 } from "@/types/clarification";
+import { getClarification, getClarificationsForRequisition } from "@/src/lib/demo-data";
+import { mapToClarificationDetail } from "./mappers";
+
+/**
+ * Demo-data backed fixture resolver. Unknown IDs return null.
+ */
+export function getClarificationFixture(
+  requestIdOrClarificationId: string,
+  clarificationId?: string
+): ClarificationDetail | null {
+  // Try direct lookup by clarificationId
+  const targetClarId =
+    clarificationId ||
+    (requestIdOrClarificationId?.startsWith("clar-")
+      ? requestIdOrClarificationId
+      : undefined);
+
+  if (targetClarId) {
+    const c = getClarification(targetClarId);
+    if (c) return mapToClarificationDetail(c);
+  }
+
+  // Try lookup by requisitionId
+  if (requestIdOrClarificationId) {
+    const list = getClarificationsForRequisition(requestIdOrClarificationId);
+    if (list.length > 0) {
+      return mapToClarificationDetail(list[0]);
+    }
+  }
+
+  return null;
+}
+
 
 /**
  * Fixture (a): INFO_WITH_APPROVAL — Full Case

@@ -69,8 +69,8 @@ export function LoginForm({
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     setError(null);
     try {
-      await login(data.Username, data.Password);
-      window.location.href = "/app";
+      const session = await login(data.Username, data.Password);
+      window.location.href = session?.userType === "VENDOR" ? "/vendor" : "/app";
     } catch (err: any) {
       if (err.code === "CONFIRM_REVOKE_OLDEST" || err.message === "CONFIRM_REVOKE_OLDEST") {
         setShowRevokeConfirm(true);
@@ -84,8 +84,8 @@ export function LoginForm({
     setShowRevokeConfirm(false);
     setError(null);
     try {
-      await login(form.getValues().Username, form.getValues().Password, true);
-      window.location.href = "/app";
+      const session = await login(form.getValues().Username, form.getValues().Password, true);
+      window.location.href = session?.userType === "VENDOR" ? "/vendor" : "/app";
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred");
     }
@@ -117,7 +117,7 @@ export function LoginForm({
                       transition={{ duration: 0.3, ease: "easeInOut" }}
                       className="overflow-hidden"
                     >
-                      <div className="p-3 text-sm text-red-500 bg-red-100 rounded-md">
+                      <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
                         {error}
                       </div>
                     </motion.div>

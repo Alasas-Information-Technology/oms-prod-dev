@@ -21,9 +21,9 @@ import {
 import { OrgUnitPicker } from "@/components/organization/OrgUnitPicker";
 import { OrgUnitSummaryDto } from "@/lib/types/organization.types";
 import { useAssignScope, useScopeCoveragePreview } from "@/hooks/useAuthorization";
-import { SCOPE_LEVEL_DEFINITIONS, ScopeLevelDefinition } from "@/lib/constants/user-admin.constants";
+import { SCOPE_LEVEL_DEFINITIONS } from "@/lib/constants/user-admin.constants";
 import { toast } from "sonner";
-import { Building2, Globe, Eye, Info, Sparkles, CheckCircle2 } from "lucide-react";
+import { Building2, Eye } from "lucide-react";
 
 interface AssignScopeDialogProps {
   open: boolean;

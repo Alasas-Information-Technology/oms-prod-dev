@@ -10,7 +10,6 @@ import {
   useViewport,
   MiniMap,
   Node,
-  Edge,
   NodeTypes,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
@@ -22,19 +21,14 @@ import {
   RotateCw,
   RefreshCw,
   Plus,
-  Compass,
   Building2,
-  Layers,
   ArrowUpDown,
   ArrowLeftRight,
   Info,
-  Undo2,
-  Redo2,
   RotateCcw,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   AlertDialog,
@@ -54,7 +48,6 @@ import {
 } from "@/hooks/useOrganization";
 import {
   useOrgChartLayoutPersistence,
-  NodePositionsMap,
 } from "@/hooks/useOrgChartLayoutPersistence";
 import { orgUnitsApi } from "@/lib/api/organization";
 import { OrgUnitSummaryDto, OrgUnitEntity } from "@/lib/types/organization.types";

@@ -10,8 +10,6 @@ import {
   CheckCircle2,
   AlertCircle,
   Clock,
-  Sparkles,
-  Users,
   Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";

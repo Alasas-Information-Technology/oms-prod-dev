@@ -9,7 +9,8 @@ export function AppLogo() {
         height={28}
         width={112}
         priority
-        style={{ width: "auto", height: "28px" }}
+        style={{ width: "auto" }}
+        className="h-7 w-auto object-contain cursor-pointer"
       />
     </div>
   );

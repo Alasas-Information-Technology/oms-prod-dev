@@ -2,19 +2,14 @@
 
 import React, { useState } from "react";
 import {
-  AlertTriangle,
-  CheckCircle2,
   ChevronDown,
   ChevronRight,
   Clock,
-  ExternalLink,
-  RotateCcw,
-  XCircle,
 } from "lucide-react";
 import { WidgetShell } from "../WidgetShell";
 import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
-import { BackgroundJobHealthData, ScheduledJobStatus } from "@/types/dashboard";
+import { BackgroundJobHealthData } from "@/types/dashboard";
 import { cn } from "@/lib/utils";
 
 function formatRelativeTime(isoDate: string): string {

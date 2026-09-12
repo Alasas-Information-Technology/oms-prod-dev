@@ -61,7 +61,6 @@ import {
   ChevronRight,
   Edit,
   Lock,
-  LogOut,
   RotateCcw,
   Save,
   Users

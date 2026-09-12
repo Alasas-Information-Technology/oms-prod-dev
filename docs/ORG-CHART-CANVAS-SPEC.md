@@ -18,7 +18,7 @@ Moving a unit in the hierarchy rewrites the closure table for its whole
 subtree, can strand budget commitments, and is guarded by `ORG.MOVE`. That
 stays behind the guided Move flow. A drag gesture must never trigger it.
 
-Consequences for the build:
+Consequences for the build: 
 
 - Connectors follow the dragged card and keep pointing at its real parent. A
   card dragged next to a different branch still connects to its actual parent —

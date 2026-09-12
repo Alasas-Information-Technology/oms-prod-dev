@@ -38,8 +38,8 @@ export default function KpiTilesDevPage() {
       {/* 1. ALL 9 TILES WITH ZERO VALUES */}
       <section className="space-y-4">
         <div className="border-b pb-2">
-          <h2 className="text-xl font-bold">1. All 9 Tiles in Zero State (Reassuring framing, no bare "0")</h2>
-          <p className="text-xs text-muted-foreground">Each tile displays "0" paired with a reassuring sentence and checkmark instead of an empty state.</p>
+          <h2 className="text-xl font-bold">1. All 9 Tiles in Zero State (Reassuring framing, no bare &quot;0&quot;)</h2>
+          <p className="text-xs text-muted-foreground">Each tile displays &quot;0&quot; paired with a reassuring sentence and checkmark instead of an empty state.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

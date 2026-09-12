@@ -25,6 +25,9 @@ import {
   useHrSendBackDraft,
   useSubmitHrSendBack,
 } from "@/src/lib/hr-send-back/api";
+import { useHrReviewQueue, hrReviewKeys } from "@/hooks/useHrReview";
+import { useQueryClient } from "@tanstack/react-query";
+import { format } from "date-fns";
 import {
   ClarificationLayout,
   ClarificationThread,
@@ -49,6 +52,8 @@ export function HrSendBackWorkspace({
   onSendBackSuccess,
 }: HrSendBackWorkspaceProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const { data: queueData } = useHrReviewQueue();
   const { requestId, requestTitle, requester, draft } = options;
 
   // Form State: mode defaults to "MORE_INFO" (least disruptive per spec)
@@ -66,9 +71,19 @@ export function HrSendBackWorkspace({
 
   // Dialog State
   const [isSubmitOpen, setIsSubmitOpen] = React.useState<boolean>(false);
+  const [idempotencyKey, setIdempotencyKey] = React.useState<string>("");
   const [submitError, setSubmitError] = React.useState<HrSendBackError | null>(
     null
   );
+
+  const handleOpenSubmit = React.useCallback(() => {
+    setIdempotencyKey(
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `sendback-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+    );
+    setIsSubmitOpen(true);
+  }, []);
 
   // Auto-grow textarea ref
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
@@ -121,6 +136,14 @@ export function HrSendBackWorkspace({
     );
   }, []);
 
+  const handleDeselectField = React.useCallback(
+    (fieldKey: string) => {
+      setEditableFieldKeys((prev) => prev.filter((k) => k !== fieldKey));
+      handleUnlinkField(fieldKey);
+    },
+    [handleUnlinkField]
+  );
+
   const handleManualSave = () => {
     saveDraft(currentDraftPayload);
     toast.success("Draft saved successfully");
@@ -130,7 +153,7 @@ export function HrSendBackWorkspace({
     try {
       setSubmitError(null);
 
-      const result = await submitMutation.mutateAsync({
+      await submitMutation.mutateAsync({
         mode,
         message,
         asks,
@@ -139,13 +162,49 @@ export function HrSendBackWorkspace({
         idempotencyKey,
       });
 
+      // Clear local draft per Task 5
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.removeItem(`hr_send_back_draft_${requestId}`);
+        } catch {
+          // ignore
+        }
+      }
+
       setIsSubmitOpen(false);
-      toast.success(result.message || `Request sent back to ${requester.name}.`);
+
+      // Format closesAt date in plain words per Task 5 (e.g. "30 September")
+      let formattedCloses = "30 days";
+      try {
+        formattedCloses = format(new Date(options.deadline.closesAt), "d MMMM");
+      } catch {
+        formattedCloses = "30 days";
+      }
+
+      // Success confirmation naming what happened: "Sent back to Mariam Al Mansoori. She has until 30 September to respond."
+      toast.success(
+        `Sent back to ${requester.name}. She has until ${formattedCloses} to respond.`
+      );
+
+      // Invalidate queries so queue is refreshed
+      queryClient.invalidateQueries({ queryKey: hrReviewKeys.all });
+
+      // Determine next queue item per HR6
+      const queueItems = queueData?.items || [];
+      const currentIdx = queueItems.findIndex((i) => i.requestId === requestId);
+      const nextRequestItem =
+        currentIdx >= 0 && currentIdx < queueItems.length - 1
+          ? queueItems[currentIdx + 1]
+          : null;
 
       if (onSendBackSuccess) {
         onSendBackSuccess();
+      } else if (nextRequestItem) {
+        router.push(
+          `/app/hr-review?request=${encodeURIComponent(nextRequestItem.requestId)}`
+        );
       } else {
-        router.push(`/app/hr-review?request=${encodeURIComponent(requestId)}`);
+        router.push("/app/hr-review");
       }
     } catch (err: unknown) {
       const errorObj = err as Record<string, unknown> | null;
@@ -241,47 +300,38 @@ export function HrSendBackWorkspace({
 
   // Header actions: Quiet saved indicator, Save draft (ghost), Send back (primary)
   const headerActionsNode = (
-    <div className="flex flex-col items-end gap-1">
-      <div className="flex items-center gap-2">
-        {isSavingDraft ? (
-          <span className="inline-flex items-center gap-1.5 text-xs text-primary mr-1">
-            <Loader2 className="size-3 animate-spin" /> Saving draft...
-          </span>
-        ) : lastSavedAt ? (
-          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground mr-1 hidden sm:inline-flex">
-            <Check className="size-3.5 text-emerald-600 dark:text-emerald-400" />
-            Saved {new Date(lastSavedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-          </span>
-        ) : null}
-
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleManualSave}
-          disabled={isSavingDraft || submitMutation.isPending}
-          className="h-9 px-3.5 text-xs font-medium border border-border/70 hover:bg-accent cursor-pointer"
-        >
-          <Bookmark className="size-3.5 mr-1.5" />
-          Save draft
-        </Button>
-
-        <Button
-          size="sm"
-          onClick={() => setIsSubmitOpen(true)}
-          disabled={submitMutation.isPending || !isMessageValid}
-          className="h-9 px-4 text-xs font-medium shadow-xs cursor-pointer"
-          title={!isMessageValid ? "A message is required before sending back." : undefined}
-        >
-          <Send className="size-3.5 mr-1.5" />
-          Send back
-        </Button>
-      </div>
-
-      {!isMessageValid && (
-        <span className="text-[11px] text-muted-foreground/80 font-medium hidden sm:inline-block">
-          Message required before sending
+    <div className="flex items-center gap-2">
+      {isSavingDraft ? (
+        <span className="inline-flex items-center gap-1.5 text-xs text-primary mr-1">
+          <Loader2 className="size-3 animate-spin" /> Saving draft...
         </span>
-      )}
+      ) : lastSavedAt ? (
+        <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground mr-1 hidden sm:inline-flex">
+          <Check className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+          Saved {new Date(lastSavedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+        </span>
+      ) : null}
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={handleManualSave}
+        disabled={isSavingDraft || submitMutation.isPending}
+        className="h-9 px-3.5 text-xs font-medium border border-border/70 hover:bg-accent cursor-pointer"
+      >
+        <Bookmark className="size-3.5 mr-1.5" />
+        Save draft
+      </Button>
+
+      <Button
+        size="sm"
+        onClick={handleOpenSubmit}
+        disabled={submitMutation.isPending || !isMessageValid}
+        className="h-9 px-4 text-xs font-medium shadow-xs cursor-pointer"
+      >
+        <Send className="size-3.5 mr-1.5" />
+        Send back
+      </Button>
     </div>
   );
 
@@ -434,11 +484,13 @@ export function HrSendBackWorkspace({
         asks={asks}
         editableFieldKeys={isMoreInfo ? [] : editableFieldKeys}
         attachmentIds={attachments.map((a) => a.id)}
+        idempotencyKey={idempotencyKey}
         isSubmitting={submitMutation.isPending}
         onConfirmSubmit={handleConfirmSubmit}
         submitError={submitError}
         onClearError={() => setSubmitError(null)}
         onSwitchToQuestion={() => setMode("MORE_INFO")}
+        onDeselectField={handleDeselectField}
       />
     </>
   );
