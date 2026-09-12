@@ -38,6 +38,9 @@
   --secondary-light: #E0E8F8;
 
   /* Accent: Teal Branding with 0.3 Opacity */
+  --brand-teal: #0D9488;
+  --brand-teal-foreground: #FFFFFF;
+  --brand-teal-light: #CCFBF1;
   --accent: rgba(52, 188, 178, 0.3);
   --accent-foreground: #0F1419;
 
