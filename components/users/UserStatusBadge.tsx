@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/components/ui/utils";
 import { CheckCircle2, Clock, Lock, UserX } from "lucide-react";
 
@@ -65,6 +66,35 @@ export function computeUserStatus(user: {
   return resolveUserStatus(undefined, user);
 }
 
+const STATUS_MAP: Record<PlainUserStatus, {
+  tone: "success" | "accent" | "danger" | "neutral";
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  extraClasses?: string;
+}> = {
+  ACTIVE: {
+    tone: "success",
+    label: "Active",
+    icon: CheckCircle2,
+  },
+  INVITED: {
+    tone: "accent",
+    label: "Hasn\u0027t signed in yet",
+    icon: Clock,
+    extraClasses: "bg-sky-50 text-sky-700 dark:bg-sky-950/30 dark:text-sky-400",
+  },
+  LOCKED: {
+    tone: "danger",
+    label: "Locked out",
+    icon: Lock,
+  },
+  INACTIVE: {
+    tone: "neutral",
+    label: "Access turned off",
+    icon: UserX,
+  },
+};
+
 export function UserStatusBadge({
   status: directStatus,
   user,
@@ -74,71 +104,22 @@ export function UserStatusBadge({
   size = "sm",
 }: UserStatusBadgeProps) {
   const resolvedStatus = resolveUserStatus(directStatus, user);
+  const config = STATUS_MAP[resolvedStatus] ?? STATUS_MAP.INACTIVE;
+  const Icon = config.icon;
 
-  switch (resolvedStatus) {
-    case "ACTIVE":
-      return (
-        <span
-          className={cn(
-            "inline-flex items-center gap-1.5 rounded-full font-medium transition-colors",
-            "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800",
-            size === "sm" ? "px-2.5 py-0.5 text-xs" : "px-3 py-1 text-sm",
-            className
-          )}
-        >
-          {showIcon && <CheckCircle2 className={cn(size === "sm" ? "size-3" : "size-3.5", "shrink-0")} />}
-          {showDot && <span className="size-1.5 rounded-full bg-emerald-500 shrink-0" />}
-          Active
-        </span>
-      );
-
-    case "INVITED":
-      return (
-        <span
-          className={cn(
-            "inline-flex items-center gap-1.5 rounded-full font-medium transition-colors",
-            "bg-sky-50 text-sky-700 border border-sky-200 dark:bg-sky-950/30 dark:text-sky-400 dark:border-sky-800",
-            size === "sm" ? "px-2.5 py-0.5 text-xs" : "px-3 py-1 text-sm",
-            className
-          )}
-        >
-          {showIcon && <Clock className={cn(size === "sm" ? "size-3" : "size-3.5", "shrink-0")} />}
-          {showDot && <span className="size-1.5 rounded-full bg-sky-500 shrink-0" />}
-          Hasn&apos;t signed in yet
-        </span>
-      );
-
-    case "LOCKED":
-      return (
-        <span
-          className={cn(
-            "inline-flex items-center gap-1.5 rounded-full font-medium transition-colors",
-            "bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/30 dark:text-rose-400 dark:border-rose-800",
-            size === "sm" ? "px-2.5 py-0.5 text-xs" : "px-3 py-1 text-sm",
-            className
-          )}
-        >
-          {showIcon && <Lock className={cn(size === "sm" ? "size-3" : "size-3.5", "shrink-0")} />}
-          {showDot && <span className="size-1.5 rounded-full bg-rose-500 shrink-0" />}
-          Locked out
-        </span>
-      );
-
-    case "INACTIVE":
-    default:
-      return (
-        <span
-          className={cn(
-            "inline-flex items-center gap-1.5 rounded-full font-medium transition-colors",
-            "bg-zinc-100 text-zinc-700 border border-zinc-200 dark:bg-zinc-900/40 dark:text-zinc-400 dark:border-zinc-800",
-            size === "sm" ? "px-2.5 py-0.5 text-xs" : "px-3 py-1 text-sm",
-            className
-          )}
-        >
-          {showIcon && <UserX className={cn(size === "sm" ? "size-3" : "size-3.5", "shrink-0")} />}
-          {showDot && <span className="size-1.5 rounded-full bg-zinc-400 shrink-0" />}
-          Access turned off
-        </span>
-      );
-  }
+  return (
+    <Badge
+      tone={config.tone}
+      className={cn(
+        "gap-1.5 transition-colors",
+        size === "sm" ? "px-2.5 py-0.5 text-xs" : "px-3 py-1 text-sm",
+        config.extraClasses,
+        className
+      )}
+    >
+      {showIcon && <Icon className={cn(size === "sm" ? "size-3" : "size-3.5", "shrink-0")} />}
+      {showDot && <span className="size-1.5 rounded-full bg-current shrink-0 opacity-60" />}
+      {config.label}
+    </Badge>
+  );
 }

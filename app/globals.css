@@ -5,127 +5,130 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* ===== REDESIGNED COLOR PALETTE ===== */
+  /* ===== REDESIGNED COLOR PALETTE (RASIKH OMS) ===== */
 
-  /* Background Colors - Light Mode (Improved) */
-  --background: #FAFBFC;
-  --background-secondary: #F1F5F9;
-  --background-tertiary: #E8EEF5;
+  /* Background Colors - Light Mode (Warm Sand) */
+  --background: #FAF8F3;
+  --background-secondary: #F1ECE1;
+  --background-tertiary: #EAE3D6;
 
-  /* Foreground/Text Colors */
-  --foreground: #0F1419;
-  --foreground-secondary: #475569;
-  --foreground-tertiary: #64748B;
-  --heading: #0F1419;
+  /* Foreground/Text Colors (Warm Charcoal) */
+  --foreground: #1A1712;
+  --foreground-secondary: #544D3F;
+  --foreground-tertiary: #7C7362;
+  --heading: #1A1712;
 
   /* Card & Popover */
   --card: #FFFFFF;
-  --card-foreground: #0F1419;
+  --card-foreground: #1A1712;
 
   --popover: #FFFFFF;
-  --popover-foreground: #0F1419;
+  --popover-foreground: #1A1712;
 
-  /* Brand Colors - Redesigned */
-  /* Primary: Vibrant Indigo (increased contrast from #7474C1) */
-  --primary: #5B5FE1;
+  /* Brand Colors */
+  /* Primary: Bedrock Indigo */
+  --primary: #1B2A4A;
   --primary-foreground: #FFFFFF;
-  --primary-light: #EEF0FF;
-  --primary-dark: #4F46E5;
+  --primary-light: #EEF1FB;
+  --primary-dark: #0E1830;
 
-  /* Secondary: Deep Blue (was redundant, now distinct) */
-  --secondary: #0C3A8F;
+  /* Secondary: Bedrock Deep */
+  --secondary: #0E1830;
   --secondary-foreground: #FFFFFF;
-  --secondary-light: #E0E8F8;
+  --secondary-light: #EAE3D6;
 
-  /* Accent: Teal Branding with 0.3 Opacity */
-  --brand-teal: #0D9488;
+  /* Brand Teal: Cyan role (Vendor-portal branding, verified checkmarks, info accents) */
+  --brand-teal: #0E5C52;
   --brand-teal-foreground: #FFFFFF;
-  --brand-teal-light: #CCFBF1;
-  --accent: rgba(52, 188, 178, 0.3);
-  --accent-foreground: #0F1419;
+  --brand-teal-light: #EEF5F4;
+  --accent: rgba(14, 92, 82, 0.15);
+  --accent-foreground: #1A1712;
 
-  /* Muted - Improved */
-  --muted: #E2E8F0;
-  --muted-foreground: #64748B;
+  /* Root Bronze: Signature accent (Milestone/attention moments, interactive accent) */
+  --root-bronze: #A65A2E;
+  --root-bronze-foreground: #FFFFFF;
 
-  /* Semantic Colors - Improved contrast */
-  --success: #047857;
+  /* Muted */
+  --muted: #E6DFD0;
+  --muted-foreground: #7C7362;
+
+  /* Semantic Colors */
+  --success: #1E5C42;
   --success-foreground: #FFFFFF;
-  --success-light: #DCFCE7;
+  --success-light: #EBF5EE;
 
-  --warning: #C2410C;
+  --warning: #7A4E0C;
   --warning-foreground: #FFFFFF;
-  --warning-light: #FEFCE8;
+  --warning-light: #FBF2E3;
 
-  --destructive: #BE123C;
+  --destructive: #7A2818;
   --destructive-foreground: #FFFFFF;
-  --destructive-light: #FEE2E2;
+  --destructive-light: #FBEDEA;
 
-  /* ===== SEMANTIC TOKENS (UX 5.1 & Part 6) ===== */
+  /* ===== SEMANTIC TOKENS (15-Token System) ===== */
   /* Five meanings: accent, success, warning, danger, info */
-  /* Each defined with surface tint, border, and text value (15 tokens) */
-  --accent-surface: #EEF2FF;
-  --accent-border: #4F46E5;
-  --accent-text: #3730A3;
+  /* Each defined with surface tint, border, and text value */
+  --accent-surface: #EEF1FB;
+  --accent-border: #3E4E8C;
+  --accent-text: #1B2A4A;
 
-  --success-surface: #ECFDF5;
-  --success-border: #059669;
-  --success-text: #065F46;
+  --success-surface: #EBF5EE;
+  --success-border: #3A8F6B;
+  --success-text: #1E5C42;
 
-  --warning-surface: #FFFBEB;
-  --warning-border: #B45309;
-  --warning-text: #78350F;
+  --warning-surface: #FBF2E3;
+  --warning-border: #B4791F;
+  --warning-text: #7A4E0C;
 
-  --danger-surface: #FFF1F2;
-  --danger-border: #E11D48;
-  --danger-text: #881337;
+  --danger-surface: #FBEDEA;
+  --danger-border: #B0432C;
+  --danger-text: #7A2818;
 
-  --info-surface: #F0F9FF;
-  --info-border: #0284C7;
-  --info-text: #075985;
+  --info-surface: #EEF5F4;
+  --info-border: #256C61;
+  --info-text: #123F38;
 
-  /* Three surface elevations per Part 6 */
-  --surface-base: #FAFBFC;
+  /* Four surface elevations */
+  --surface-base: #FAF8F3;
   --surface-card: #FFFFFF;
-  --surface-elevated: #F8FAFC;
+  --surface-elevated: #F8F4EC;
   --surface-popover: #FFFFFF;
 
   /* Ratios / Alphas */
   --border-alpha: 0.08;
   --candidate-tint-alpha: 0.08;
   --hatch-alpha: 0.18;
-  --disabled-text: #64748B;
+  --disabled-text: #7C7362;
 
-  /* Border & Input - Lighter & more subtle */
-  --border: #E2E8F0;
-  --input: #F8FAFC;
-  --input-border: #E2E8F0;
-  --ring: #5B5FE1;
+  /* Border & Input */
+  --border: #E6DFD0;
+  --input: #F8F4EC;
+  --input-border: #E6DFD0;
+  --ring: #1B2A4A;
 
-  /* Chart Colors - Updated for better contrast */
-  --chart-1: #6366F1;
-  --chart-2: #0D47A1;
-  --chart-3: #059669;
-  --chart-4: #D97706;
-  --chart-5: #DC2626;
+  /* Chart Colors - Curated Palette */
+  --chart-1: #1B2A4A;
+  --chart-2: #0E5C52;
+  --chart-3: #3A8F6B;
+  --chart-4: #B4791F;
+  --chart-5: #B0432C;
 
-  /* Sidebar - Distinct Shade (Light Mode) */
-  --sidebar: #EEF2F9;
-  --sidebar-foreground: #0F1419;
-  --sidebar-primary: #5B5FE1;
+  /* Sidebar - Light Mode */
+  --sidebar: #F1ECE1;
+  --sidebar-foreground: #1A1712;
+  --sidebar-primary: #1B2A4A;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #E0E8F8;
-  --sidebar-accent-foreground: #0C3A8F;
-  --sidebar-border: #E2E8F0;
-  --sidebar-ring: #5B5FE1;
+  --sidebar-accent: #EAE3D6;
+  --sidebar-accent-foreground: #0E1830;
+  --sidebar-border: #E6DFD0;
+  --sidebar-ring: #1B2A4A;
 
-  /* Typography - Updated fonts */
-  /* Montserrat for display/headlines */
-  --font-display: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  /* Inter for body/UI */
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-serif: "Merriweather", serif;
-  --font-mono: "JetBrains Mono", monospace;
+  /* Typography — RASIKH UI v3 */
+  /* Urbanist for display/headlines */
+  --font-display: "Urbanist", system-ui, sans-serif;
+  /* Google Sans Flex for body/UI */
+  --font-sans: "Google Sans Flex", system-ui, sans-serif;
+  --font-ui: var(--font-sans);
 
   /* Enterprise radii & shadows */
   --radius: 0.5rem;
@@ -137,123 +140,133 @@
   --shadow-lg: 0px 20px 25px -5px rgba(0, 0, 0, 0.1), 0px 8px 10px -6px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0px 25px 50px -12px rgba(0, 0, 0, 0.1);
 
+  /* Glass system — RASIKH UI v3 */
+  --glass-bg-light: rgba(255, 255, 255, 0.55);
+  --glass-bg-dark: rgba(26, 23, 18, 0.45);
+  --glass-border-light: rgba(255, 255, 255, 0.45);
+  --glass-border-dark: rgba(230, 223, 208, 0.14);
+  --glass-blur: 20px;
+  --glass-saturate: 160%;
+
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 }
 
 .dark {
-  /* ===== DARK MODE - REDESIGNED ===== */
+  /* ===== DARK MODE (Warm Black Physics) ===== */
 
   /* Background Colors */
-  --background: #0F1419;
-  --background-secondary: #1A1F2E;
-  --background-tertiary: #252D3D;
+  --background: #0E0D0B;
+  --background-secondary: #181510;
+  --background-tertiary: #211D16;
 
   /* Foreground/Text Colors */
-  --foreground: #F9FAFB;
-  --foreground-secondary: #D1D5DB;
-  --foreground-tertiary: #9CA3AF;
-  --heading: #F9FAFB;
+  --foreground: #F7F5F0;
+  --foreground-secondary: #C9C2B3;
+  --foreground-tertiary: #948C7A;
+  --heading: #F7F5F0;
 
   /* Card & Popover */
-  --card: #1A1F2E;
-  --card-foreground: #F9FAFB;
+  --card: #191712;
+  --card-foreground: #F7F5F0;
 
-  --popover: #1A1F2E;
-  --popover-foreground: #F9FAFB;
+  --popover: #2A2219;
+  --popover-foreground: #F7F5F0;
 
   /* Brand Colors - Dark Mode */
-  --primary: #818CF8;
-  --primary-foreground: #0F1419;
-  --primary-light: #312E81;
+  --primary: #7C8FC4;
+  --primary-foreground: #0E0D0B;
+  --primary-light: #1E2540;
   --primary-dark: #A5B4FC;
 
-  --secondary: #42A5F5;
-  --secondary-foreground: #0F1419;
-  --secondary-light: #1A237E;
+  --secondary: #5A7BB8;
+  --secondary-foreground: #0E0D0B;
+  --secondary-light: #181510;
 
-  /* Brand Teal - Dark Mode variant */
-  --brand-teal: #34bcb2;
-  --brand-teal-foreground: #0F1419;
-  --brand-teal-light: #064E3B;
+  /* Brand Teal - Dark Mode (Cyan role) */
+  --brand-teal: #3FA394;
+  --brand-teal-foreground: #0E0D0B;
+  --brand-teal-light: #132320;
 
-  /* Accent: Teal Branding with 0.3 Opacity */
-  --accent: rgba(52, 188, 178, 0.3);
-  --accent-foreground: #F9FAFB;
+  --accent: rgba(63, 163, 148, 0.2);
+  --accent-foreground: #F7F5F0;
+
+  /* Root Bronze - Dark Mode */
+  --root-bronze: #D3894F;
+  --root-bronze-foreground: #0E0D0B;
 
   /* Muted - Dark Mode */
-  --muted: #252D3D;
-  --muted-foreground: #9CA3AF;
+  --muted: #2A2620;
+  --muted-foreground: #948C7A;
 
   /* Semantic Colors - Dark Mode */
-  --success: #10B981;
-  --success-foreground: #0F1419;
-  --success-light: #064E3B;
+  --success: #A7E8C7;
+  --success-foreground: #0E0D0B;
+  --success-light: #12271F;
 
-  --warning: #F59E0B;
-  --warning-foreground: #0F1419;
-  --warning-light: #78350F;
+  --warning: #F5D89A;
+  --warning-foreground: #0E0D0B;
+  --warning-light: #2E2416;
 
-  --destructive: #EF4444;
-  --destructive-foreground: #0F1419;
-  --destructive-light: #7F1D1D;
+  --destructive: #F5B8A5;
+  --destructive-foreground: #0E0D0B;
+  --destructive-light: #2E1B18;
 
-  /* ===== SEMANTIC TOKENS - DARK MODE (UX 5.1 & Part 6) ===== */
-  /* Desaturated ~20%, lightened ~10% to eliminate vibration on dark */
+  /* ===== SEMANTIC TOKENS - DARK MODE ===== */
   --accent-surface: #1E2540;
-  --accent-border: #818CF8;
+  --accent-border: #7C8FC4;
   --accent-text: #C7D2FE;
 
-  --success-surface: #142924;
-  --success-border: #34D399;
-  --success-text: #A7F3D0;
+  --success-surface: #12271F;
+  --success-border: #5FC79A;
+  --success-text: #A7E8C7;
 
   --warning-surface: #2E2416;
-  --warning-border: #FBBF24;
-  --warning-text: #FDE68A;
+  --warning-border: #E0A94A;
+  --warning-text: #F5D89A;
 
-  --danger-surface: #2E1B22;
-  --danger-border: #FB7185;
-  --danger-text: #FECDD3;
+  --danger-surface: #2E1B18;
+  --danger-border: #E8795C;
+  --danger-text: #F5B8A5;
 
-  --info-surface: #142538;
-  --info-border: #38BDF8;
-  --info-text: #BAE6FD;
+  --info-surface: #132320;
+  --info-border: #4CA694;
+  --info-text: #A9DAD0;
 
-  /* Three surface elevations per Part 6 (~4% lighter each step) */
-  --surface-base: #0B0F17;
-  --surface-card: #161B26; /* Cards lift off the page */
-  --surface-elevated: #212838; /* Elevated items, popovers */
-  --surface-popover: #2D364A; /* High elevations, modals */
+  /* Four Surface Elevations (Physics: ~4% lighter each step on warm-black) */
+  --surface-base: #0E0D0B; /* Elevation 0 */
+  --surface-card: #171310; /* Elevation 1 */
+  --surface-elevated: #201A14; /* Elevation 2 */
+  --surface-popover: #2A2219; /* Elevation 3 */
 
-  /* Ratios / Alphas (Borders 14% up from 8%, Candidate tints 12% up from 8%, Hatch 24% up from 18%) */
+  /* Ratios / Alphas (Warm 14% opacity border on dark) */
   --border-alpha: 0.14;
   --candidate-tint-alpha: 0.12;
   --hatch-alpha: 0.24;
-  --disabled-text: #9CA3AF;
+  --disabled-text: #948C7A;
 
-  /* Border & Input - Subtle dark mode borders */
-  --border: #222B3C;
-  --input: #1A1F2E;
-  --input-border: #222B3C;
-  --ring: #818CF8;
+  /* Border & Input - Subtle warm dark borders */
+  --border: #2A2620;
+  --input: #1C1912;
+  --input-border: #2A2620;
+  --ring: #7C8FC4;
 
   /* Chart Colors - Dark Mode */
-  --chart-1: #818CF8;
-  --chart-2: #42A5F5;
-  --chart-3: #10B981;
-  --chart-4: #F59E0B;
-  --chart-5: #EF4444;
+  --chart-1: #7C8FC4;
+  --chart-2: #3FA394;
+  --chart-3: #5FC79A;
+  --chart-4: #E0A94A;
+  --chart-5: #E8795C;
 
   /* Sidebar - Dark Mode */
-  --sidebar: #1A1F2E;
-  --sidebar-foreground: #F9FAFB;
-  --sidebar-primary: #818CF8;
-  --sidebar-primary-foreground: #0F1419;
-  --sidebar-accent: #312E81;
-  --sidebar-accent-foreground: #A5B4FC;
-  --sidebar-border: #222B3C;
-  --sidebar-ring: #818CF8;
+  --sidebar: #181510;
+  --sidebar-foreground: #F7F5F0;
+  --sidebar-primary: #7C8FC4;
+  --sidebar-primary-foreground: #0E0D0B;
+  --sidebar-accent: #211D16;
+  --sidebar-accent-foreground: #C9C2B3;
+  --sidebar-border: #2A2620;
+  --sidebar-ring: #7C8FC4;
 }
 
 @theme inline {
@@ -279,6 +292,9 @@
   --color-brand-teal: var(--brand-teal);
   --color-brand-teal-foreground: var(--brand-teal-foreground);
   --color-brand-teal-light: var(--brand-teal-light);
+
+  --color-root-bronze: var(--root-bronze);
+  --color-root-bronze-foreground: var(--root-bronze-foreground);
 
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
@@ -344,14 +360,14 @@
 
   --font-display: var(--font-display);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
-  --font-serif: var(--font-serif);
+  --font-ui: var(--font-ui);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-full: 9999px;
+  /* Radius scale — RASIKH UI v3 */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 28px;
+  --radius-full: 999px;
 
   --shadow-2xs: var(--shadow-2xs);
   --shadow-xs: var(--shadow-xs);
@@ -391,7 +407,8 @@
 
   body {
     @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
-    font-family: var(--font-sans);
+    font-family: var(--font-ui);
+    font-variation-settings: 'ROND' 60, 'wdth' 100, 'GRAD' 0;
     line-height: 1.6;
   }
 

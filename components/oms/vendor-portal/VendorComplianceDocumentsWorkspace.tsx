@@ -130,8 +130,8 @@ export function VendorComplianceDocumentsWorkspace({
             <span className="text-[11px] font-bold tracking-wider uppercase text-muted-foreground">
               Statutory Compliance
             </span>
-            <span className="text-muted-foreground/40 font-mono">/</span>
-            <span className="text-[11px] font-mono font-medium text-teal-600 dark:text-teal-400">
+            <span className="text-muted-foreground/40">/</span>
+            <span className="text-[11px] font-medium text-teal-600 dark:text-teal-400">
               Corporate Records
             </span>
           </div>
@@ -177,7 +177,7 @@ export function VendorComplianceDocumentsWorkspace({
             <div className="space-y-0.5">
               <p className="font-semibold text-foreground flex items-center gap-1.5">
                 Statutory Compliance Expiry Alert
-                <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 font-mono">
+                <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300">
                   90-Day Renewal Window
                 </span>
               </p>
@@ -205,7 +205,7 @@ export function VendorComplianceDocumentsWorkspace({
         <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">Total Documents</span>
-            <p className="text-2xl font-bold font-mono text-foreground">{documents.length}</p>
+            <p className="text-2xl font-bold text-foreground">{documents.length}</p>
           </div>
           <div className="p-2.5 rounded-lg bg-muted/60 text-muted-foreground">
             <FileText className="w-4 h-4" />
@@ -217,7 +217,7 @@ export function VendorComplianceDocumentsWorkspace({
             <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
               Active Compliant
             </span>
-            <p className="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400">
+            <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
               {activeDocs.length}
             </p>
           </div>
@@ -231,7 +231,7 @@ export function VendorComplianceDocumentsWorkspace({
             <span className="text-[11px] font-medium text-amber-700 dark:text-amber-300">
               Expiring Soon (&le;90d)
             </span>
-            <p className="text-2xl font-bold font-mono text-amber-600 dark:text-amber-400">
+            <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
               {expiringSoonDocs.length}
             </p>
           </div>
@@ -243,7 +243,7 @@ export function VendorComplianceDocumentsWorkspace({
         <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">Audit Health</span>
-            <p className="text-2xl font-bold font-mono text-foreground">98%</p>
+            <p className="text-2xl font-bold text-foreground">98%</p>
           </div>
           <div className="p-2.5 rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400">
             <ShieldCheck className="w-4 h-4" />
@@ -270,7 +270,7 @@ export function VendorComplianceDocumentsWorkspace({
               <div className="space-y-3">
                 {/* Top: Doc type badge and status */}
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-muted/80 text-foreground border border-border/70">
+                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-muted/80 text-foreground border border-border/70">
                     {doc.licenceNumber}
                   </span>
 
@@ -298,11 +298,11 @@ export function VendorComplianceDocumentsWorkspace({
                 {/* Attached File Preview */}
                 <div className="p-3 rounded-lg bg-muted/25 border border-border/50 space-y-1.5 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono font-medium text-foreground flex items-center gap-1.5 truncate">
+                    <span className="font-medium text-foreground flex items-center gap-1.5 truncate">
                       <FileText className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
                       {doc.file.name}
                     </span>
-                    <span className="text-[11px] font-mono text-muted-foreground shrink-0 ml-2">
+                    <span className="text-[11px] text-muted-foreground shrink-0 ml-2">
                       {formatBytes(doc.file.sizeBytes)}
                     </span>
                   </div>
@@ -352,7 +352,7 @@ export function VendorComplianceDocumentsWorkspace({
             <>
               <DialogHeader>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-muted border">
+                  <span className="text-xs font-bold px-2 py-0.5 rounded bg-muted border">
                     {selectedDoc.licenceNumber}
                   </span>
                   <Badge variant="outline" className="text-xs border-teal-500/30 text-teal-600">
@@ -375,17 +375,17 @@ export function VendorComplianceDocumentsWorkspace({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Licence / Policy Ref:</span>
-                    <span className="font-mono text-foreground">{selectedDoc.licenceNumber}</span>
+                    <span className="text-foreground">{selectedDoc.licenceNumber}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Expiry Date:</span>
-                    <span className="font-mono text-foreground">{selectedDoc.expiresOn}</span>
+                    <span className="text-foreground">{selectedDoc.expiresOn}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Remaining Validity:</span>
                     <span
                       className={cn(
-                        "font-mono font-bold",
+                        "font-bold",
                         selectedDoc.daysRemaining <= 90
                           ? "text-amber-600 dark:text-amber-400"
                           : "text-emerald-600 dark:text-emerald-400"
@@ -398,7 +398,7 @@ export function VendorComplianceDocumentsWorkspace({
 
                 <div className="p-3.5 rounded-xl bg-teal-500/5 border border-teal-500/20 space-y-1.5">
                   <span className="font-semibold text-foreground">File Repository Item</span>
-                  <p className="font-mono text-muted-foreground">{selectedDoc.file.name}</p>
+                  <p className="text-muted-foreground">{selectedDoc.file.name}</p>
                   <p className="text-[11px] text-muted-foreground">
                     Size: {formatBytes(selectedDoc.file.sizeBytes)} · Stored on DIEZ sovereign cloud storage.
                   </p>

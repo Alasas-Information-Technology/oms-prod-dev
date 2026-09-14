@@ -87,7 +87,7 @@ export function IntegrationHealthWidget({
                     {sys.failureCount24h} fail{sys.failureCount24h > 1 ? "s" : ""}
                   </span>
                 ) : (
-                  <span className="text-[10.5px] font-mono text-muted-foreground tabular-nums">
+                  <span className="text-[10.5px] text-muted-foreground tabular-nums">
                     Synced
                   </span>
                 )}

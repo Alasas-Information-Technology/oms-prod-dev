@@ -277,27 +277,27 @@ export function SuggestionList({
       <div className="pt-3 pb-1 border-t border-border/60 flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground">
         <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5 text-[11px]">
           <span className="inline-flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border font-mono text-[10px] font-semibold text-foreground shadow-2xs">1-9</kbd>
+            <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border text-[10px] font-semibold text-foreground shadow-2xs">1-9</kbd>
             <span>add</span>
           </span>
           <span className="inline-flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border font-mono text-[10px] font-semibold text-foreground shadow-2xs">↑↓</kbd>
+            <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border text-[10px] font-semibold text-foreground shadow-2xs">↑↓</kbd>
             <span>navigate</span>
           </span>
           <span className="inline-flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border font-mono text-[10px] font-semibold text-foreground shadow-2xs">X</kbd>
+            <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border text-[10px] font-semibold text-foreground shadow-2xs">X</kbd>
             <span>dismiss</span>
           </span>
           <span className="inline-flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border font-mono text-[10px] font-semibold text-foreground shadow-2xs">Tab</kbd>
+            <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border text-[10px] font-semibold text-foreground shadow-2xs">Tab</kbd>
             <span>switch candidate</span>
           </span>
           <span className="inline-flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border font-mono text-[10px] font-semibold text-foreground shadow-2xs">⌘Z</kbd>
+            <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border text-[10px] font-semibold text-foreground shadow-2xs">⌘Z</kbd>
             <span>undo</span>
           </span>
           <span className="inline-flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border font-mono text-[10px] font-semibold text-foreground shadow-2xs">C</kbd>
+            <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border text-[10px] font-semibold text-foreground shadow-2xs">C</kbd>
             <span>toggle calendar</span>
           </span>
         </div>
@@ -309,7 +309,7 @@ export function SuggestionList({
             className="inline-flex items-center gap-1.5 text-[11px] font-medium text-primary hover:underline cursor-pointer ml-auto"
             title="View keyboard shortcut guide (?)"
           >
-            <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border font-mono text-[10px] font-semibold text-foreground shadow-2xs">?</kbd>
+            <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border text-[10px] font-semibold text-foreground shadow-2xs">?</kbd>
             <span>Shortcuts</span>
           </button>
         )}

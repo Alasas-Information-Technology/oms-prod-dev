@@ -145,7 +145,7 @@ export function HrReviewQueue({
 
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="font-mono text-[11px] font-medium text-muted-foreground">
+                      <span className="text-[11px] font-medium text-muted-foreground">
                         {request.requestId}
                       </span>
                       
@@ -214,7 +214,7 @@ export function HrReviewQueue({
         </span>
         <div className="flex items-center gap-4 text-[12px] font-normal tabular-nums">
           {positionLabel && <span className="text-foreground">{positionLabel}</span>}
-          <span className="text-muted-foreground hidden sm:inline-block">Press <kbd className="font-mono bg-card border border-border px-1 rounded mx-0.5">?</kbd> for shortcuts</span>
+          <span className="text-muted-foreground hidden sm:inline-block">Press <kbd className="bg-card border border-border px-1 rounded mx-0.5">?</kbd> for shortcuts</span>
         </div>
       </div>
     </Card>

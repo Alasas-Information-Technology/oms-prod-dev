@@ -134,7 +134,7 @@ export function WorkforceOnboardingWorkspace() {
                         <h3 className="text-base font-bold text-foreground">
                           {onb.candidate.fullName}
                         </h3>
-                        <span className="font-mono text-xs px-2 py-0.5 rounded bg-muted border border-border/60 text-foreground">
+                        <span className="text-xs px-2 py-0.5 rounded bg-muted border border-border/60 text-foreground">
                           {onb.id}
                         </span>
                         <Badge variant="outline" className="text-[10px] font-bold uppercase">
@@ -147,7 +147,7 @@ export function WorkforceOnboardingWorkspace() {
                         <span className="text-muted-foreground">&middot;</span>
                         <span className="text-muted-foreground">{req?.departmentName || "Department"}</span>
                         <span className="text-muted-foreground">&middot;</span>
-                        <Link href={`/app/requests/${onb.requisitionId}`} className="font-mono hover:underline text-primary">
+                        <Link href={`/app/requests/${onb.requisitionId}`} className="hover:underline text-primary">
                           {onb.requisitionId}
                         </Link>
                       </div>

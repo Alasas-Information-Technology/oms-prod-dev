@@ -62,7 +62,7 @@ export function DraftExpiryWatchWidget({
               title={item.title}
               subtitle={item.requestId}
               trailing={
-                <span className="text-rose-600 dark:text-rose-400 font-mono tabular-nums font-semibold">
+                <span className="text-rose-600 dark:text-rose-400 tabular-nums font-semibold">
                   {item.daysRemaining}d left
                 </span>
               }

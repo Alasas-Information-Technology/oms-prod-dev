@@ -73,7 +73,7 @@ export function SubmitConfirmationModalContent({
       <div className="space-y-4 py-2 text-xs">
         {/* Restate Candidate per §5 Task 2 */}
         <div className="p-3 rounded-lg bg-muted/20 border border-border/60 space-y-1.5">
-          <span className="text-[10px] font-mono uppercase text-muted-foreground font-semibold tracking-wider">
+          <span className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">
             Candidate Details
           </span>
           <div className="flex items-center justify-between">
@@ -83,7 +83,7 @@ export function SubmitConfirmationModalContent({
                 <p className="font-semibold text-sm text-foreground">
                   {candidateName}
                 </p>
-                <p className="text-[11px] text-muted-foreground font-mono">
+                <p className="text-[11px] text-muted-foreground">
                   {position} · {candidateRef}
                 </p>
               </div>
@@ -94,7 +94,7 @@ export function SubmitConfirmationModalContent({
         {/* Restate Approved vs Pending Documents & Signature Status per §5 Task 2 */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           <div className="p-3 rounded-lg bg-muted/15 border border-border/50 space-y-1">
-            <span className="text-[10px] font-mono uppercase text-muted-foreground font-semibold flex items-center gap-1">
+            <span className="text-[10px] uppercase text-muted-foreground font-semibold flex items-center gap-1">
               <FileCheck2 className="size-3.5 text-teal-600 dark:text-teal-400" />
               Document Status
             </span>
@@ -114,7 +114,7 @@ export function SubmitConfirmationModalContent({
           </div>
 
           <div className="p-3 rounded-lg bg-muted/15 border border-border/50 space-y-1">
-            <span className="text-[10px] font-mono uppercase text-muted-foreground font-semibold flex items-center gap-1">
+            <span className="text-[10px] uppercase text-muted-foreground font-semibold flex items-center gap-1">
               <FileSignature className="size-3.5 text-teal-600 dark:text-teal-400" />
               E-Signature
             </span>
@@ -150,7 +150,7 @@ export function SubmitConfirmationModalContent({
         </div>
 
         {/* Idempotency Key Notice (§5 Task 3) */}
-        <div className="flex items-center justify-between text-[10px] font-mono text-muted-foreground/80 px-1">
+        <div className="flex items-center justify-between text-[10px] text-muted-foreground/80 px-1">
           <span>Idempotency Key</span>
           <span className="truncate max-w-[200px] select-all">{idempotencyKey}</span>
         </div>

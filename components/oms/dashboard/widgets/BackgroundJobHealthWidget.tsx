@@ -135,7 +135,7 @@ export function BackgroundJobHealthWidget({
                   <div className="flex items-center gap-2 shrink-0">
                     {/* Duration & Items Count (Subtle text) */}
                     {!isMissed && (
-                      <div className="flex items-center gap-1.5 text-right font-mono text-[11px] tabular-nums text-muted-foreground">
+                      <div className="flex items-center gap-1.5 text-right text-[11px] tabular-nums text-muted-foreground">
                         <span className="font-medium text-foreground/80">{formatDuration(job.durationMs)}</span>
                         <span className="text-muted-foreground/60">·</span>
                         <span>{job.itemsProcessed} items</span>
@@ -177,7 +177,7 @@ export function BackgroundJobHealthWidget({
                 {/* Expanded Details / Error Callout */}
                 {isExpanded && job.lastError && (
                   <div className="px-3 pb-2.5 pt-1 border-t border-border/20 text-xs">
-                    <div className="p-2 rounded bg-rose-500/15 text-rose-700 dark:text-rose-300 font-mono text-[10.5px] break-all border border-rose-500/30">
+                    <div className="p-2 rounded bg-rose-500/15 text-rose-700 dark:text-rose-300 text-[10.5px] break-all border border-rose-500/30">
                       <strong className="block font-sans font-semibold mb-0.5">Failure Detail:</strong>
                       {job.lastError}
                     </div>

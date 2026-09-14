@@ -121,7 +121,7 @@ export function RequestExceptionsTable({
                 title={item.detail}
                 subtitle={`${item.requestCode || item.requestId} · ${item.owner?.name || "Unassigned"}`}
                 trailing={
-                  <span className="text-muted-foreground font-mono tabular-nums">
+                  <span className="text-muted-foreground tabular-nums">
                     {item.ageDays}d old
                   </span>
                 }

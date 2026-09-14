@@ -139,7 +139,7 @@ export function VendorDashboardWorkspace({
       <div className="w-full bg-background border-b border-border/70 px-4 sm:px-6 py-4 space-y-3 transition-colors">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Link
                 href="/vendor"
                 className="hover:text-foreground transition-colors"
@@ -158,7 +158,7 @@ export function VendorDashboardWorkspace({
                 <span className="size-1.5 rounded-full bg-teal-500 animate-pulse" />
                 Primary Talent Partner
               </span>
-              <span className="text-xs text-muted-foreground font-mono hidden sm:inline">
+              <span className="text-xs text-muted-foreground hidden sm:inline">
                 Supplier ID: #10842 · DIEZA Certified
               </span>
             </div>
@@ -361,7 +361,7 @@ export function VendorDashboardWorkspace({
                             >
                               {typeBadge.label}
                             </span>
-                            <span className="text-xs font-mono font-semibold text-foreground/80 px-1.5 py-0.5 rounded bg-muted/70 border border-border/50">
+                            <span className="text-xs font-semibold text-foreground/80 px-1.5 py-0.5 rounded bg-muted/70 border border-border/50">
                               {item.subjectRef}
                             </span>
                             <span
@@ -394,7 +394,7 @@ export function VendorDashboardWorkspace({
                               day: "numeric",
                             })}
                           </div>
-                          <div className="text-[11px] text-muted-foreground font-mono">
+                          <div className="text-[11px] text-muted-foreground">
                             SLA Window
                           </div>
                         </div>
@@ -454,7 +454,7 @@ export function VendorDashboardWorkspace({
                   >
                     <div className="space-y-1 min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-xs font-mono font-semibold text-foreground/80 px-1.5 py-0.5 rounded bg-muted/60 border border-border/40">
+                        <span className="text-xs font-semibold text-foreground/80 px-1.5 py-0.5 rounded bg-muted/60 border border-border/40">
                           {req.id}
                         </span>
                         <span className="text-xs text-muted-foreground">
@@ -541,7 +541,7 @@ export function VendorDashboardWorkspace({
                       Templates: DIEZA Premises · UAE Remote (WFH)
                     </div>
                     <div className="flex items-center justify-between text-[11px] pt-1 border-t border-border/30">
-                      <span className="text-muted-foreground font-mono">
+                      <span className="text-muted-foreground">
                         Grades: {rc.grades.map((g) => g.gradeCode).join(", ")}
                       </span>
                       <span className="text-muted-foreground">

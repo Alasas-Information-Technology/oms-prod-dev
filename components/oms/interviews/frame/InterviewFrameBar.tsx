@@ -429,7 +429,7 @@ export function InterviewFrameBar({
                     onFrameChange({ ...frame, earliestDate: e.target.value });
                   }
                 }}
-                className="w-full px-2.5 py-1.5 rounded-md border border-border bg-card text-xs font-mono text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                className="w-full px-2.5 py-1.5 rounded-md border border-border bg-card text-xs text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
               />
               <p className="text-[10px] text-muted-foreground">
                 Proposals before this date are automatically filtered out.
@@ -465,12 +465,12 @@ export function InterviewFrameBar({
             <div className="space-y-1.5 text-xs">
               <div className="p-2 rounded bg-muted/40 flex items-center justify-between">
                 <span className="text-muted-foreground">Hiring Team:</span>
-                <strong className="text-foreground font-mono">GST (Asia/Dubai · UTC+4)</strong>
+                <strong className="text-foreground">GST (Asia/Dubai · UTC+4)</strong>
               </div>
               {isOffshore && (
                 <div className="p-2 rounded bg-primary/5 border border-primary/15 flex items-center justify-between">
                   <span className="text-muted-foreground">Candidate ({candidateRef}):</span>
-                  <strong className="text-primary font-mono">{candidateTimezone} (UTC+5:30)</strong>
+                  <strong className="text-primary">{candidateTimezone} (UTC+5:30)</strong>
                 </div>
               )}
               <p className="text-[10px] text-muted-foreground leading-tight pt-1">
@@ -581,7 +581,7 @@ export function InterviewFrameBar({
                     onFrameChange({ ...frame, earliestDate: e.target.value });
                   }
                 }}
-                className="w-full px-2.5 py-1.5 rounded-md border border-border bg-card text-xs font-mono text-foreground focus:ring-1 focus:ring-primary"
+                className="w-full px-2.5 py-1.5 rounded-md border border-border bg-card text-xs text-foreground focus:ring-1 focus:ring-primary"
               />
             </div>
 

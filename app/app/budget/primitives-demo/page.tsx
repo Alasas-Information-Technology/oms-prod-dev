@@ -70,7 +70,7 @@ export default function BudgetPrimitivesDemoPage() {
             <p className="text-sm text-muted-foreground leading-relaxed">
               Living design verification for <strong>minor units arithmetic (fils)</strong>,
               exact decimal rendering, executive KPI summary cards, and the sum-integrity fund
-              state bar per Part 4 of <code className="text-primary font-mono text-xs">BUDGET-CONTROL-CENTER-UI.md</code>.
+              state bar per Part 4 of <code className="text-primary text-xs">BUDGET-CONTROL-CENTER-UI.md</code>.
             </p>
           </div>
 
@@ -104,7 +104,7 @@ export default function BudgetPrimitivesDemoPage() {
             <span>Exact Minor Units (Fils)</span>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            All APIs transport pure integer fils (<code className="font-mono text-foreground font-semibold">1 AED = 100 fils</code>). Table cells format to 2 decimals always, including <code className="font-mono">.00</code>.
+            All APIs transport pure integer fils (<code className="text-foreground font-semibold">1 AED = 100 fils</code>). Table cells format to 2 decimals always, including <code>.00</code>.
           </p>
         </Card>
 
@@ -125,7 +125,7 @@ export default function BudgetPrimitivesDemoPage() {
           <div>
             <h2 className="text-lg font-bold font-display text-foreground">Executive KPI Summary Cards</h2>
             <p className="text-xs text-muted-foreground">
-              Headline cards using <code className="text-primary font-mono text-xs">formatAbbreviated()</code> with hover inspection tooltips.
+              Headline cards using <code className="text-primary text-xs">formatAbbreviated()</code> with hover inspection tooltips.
             </p>
           </div>
         </div>
@@ -342,7 +342,7 @@ export default function BudgetPrimitivesDemoPage() {
                 value={customFilsInput}
                 onChange={(e) => setCustomFilsInput(e.target.value)}
                 placeholder="e.g. 2480000000"
-                className="font-mono text-sm h-10 rounded-md"
+                className="text-sm h-10 rounded-md"
               />
             </div>
 
@@ -350,7 +350,7 @@ export default function BudgetPrimitivesDemoPage() {
               <span className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider block">
                 formatAmount()
               </span>
-              <div className="text-sm font-bold text-foreground font-mono tabular-nums">
+              <div className="text-sm font-bold text-foreground tabular-nums">
                 AED {formatAmount(parsedCustomFils)}
               </div>
             </div>
@@ -359,7 +359,7 @@ export default function BudgetPrimitivesDemoPage() {
               <span className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider block">
                 formatAbbreviated()
               </span>
-              <div className="text-sm font-bold text-primary font-mono tabular-nums">
+              <div className="text-sm font-bold text-primary tabular-nums">
                 {formatAbbreviated(parsedCustomFils, { showCurrency: true })}
               </div>
             </div>

@@ -60,7 +60,7 @@ export function EmiratisationQuotaWidget({
           {/* Main Percentage & Segmented Progress */}
           <div className="flex items-center justify-between pt-1">
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold font-mono tracking-tight text-foreground">
+              <span className="text-2xl font-bold tracking-tight text-foreground">
                 {currentPercent.toFixed(1)}%
               </span>
               <span className="text-xs text-muted-foreground">
@@ -85,12 +85,12 @@ export function EmiratisationQuotaWidget({
                     {bu.name}
                   </span>
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] text-muted-foreground font-mono tabular-nums">
+                    <span className="text-[11px] text-muted-foreground tabular-nums">
                       {bu.uaeNationalHeadcount}/{bu.totalHeadcount}
                     </span>
                     <span
                       className={cn(
-                        "text-xs font-mono font-semibold tabular-nums",
+                        "text-xs font-semibold tabular-nums",
                         bu.currentPercent >= bu.targetPercent
                           ? "text-emerald-600 dark:text-emerald-400"
                           : "text-amber-600 dark:text-amber-400"

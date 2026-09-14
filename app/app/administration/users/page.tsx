@@ -235,12 +235,12 @@ function PeopleListPageContent() {
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-foreground truncate">{displayName}</span>
                   {empId && (
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground shrink-0">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground shrink-0">
                       {empId}
                     </span>
                   )}
                 </div>
-                <div className="text-xs text-muted-foreground font-mono truncate">
+                <div className="text-xs text-muted-foreground truncate">
                   @{row.username}
                 </div>
               </div>
@@ -252,7 +252,7 @@ function PeopleListPageContent() {
         key: "email",
         header: "Email",
         render: (_, row) => (
-          <span className="text-xs font-mono text-muted-foreground">{row.email}</span>
+          <span className="text-xs text-muted-foreground">{row.email}</span>
         ),
       },
       {

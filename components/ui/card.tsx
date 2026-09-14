@@ -2,12 +2,49 @@ import * as React from "react";
 
 import { cn } from "./utils";
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
+/* ─── Padding scale ───────────────────────────────────────────────── */
+const paddingMap = {
+  sm: "p-4",
+  md: "p-6",
+  lg: "p-8",
+} as const;
+
+/* ─── Card ────────────────────────────────────────────────────────── */
+
+interface CardProps extends React.ComponentProps<"div"> {
+  /** Surface style. `solid` (default) for data-dense screens; `glass` for dashboards/overviews. */
+  surface?: "solid" | "glass";
+  /** Padding preset */
+  padding?: "sm" | "md" | "lg";
+}
+
+function Card({
+  className,
+  surface = "solid",
+  padding,
+  ...props
+}: CardProps) {
   return (
     <div
       data-slot="card"
+      data-surface={surface}
       className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-md border shadow-sm transition-all duration-300 ease-out hover:shadow-md hover:-translate-y-[1px]",
+        // Base
+        "flex flex-col gap-6 rounded-[var(--radius-lg)] transition-all duration-300 ease-out",
+        // Solid surface
+        surface === "solid" && "bg-card text-card-foreground border border-border shadow-sm hover:shadow-md hover:-translate-y-[1px]",
+        // Glass surface
+        surface === "glass" && [
+          "text-card-foreground border",
+          "bg-[var(--glass-bg-light)] border-[var(--glass-border-light)]",
+          "backdrop-blur-[var(--glass-blur)] backdrop-saturate-[var(--glass-saturate)]",
+          "[backdrop-filter:blur(var(--glass-blur))_saturate(var(--glass-saturate))]",
+          "[-webkit-backdrop-filter:blur(var(--glass-blur))_saturate(var(--glass-saturate))]",
+          // Dark mode glass
+          "dark:bg-[var(--glass-bg-dark)] dark:border-[var(--glass-border-dark)]",
+        ],
+        // Padding
+        padding && paddingMap[padding],
         className,
       )}
       {...props}
@@ -90,3 +127,4 @@ export {
   CardDescription,
   CardContent,
 };
+export type { CardProps };

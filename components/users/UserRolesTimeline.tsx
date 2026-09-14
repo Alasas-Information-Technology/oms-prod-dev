@@ -146,7 +146,7 @@ export function UserRolesTimeline({
                         <span className="font-semibold text-base text-foreground">
                           {role.roleName || role.roleCode}
                         </span>
-                        <code className="text-xs px-2 py-0.5 bg-muted rounded font-mono text-muted-foreground">
+                        <code className="text-xs px-2 py-0.5 bg-muted rounded text-muted-foreground">
                           {role.roleCode}
                         </code>
 

@@ -68,13 +68,13 @@ export function TimeInStageChart({
       key: "avgDays",
       header: "Avg Days",
       align: "right",
-      render: (val: any) => <span className="font-mono tabular-nums text-foreground">{typeof val === "number" ? val : String(val)}d</span>,
+      render: (val: any) => <span className="tabular-nums text-foreground">{typeof val === "number" ? val : String(val)}d</span>,
     },
     {
       key: "targetDays",
       header: "Target",
       align: "right",
-      render: (val: any) => <span className="font-mono tabular-nums text-muted-foreground">{val ? `${val}d` : "—"}</span>,
+      render: (val: any) => <span className="tabular-nums text-muted-foreground">{val ? `${val}d` : "—"}</span>,
     },
   ];
 
@@ -137,7 +137,7 @@ export function TimeInStageChart({
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-2 font-mono text-[11px] tabular-nums">
+                    <div className="flex items-center gap-2 text-[11px] tabular-nums">
                       <span className="font-semibold text-foreground">{stage.avgDays}d</span>
                       {stage.targetDays && (
                         <span className="text-muted-foreground">(target {stage.targetDays}d)</span>
@@ -173,7 +173,7 @@ export function TimeInStageChart({
             <span className="font-medium text-[11.5px] text-amber-600 dark:text-amber-400">
               {caption}
             </span>
-            <span className="text-[10.5px] text-muted-foreground font-mono tabular-nums">
+            <span className="text-[10.5px] text-muted-foreground tabular-nums">
               Dept avg: {overallAvg.toFixed(1)}d
             </span>
           </div>

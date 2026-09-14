@@ -127,7 +127,7 @@ export function UserScopeCoverageCard({
                           </h4>
                           <Badge
                             variant="secondary"
-                            className="text-xs font-mono px-2 py-0"
+                            className="text-xs px-2 py-0"
                           >
                             {scope.scopeCode}
                           </Badge>

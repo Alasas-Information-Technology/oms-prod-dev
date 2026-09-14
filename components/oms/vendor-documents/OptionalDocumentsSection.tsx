@@ -64,7 +64,7 @@ export function OptionalDocumentsSection({
             </div>
 
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground group-hover:text-foreground">
-              <span className="text-[11px] font-mono">
+              <span className="text-[11px]">
                 {isOpen ? "Collapse" : "Expand"}
               </span>
               <ChevronDown

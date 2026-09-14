@@ -109,7 +109,7 @@ export function RevisedBudgetPositionPanel({
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-border/40 font-mono">
+          <tbody className="divide-y divide-border/40">
             {revisedPosition.map((row, index) => {
               const isCostIncrease = row.change > 0;
               const isBudgetDecrease = row.change < 0;

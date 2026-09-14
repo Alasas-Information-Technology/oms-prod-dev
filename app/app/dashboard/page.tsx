@@ -4,6 +4,7 @@ import * as React from "react";
 import { RefreshCw, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { GlassBackground } from "@/components/ui/GlassBackground";
 import {
   Select,
   SelectContent,
@@ -209,6 +210,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-3.5 p-3.5 sm:p-4 md:p-5 max-w-[1600px] mx-auto pb-16 w-full">
+      <GlassBackground />
       {/* Inject Persona Switcher into the sticky Breadcrumb / Page Bar */}
       <PageBarActions>
         <div className="flex items-center gap-1 bg-muted/40 hover:bg-muted/60 transition-colors px-2 py-0.5 rounded-md border border-border/40 text-[11px] shadow-2xs">

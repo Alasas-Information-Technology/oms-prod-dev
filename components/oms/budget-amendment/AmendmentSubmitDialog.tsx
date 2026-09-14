@@ -156,7 +156,7 @@ export function AmendmentSubmitDialogContent({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground font-medium">Currently Available:</span>
-                  <span className="font-mono font-bold text-destructive">
+                  <span className="font-bold text-destructive">
                     {`AED ${formatAmount(
                       (submitError.details?.currentAvailable as number) ?? 0
                     )}`}
@@ -164,7 +164,7 @@ export function AmendmentSubmitDialogContent({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground font-medium">Requested:</span>
-                  <span className="font-mono font-medium text-foreground">
+                  <span className="font-medium text-foreground">
                     {`AED ${formatAmount(
                       (submitError.details?.requested as number) ?? shortfall
                     )}`}
@@ -253,7 +253,7 @@ export function AmendmentSubmitDialogContent({
               Total variance to cover via amendment
             </p>
           </div>
-          <div className="text-right font-mono">
+          <div className="text-right">
             <Amount
               variant="display"
               size="md"
@@ -312,12 +312,12 @@ export function AmendmentSubmitDialogContent({
                         {lineName}
                       </p>
                       {lineCode && (
-                        <p className="text-[10.5px] font-mono text-muted-foreground">
+                        <p className="text-[10.5px] text-muted-foreground">
                           {lineCode}
                         </p>
                       )}
                     </div>
-                    <div className="text-right shrink-0 font-mono font-semibold text-foreground">
+                    <div className="text-right shrink-0 font-semibold text-foreground">
                       {`AED ${formatAmount(alloc.amount)}`}
                     </div>
                   </div>
@@ -376,7 +376,7 @@ export function AmendmentSubmitDialogContent({
       </div>
 
       {/* Quiet Idempotency key indicator */}
-      <div className="flex items-center justify-between text-[11px] text-muted-foreground/70 font-mono">
+      <div className="flex items-center justify-between text-[11px] text-muted-foreground/70">
         <span>Idempotency token:</span>
         <span className="truncate max-w-[200px]" title={idempotencyKey}>
           {idempotencyKey ? `${idempotencyKey.slice(0, 18)}...` : "None"}

@@ -84,7 +84,7 @@ export function DocumentRow({
             {doc.label}
           </h4>
           {doc.isOptional && (
-            <span className="text-[10px] px-1.5 py-0.2 rounded bg-muted text-muted-foreground font-mono uppercase font-semibold">
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-muted text-muted-foreground uppercase font-semibold">
               OPTIONAL
             </span>
           )}
@@ -99,7 +99,7 @@ export function DocumentRow({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-muted-foreground border-t border-border/40 pt-2.5">
         <div className="flex items-center flex-wrap gap-2">
           {doc.file ? (
-            <span className="font-mono text-foreground/90 font-medium select-all">
+            <span className="text-foreground/90 font-medium select-all">
               {doc.file.name}
             </span>
           ) : doc.requiresSignature ? (
@@ -116,7 +116,7 @@ export function DocumentRow({
           {doc.file && doc.file.sizeBytes > 0 && (
             <>
               <span>·</span>
-              <span className="font-mono text-[11px] tabular-nums">
+              <span className="text-[11px] tabular-nums">
                 {formatFileSize(doc.file.sizeBytes)}
               </span>
             </>

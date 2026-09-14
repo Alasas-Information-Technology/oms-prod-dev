@@ -83,7 +83,7 @@ export const sessionsColumns: ColumnDef<RawActiveSession>[] = [
     key: "LoginSessionID",
     header: "Session ID",
     sortable: true,
-    render: (val) => <span className="font-mono text-xs">{val as string}</span>
+    render: (val) => <span className="text-xs">{val as string}</span>
   },
   { key: "Username", header: "User", sortable: true },
   {

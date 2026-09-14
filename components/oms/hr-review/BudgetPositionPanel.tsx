@@ -126,7 +126,7 @@ export function BudgetPositionPanel({
                   )}
                 >
                   <span className="whitespace-normal text-[13px] font-normal text-muted-foreground">
-                    <span className="font-mono text-[11px] font-medium text-secondary mr-2">{line.code}</span>
+                    <span className="text-[11px] font-medium text-secondary mr-2">{line.code}</span>
                     {line.name}
                   </span>
 

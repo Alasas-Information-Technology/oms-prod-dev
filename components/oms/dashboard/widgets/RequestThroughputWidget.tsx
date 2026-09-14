@@ -177,7 +177,7 @@ export function RequestThroughputWidget({
           <span className={cn("font-medium text-[11.5px]", toneClass)}>
             {caption}
           </span>
-          <span className="text-[10.5px] text-muted-foreground font-mono tabular-nums">
+          <span className="text-[10.5px] text-muted-foreground tabular-nums">
             12-week rolling window
           </span>
         </div>

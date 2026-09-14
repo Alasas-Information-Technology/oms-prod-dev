@@ -81,7 +81,7 @@ export function CandidateStickyPageBar({
           {/* Breadcrumb-as-title: "Onboarding · ONB-2026-0061" muted */}
           <div
             id="candidate-breadcrumb-title"
-            className="text-xs font-mono text-muted-foreground tracking-tight mb-1"
+            className="text-xs text-muted-foreground tracking-tight mb-1"
           >
             {`Onboarding · ${onboardingCase}`}
           </div>
@@ -99,7 +99,7 @@ export function CandidateStickyPageBar({
             id="candidate-reference-line"
             className="flex items-center gap-2 mt-1 flex-wrap"
           >
-            <span className="font-mono text-xs font-semibold text-muted-foreground bg-muted/60 dark:bg-muted/40 px-1.5 py-0.5 rounded border border-border/50">
+            <span className="text-xs font-semibold text-muted-foreground bg-muted/60 dark:bg-muted/40 px-1.5 py-0.5 rounded border border-border/50">
               {candidateRef}
             </span>
             <span className="text-muted-foreground/60 text-xs" aria-hidden="true">
@@ -148,7 +148,7 @@ export function CandidateStickyPageBar({
             <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Expected Joining
             </span>
-            <span className="font-mono text-sm sm:text-base font-bold tabular-nums text-foreground">
+            <span className="text-sm sm:text-base font-bold tabular-nums text-foreground">
               {formattedDate}
             </span>
           </div>

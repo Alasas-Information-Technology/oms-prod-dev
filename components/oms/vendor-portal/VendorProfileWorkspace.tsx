@@ -53,8 +53,8 @@ export function VendorProfileWorkspace({
             <span className="text-[11px] font-bold tracking-wider uppercase text-muted-foreground">
               Account & Governance
             </span>
-            <span className="text-muted-foreground/40 font-mono">/</span>
-            <span className="text-[11px] font-mono font-medium text-teal-600 dark:text-teal-400">
+            <span className="text-muted-foreground/40">/</span>
+            <span className="text-[11px] font-medium text-teal-600 dark:text-teal-400">
               Company Registration
             </span>
           </div>
@@ -93,7 +93,7 @@ export function VendorProfileWorkspace({
                   VERIFIED VENDOR
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground font-mono">
+              <p className="text-xs text-muted-foreground">
                 Vendor ID: {profile.vendorId} · {profile.tier}
               </p>
             </div>
@@ -113,7 +113,7 @@ export function VendorProfileWorkspace({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
             <div className="space-y-1 p-3 rounded-lg bg-muted/20 border border-border/50">
               <span className="text-[11px] text-muted-foreground block">Commercial Licence Ref</span>
-              <span className="font-mono font-bold text-foreground">
+              <span className="font-bold text-foreground">
                 {profile.tradeLicenceNumber}
               </span>
             </div>
@@ -122,7 +122,7 @@ export function VendorProfileWorkspace({
               <span className="text-[11px] text-muted-foreground block">
                 Tax Registration Number (TRN)
               </span>
-              <span className="font-mono font-bold text-foreground">
+              <span className="font-bold text-foreground">
                 {profile.taxRegistrationNumber}
               </span>
             </div>
@@ -134,7 +134,7 @@ export function VendorProfileWorkspace({
 
             <div className="space-y-1 p-3 rounded-lg bg-muted/20 border border-border/50">
               <span className="text-[11px] text-muted-foreground block">Registered Website</span>
-              <span className="font-mono text-teal-600 dark:text-teal-400">
+              <span className="text-teal-600 dark:text-teal-400">
                 {profile.website}
               </span>
             </div>
@@ -152,7 +152,7 @@ export function VendorProfileWorkspace({
                 <Mail className="w-3 h-3 text-teal-600 dark:text-teal-400" />
                 Central Dispatch Email
               </span>
-              <span className="font-mono text-foreground">{profile.primaryEmail}</span>
+              <span className="text-foreground">{profile.primaryEmail}</span>
             </div>
 
             <div className="space-y-1 p-3 rounded-lg bg-muted/20 border border-border/50">
@@ -160,7 +160,7 @@ export function VendorProfileWorkspace({
                 <Phone className="w-3 h-3 text-teal-600 dark:text-teal-400" />
                 Main Office Telephone
               </span>
-              <span className="font-mono text-foreground">{profile.primaryPhone}</span>
+              <span className="text-foreground">{profile.primaryPhone}</span>
             </div>
           </div>
         </Card>
@@ -188,11 +188,11 @@ export function VendorProfileWorkspace({
             <div className="space-y-2 pt-2 text-xs">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Mail className="w-3.5 h-3.5 text-muted-foreground/70" />
-                <span className="font-mono text-foreground">{profile.primaryContact.email}</span>
+                <span className="text-foreground">{profile.primaryContact.email}</span>
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Phone className="w-3.5 h-3.5 text-muted-foreground/70" />
-                <span className="font-mono text-foreground">{profile.primaryContact.phone}</span>
+                <span className="text-foreground">{profile.primaryContact.phone}</span>
               </div>
             </div>
 
@@ -228,7 +228,7 @@ export function VendorProfileWorkspace({
             </p>
           </div>
 
-          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-muted text-muted-foreground self-start sm:self-center">
+          <span className="text-[11px] px-2 py-0.5 rounded bg-muted text-muted-foreground self-start sm:self-center">
             {profile.coordinators.length} Authorized Users
           </span>
         </div>
@@ -242,13 +242,13 @@ export function VendorProfileWorkspace({
             <div className="space-y-0.5">
               <p className="font-semibold text-foreground flex items-center gap-1.5">
                 Coordinator Management Governance (Domain 3 Rule V8)
-                <span className="text-[10px] px-1.5 py-0.2 rounded bg-teal-500/20 text-teal-700 dark:text-teal-300 font-mono">
+                <span className="text-[10px] px-1.5 py-0.2 rounded bg-teal-500/20 text-teal-700 dark:text-teal-300">
                   VENDORUSER.MANAGE
                 </span>
               </p>
               <p className="text-muted-foreground text-[11px] leading-relaxed">
                 Permission to provision, edit, or deactivate vendor coordinator accounts (
-                <code className="text-[10px] font-mono text-foreground font-semibold">
+                <code className="text-[10px] text-foreground font-semibold">
                   VENDORUSER.MANAGE
                 </code>
                 ) is held exclusively by DIEZ Procurement Division to prevent unauthorized agency
@@ -290,8 +290,8 @@ export function VendorProfileWorkspace({
                       </span>
                     )}
                   </td>
-                  <td className="py-3 px-3 font-mono text-muted-foreground">{coord.email}</td>
-                  <td className="py-3 px-3 font-mono text-muted-foreground">{coord.phone}</td>
+                  <td className="py-3 px-3 text-muted-foreground">{coord.email}</td>
+                  <td className="py-3 px-3 text-muted-foreground">{coord.phone}</td>
                   <td className="py-3 px-3 text-foreground">{coord.role}</td>
                   <td className="py-3 px-3">
                     <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
@@ -299,7 +299,7 @@ export function VendorProfileWorkspace({
                       Active
                     </span>
                   </td>
-                  <td className="py-3 px-3 text-right font-mono text-[11px] text-muted-foreground">
+                  <td className="py-3 px-3 text-right text-[11px] text-muted-foreground">
                     DIEZ Procurement
                   </td>
                 </tr>

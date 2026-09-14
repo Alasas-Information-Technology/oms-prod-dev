@@ -122,7 +122,7 @@ export function NotificationDeliveryWidget({
                   key={type}
                   className="flex items-center justify-between px-2.5 py-1.5 rounded bg-background/80 border border-red-500/20 text-xs"
                 >
-                  <span className="text-muted-foreground font-mono text-[11px]">{type}</span>
+                  <span className="text-muted-foreground text-[11px]">{type}</span>
                   <span className="font-semibold text-red-600 dark:text-red-400 tabular-nums">
                     {count} failed
                   </span>

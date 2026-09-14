@@ -30,7 +30,7 @@ export function HrReviewShortcutOverlay({ open, onOpenChange }: HrReviewShortcut
           {shortcuts.map((shortcut) => (
             <div key={shortcut.key} className="flex items-center justify-between py-2 border-b border-border last:border-0">
               <span className="text-[13px] font-normal text-foreground">{shortcut.label}</span>
-              <kbd className="pointer-events-none inline-flex h-6 select-none items-center gap-1 rounded border bg-muted px-2 font-mono text-[11px] font-medium text-muted-foreground opacity-100">
+              <kbd className="pointer-events-none inline-flex h-6 select-none items-center gap-1 rounded border bg-muted px-2 text-[11px] font-medium text-muted-foreground opacity-100">
                 {shortcut.key}
               </kbd>
             </div>

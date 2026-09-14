@@ -111,7 +111,7 @@ export function StatusTooltipIcon({
         {tooltipDetails && tooltipDetails.length > 0 && (
           <div className="pt-1 border-t border-primary-foreground/20 space-y-0.5 text-[10.5px]">
             {tooltipDetails.map((item, idx) => (
-              <div key={idx} className="flex justify-between gap-3 text-primary-foreground/90 font-mono">
+              <div key={idx} className="flex justify-between gap-3 text-primary-foreground/90">
                 <span className="text-primary-foreground/60">{item.label}:</span>
                 <span className="font-semibold">{item.value}</span>
               </div>

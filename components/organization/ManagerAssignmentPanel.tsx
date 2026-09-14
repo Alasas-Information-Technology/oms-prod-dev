@@ -211,7 +211,7 @@ export function ManagerAssignmentPanel({
                 <span className="text-xs font-semibold uppercase tracking-wider text-primary">
                   Current Primary Head
                 </span>
-                <Badge variant="default" className="text-[10px] py-0 px-1.5 font-mono">
+                <Badge variant="default" className="text-[10px] py-0 px-1.5">
                   RULE G7 ACTIVE
                 </Badge>
               </div>
@@ -385,7 +385,7 @@ export function ManagerAssignmentPanel({
                 value={userId}
                 onChange={(e) => setUserId(e.target.value)}
                 required
-                className="font-mono text-sm"
+                className="text-sm"
               />
             </div>
 

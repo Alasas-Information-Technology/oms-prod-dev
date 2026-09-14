@@ -292,7 +292,7 @@ export function EvaluationOutcomePanel({
                         {reason.label}
                       </span>
                       {reason.deletionDate && (
-                        <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-muted/80 text-muted-foreground border border-border shrink-0 flex items-center gap-1">
+                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-muted/80 text-muted-foreground border border-border shrink-0 flex items-center gap-1">
                           <Calendar className="size-2.5" />
                           Deletion: {reason.deletionDate}
                         </span>

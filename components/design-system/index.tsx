@@ -239,7 +239,7 @@ function FoundationSection() {
                                 <div className={cn("w-16 h-10 rounded border border-black/10", s.cls)} />
                                 <div className="text-center">
                                     <div className="text-xs font-semibold text-slate-600">{s.name}</div>
-                                    <div className="text-[10px] text-muted-foreground font-mono">{s.hex}</div>
+                                    <div className="text-[10px] text-muted-foreground">{s.hex}</div>
                                 </div>
                             </div>
                         ))}
@@ -257,7 +257,7 @@ function FoundationSection() {
                             <div key={name} className="flex flex-col items-center gap-2">
                                 <div className={cn("w-12 h-12 bg-primary/20 border-2 border-primary/40", cls)} />
                                 <div className="text-xs font-medium text-slate-600">{name}</div>
-                                <div className="text-[10px] text-muted-foreground font-mono">{val}</div>
+                                <div className="text-[10px] text-muted-foreground">{val}</div>
                             </div>
                         ))}
                     </div>
@@ -291,7 +291,7 @@ function TypographySection() {
         { name: "Body Small", cls: "text-xs text-slate-600 leading-relaxed", sample: "Supplementary information, helper text, and secondary descriptions use this size for de-emphasis in high-density interfaces and data-rich screens." },
         { name: "Caption", cls: "text-xs text-muted-foreground", sample: "Last updated: January 2025 · OMS v1.0 · Philippines Economic Zone Authority" },
         { name: "Label / Overline", cls: "text-[11px] font-semibold uppercase tracking-widest text-slate-500", sample: "Contract Status · Vendor Type · Approval Level · Procurement Mode" },
-        { name: "Mono / Code", cls: "text-sm font-mono text-slate-700 bg-slate-100 px-2 py-0.5 rounded", sample: "OMS-2025-PRO-0421" },
+        { name: "Mono / Code", cls: "text-sm text-slate-700 bg-slate-100 px-2 py-0.5 rounded", sample: "OMS-2025-PRO-0421" },
     ];
 
     return (
@@ -668,7 +668,7 @@ const KPI_CARDS = [
 const CONTRACT_COLS: ColumnDef<Contract>[] = [
     {
         key: "contractNo", header: "Contract No.", sortable: true, width: "140px",
-        render: (v) => <span className="font-mono text-xs font-semibold text-slate-700">{String(v)}</span>
+        render: (v) => <span className="text-xs font-semibold text-slate-700">{String(v)}</span>
     },
     { key: "vendor", header: "Vendor / Supplier", sortable: true },
     { key: "type", header: "Type", sortable: true, width: "120px" },
@@ -1355,7 +1355,7 @@ export default function DesignSystemPage() {
                         </div>
                     </div>
                     <div className="mt-3 flex items-center justify-between px-2 py-1 bg-sidebar-accent/70 rounded">
-                        <span className="text-[10px] text-sidebar-foreground/50 font-mono">v1.0.0</span>
+                        <span className="text-[10px] text-sidebar-foreground/50">v1.0.0</span>
                         <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded">STABLE</span>
                     </div>
                 </div>

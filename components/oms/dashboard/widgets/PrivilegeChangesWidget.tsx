@@ -133,7 +133,7 @@ export function PrivilegeChangesWidget({
 
                 {/* Right: Timestamp tag */}
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-[10.5px] font-mono text-muted-foreground tabular-nums">
+                  <span className="text-[10.5px] text-muted-foreground tabular-nums">
                     {formatRelativeTime(change.at)}
                   </span>
                 </div>

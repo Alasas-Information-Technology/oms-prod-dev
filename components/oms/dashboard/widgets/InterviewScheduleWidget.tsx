@@ -28,7 +28,7 @@ export function InterviewScheduleWidget({
       minHeight={215}
       headerActions={
         interviews.length > 0 ? (
-          <span className="text-[11px] font-mono text-muted-foreground tabular-nums bg-muted/40 px-2 py-0.5 rounded border border-border/30">
+          <span className="text-[11px] text-muted-foreground tabular-nums bg-muted/40 px-2 py-0.5 rounded border border-border/30">
             {interviews.length} upcoming
           </span>
         ) : undefined
@@ -76,10 +76,10 @@ export function InterviewScheduleWidget({
               </div>
               
               <div className="flex flex-col items-end shrink-0 text-right">
-                <span className="text-[11.5px] font-medium text-foreground font-mono tabular-nums leading-tight">
+                <span className="text-[11.5px] font-medium text-foreground tabular-nums leading-tight">
                   {interview.formattedDate}
                 </span>
-                <span className="text-[10.5px] text-muted-foreground font-mono tabular-nums leading-tight mt-0.5">
+                <span className="text-[10.5px] text-muted-foreground tabular-nums leading-tight mt-0.5">
                   {interview.formattedTime}
                 </span>
               </div>

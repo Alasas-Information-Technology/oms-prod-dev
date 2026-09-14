@@ -118,7 +118,7 @@ assert(pageBarHtml0061.includes("sticky top-11 z-20"), "Page bar is sticky top-1
 
 // 2. Breadcrumb-as-title: "Onboarding · ONB-2026-0061" muted
 assert(pageBarHtml0061.includes("Onboarding · ONB-2026-0061"), "Breadcrumb-as-title displays 'Onboarding · ONB-2026-0061'");
-assert(pageBarHtml0061.includes("text-muted-foreground") && pageBarHtml0061.includes("font-mono"), "Breadcrumb-as-title is muted font-mono text");
+assert(pageBarHtml0061.includes("text-muted-foreground") && pageBarHtml0061.includes("text-sm"), "Breadcrumb-as-title is muted text");
 
 // 3. Real heading: "Your Joining Readiness"
 assert(pageBarHtml0061.includes("Your Joining Readiness"), "Real heading is 'Your Joining Readiness'");
@@ -133,7 +133,7 @@ assert(pageBarHtml0061.includes("Action Needed From You"), "Status chip is 'Acti
 assert(pageBarHtml0061.includes("#FFFBEB") || pageBarHtml0061.includes("#B45309"), "Status chip uses semantic warning tri-token");
 
 // 6. Expected joining date in mono tabular-nums
-assert(pageBarHtml0061.includes("tabular-nums") && pageBarHtml0061.includes("font-mono"), "Expected joining date has font-mono and tabular-nums");
+assert(pageBarHtml0061.includes("tabular-nums") && pageBarHtml0061.includes("text-sm"), "Expected joining date has and tabular-nums");
 assert(pageBarHtml0061.includes("01 Sep 2026") || pageBarHtml0061.includes("1 Sep 2026"), "Expected joining date formatted correctly");
 
 // 7. No subtitle

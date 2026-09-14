@@ -109,7 +109,7 @@ export function VendorRequisitionsWorkspace({
       <div className="w-full bg-background border-b border-border/70 px-4 sm:px-6 py-4 space-y-3 transition-colors">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Link href="/vendor" className="hover:text-foreground transition-colors">
                 Vendor Portal
               </Link>
@@ -232,7 +232,7 @@ export function VendorRequisitionsWorkspace({
                     {/* Left: Requisition Metadata & Details */}
                     <div className="space-y-2.5 min-w-0 flex-1">
                       <div className="flex items-center gap-2.5 flex-wrap">
-                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-muted/80 text-foreground border border-border/50">
+                        <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-muted/80 text-foreground border border-border/50">
                           {req.id}
                         </span>
                         <span className="text-xs text-muted-foreground flex items-center gap-1 font-medium">
@@ -242,7 +242,7 @@ export function VendorRequisitionsWorkspace({
                         <span className="text-[11px] px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20 font-medium">
                           {req.positions.required} Resource{req.positions.required > 1 ? "s" : ""} Needed
                         </span>
-                        <span className="text-[11px] px-2 py-0.5 rounded-md bg-muted/60 text-muted-foreground font-mono">
+                        <span className="text-[11px] px-2 py-0.5 rounded-md bg-muted/60 text-muted-foreground">
                           Grade {req.salaryGrade}
                         </span>
                       </div>
@@ -328,7 +328,7 @@ export function VendorRequisitionsWorkspace({
                                 }}
                               />
                             </div>
-                            <p className="text-[10px] text-muted-foreground/80 lg:text-right font-mono">
+                            <p className="text-[10px] text-muted-foreground/80 lg:text-right">
                               RFP 10-CV batch ceiling enforced
                             </p>
                           </div>

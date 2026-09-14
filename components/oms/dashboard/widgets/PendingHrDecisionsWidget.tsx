@@ -70,7 +70,7 @@ export function PendingHrDecisionsWidget({
                 iconColor={config.color}
                 title={config.label}
                 trailing={
-                  <span className="font-mono tabular-nums">
+                  <span className="tabular-nums">
                     {count}
                   </span>
                 }

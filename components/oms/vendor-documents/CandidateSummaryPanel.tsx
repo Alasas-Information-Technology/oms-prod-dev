@@ -103,7 +103,7 @@ export function CandidateSummaryPanel({
         {/* Panel Header */}
         <div className="space-y-1.5 border-b border-border/50 pb-3">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider font-mono">
+            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Candidate
             </span>
             <Badge
@@ -137,7 +137,7 @@ export function CandidateSummaryPanel({
             <Badge
               variant="secondary"
               className={cn(
-                "text-[10px] font-medium uppercase tracking-wider font-mono px-1.5 py-0",
+                "text-[10px] font-medium uppercase tracking-wider px-1.5 py-0",
                 candidate.residentStatus === "ONSHORE"
                   ? "bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/20"
                   : "bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20"
@@ -161,13 +161,13 @@ export function CandidateSummaryPanel({
           <div className="pt-2 border-t border-border/40 space-y-1.5">
             <div className="flex items-center gap-1.5 text-muted-foreground" title={candidate.email}>
               <Mail className="size-3.5 text-muted-foreground/70 shrink-0" />
-              <span className="truncate text-foreground/90 select-all font-mono text-[11px]">
+              <span className="truncate text-foreground/90 select-all text-[11px]">
                 {candidate.email}
               </span>
             </div>
             <div className="flex items-center gap-1.5 text-muted-foreground">
               <Phone className="size-3.5 text-muted-foreground/70 shrink-0" />
-              <span className="text-foreground/90 select-all font-mono text-[11px]">
+              <span className="text-foreground/90 select-all text-[11px]">
                 {candidate.mobile}
               </span>
             </div>
@@ -209,7 +209,7 @@ export function CandidateSummaryPanel({
                   <span>Secure platform</span>
                 </div>
                 <div className="flex items-center gap-1 text-[11px] text-muted-foreground group-hover:text-foreground">
-                  <span className="font-mono text-[10px]">6 controls</span>
+                  <span className="text-[10px]">6 controls</span>
                   <ChevronDown
                     className={cn(
                       "size-3.5 transition-transform duration-200",
@@ -237,7 +237,7 @@ export function CandidateSummaryPanel({
                 ))}
 
                 {/* Audit Timestamp per §1.10 (Gulf Standard Time) */}
-                <div className="pt-1.5 border-t border-border/40 text-[10px] text-muted-foreground/80 font-mono">
+                <div className="pt-1.5 border-t border-border/40 text-[10px] text-muted-foreground/80">
                   Audited: {formatAuditTimestamp(new Date())}
                 </div>
               </div>

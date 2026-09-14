@@ -66,7 +66,7 @@ export function ContractRunwayWidget({
                   {bucket.label}
                 </span>
                 <span className={cn(
-                  "text-lg font-bold font-mono tabular-nums leading-none",
+                  "text-lg font-bold tabular-nums leading-none",
                   i === 0 ? "text-rose-600 dark:text-rose-400" : i === 1 ? "text-amber-600 dark:text-amber-400" : "text-foreground"
                 )}>
                   {bucket.count}
@@ -102,11 +102,11 @@ export function ContractRunwayWidget({
                   subtitle={`${v.active} active resources`}
                   trailing={
                     v.endingWithin90Days > 0 ? (
-                      <span className="text-amber-600 dark:text-amber-400 font-mono tabular-nums">
+                      <span className="text-amber-600 dark:text-amber-400 tabular-nums">
                         {v.endingWithin90Days} ending &lt;90d
                       </span>
                     ) : (
-                      <span className="text-muted-foreground font-mono tabular-nums">
+                      <span className="text-muted-foreground tabular-nums">
                         0 ending
                       </span>
                     )

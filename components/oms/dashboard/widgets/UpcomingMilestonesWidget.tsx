@@ -99,7 +99,7 @@ export function UpcomingMilestonesWidget({
                         "text-[12px]",
                         isOverdue
                           ? "text-rose-600 dark:text-rose-400 font-semibold"
-                          : "text-muted-foreground font-mono tabular-nums"
+                          : "text-muted-foreground tabular-nums"
                       )}
                     >
                       {milestone.formattedDate}

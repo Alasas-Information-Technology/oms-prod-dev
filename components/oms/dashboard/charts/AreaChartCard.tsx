@@ -65,7 +65,7 @@ export function AreaChartCard({
       header: s.name,
       align: "right" as const,
       render: (val: any, row: any) => (
-        <span className="font-mono tabular-nums text-muted-foreground">
+        <span className="tabular-nums text-muted-foreground">
           {typeof row[s.key] === "number" ? row[s.key].toLocaleString() : row[s.key]}
         </span>
       ),

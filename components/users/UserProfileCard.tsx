@@ -234,13 +234,13 @@ export function UserProfileCard({
               <div className="space-y-4">
                 <div className="space-y-1">
                   <div className="text-[13px] text-muted-foreground font-medium">Email</div>
-                  <div className="text-[13px] font-mono text-foreground font-medium truncate" title={user.email}>{user.email}</div>
+                  <div className="text-[13px] text-foreground font-medium truncate" title={user.email}>{user.email}</div>
                 </div>
 
                 {user.profile?.employeeId && (
                   <div className="space-y-1">
                     <div className="text-[13px] text-muted-foreground font-medium">Employee ID</div>
-                    <div className="text-[13px] font-mono text-foreground font-medium">{user.profile.employeeId}</div>
+                    <div className="text-[13px] text-foreground font-medium">{user.profile.employeeId}</div>
                   </div>
                 )}
 
@@ -310,7 +310,7 @@ export function UserProfileCard({
                 >
                   <span>Sign out everywhere</span>
                   {counts.sessions > 0 && (
-                    <span className="text-xs font-mono text-muted-foreground bg-muted/60 px-1.5 rounded-sm">
+                    <span className="text-xs text-muted-foreground bg-muted/60 px-1.5 rounded-sm">
                       {counts.sessions}
                     </span>
                   )}

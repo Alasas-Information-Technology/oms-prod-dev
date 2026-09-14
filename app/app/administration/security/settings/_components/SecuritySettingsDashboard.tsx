@@ -194,7 +194,7 @@ export function SecuritySettingsDashboard() {
                 <span className="text-[11px] font-bold text-foreground block">
                   UAE Cyber Compliance
                 </span>
-                <span className="text-[10px] text-muted-foreground font-mono">
+                <span className="text-[10px] text-muted-foreground">
                   ISO 27001 / NESA Aligned
                 </span>
               </div>

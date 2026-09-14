@@ -163,7 +163,7 @@ export function VendorsWorkspace() {
                         <h2 className="text-lg font-bold text-foreground">
                           {vendor.name}
                         </h2>
-                        <span className="font-mono text-xs px-2 py-0.5 rounded bg-muted border border-border/60 text-foreground">
+                        <span className="text-xs px-2 py-0.5 rounded bg-muted border border-border/60 text-foreground">
                           {vendor.code}
                         </span>
                         <Badge variant="outline" className="text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30">
@@ -236,7 +236,7 @@ export function VendorsWorkspace() {
                     </span>
                   </div>
 
-                  <span className="font-mono text-[11px]">
+                  <span className="text-[11px]">
                     Internal Vendor ID: {vendor.id}
                   </span>
                 </div>

@@ -122,7 +122,7 @@ export function SafeguardsPanel({
               <div className="shrink-0 text-right">
                 {item.isOracleRow ? (
                   <div className="flex flex-col items-end">
-                    <span className="inline-flex items-center gap-1 text-[11px] font-mono font-medium text-foreground">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-foreground">
                       <Clock className="size-3 text-muted-foreground" />
                       {lastSyncFormatted}
                     </span>

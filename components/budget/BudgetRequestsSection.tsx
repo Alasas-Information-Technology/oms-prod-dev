@@ -323,7 +323,7 @@ export function BudgetRequestsSection({
                         <td className="py-3 px-4">
                           <a
                             href={`/app/budget/dept-budget#${encodeURIComponent(req.requestCode)}`}
-                            className="inline-flex items-center gap-1 font-mono text-xs font-bold text-primary hover:text-primary/80 hover:underline cursor-pointer"
+                            className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-primary/80 hover:underline cursor-pointer"
                             title={`View request ${req.requestCode}`}
                           >
                             <span>{req.requestCode}</span>
@@ -351,7 +351,7 @@ export function BudgetRequestsSection({
                               {req.description}
                             </span>
                             {req.budgetLineCode && (
-                              <span className="font-mono text-[10px] text-muted-foreground mt-0.5">
+                              <span className="text-[10px] text-muted-foreground mt-0.5">
                                 Line: {req.budgetLineCode}
                               </span>
                             )}

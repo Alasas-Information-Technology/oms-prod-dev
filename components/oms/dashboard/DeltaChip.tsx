@@ -1,5 +1,6 @@
 import React from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 export interface DeltaChipProps {
@@ -18,17 +19,15 @@ export function DeltaChip({ value, direction, increaseIsGood, className }: Delta
   const Icon = direction === "up" ? ArrowUp : ArrowDown;
 
   return (
-    <div
+    <Badge
+      tone={isGood ? "success" : "danger"}
       className={cn(
-        "inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-semibold tabular-nums leading-none",
-        isGood
-          ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400"
-          : "bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400",
+        "gap-0.5 px-1.5 py-0.5 text-xs tabular-nums leading-none",
         className
       )}
     >
       <Icon className="size-3 stroke-[2.5]" aria-hidden="true" />
       <span>{value}%</span>
-    </div>
+    </Badge>
   );
 }

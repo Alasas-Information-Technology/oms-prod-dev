@@ -107,7 +107,7 @@ export function BudgetPeriodStatusWidget({
         {lastAmendedAt && (
           <div className="pt-2 border-t border-border/40 flex justify-between items-center text-[11px] text-muted-foreground">
             <span>Last amended</span>
-            <span className="font-medium text-foreground font-mono">{lastAmendedAt}</span>
+            <span className="font-medium text-foreground">{lastAmendedAt}</span>
           </div>
         )}
       </div>

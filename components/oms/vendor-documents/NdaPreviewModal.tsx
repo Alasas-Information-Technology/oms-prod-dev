@@ -63,7 +63,7 @@ export function NdaPreviewModalContent({
               {`Preview NDA — ${signature.templateName}`}
             </DialogTitle>
           </div>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-muted text-muted-foreground border border-border">
+          <span className="text-[10px] px-2 py-0.5 rounded bg-muted text-muted-foreground border border-border">
             {signature.envelopeStatus === "SIGNED" ? "Executed" : "Standard DIEZ Template"}
           </span>
         </div>
@@ -73,7 +73,7 @@ export function NdaPreviewModalContent({
       </DialogHeader>
 
       {/* Candidate & Position Context Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2.5 rounded-lg bg-muted/20 border border-border/60 text-xs font-mono">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2.5 rounded-lg bg-muted/20 border border-border/60 text-xs">
         <div>
           <span className="text-[10px] text-muted-foreground block uppercase">Candidate</span>
           <span className="font-semibold text-foreground truncate block">{candidateName}</span>
@@ -103,7 +103,7 @@ export function NdaPreviewModalContent({
           <h2 className="text-sm sm:text-base font-bold text-foreground">
             NON-DISCLOSURE AND CONFIDENTIALITY AGREEMENT
           </h2>
-          <p className="text-[10px] font-mono text-muted-foreground">
+          <p className="text-[10px] text-muted-foreground">
             Doc Ref: DIEZ-SEC-NDA-2026-V3 · Standard Outsourced Resource Agreement
           </p>
         </div>
@@ -147,12 +147,12 @@ export function NdaPreviewModalContent({
         {/* Execution Blocks */}
         <div className="pt-3 border-t border-border/50 grid grid-cols-1 sm:grid-cols-2 gap-3 font-sans">
           <div className="p-2.5 rounded border border-border/50 bg-muted/20 space-y-1 text-xs">
-            <span className="text-[10px] text-muted-foreground block font-mono uppercase">
+            <span className="text-[10px] text-muted-foreground block uppercase">
               Signer 1 (Resource)
             </span>
             <p className="font-semibold text-foreground">{candidateName}</p>
             <p className="text-[10px] text-muted-foreground">Candidate / Contractor</p>
-            <div className="pt-1 text-[10px] font-mono text-muted-foreground">
+            <div className="pt-1 text-[10px] text-muted-foreground">
               {isSigned ? (
                 <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
                   <CheckCircle2 className="size-3" /> Signed digitally via DocuSign
@@ -164,12 +164,12 @@ export function NdaPreviewModalContent({
           </div>
 
           <div className="p-2.5 rounded border border-border/50 bg-muted/20 space-y-1 text-xs">
-            <span className="text-[10px] text-muted-foreground block font-mono uppercase">
+            <span className="text-[10px] text-muted-foreground block uppercase">
               Signer 2 (Authority)
             </span>
             <p className="font-semibold text-foreground">DIEZ Authorized Representative</p>
             <p className="text-[10px] text-muted-foreground">DIEZ Human Resources / Procurement</p>
-            <div className="pt-1 text-[10px] font-mono text-muted-foreground">
+            <div className="pt-1 text-[10px] text-muted-foreground">
               {isSigned ? (
                 <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
                   <CheckCircle2 className="size-3" /> Counter-signed and sealed

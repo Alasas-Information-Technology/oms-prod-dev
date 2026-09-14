@@ -380,7 +380,7 @@ export function CreateRequisitionWorkspace() {
               <h1 className="text-2xl font-bold tracking-tight text-foreground">
                 Create Requisition
               </h1>
-              <Badge variant="outline" className="text-xs font-mono font-medium bg-muted/40">
+              <Badge variant="outline" className="text-xs font-medium bg-muted/40">
                 REQ-2026-0186
               </Badge>
             </div>
@@ -579,7 +579,7 @@ export function CreateRequisitionWorkspace() {
                       Business Justification & Specifications
                     </h2>
                   </div>
-                  <span className="text-xs text-muted-foreground tabular-nums font-mono">
+                  <span className="text-xs text-muted-foreground tabular-nums">
                     {justification.length} / 500
                   </span>
                 </div>

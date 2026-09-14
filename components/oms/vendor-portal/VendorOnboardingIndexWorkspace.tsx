@@ -89,8 +89,8 @@ export function VendorOnboardingIndexWorkspace({
             <span className="text-[11px] font-bold tracking-wider uppercase text-muted-foreground">
               Candidate Onboarding
             </span>
-            <span className="text-muted-foreground/40 font-mono">/</span>
-            <span className="text-[11px] font-mono font-medium text-teal-600 dark:text-teal-400">
+            <span className="text-muted-foreground/40">/</span>
+            <span className="text-[11px] font-medium text-teal-600 dark:text-teal-400">
               Active Cases
             </span>
           </div>
@@ -123,7 +123,7 @@ export function VendorOnboardingIndexWorkspace({
         <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">Active Cases</span>
-            <p className="text-2xl font-bold font-mono text-foreground">{cases.length}</p>
+            <p className="text-2xl font-bold text-foreground">{cases.length}</p>
           </div>
           <div className="p-2.5 rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400">
             <Users className="w-4 h-4" />
@@ -133,7 +133,7 @@ export function VendorOnboardingIndexWorkspace({
         <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">UAE Onshore</span>
-            <p className="text-2xl font-bold font-mono text-foreground">{onshoreCount}</p>
+            <p className="text-2xl font-bold text-foreground">{onshoreCount}</p>
           </div>
           <div className="p-2.5 rounded-lg bg-muted/60 text-muted-foreground">
             <MapPin className="w-4 h-4" />
@@ -143,7 +143,7 @@ export function VendorOnboardingIndexWorkspace({
         <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">International Offshore</span>
-            <p className="text-2xl font-bold font-mono text-foreground">{offshoreCount}</p>
+            <p className="text-2xl font-bold text-foreground">{offshoreCount}</p>
           </div>
           <div className="p-2.5 rounded-lg bg-muted/60 text-muted-foreground">
             <Building2 className="w-4 h-4" />
@@ -155,7 +155,7 @@ export function VendorOnboardingIndexWorkspace({
             <span className="text-[11px] font-medium text-amber-700 dark:text-amber-300">
               Awaiting E-Signature
             </span>
-            <p className="text-2xl font-bold font-mono text-amber-600 dark:text-amber-400">
+            <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
               {pendingSignatureCount}
             </p>
           </div>
@@ -179,7 +179,7 @@ export function VendorOnboardingIndexWorkspace({
             )}
           >
             <span>All Cases</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-muted font-mono">
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-muted">
               {cases.length}
             </span>
           </button>
@@ -193,7 +193,7 @@ export function VendorOnboardingIndexWorkspace({
             )}
           >
             <span>Onshore (UAE)</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-muted font-mono">
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-muted">
               {onshoreCount}
             </span>
           </button>
@@ -207,7 +207,7 @@ export function VendorOnboardingIndexWorkspace({
             )}
           >
             <span>Offshore</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-muted font-mono">
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-muted">
               {offshoreCount}
             </span>
           </button>
@@ -252,10 +252,10 @@ export function VendorOnboardingIndexWorkspace({
                 {/* Top Row: Case ID, Resident Badge, Req Link */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/40 pb-3.5">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-muted text-foreground border border-border/60">
+                    <span className="text-xs font-bold px-2.5 py-0.5 rounded bg-muted text-foreground border border-border/60">
                       {onb.id}
                     </span>
-                    <span className="text-xs font-mono text-muted-foreground">
+                    <span className="text-xs text-muted-foreground">
                       Ref: <strong className="text-foreground">{onb.candidateRef}</strong>
                     </span>
                     <Badge
@@ -274,7 +274,7 @@ export function VendorOnboardingIndexWorkspace({
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Building2 className="w-3.5 h-3.5" />
                     <span>Requisition:</span>
-                    <span className="font-mono font-semibold text-foreground">
+                    <span className="font-semibold text-foreground">
                       {onb.requisitionId}
                     </span>
                   </div>
@@ -290,7 +290,7 @@ export function VendorOnboardingIndexWorkspace({
                     <p className="text-xs text-muted-foreground">
                       {onb.positionTitle} · {onb.candidate.nationality}
                     </p>
-                    <p className="text-[11px] font-mono text-muted-foreground/80">
+                    <p className="text-[11px] text-muted-foreground/80">
                       {onb.candidate.email}
                     </p>
                   </div>
@@ -301,10 +301,10 @@ export function VendorOnboardingIndexWorkspace({
                       <Calendar className="w-3 h-3" />
                       Joining Date
                     </span>
-                    <p className="text-xs font-bold font-mono text-foreground">
+                    <p className="text-xs font-bold text-foreground">
                       {onb.candidate.expectedJoining}
                     </p>
-                    <span className="inline-block text-[10px] font-mono px-1.5 py-0.2 rounded bg-muted/80 text-muted-foreground">
+                    <span className="inline-block text-[10px] px-1.5 py-0.2 rounded bg-muted/80 text-muted-foreground">
                       {onb.deadline.daysRemaining} days left
                     </span>
                   </div>
@@ -316,7 +316,7 @@ export function VendorOnboardingIndexWorkspace({
                         <FileText className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                         Document Completion
                       </span>
-                      <span className="font-mono font-bold text-foreground">
+                      <span className="font-bold text-foreground">
                         {completionRatio}
                       </span>
                     </div>

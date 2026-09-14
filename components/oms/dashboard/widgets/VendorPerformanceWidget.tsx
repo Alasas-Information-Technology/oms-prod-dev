@@ -48,7 +48,7 @@ export function VendorPerformanceWidget({
                 </div>
               }
               trailing={
-                <span className="font-mono tabular-nums">
+                <span className="tabular-nums">
                   {v.submissionRatePercent}%
                 </span>
               }

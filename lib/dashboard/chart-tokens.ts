@@ -66,6 +66,6 @@ export const tooltipStyle = {
   color: "var(--popover-foreground)",
   boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
   fontSize: 12,
-  fontFamily: "var(--font-mono)",
+  fontFamily: "var(--font-ui)",
 };
 

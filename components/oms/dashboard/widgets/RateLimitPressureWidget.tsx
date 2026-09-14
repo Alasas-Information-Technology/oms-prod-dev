@@ -68,7 +68,7 @@ export function RateLimitPressureWidget({
                 >
                   {/* Left: Tier Label & Limit */}
                   <div className="flex items-center gap-3 min-w-0 flex-1 pr-3">
-                    <span className="text-[11px] font-mono font-semibold text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                    <span className="text-[11px] font-semibold text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
                       T{t.tier}
                     </span>
                     <div className="flex flex-col min-w-0">

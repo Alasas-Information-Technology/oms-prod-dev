@@ -118,7 +118,7 @@ assert(kpiHtml.includes("text-muted-foreground text-sm sm:text-base font-medium"
 // 6. Column 3: Offer Reference in mono
 assert(kpiHtml.includes("Offer Reference"), "Column 3 has label 'Offer Reference'");
 assert(kpiHtml.includes("LPO-260771"), "Displays offer reference 'LPO-260771'");
-assert(kpiHtml.includes("font-mono"), "Offer reference is rendered in font-mono");
+assert(kpiHtml.includes("text-sm"), "Offer reference is rendered in");
 
 // 7. Column 4: Biometric Appointment status chip
 assert(kpiHtml.includes("Biometric Appointment"), "Column 4 has label 'Biometric Appointment'");

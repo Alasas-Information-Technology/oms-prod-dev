@@ -91,7 +91,7 @@ export function DocumentStatusBadge({
     <Badge
       variant="outline"
       className={cn(
-        "inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full font-mono tracking-wide transition-colors",
+        "inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full tracking-wide transition-colors",
         config.className,
         className
       )}

@@ -120,7 +120,7 @@ export function ApprovalImpactPanel({ impact }: ApprovalImpactPanelProps) {
                 <span className="text-sm font-medium text-foreground">
                   {alloc.name}
                 </span>
-                <span className="text-[11px] font-mono text-muted-foreground">
+                <span className="text-[11px] text-muted-foreground">
                   {alloc.code}
                 </span>
               </div>

@@ -326,7 +326,7 @@ export function AddOrgUnitWizard({
                       <span className="font-semibold text-sm text-foreground truncate">
                         {selectedParent.name}
                       </span>
-                      <span className="font-mono text-xs font-semibold px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border/50">
+                      <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border/50">
                         {selectedParent.code}
                       </span>
                     </div>
@@ -388,7 +388,7 @@ export function AddOrgUnitWizard({
                         <h4 className="text-sm font-bold text-foreground leading-tight">
                           {type.name}
                         </h4>
-                        <span className="font-mono text-[10px] text-muted-foreground">
+                        <span className="text-[10px] text-muted-foreground">
                           Level {type.canonicalLevel}
                         </span>
                       </div>
@@ -494,7 +494,7 @@ export function AddOrgUnitWizard({
                 }}
                 placeholder="e.g. IT"
                 className={cn(
-                  "h-9 text-xs font-mono uppercase tracking-wider",
+                  "h-9 text-xs uppercase tracking-wider",
                   codeCheckStatus === "taken" ? "border-destructive focus-visible:ring-destructive" : ""
                 )}
               />
@@ -512,7 +512,7 @@ export function AddOrgUnitWizard({
                 value={costCenterCode}
                 onChange={(e) => setCostCenterCode(e.target.value.toUpperCase())}
                 placeholder="e.g. CC-1042"
-                className="h-9 text-xs font-mono uppercase"
+                className="h-9 text-xs uppercase"
               />
             </div>
           </div>

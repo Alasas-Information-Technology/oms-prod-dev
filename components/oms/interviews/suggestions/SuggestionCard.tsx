@@ -135,7 +135,7 @@ export function SuggestionCard({
           {shortcutNumber !== undefined && shortcutNumber >= 1 && shortcutNumber <= 9 && (
             <kbd
               title={`Press ${shortcutNumber} to add to active candidate`}
-              className="size-5 flex items-center justify-center rounded bg-muted border border-border font-mono text-[10px] font-bold text-foreground shadow-2xs"
+              className="size-5 flex items-center justify-center rounded bg-muted border border-border text-[10px] font-bold text-foreground shadow-2xs"
             >
               {shortcutNumber}
             </kbd>
@@ -149,7 +149,7 @@ export function SuggestionCard({
               Best match
             </Badge>
           ) : (
-            <span className="text-[11px] font-mono text-muted-foreground">
+            <span className="text-[11px] text-muted-foreground">
               Option {suggestion.rank}
             </span>
           )}
@@ -165,7 +165,7 @@ export function SuggestionCard({
         >
           <X className="size-4" />
           {isFocused && (
-            <span className="absolute -top-1 -right-1 text-[9px] font-mono font-bold px-1 bg-muted rounded border border-border text-foreground shadow-2xs">
+            <span className="absolute -top-1 -right-1 text-[9px] font-bold px-1 bg-muted rounded border border-border text-foreground shadow-2xs">
               X
             </span>
           )}
@@ -304,7 +304,7 @@ export function SuggestionCard({
                       <div className="flex items-center gap-2">
                         <span
                           className={cn(
-                            "px-1.5 py-0.5 rounded text-[10px] font-mono font-bold border-l-2",
+                            "px-1.5 py-0.5 rounded text-[10px] font-bold border-l-2",
                             color.classes.chip
                           )}
                         >

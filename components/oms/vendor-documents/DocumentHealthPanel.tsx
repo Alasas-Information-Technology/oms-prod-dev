@@ -37,14 +37,14 @@ export function DocumentHealthPanel({
     >
       <div className="flex items-center justify-between border-b border-border/50 pb-2.5">
         <div className="space-y-0.5">
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider font-mono">
+          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
             Document Health
           </span>
           <h4 className="text-xs font-semibold text-foreground">
             Compliance Reconciliation
           </h4>
         </div>
-        <span className="text-[10px] text-muted-foreground font-mono">
+        <span className="text-[10px] text-muted-foreground">
           Derived counts
         </span>
       </div>
@@ -56,7 +56,7 @@ export function DocumentHealthPanel({
             <FileCheck className="size-3.5 text-muted-foreground/70" />
             Required
           </span>
-          <span className="font-mono font-semibold text-foreground tabular-nums">
+          <span className="font-semibold text-foreground tabular-nums">
             {health.required}
           </span>
         </div>
@@ -67,7 +67,7 @@ export function DocumentHealthPanel({
             <Upload className="size-3.5 text-muted-foreground/70" />
             Uploaded
           </span>
-          <span className="font-mono font-semibold text-foreground tabular-nums">
+          <span className="font-semibold text-foreground tabular-nums">
             {health.uploaded}
           </span>
         </div>
@@ -78,7 +78,7 @@ export function DocumentHealthPanel({
             <CheckCircle2 className="size-3.5 text-emerald-600 dark:text-emerald-400" />
             Approved
           </span>
-          <span className="font-mono font-semibold text-emerald-600 dark:text-emerald-400 tabular-nums">
+          <span className="font-semibold text-emerald-600 dark:text-emerald-400 tabular-nums">
             {health.approved}
           </span>
         </div>
@@ -89,7 +89,7 @@ export function DocumentHealthPanel({
             <Clock className="size-3.5 text-amber-500" />
             Expiring soon
           </span>
-          <span className="font-mono font-semibold text-amber-600 dark:text-amber-400 tabular-nums">
+          <span className="font-semibold text-amber-600 dark:text-amber-400 tabular-nums">
             {health.expiringSoon}
           </span>
         </div>
@@ -109,7 +109,7 @@ export function DocumentHealthPanel({
           </span>
           <span
             className={cn(
-              "font-mono font-semibold tabular-nums",
+              "font-semibold tabular-nums",
               health.missing > 0
                 ? "text-destructive"
                 : "text-muted-foreground"
@@ -126,7 +126,7 @@ export function DocumentHealthPanel({
               <XCircle className="size-3.5 text-destructive" />
               Scan failed (blocking)
             </span>
-            <span className="font-mono font-bold tabular-nums">
+            <span className="font-bold tabular-nums">
               {health.scanFailed}
             </span>
           </div>
@@ -139,7 +139,7 @@ export function DocumentHealthPanel({
               <AlertCircle className="size-3.5 text-destructive" />
               Rejected by DIEZ
             </span>
-            <span className="font-mono font-bold tabular-nums">
+            <span className="font-bold tabular-nums">
               {health.rejected}
             </span>
           </div>

@@ -1,5 +1,8 @@
+"use client";
+
 import * as React from "react";
 import { cn } from "@/components/ui/utils";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
 export interface UserPanelCardProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -14,11 +17,9 @@ export function UserPanelCard({
   ...props
 }: UserPanelCardProps) {
   return (
-    <div
-      className={cn(
-        "bg-card rounded-md border border-border/70 flex flex-col",
-        className
-      )}
+    <Card
+      surface="solid"
+      className={cn("flex flex-col", className)}
       {...props}
     >
       <div className="flex h-14 items-center justify-between px-6 border-b border-border/50 shrink-0">
@@ -34,7 +35,7 @@ export function UserPanelCard({
       <div className="flex flex-col [&>div:not(:last-child)]:border-b [&>div:not(:last-child)]:border-border/50">
         {children}
       </div>
-    </div>
+    </Card>
   );
 }
 

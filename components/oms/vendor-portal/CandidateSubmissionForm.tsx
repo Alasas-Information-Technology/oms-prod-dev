@@ -316,11 +316,11 @@ export function CandidateSubmissionForm({
             </div>
             <div className="flex items-center justify-between py-2">
               <span className="text-muted-foreground">Candidate Reference Assigned:</span>
-              <span className="font-mono font-bold text-teal-600 dark:text-teal-400 text-sm">{receipt.candidateRef}</span>
+              <span className="font-bold text-teal-600 dark:text-teal-400 text-sm">{receipt.candidateRef}</span>
             </div>
             <div className="flex items-center justify-between py-2">
               <span className="text-muted-foreground">Cost Mode:</span>
-              <Badge variant="outline" className="text-[11px] font-mono">{receipt.costMode}</Badge>
+              <Badge variant="outline" className="text-[11px]">{receipt.costMode}</Badge>
             </div>
             <div className="flex items-center justify-between py-2">
               <span className="text-muted-foreground">Quoted Rate:</span>
@@ -379,7 +379,7 @@ export function CandidateSubmissionForm({
       <div className="w-full bg-background border-b border-border/70 px-4 sm:px-6 py-4 space-y-3 transition-colors">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Link href="/vendor" className="hover:text-foreground transition-colors">
                 Vendor Portal
               </Link>
@@ -431,7 +431,7 @@ export function CandidateSubmissionForm({
                 </h2>
               </div>
               {currentReq && (
-                <span className="text-xs text-muted-foreground font-mono">
+                <span className="text-xs text-muted-foreground">
                   {currentReq.mySubmissionsCount} of {currentReq.submissionWindow.maxBatchSize} CVs submitted
                 </span>
               )}
@@ -474,7 +474,7 @@ export function CandidateSubmissionForm({
                   <span className="font-medium text-foreground">
                     {currentReq.positionTitle} · {currentReq.departmentName}
                   </span>
-                  <span className="font-mono text-muted-foreground">
+                  <span className="text-muted-foreground">
                     Grade {currentReq.salaryGrade} · {currentReq.workLocation}
                   </span>
                 </div>
@@ -678,7 +678,7 @@ export function CandidateSubmissionForm({
                   4. Commercial Terms & Quoted Rate (RFP Step 4)
                 </h2>
               </div>
-              <span className="text-xs font-mono text-muted-foreground">
+              <span className="text-xs text-muted-foreground">
                 Mode: {costMode}
               </span>
             </div>
@@ -701,7 +701,7 @@ export function CandidateSubmissionForm({
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-foreground">Fixed</span>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted/60 text-muted-foreground font-mono">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted/60 text-muted-foreground">
                       Single Rate
                     </span>
                   </div>
@@ -722,7 +722,7 @@ export function CandidateSubmissionForm({
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-foreground">Negotiable</span>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-700 dark:text-teal-300 font-mono">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-700 dark:text-teal-300">
                       Rate Card
                     </span>
                   </div>
@@ -743,7 +743,7 @@ export function CandidateSubmissionForm({
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-foreground">Pre-Agreed</span>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted/60 text-muted-foreground font-mono">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted/60 text-muted-foreground">
                       Contract MSA
                     </span>
                   </div>
@@ -772,7 +772,7 @@ export function CandidateSubmissionForm({
                       min="10000"
                       value={fixedAmountAed}
                       onChange={(e) => setFixedAmountAed(e.target.value)}
-                      className="pl-14 text-xs font-mono font-semibold h-10"
+                      className="pl-14 text-xs font-semibold h-10"
                       placeholder="330000"
                       required
                     />
@@ -841,7 +841,7 @@ export function CandidateSubmissionForm({
                         <Label htmlFor="grade-select" className="text-xs font-medium text-foreground">
                           Select Published Rate Card Grade <span className="text-destructive">*</span>
                         </Label>
-                        <span className="text-[11px] text-teal-600 dark:text-teal-400 font-mono">
+                        <span className="text-[11px] text-teal-600 dark:text-teal-400">
                           Card: {activeRateCard.code} · Status: PUBLISHED
                         </span>
                       </div>
@@ -856,7 +856,7 @@ export function CandidateSubmissionForm({
                               <div className="flex items-center justify-between gap-4 w-full">
                                 <span className="font-bold">{grade.gradeCode} ({grade.level})</span>
                                 <span>{grade.roleTitle}</span>
-                                <span className="font-mono text-teal-600 font-semibold">
+                                <span className="text-teal-600 font-semibold">
                                   AED {formatAmount(grade.monthlyRate)}/mo
                                 </span>
                               </div>
@@ -877,23 +877,23 @@ export function CandidateSubmissionForm({
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-muted-foreground">Base Salary Band:</span>
-                      <span className="font-mono text-foreground">
+                      <span className="text-foreground">
                         AED {formatAmount(selectedGrade.minSalary)} – AED {formatAmount(selectedGrade.maxSalary)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-muted-foreground">Service Charge:</span>
-                      <span className="font-mono text-teal-600 font-medium">{selectedGrade.serviceChargePercent}%</span>
+                      <span className="text-teal-600 font-medium">{selectedGrade.serviceChargePercent}%</span>
                     </div>
                     <div className="flex items-center justify-between pt-1 border-t border-border/40 font-bold">
                       <span className="text-foreground">Official Approved Monthly Rate:</span>
-                      <span className="font-mono text-teal-600 dark:text-teal-400 text-sm">
+                      <span className="text-teal-600 dark:text-teal-400 text-sm">
                         AED {formatAmount(selectedGrade.monthlyRate)} / mo
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-[11px] text-muted-foreground">
                       <span>Annualized Total Quoted Rate:</span>
-                      <span className="font-mono text-foreground font-semibold">
+                      <span className="text-foreground font-semibold">
                         AED {formatAmount(resolvedCost.annualFils)}
                       </span>
                     </div>
@@ -911,7 +911,7 @@ export function CandidateSubmissionForm({
                   <span className="text-xs font-bold text-foreground">
                     Active Master Contract: {activeContract.contractCode}
                   </span>
-                  <Badge variant="outline" className="text-[10px] font-mono text-emerald-600">
+                  <Badge variant="outline" className="text-[10px] text-emerald-600">
                     {activeContract.status}
                   </Badge>
                 </div>
@@ -923,19 +923,19 @@ export function CandidateSubmissionForm({
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Pre-Agreed Monthly Billing Rate:</span>
-                    <span className="font-mono font-bold text-foreground">
+                    <span className="font-bold text-foreground">
                       AED {formatAmount(activeContract.preAgreedMonthlyRate)} / mo
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Pre-Agreed Daily Billing Rate:</span>
-                    <span className="font-mono text-foreground">
+                    <span className="text-foreground">
                       AED {formatAmount(activeContract.preAgreedDailyRate)} / day
                     </span>
                   </div>
                   <div className="flex items-center justify-between pt-1 border-t border-border/40 text-[11px]">
                     <span className="text-muted-foreground">Annualized Pre-Agreed Value:</span>
-                    <span className="font-mono font-bold text-teal-600 dark:text-teal-400">
+                    <span className="font-bold text-teal-600 dark:text-teal-400">
                       AED {formatAmount(resolvedCost.annualFils)}
                     </span>
                   </div>
@@ -1032,17 +1032,17 @@ export function CandidateSubmissionForm({
               </div>
               <div className="flex items-center justify-between py-1">
                 <span className="text-muted-foreground">Cost Mode:</span>
-                <span className="font-mono">{costMode}</span>
+                <span>{costMode}</span>
               </div>
               <div className="flex items-center justify-between py-1 font-bold">
                 <span className="text-foreground">Quoted Rate:</span>
-                <span className="font-mono text-teal-600 dark:text-teal-400">
+                <span className="text-teal-600 dark:text-teal-400">
                   AED {formatAmount(resolvedCost.monthlyFils)} / mo
                 </span>
               </div>
               <div className="flex items-center justify-between py-1">
                 <span className="text-muted-foreground">Annualized Value:</span>
-                <span className="font-mono text-foreground font-semibold">
+                <span className="text-foreground font-semibold">
                   AED {formatAmount(resolvedCost.annualFils)}
                 </span>
               </div>

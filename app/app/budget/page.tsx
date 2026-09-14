@@ -18,6 +18,7 @@ import {
 } from "@/components/budget";
 import { useBudgetSummary, useBudgetPeriod, useBudgetLines } from "@/hooks/useBudget";
 import { Skeleton } from "@/components/ui/skeleton";
+import { GlassBackground } from "@/components/ui/GlassBackground";
 import { IBudgetLineDto } from "@/lib/types/budget.types";
 
 function BudgetControlCenterContent() {
@@ -172,7 +173,8 @@ function BudgetControlCenterContent() {
   const selectedLine = linesData?.items.find((l) => l.id === selectedLineId);
 
   return (
-    <div className="p-6 space-y-6 animate-in fade-in-50 duration-200">
+    <div className="flex flex-col flex-1 h-full w-full p-6 space-y-6 animate-in fade-in-50 duration-200">
+      <GlassBackground />
       {/* ── Page Bar Portal Actions (Top 56px sticky bar per Part 3) ── */}
       <PageBarActions>
         <BudgetHeaderActions

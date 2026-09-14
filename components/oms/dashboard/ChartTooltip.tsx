@@ -55,7 +55,7 @@ export function ChartTooltip({
                   {item.name}
                 </span>
               </div>
-              <span className="text-[13px] font-semibold text-foreground font-mono tabular-nums leading-none">
+              <span className="text-[13px] font-semibold text-foreground tabular-nums leading-none">
                 {formatted}
               </span>
             </div>
@@ -65,7 +65,7 @@ export function ChartTooltip({
 
       {/* 2. Date / Label Last (Separated by 8px) */}
       {dateOrLabel && (
-        <div className="mt-2 pt-1.5 border-t border-border/40 text-[11px] font-medium text-muted-foreground/80 font-mono">
+        <div className="mt-2 pt-1.5 border-t border-border/40 text-[11px] font-medium text-muted-foreground/80">
           {dateOrLabel}
         </div>
       )}

@@ -55,7 +55,7 @@ export function VendorHeader() {
               </span>
               <Badge
                 variant="outline"
-                className="hidden sm:inline-flex text-[10px] font-mono uppercase px-1.5 py-0 bg-teal-500/15 text-teal-300 border-teal-500/40"
+                className="hidden sm:inline-flex text-[10px] uppercase px-1.5 py-0 bg-teal-500/15 text-teal-300 border-teal-500/40"
               >
                 Accredited Partner
               </Badge>
@@ -93,7 +93,7 @@ export function VendorHeader() {
 
         {/* Right section: Utilities + Vendor Account Dropdown */}
         <div className="flex items-center gap-2.5 shrink-0">
-          <div className="hidden lg:flex items-center gap-1.5 text-xs text-white/70 dark:text-muted-foreground font-mono text-[11px] pr-2 border-r border-border/40">
+          <div className="hidden lg:flex items-center gap-1.5 text-xs text-white/70 dark:text-muted-foreground text-[11px] pr-2 border-r border-border/40">
             <ShieldCheck className="size-3.5 text-teal-400" />
             <span>Vendor TLS Session</span>
           </div>

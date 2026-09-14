@@ -29,7 +29,7 @@ export default function InterviewTokensDemoPage() {
     <div className="p-8 pb-32 max-w-7xl mx-auto space-y-12">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2 text-xs font-mono text-primary font-semibold mb-1 tracking-wider uppercase">
+        <div className="flex items-center gap-2 text-xs text-primary font-semibold mb-1 tracking-wider uppercase">
           Design System · Foundation UX1
         </div>
         <h1 className="text-3xl font-display font-bold text-heading">
@@ -93,7 +93,7 @@ export default function InterviewTokensDemoPage() {
                     <span className="opacity-90">Used for recommended actions, active tab, and progress</span>
                   </div>
                 </div>
-                <Badge className="bg-white/80 border border-indigo-200 text-indigo-900 text-[10px] font-mono shrink-0">
+                <Badge className="bg-white/80 border border-indigo-200 text-indigo-900 text-[10px] shrink-0">
                   9.02:1
                 </Badge>
               </div>
@@ -114,7 +114,7 @@ export default function InterviewTokensDemoPage() {
                     <span className="opacity-90">All 3 interviewers free · 3 of 3 ready to send</span>
                   </div>
                 </div>
-                <Badge className="bg-white/80 border border-emerald-200 text-emerald-900 text-[10px] font-mono shrink-0">
+                <Badge className="bg-white/80 border border-emerald-200 text-emerald-900 text-[10px] shrink-0">
                   7.11:1
                 </Badge>
               </div>
@@ -135,7 +135,7 @@ export default function InterviewTokensDemoPage() {
                     <span className="opacity-90">Omar is busy · Preference mismatch · Short notice</span>
                   </div>
                 </div>
-                <Badge className="bg-white/80 border border-amber-200 text-amber-900 text-[10px] font-mono shrink-0">
+                <Badge className="bg-white/80 border border-amber-200 text-amber-900 text-[10px] shrink-0">
                   8.52:1
                 </Badge>
               </div>
@@ -156,7 +156,7 @@ export default function InterviewTokensDemoPage() {
                     <span className="opacity-90">Interview slot taken by colleague · Relay unavailable</span>
                   </div>
                 </div>
-                <Badge className="bg-white/80 border border-rose-200 text-rose-900 text-[10px] font-mono shrink-0">
+                <Badge className="bg-white/80 border border-rose-200 text-rose-900 text-[10px] shrink-0">
                   8.63:1
                 </Badge>
               </div>
@@ -177,7 +177,7 @@ export default function InterviewTokensDemoPage() {
                     <span className="opacity-90">System generated suggestions · Sent via vendor relay</span>
                   </div>
                 </div>
-                <Badge className="bg-white/80 border border-sky-200 text-sky-900 text-[10px] font-mono shrink-0">
+                <Badge className="bg-white/80 border border-sky-200 text-sky-900 text-[10px] shrink-0">
                   6.99:1
                 </Badge>
               </div>
@@ -208,14 +208,14 @@ export default function InterviewTokensDemoPage() {
                       >
                         {cand.index + 1}
                       </div>
-                      <span className="font-mono font-semibold" style={{ color: cand.light.text }}>
+                      <span className="font-semibold" style={{ color: cand.light.text }}>
                         C-01{cand.index + 4}
                       </span>
                       <span className="text-slate-600 font-medium capitalize">
                         {cand.name} identity
                       </span>
                     </div>
-                    <Badge className="bg-white/80 border border-slate-200 text-slate-800 text-[10px] font-mono">
+                    <Badge className="bg-white/80 border border-slate-200 text-slate-800 text-[10px]">
                       Border: {cand.light.border}
                     </Badge>
                   </div>
@@ -231,15 +231,15 @@ export default function InterviewTokensDemoPage() {
               <div className="grid grid-cols-3 gap-2 text-center text-xs">
                 <div className="p-3 rounded-lg border border-slate-200 bg-[#FAFBFC]">
                   <strong className="block text-[11px]">Base Page</strong>
-                  <span className="text-[10px] font-mono text-slate-500">#FAFBFC</span>
+                  <span className="text-[10px] text-slate-500">#FAFBFC</span>
                 </div>
                 <div className="p-3 rounded-lg border border-slate-200 bg-white shadow-xs">
                   <strong className="block text-[11px]">Elevation 1 (Card)</strong>
-                  <span className="text-[10px] font-mono text-slate-500">#FFFFFF</span>
+                  <span className="text-[10px] text-slate-500">#FFFFFF</span>
                 </div>
                 <div className="p-3 rounded-lg border border-slate-300 bg-white shadow-sm">
                   <strong className="block text-[11px]">Elevation 2 (Popover)</strong>
-                  <span className="text-[10px] font-mono text-slate-500">#FFFFFF</span>
+                  <span className="text-[10px] text-slate-500">#FFFFFF</span>
                 </div>
               </div>
             </div>
@@ -284,7 +284,7 @@ export default function InterviewTokensDemoPage() {
                     <span className="opacity-90">Primary actions, suggestions selection, progress rail</span>
                   </div>
                 </div>
-                <Badge className="bg-[#161B26] border border-indigo-800 text-indigo-200 text-[10px] font-mono shrink-0">
+                <Badge className="bg-[#161B26] border border-indigo-800 text-indigo-200 text-[10px] shrink-0">
                   9.64:1
                 </Badge>
               </div>
@@ -305,7 +305,7 @@ export default function InterviewTokensDemoPage() {
                     <span className="opacity-90">All three free · Plan ready · Confirmed</span>
                   </div>
                 </div>
-                <Badge className="bg-[#161B26] border border-emerald-800 text-emerald-200 text-[10px] font-mono shrink-0">
+                <Badge className="bg-[#161B26] border border-emerald-800 text-emerald-200 text-[10px] shrink-0">
                   10.68:1
                 </Badge>
               </div>
@@ -326,7 +326,7 @@ export default function InterviewTokensDemoPage() {
                     <span className="opacity-90">Omar is busy · Preference mismatch · Short notice</span>
                   </div>
                 </div>
-                <Badge className="bg-[#161B26] border border-amber-800 text-amber-200 text-[10px] font-mono shrink-0">
+                <Badge className="bg-[#161B26] border border-amber-800 text-amber-200 text-[10px] shrink-0">
                   10.77:1
                 </Badge>
               </div>
@@ -347,7 +347,7 @@ export default function InterviewTokensDemoPage() {
                     <span className="opacity-90">Conflict · Declined · Vendor relay unavailable</span>
                   </div>
                 </div>
-                <Badge className="bg-[#161B26] border border-rose-800 text-rose-200 text-[10px] font-mono shrink-0">
+                <Badge className="bg-[#161B26] border border-rose-800 text-rose-200 text-[10px] shrink-0">
                   10.34:1
                 </Badge>
               </div>
@@ -368,7 +368,7 @@ export default function InterviewTokensDemoPage() {
                     <span className="opacity-90">Suggestions computed · Blind boundary relay</span>
                   </div>
                 </div>
-                <Badge className="bg-[#161B26] border border-sky-800 text-sky-200 text-[10px] font-mono shrink-0">
+                <Badge className="bg-[#161B26] border border-sky-800 text-sky-200 text-[10px] shrink-0">
                   10.50:1
                 </Badge>
               </div>
@@ -404,14 +404,14 @@ export default function InterviewTokensDemoPage() {
                       >
                         {cand.index + 1}
                       </div>
-                      <span className="font-mono font-semibold" style={{ color: cand.dark.text }}>
+                      <span className="font-semibold" style={{ color: cand.dark.text }}>
                         C-01{cand.index + 4}
                       </span>
                       <span className="text-slate-300 font-medium capitalize">
                         {cand.name} identity
                       </span>
                     </div>
-                    <Badge className="bg-[#161B26] border border-slate-700 text-slate-300 text-[10px] font-mono">
+                    <Badge className="bg-[#161B26] border border-slate-700 text-slate-300 text-[10px]">
                       Border: {cand.dark.border}
                     </Badge>
                   </div>
@@ -430,21 +430,21 @@ export default function InterviewTokensDemoPage() {
                   style={{ backgroundColor: SURFACE_DARK_BASE }}
                 >
                   <strong className="block text-[11px]">Base Page</strong>
-                  <span className="text-[10px] font-mono text-slate-400">#0B0F17</span>
+                  <span className="text-[10px] text-slate-400">#0B0F17</span>
                 </div>
                 <div
                   className="p-3 rounded-lg border border-slate-700/80"
                   style={{ backgroundColor: SURFACE_DARK_CARD }}
                 >
                   <strong className="block text-[11px]">Elevation 1 (Card)</strong>
-                  <span className="text-[10px] font-mono text-slate-400">#161B26 (+4%)</span>
+                  <span className="text-[10px] text-slate-400">#161B26 (+4%)</span>
                 </div>
                 <div
                   className="p-3 rounded-lg border border-slate-600/80"
                   style={{ backgroundColor: SURFACE_DARK_ELEV2 }}
                 >
                   <strong className="block text-[11px]">Elevation 2 (Elevated)</strong>
-                  <span className="text-[10px] font-mono text-slate-400">#212838 (+4%)</span>
+                  <span className="text-[10px] text-slate-400">#212838 (+4%)</span>
                 </div>
               </div>
             </div>
@@ -464,7 +464,7 @@ export default function InterviewTokensDemoPage() {
               Standards: Body text 4.5:1 · Large text 3:1 · Meaningful icons/borders 3:1 · Focus rings 3:1 · Disabled text 4.5:1
             </p>
           </div>
-          <Badge className="bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border-emerald-300 font-mono text-xs">
+          <Badge className="bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border-emerald-300 text-xs">
             100% PASS (24 / 24)
           </Badge>
         </div>
@@ -482,7 +482,7 @@ export default function InterviewTokensDemoPage() {
                   <th className="py-3 px-4 text-right">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border font-mono">
+              <tbody className="divide-y divide-border">
                 {auditList.map((item, idx) => (
                   <tr key={idx} className="hover:bg-muted/20 transition-colors">
                     <td className="py-2.5 px-4 font-sans font-medium text-foreground">

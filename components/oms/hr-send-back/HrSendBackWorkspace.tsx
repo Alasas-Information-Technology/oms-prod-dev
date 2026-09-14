@@ -289,7 +289,7 @@ export function HrSendBackWorkspace({
       <p className="text-xs text-muted-foreground font-medium flex items-center gap-2">
         <span>{requestTitle || "Outsource Request"}</span>
         <span className="text-muted-foreground/40">·</span>
-        <span className="font-mono text-xs bg-muted/60 px-2 py-0.5 rounded border border-border/50">
+        <span className="text-xs bg-muted/60 px-2 py-0.5 rounded border border-border/50">
           {requestId}
         </span>
       </p>

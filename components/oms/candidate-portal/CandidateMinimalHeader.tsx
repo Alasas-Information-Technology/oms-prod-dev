@@ -128,7 +128,7 @@ export function CandidateMinimalHeader({
                     className="flex items-center gap-2 p-2 rounded-md bg-background border border-border/60 hover:border-[var(--brand-teal,#0D9488)]/50 hover:bg-[var(--brand-teal,#0D9488)]/5 transition-colors text-foreground"
                   >
                     <Phone className="size-3.5 text-[var(--brand-teal,#0D9488)] shrink-0" />
-                    <span className="font-mono">{coordinator?.phone || "+971 4 123 4567"}</span>
+                    <span>{coordinator?.phone || "+971 4 123 4567"}</span>
                   </a>
                 </div>
 

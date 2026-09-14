@@ -544,7 +544,7 @@ export function OrgTree({
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-foreground truncate">{result.name}</span>
-                    <span className="font-mono text-[10px] text-muted-foreground bg-muted px-1 rounded">
+                    <span className="text-[10px] text-muted-foreground bg-muted px-1 rounded">
                       {result.code}
                     </span>
                   </div>
@@ -704,7 +704,7 @@ export function OrgTree({
       {/* Tree Footer / Unit Count */}
       <div className="p-2 border-t border-border bg-muted/20 flex items-center justify-between text-[11px] text-muted-foreground shrink-0">
         <span>{flatVisibleNodes.length} units visible</span>
-        <span className="font-mono text-[10px]">
+        <span className="text-[10px]">
           {isVirtualised ? "Virtualised (O(1) DOM)" : "Standard Mode"}
         </span>
       </div>
@@ -794,7 +794,7 @@ function TreeRow({
         <OrgTypeIcon type={typeCode} size="xs" className="mr-2 shrink-0" />
 
         {/* Unit Code in Monospace */}
-        <span className="font-mono text-[11px] text-muted-foreground font-semibold shrink-0 mr-2">
+        <span className="text-[11px] text-muted-foreground font-semibold shrink-0 mr-2">
           {unit.code}
         </span>
 
@@ -819,7 +819,7 @@ function TreeRow({
       <div className="flex items-center gap-1.5 shrink-0 ml-2">
         {/* Child Count */}
         {unit.childCount !== undefined && unit.childCount > 0 && (
-          <span className="text-[10px] font-mono font-semibold text-muted-foreground bg-muted px-1.5 py-0.5 rounded border border-border/40">
+          <span className="text-[10px] font-semibold text-muted-foreground bg-muted px-1.5 py-0.5 rounded border border-border/40">
             {unit.childCount}
           </span>
         )}

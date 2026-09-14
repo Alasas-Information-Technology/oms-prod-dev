@@ -110,7 +110,7 @@ export function OrgUnitPicker({
               <Building2 className="h-4 w-4 shrink-0 text-muted-foreground" />
               {selectedUnit ? (
                 <div className="flex items-center gap-2 truncate">
-                  <span className="font-mono text-xs font-semibold px-1.5 py-0.5 rounded bg-muted text-foreground">
+                  <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-muted text-foreground">
                     {selectedUnit.code}
                   </span>
                   <span className="truncate text-sm font-medium">{selectedUnit.name}</span>
@@ -202,7 +202,7 @@ export function OrgUnitPicker({
                   >
                     <div className="flex-1 min-w-0 pr-2">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className="font-mono text-xs font-semibold px-1.5 py-0.5 rounded bg-muted text-foreground">
+                        <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-muted text-foreground">
                           {unit.code}
                         </span>
                         <span className="text-sm font-semibold truncate">{unit.name}</span>

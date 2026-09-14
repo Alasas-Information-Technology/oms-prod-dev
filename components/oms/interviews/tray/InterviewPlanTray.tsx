@@ -276,7 +276,7 @@ export function InterviewPlanTray({
           <Badge
             variant="outline"
             className={cn(
-              "text-[10px] font-mono font-semibold",
+              "text-[10px] font-semibold",
               allCandidatesReady
                 ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-300"
                 : "bg-muted/60 text-muted-foreground"
@@ -385,7 +385,7 @@ export function InterviewPlanTray({
             <Badge
               variant="outline"
               className={cn(
-                "text-[10px] font-mono font-semibold",
+                "text-[10px] font-semibold",
                 allCandidatesReady
                   ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
                   : "bg-muted"

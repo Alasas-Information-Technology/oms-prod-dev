@@ -83,7 +83,7 @@ export function BudgetBurnVsElapsedWidget({
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-xs">
             <span className="font-medium text-foreground/80 text-[12px]">Budget consumed</span>
-            <span className="font-mono font-semibold text-foreground tabular-nums text-[13px]">
+            <span className="font-semibold text-foreground tabular-nums text-[13px]">
               {consumedPercent.toFixed(1)}%
             </span>
           </div>
@@ -106,7 +106,7 @@ export function BudgetBurnVsElapsedWidget({
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-xs">
             <span className="font-normal text-muted-foreground text-[12px]">Financial year elapsed</span>
-            <span className="font-mono font-medium text-muted-foreground tabular-nums text-[12px]">
+            <span className="font-medium text-muted-foreground tabular-nums text-[12px]">
               {elapsedPercent.toFixed(1)}%
             </span>
           </div>
@@ -128,7 +128,7 @@ export function BudgetBurnVsElapsedWidget({
             {caption}
           </span>
           {consumedFormatted && totalFormatted && (
-            <span className="text-[11px] font-mono text-muted-foreground tabular-nums">
+            <span className="text-[11px] text-muted-foreground tabular-nums">
               {consumedFormatted} / {totalFormatted}
             </span>
           )}

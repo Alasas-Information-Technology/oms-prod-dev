@@ -209,7 +209,7 @@ export function SocPanel({
               )}
               <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${streamConnected ? threatPosture.dotColor : "bg-muted-foreground"}`} />
             </span>
-            <span className="text-[11px] font-mono font-medium text-muted-foreground uppercase tracking-wider">
+            <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
               {streamConnected ? "Live" : "Polling"}
             </span>
           </div>
@@ -295,7 +295,7 @@ export function SocPanel({
                         <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold border ${event.badge}`}>
                           {event.label}
                         </span>
-                        <span className="text-[10px] text-muted-foreground font-mono bg-muted/60 px-1.5 py-0.5 rounded">
+                        <span className="text-[10px] text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded">
                           {event.IPAddress || "Local"}
                         </span>
                       </div>
@@ -304,7 +304,7 @@ export function SocPanel({
                       </p>
                     </div>
                   </div>
-                  <span className="text-muted-foreground text-[10px] font-mono tabular-nums whitespace-nowrap shrink-0 pt-0.5">
+                  <span className="text-muted-foreground text-[10px] tabular-nums whitespace-nowrap shrink-0 pt-0.5">
                     {event.CreatedAt ? safeFormatDate(event.CreatedAt, "HH:mm:ss") : "-"}
                   </span>
                 </div>
@@ -315,7 +315,7 @@ export function SocPanel({
       </CardContent>
 
       {/* Footer Info */}
-      <div className="p-2.5 px-4 border-t border-border/50 shrink-0 flex items-center justify-between text-[11px] text-muted-foreground font-mono bg-muted/20">
+      <div className="p-2.5 px-4 border-t border-border/50 shrink-0 flex items-center justify-between text-[11px] text-muted-foreground bg-muted/20">
         <span>Displaying {filteredEvents.length} events</span>
         <span>
           {lastUpdated ? `Sync: ${format(lastUpdated, "HH:mm:ss")}` : "Connecting..."}

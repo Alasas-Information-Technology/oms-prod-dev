@@ -109,7 +109,7 @@ export function UnitPath({
             >
               {node.name}
               {showCodes && node.code && (
-                <span className="font-mono text-[10px] ml-1 text-muted-foreground/70">
+                <span className="text-[10px] ml-1 text-muted-foreground/70">
                   [{node.code}]
                 </span>
               )}

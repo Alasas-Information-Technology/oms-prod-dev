@@ -64,7 +64,7 @@ export function SubmissionReceiptCard({
         )}
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-emerald-500/20 text-xs font-mono">
+      <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-emerald-500/20 text-xs">
         <div className="flex items-center gap-2">
           <Receipt className="size-3.5 text-emerald-700 dark:text-emerald-300" />
           <span>

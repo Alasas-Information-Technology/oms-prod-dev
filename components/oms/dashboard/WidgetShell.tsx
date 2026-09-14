@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronRight, AlertCircle, RefreshCw, MoreHorizontal } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 export interface WidgetShellProps {
@@ -58,9 +59,10 @@ export function WidgetShell({
     typeof minHeight === "number" ? `${minHeight}px` : minHeight;
 
   return (
-    <section
+    <Card
+      surface="glass"
       className={cn(
-        "group relative flex flex-col h-full w-full bg-card/95 dark:bg-card/70 backdrop-blur-xs border border-border/40 dark:border-white/[0.07] shadow-2xs hover:shadow-xs hover:border-border/80 dark:hover:border-white/[0.14] transition-all duration-200 rounded-xl overflow-hidden select-none",
+        "group relative flex flex-col h-full w-full overflow-hidden select-none",
         "before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-foreground/[0.06] before:to-transparent",
         className
       )}
@@ -164,7 +166,7 @@ export function WidgetShell({
           children
         )}
       </div>
-    </section>
+    </Card>
   );
 }
 

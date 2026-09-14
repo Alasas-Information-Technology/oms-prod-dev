@@ -164,7 +164,7 @@ export function OrgGroupedView({
                 <span className="font-semibold text-sm text-foreground hover:text-primary transition-colors truncate">
                   {unit.name}
                 </span>
-                <span className="font-mono text-[11px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded border border-border/50">
+                <span className="text-[11px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded border border-border/50">
                   {unit.code}
                 </span>
               </div>

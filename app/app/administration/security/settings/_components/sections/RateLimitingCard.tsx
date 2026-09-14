@@ -133,16 +133,16 @@ export function RateLimitingCard() {
               <TableBody>
                 {limits.map((item) => (
                   <TableRow key={item.endpoint} className="hover:bg-muted/30">
-                    <TableCell className="font-mono text-xs font-semibold text-foreground">
+                    <TableCell className="text-xs font-semibold text-foreground">
                       {item.endpoint}
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
                       {item.category}
                     </TableCell>
                     <TableCell className="text-xs font-medium">
-                      <span className="font-mono">{item.limit}</span> reqs (+{item.burstAllowance} burst)
+                      <span>{item.limit}</span> reqs (+{item.burstAllowance} burst)
                     </TableCell>
-                    <TableCell className="text-xs text-muted-foreground font-mono">
+                    <TableCell className="text-xs text-muted-foreground">
                       {item.windowMinutes} min
                     </TableCell>
                     <TableCell className="text-right">

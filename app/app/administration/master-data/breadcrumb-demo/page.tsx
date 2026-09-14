@@ -34,7 +34,7 @@ export default function BreadcrumbDemoPage() {
   return (
     <div className="p-6 space-y-8 pb-24">
       <PageBarActions>
-        <Badge variant="secondary" className="gap-1.5 font-mono text-xs h-9 px-3">
+        <Badge variant="secondary" className="gap-1.5 text-xs h-9 px-3">
           <Type className="h-3.5 w-3.5 text-primary" />
           Part 5 Breadcrumb Spec
         </Badge>
@@ -70,7 +70,7 @@ export default function BreadcrumbDemoPage() {
                 <Badge variant="outline" className="text-xs">Case 1</Badge>
                 2 Crumbs (Standard 1st-level view)
               </CardTitle>
-              <span className="text-[11px] font-mono text-muted-foreground">Length: 2</span>
+              <span className="text-[11px] text-muted-foreground">Length: 2</span>
             </div>
             <CardDescription className="text-xs">
               Simple 2-level trail with 1 ancestor and 1 active current page.
@@ -99,7 +99,7 @@ export default function BreadcrumbDemoPage() {
                 <Badge variant="outline" className="text-xs">Case 2</Badge>
                 3 Crumbs (Master Data drill-down)
               </CardTitle>
-              <span className="text-[11px] font-mono text-muted-foreground">Length: 3</span>
+              <span className="text-[11px] text-muted-foreground">Length: 3</span>
             </div>
             <CardDescription className="text-xs">
               Direct path matching the route tree without sidebar grouping noise.
@@ -129,7 +129,7 @@ export default function BreadcrumbDemoPage() {
                 <Badge variant="outline" className="text-xs">Case 3</Badge>
                 4 Crumbs (Maximum Full Display)
               </CardTitle>
-              <span className="text-[11px] font-mono text-muted-foreground">Length: 4</span>
+              <span className="text-[11px] text-muted-foreground">Length: 4</span>
             </div>
             <CardDescription className="text-xs">
               Exactly at the 4-crumb limit — displays all 4 crumbs without collapsing into “…”.
@@ -160,7 +160,7 @@ export default function BreadcrumbDemoPage() {
                 <Badge variant="outline" className="text-xs">Case 4</Badge>
                 6 Crumbs (Collapsed Menu Menu “…”)
               </CardTitle>
-              <span className="text-[11px] font-mono text-muted-foreground">Length: 6</span>
+              <span className="text-[11px] text-muted-foreground">Length: 6</span>
             </div>
             <CardDescription className="text-xs">
               5 or more crumbs: shows first, “…” button opening dropdown menu, then last two.
@@ -194,7 +194,7 @@ export default function BreadcrumbDemoPage() {
                 <Badge variant="outline" className="text-xs">Case 5</Badge>
                 Very Long Crumb Name (&gt; 28 Characters)
               </CardTitle>
-              <span className="text-[11px] font-mono text-muted-foreground">Length: 63 chars</span>
+              <span className="text-[11px] text-muted-foreground">Length: 63 chars</span>
             </div>
             <CardDescription className="text-xs">
               Any crumb over 28 characters truncates with an ellipsis and displays the full title inside a hover tooltip.
@@ -227,7 +227,7 @@ export default function BreadcrumbDemoPage() {
                 <Badge variant="outline" className="text-xs">Case 6</Badge>
                 Deep Drill-Down Replacement Pattern (Org Units &gt; 3 levels)
               </CardTitle>
-              <span className="text-[11px] font-mono text-muted-foreground">Replace vs Extend</span>
+              <span className="text-[11px] text-muted-foreground">Replace vs Extend</span>
             </div>
             <CardDescription className="text-xs">
               For units nested deeper than three levels, replace rather than extend because the org chart canvas already communicates tree depth.
@@ -305,7 +305,7 @@ export default function BreadcrumbDemoPage() {
                   variant="secondary"
                   className="pl-3 pr-1.5 py-1 text-xs gap-2 rounded-lg border border-border"
                 >
-                  <span className="font-mono text-[10px] text-muted-foreground">{idx + 1}.</span>
+                  <span className="text-[10px] text-muted-foreground">{idx + 1}.</span>
                   <span className="font-medium truncate max-w-[200px]">{crumb}</span>
                   <button
                     type="button"

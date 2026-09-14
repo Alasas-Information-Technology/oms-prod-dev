@@ -165,7 +165,7 @@ export function PermanentHireDialog({ open, onOpenChange, detail, onSuccess }: S
           </div>
 
           <div className="space-y-2">
-            <Label>Type <span className="font-mono font-bold select-all">{detail.request.id}</span> to confirm</Label>
+            <Label>Type <span className="font-bold select-all">{detail.request.id}</span> to confirm</Label>
             <Input value={confirmId} onChange={(e) => setConfirmId(e.target.value)} disabled={isPending} />
           </div>
         </div>

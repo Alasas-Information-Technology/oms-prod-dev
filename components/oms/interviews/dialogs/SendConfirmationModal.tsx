@@ -129,7 +129,7 @@ export function SendConfirmationModal({
                 Confirm Interview Invitation
               </DialogTitle>
             </div>
-            <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded-full bg-muted border border-border text-foreground">
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-muted border border-border text-foreground">
               {candidateRef}
             </span>
           </div>
@@ -143,7 +143,7 @@ export function SendConfirmationModal({
           <div className="grid grid-cols-2 gap-2.5 p-3 rounded-lg bg-muted/30 border border-border">
             <div>
               <span className="text-[11px] text-muted-foreground block">Candidate</span>
-              <span className="font-mono font-semibold text-foreground">{candidateRef}</span>
+              <span className="font-semibold text-foreground">{candidateRef}</span>
             </div>
             <div>
               <span className="text-[11px] text-muted-foreground block">Method</span>
@@ -197,7 +197,7 @@ export function SendConfirmationModal({
                 return (
                   <div
                     key={slot.start || index}
-                    className="p-2 rounded-md border border-border bg-card flex items-center justify-between font-mono text-[11px]"
+                    className="p-2 rounded-md border border-border bg-card flex items-center justify-between text-[11px]"
                   >
                     <div>
                       <strong className="text-foreground font-sans mr-2">{dateLabel}</strong>

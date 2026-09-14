@@ -257,19 +257,19 @@ export default function VendorUsersPage() {
                         <span className="font-semibold text-foreground">
                           {user.profile?.displayName || user.username}
                         </span>
-                        <div className="text-xs text-muted-foreground font-mono">
+                        <div className="text-xs text-muted-foreground">
                           @{user.username}
                         </div>
                       </div>
                     </td>
 
-                    <td className="px-4 py-3.5 text-xs font-mono text-muted-foreground">
+                    <td className="px-4 py-3.5 text-xs text-muted-foreground">
                       {user.email}
                     </td>
 
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-1.5">
-                        <code className="text-xs px-2 py-0.5 bg-muted rounded font-mono text-foreground">
+                        <code className="text-xs px-2 py-0.5 bg-muted rounded text-foreground">
                           {user.vendorId}
                         </code>
                         <Button

@@ -119,7 +119,7 @@ export function ActiveDelegationsWidget({
                       size="sm"
                     />
                   ) : (
-                    <span className="text-[10.5px] font-mono text-muted-foreground tabular-nums">
+                    <span className="text-[10.5px] text-muted-foreground tabular-nums">
                       Until {formatDate(del.validUntil)}
                     </span>
                   )}

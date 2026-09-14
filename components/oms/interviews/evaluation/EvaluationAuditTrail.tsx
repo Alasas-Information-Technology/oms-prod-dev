@@ -145,7 +145,7 @@ export function EvaluationAuditTrail({
               {/* Right: Timestamp in plain language format */}
               <time
                 dateTime={entry.at}
-                className="text-[11px] font-mono text-muted-foreground shrink-0 tabular-nums"
+                className="text-[11px] text-muted-foreground shrink-0 tabular-nums"
               >
                 {formatAuditTimestamp(entry.at)}
               </time>

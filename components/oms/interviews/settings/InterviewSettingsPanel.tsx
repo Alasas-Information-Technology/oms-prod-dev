@@ -208,7 +208,7 @@ export function InterviewSettingsPanel({
             Interview Settings
           </h3>
         </div>
-        <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded-full bg-muted border border-border text-foreground">
+        <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-muted border border-border text-foreground">
           {candidate.candidateRef}
         </span>
       </div>
@@ -335,7 +335,7 @@ export function InterviewSettingsPanel({
               <Clock className="size-3.5 text-muted-foreground" />
               <span>Duration</span>
             </label>
-            <span className="text-[11px] font-mono text-muted-foreground">
+            <span className="text-[11px] text-muted-foreground">
               {activeDuration} min
             </span>
           </div>

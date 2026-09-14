@@ -95,7 +95,7 @@ export function AuthenticationPoliciesCard() {
                     max={60}
                     {...field}
                     onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                    className="font-mono text-sm h-10 rounded-md"
+                    className="text-sm h-10 rounded-md"
                   />
                 </FormControl>
                 <FormDescription className="text-xs">
@@ -139,7 +139,7 @@ export function AuthenticationPoliciesCard() {
                     max={90}
                     {...field}
                     onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                    className="font-mono text-sm h-10 rounded-md"
+                    className="text-sm h-10 rounded-md"
                   />
                 </FormControl>
                 <FormDescription className="text-xs">
@@ -235,7 +235,7 @@ export function AuthenticationPoliciesCard() {
                       max={20}
                       {...field}
                       onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                      className="font-mono text-sm h-10 rounded-md"
+                      className="text-sm h-10 rounded-md"
                     />
                   </FormControl>
                   <FormDescription className="text-[11px]">
@@ -261,7 +261,7 @@ export function AuthenticationPoliciesCard() {
                       max={1440}
                       {...field}
                       onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                      className="font-mono text-sm h-10 rounded-md"
+                      className="text-sm h-10 rounded-md"
                     />
                   </FormControl>
                   <FormDescription className="text-[11px]">

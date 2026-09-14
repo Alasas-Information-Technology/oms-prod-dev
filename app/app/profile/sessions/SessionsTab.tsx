@@ -91,7 +91,7 @@ export function SessionsTab({
                                 {String(row.browserName ?? "").toUpperCase()}
                             </span>
                         </div>
-                        <p className="text-xs text-muted-foreground font-mono mt-0.5">
+                        <p className="text-xs text-muted-foreground mt-0.5">
                             {String(row.loginSessionId ?? "")}
                         </p>
                     </div>
@@ -103,7 +103,7 @@ export function SessionsTab({
             header: "IP Address",
             sortable: true,
             render: (value) => (
-                <span className="text-sm text-muted-foreground font-mono">{String(value ?? "")}</span>
+                <span className="text-sm text-muted-foreground">{String(value ?? "")}</span>
             ),
         },
         {

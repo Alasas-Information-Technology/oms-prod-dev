@@ -21,7 +21,7 @@ interface CandidateKpiSurfaceProps {
  * - 1px hairline dividers at 8% opacity (border-foreground/8)
  * - Column 1: Readiness Score as T5 segmented tick bar (20 discrete ticks), NOT a donut/ring
  * - Column 2: Documents (e.g. 4/4) with T2 weight contrast (heavy numerator, light denominator)
- * - Column 3: Offer reference in font-mono
+ * - Column 3: Offer reference in
  * - Column 4: Biometric appointment status chip
  * - Column 5: Joining confirmation status chip
  */
@@ -89,7 +89,7 @@ export function CandidateKpiSurface({
             </div>
 
             {/* Percentage displayed beside ticks in mono tabular-nums */}
-            <span className="font-mono text-sm sm:text-base font-bold tabular-nums text-foreground">
+            <span className="text-sm sm:text-base font-bold tabular-nums text-foreground">
               {`(${readinessScore}%)`}
             </span>
           </div>
@@ -109,7 +109,7 @@ export function CandidateKpiSurface({
           </span>
 
           {/* T2 Weight Contrast: Heavy bold numerator, lighter muted slash and denominator */}
-          <div className="flex items-baseline gap-1 mt-2 sm:mt-0 font-mono tabular-nums">
+          <div className="flex items-baseline gap-1 mt-2 sm:mt-0 tabular-nums">
             <span className="font-bold text-xl sm:text-2xl text-foreground">
               {docsCompleted}
             </span>
@@ -133,7 +133,7 @@ export function CandidateKpiSurface({
           </span>
 
           <div className="mt-2 sm:mt-0">
-            <span className="inline-block font-mono font-bold text-xs sm:text-sm text-foreground bg-muted/60 dark:bg-muted/40 px-2 py-0.5 rounded border border-border/50 select-all tracking-tight">
+            <span className="inline-block font-bold text-xs sm:text-sm text-foreground bg-muted/60 dark:bg-muted/40 px-2 py-0.5 rounded border border-border/50 select-all tracking-tight">
               {kpi.offerReference || "LPO-260771"}
             </span>
           </div>

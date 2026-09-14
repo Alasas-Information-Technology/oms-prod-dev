@@ -55,7 +55,7 @@ export function ReconciliationExceptionsWidget({
         <div className="flex flex-col gap-3 select-none">
           <div className="flex items-center justify-between p-2 rounded-lg bg-muted/20 border border-border/30 dark:border-white/[0.04]">
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold font-mono tracking-tight text-foreground">
+              <span className="text-2xl font-bold tracking-tight text-foreground">
                 {total}
               </span>
               <span className="text-xs font-medium text-muted-foreground">
@@ -64,7 +64,7 @@ export function ReconciliationExceptionsWidget({
             </div>
             
             {total > 0 && (
-              <div className="flex items-center gap-1.5 font-mono text-xs">
+              <div className="flex items-center gap-1.5 text-xs">
                 <span className="text-muted-foreground text-[11px]">Oldest:</span>
                 <span className={cn(
                   "font-bold tabular-nums",
@@ -82,12 +82,12 @@ export function ReconciliationExceptionsWidget({
                 <span className="text-[12.5px] font-medium text-foreground/90">{sys.label}</span>
                 <div className="flex items-center gap-3">
                   {sys.exceptionCount > 0 && (
-                    <span className="text-[10.5px] text-muted-foreground font-mono">
+                    <span className="text-[10.5px] text-muted-foreground">
                       Oldest: {sys.oldestAgeDays}d
                     </span>
                   )}
                   <span className={cn(
-                    "text-xs font-mono font-semibold tabular-nums",
+                    "text-xs font-semibold tabular-nums",
                     sys.exceptionCount > 0 ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground"
                   )}>
                     {sys.exceptionCount}

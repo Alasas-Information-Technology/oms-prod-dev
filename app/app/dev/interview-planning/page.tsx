@@ -407,7 +407,7 @@ export default function InterviewPlanningDevPage() {
     <div className="p-8 pb-32 max-w-7xl mx-auto space-y-8">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2 text-xs font-mono text-primary font-semibold mb-1 tracking-wider uppercase">
+        <div className="flex items-center gap-2 text-xs text-primary font-semibold mb-1 tracking-wider uppercase">
           UX5 · Calendar Tab &amp; Keyboard Engine
         </div>
         <h1 className="text-3xl font-display font-bold text-heading">
@@ -422,7 +422,7 @@ export default function InterviewPlanningDevPage() {
       {/* Test Controls Bar */}
       <div className="p-4 rounded-xl border border-border bg-card shadow-xs flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="outline" className="font-mono text-xs bg-primary/10 text-primary border-primary/20 mr-1">
+          <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20 mr-1">
             DEV WORKBENCH
           </Badge>
           <Button
@@ -525,10 +525,10 @@ export default function InterviewPlanningDevPage() {
                     isSelected ? "bg-primary-foreground" : candColor.classes.avatar
                   )}
                 />
-                <span className="font-mono">{cand.candidateRef}</span>
+                <span>{cand.candidateRef}</span>
                 <span
                   className={cn(
-                    "text-[10px] px-1 rounded-full font-mono",
+                    "text-[10px] px-1 rounded-full",
                     isSelected
                       ? "bg-primary-foreground/20 text-primary-foreground"
                       : "bg-muted text-muted-foreground"
@@ -545,7 +545,7 @@ export default function InterviewPlanningDevPage() {
             );
           })}
         </div>
-        <span className="text-[11px] text-muted-foreground font-mono">
+        <span className="text-[11px] text-muted-foreground">
           Tip: Press <kbd className="px-1 py-0.5 rounded bg-muted border text-foreground">Tab</kbd> to cycle candidate
         </span>
       </div>
@@ -572,7 +572,7 @@ export default function InterviewPlanningDevPage() {
                 <span>Suggested times</span>
                 <Badge
                   variant="secondary"
-                  className="text-[10px] px-1.5 py-0 h-4 font-mono font-bold"
+                  className="text-[10px] px-1.5 py-0 h-4 font-bold"
                 >
                   {currentDataset.suggestions.filter((s) => !dismissedSlotIds.includes(s.slotId)).length}
                 </Badge>
@@ -594,7 +594,7 @@ export default function InterviewPlanningDevPage() {
                 {calendarCandidateSlots.length > 0 && (
                   <Badge
                     variant="outline"
-                    className="text-[10px] px-1.5 py-0 h-4 font-mono font-bold"
+                    className="text-[10px] px-1.5 py-0 h-4 font-bold"
                   >
                     {calendarCandidateSlots.length}
                   </Badge>
@@ -604,7 +604,7 @@ export default function InterviewPlanningDevPage() {
 
             <div className="flex items-center gap-2 text-[11px] text-muted-foreground pb-3">
               <span className="hidden sm:inline-flex items-center gap-1.5 font-medium">
-                Press <kbd className="px-1.5 py-0.5 rounded bg-muted border font-mono text-[10px] text-foreground">C</kbd> to toggle view
+                Press <kbd className="px-1.5 py-0.5 rounded bg-muted border text-[10px] text-foreground">C</kbd> to toggle view
               </span>
             </div>
           </div>

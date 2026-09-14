@@ -151,7 +151,7 @@ function LedgerRow({ movement }: { movement: IFundMovementDto }) {
         {movement.requestCode && (
           <a
             href={`/app/requisitions/${movement.requestId}`}
-            className="font-mono text-[10px] text-primary hover:underline truncate block"
+            className="text-[10px] text-primary hover:underline truncate block"
           >
             {movement.requestCode}
           </a>
@@ -162,7 +162,7 @@ function LedgerRow({ movement }: { movement: IFundMovementDto }) {
       {/* Amount — right-aligned, red if decreasing */}
       <span
         className={cn(
-          "font-mono tabular-nums text-xs font-semibold shrink-0 text-right whitespace-nowrap",
+          "tabular-nums text-xs font-semibold shrink-0 text-right whitespace-nowrap",
           decreasing ? "text-rose-600 dark:text-rose-400" : "text-foreground"
         )}
       >
@@ -280,7 +280,7 @@ function PanelContents({
         <div className="px-5 py-4 space-y-1">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <span className="font-mono text-[11px] text-muted-foreground block">
+              <span className="text-[11px] text-muted-foreground block">
                 {line.code}
               </span>
               <h3 className="text-[17px] font-semibold text-foreground leading-snug mt-0.5">
@@ -413,7 +413,7 @@ function PanelContents({
                 className="flex items-center justify-between gap-3 px-5 py-2.5 text-xs border-b border-border/30 last:border-0 hover:bg-muted/30 transition-colors group"
               >
                 <div className="min-w-0 space-y-0.5">
-                  <span className="font-mono text-[10px] text-primary block">{req.requestCode}</span>
+                  <span className="text-[10px] text-primary block">{req.requestCode}</span>
                   <span className="text-muted-foreground truncate block">{req.typeLabel}</span>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">

@@ -93,7 +93,7 @@ export function DashboardListRow({
       {(trailing || trailingSubtitle) && (
         <div className="flex flex-col items-end shrink-0 pl-2">
           {trailing && (
-            <div className="text-[13px] font-semibold text-foreground font-mono tabular-nums leading-tight">
+            <div className="text-[13px] font-semibold text-foreground tabular-nums leading-tight">
               {trailing}
             </div>
           )}
