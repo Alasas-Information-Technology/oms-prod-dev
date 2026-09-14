@@ -29,49 +29,42 @@ interface StatusConfig {
 const STATUS_CONFIG: Record<DocumentStatus, StatusConfig> = {
   NOT_STARTED: {
     label: "Not started",
-    className: "bg-muted text-muted-foreground border-border/70",
+    className: "bg-muted text-muted-foreground border-border",
     icon: Clock,
   },
   UPLOADED: {
     label: "Uploaded",
-    className:
-      "bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/25 font-medium",
+    className: "bg-info-surface text-info-text border-info-border font-medium",
     icon: FileText,
   },
   SCAN_FAILED: {
     label: "Scan failed",
-    className:
-      "bg-destructive/10 text-destructive border-destructive/30 font-semibold",
+    className: "bg-danger-surface text-danger-text border-danger-border font-semibold",
     icon: XCircle,
   },
   UNDER_REVIEW: {
     label: "In review",
-    className:
-      "bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/25 font-medium",
+    className: "bg-accent-surface text-accent-text border-accent-border font-medium",
     icon: Clock,
   },
   APPROVED: {
     label: "Approved",
-    className:
-      "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 font-semibold",
+    className: "bg-success-surface text-success-text border-success-border font-semibold",
     icon: Check,
   },
   REJECTED: {
     label: "Rejected",
-    className:
-      "bg-destructive/10 text-destructive border-destructive/30 font-semibold",
+    className: "bg-danger-surface text-danger-text border-danger-border font-semibold",
     icon: XCircle,
   },
   PENDING_SIGNATURE: {
     label: "Pending signature",
-    className:
-      "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/25 font-medium",
+    className: "bg-warning-surface text-warning-text border-warning-border font-medium",
     icon: PenTool,
   },
   MISSING: {
     label: "Missing",
-    className:
-      "bg-destructive/10 text-destructive border-destructive/30 font-semibold",
+    className: "bg-danger-surface text-danger-text border-danger-border font-semibold",
     icon: AlertTriangle,
   },
 };

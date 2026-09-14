@@ -20,7 +20,7 @@ const STAGE_COLORS: Record<string, { fill: string; bg: string; text: string }> =
     text: "text-emerald-600 dark:text-emerald-400",
   },
   HR_REVIEW: {
-    fill: "#8B5CF6", // Purple 500
+    fill: "#7C6BC4", // Violet
     bg: "bg-purple-500/10",
     text: "text-purple-600 dark:text-purple-400",
   },

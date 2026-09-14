@@ -165,20 +165,53 @@ export function AttachmentList({
                       <>
                         <span>·</span>
                         {att.scanStatus === "VERIFIED" && (
-                          <span className="inline-flex items-center gap-0.5 text-emerald-600 dark:text-emerald-400 font-medium">
+                          <span className="inline-flex items-center gap-0.5 text-success-text font-medium">
                             <ShieldCheck className="size-3" /> Clean
                           </span>
                         )}
                         {att.scanStatus === "PENDING" && (
-                          <span className="inline-flex items-center gap-0.5 text-amber-600 dark:text-amber-400 font-medium">
+                          <span className="inline-flex items-center gap-0.5 text-warning-text font-medium">
                             <Clock className="size-3" /> Scanning...
                           </span>
                         )}
                         {att.scanStatus === "FAILED" && (
-                          <span className="inline-flex items-center gap-0.5 text-red-600 dark:text-red-400 font-medium">
+                          <span className="inline-flex items-center gap-0.5 text-danger-text font-medium">
                             <ShieldAlert className="size-3" /> Threat Detected
                           </span>
                         )}
+                      </>
+                    )}
+
+                    {(att.expiresOn || (att.expiringWithinDays !== null && att.expiringWithinDays !== undefined)) && (
+                      <>
+                        <span>·</span>
+                        {(() => {
+                          const days = att.expiringWithinDays !== null && att.expiringWithinDays !== undefined
+                            ? att.expiringWithinDays
+                            : att.expiresOn
+                            ? Math.ceil((new Date(att.expiresOn).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+                            : null;
+                          if (days === null) return null;
+                          if (days < 30) {
+                            return (
+                              <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-danger-surface text-danger-text border border-danger-border">
+                                {days <= 0 ? "Expired" : `${days}d left · Critical`}
+                              </span>
+                            );
+                          }
+                          if (days < 90) {
+                            return (
+                              <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-warning-surface text-warning-text border border-warning-border">
+                                {days}d left · Warning
+                              </span>
+                            );
+                          }
+                          return (
+                            <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[10px] font-medium bg-success-surface text-success-text border border-success-border">
+                              {days}d left · Normal
+                            </span>
+                          );
+                        })()}
                       </>
                     )}
                   </div>

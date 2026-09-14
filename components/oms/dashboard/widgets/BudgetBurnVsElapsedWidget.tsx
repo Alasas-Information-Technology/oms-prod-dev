@@ -92,10 +92,10 @@ export function BudgetBurnVsElapsedWidget({
               style={{
                 width: `${Math.min(100, Math.max(0, consumedPercent))}%`,
                 background: isCritical
-                  ? "linear-gradient(90deg, #f43f5e, #e11d48)"
+                  ? "linear-gradient(90deg, var(--danger-border), var(--danger-text))"
                   : isWarning
-                  ? "linear-gradient(90deg, #f59e0b, #d97706)"
-                  : "linear-gradient(90deg, #3b82f6, #6366f1)",
+                  ? "linear-gradient(90deg, var(--warning-border), var(--warning-text))"
+                  : "linear-gradient(90deg, var(--primary), var(--secondary))",
               }}
               className="h-full rounded-full transition-all duration-300 shadow-2xs"
             />

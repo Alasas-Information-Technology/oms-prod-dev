@@ -31,6 +31,8 @@ export interface ClarificationAttachment {
   sizeBytes: number;
   url?: string;
   scanStatus?: ClarificationScanStatus;
+  expiresOn?: string | null;
+  expiringWithinDays?: number | null;
 }
 
 export interface ClarificationAsk {

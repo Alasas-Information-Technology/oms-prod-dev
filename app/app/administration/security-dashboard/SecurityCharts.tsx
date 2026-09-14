@@ -73,8 +73,8 @@ export interface SocPanelProps {
   lastUpdated?: Date | null;
 }
 
-const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6", "#06b6d4"];
-const BAR_COLORS = ["#6366f1", "#8b5cf6", "#ec4899", "#f43f5e", "#f59e0b", "#10b981"];
+const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ec4899", "#7C6BC4", "#06b6d4"];
+const BAR_COLORS = ["#6366f1", "#7C6BC4", "#ec4899", "#B0432C", "#f59e0b", "#10b981"];
 
 const safeFormatDate = (dateStr: string | Date, formatStr: string) => {
   try {
@@ -411,7 +411,7 @@ export function EventsByTypeChart({ chartsData }: ChartsDataProps) {
 
   return (
     <ChartCard title="Events by Type" desc="Top security event distribution" h="h-[220px] pl-0" isEmpty={data.length === 0} emptyMsg="No security events found">
-      <ChartContainer config={{ count: { label: "Event Count", color: "#8b5cf6" } }} className="h-full w-full">
+      <ChartContainer config={{ count: { label: "Event Count", color: "#7C6BC4" } }} className="h-full w-full">
         <BarChart className="w-full" data={data} layout="vertical" margin={{ left: 5, right: 25, top: 10, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} className="stroke-muted" />
           <XAxis type="number" tickLine={false} axisLine={false} fontSize={11} allowDecimals={false} className="fill-muted-foreground" />

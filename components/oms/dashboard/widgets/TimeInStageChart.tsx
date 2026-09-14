@@ -78,8 +78,8 @@ export function TimeInStageChart({
     },
   ];
 
-  // Stage colors: Blue, Indigo, Violet, Cyan, Amber/Rose
-  const stagePalette = ["#3b82f6", "#6366f1", "#8b5cf6", "#06b6d4", "#f59e0b"];
+  // Stage colors: Blue, Indigo, Violet, Cyan, Amber
+  const stagePalette = ["#3b82f6", "#6366f1", "#7C6BC4", "#06b6d4", "#f59e0b"];
 
   return (
     <WidgetShell
@@ -122,7 +122,7 @@ export function TimeInStageChart({
                 ? Math.min(100, (stage.targetDays / maxVal) * 100)
                 : null;
               const barColor = isSlowest
-                ? "#f43f5e"
+                ? "var(--danger-border, #B0432C)"
                 : stagePalette[idx % stagePalette.length];
 
               return (
@@ -132,7 +132,7 @@ export function TimeInStageChart({
                     <div className="flex items-center gap-1.5">
                       <span className="font-medium text-foreground/90 text-[12px]">{stage.label}</span>
                       {isSlowest && (
-                        <span className="text-[9.5px] font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 px-1.5 py-0.2 rounded border border-rose-500/20">
+                        <span className="text-[9.5px] font-semibold text-danger-text bg-danger-surface px-1.5 py-0.2 rounded border border-danger-border">
                           Slowest
                         </span>
                       )}

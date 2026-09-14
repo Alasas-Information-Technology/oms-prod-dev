@@ -8,7 +8,7 @@
 export const executivePalette = [
   "#3b82f6", // Sapphire Blue
   "#10b981", // Emerald Green
-  "#8b5cf6", // Royal Violet
+  "#7C6BC4", // Bedrock Violet
   "#f59e0b", // Warm Amber
   "#06b6d4", // Cyan / Teal
   "#ec4899", // Rose
@@ -28,10 +28,10 @@ export function categoricalScale(count: number): string[] {
 }
 
 export const semanticColors = {
-  success: "#10b981",
-  failure: "#f43f5e",
-  warning: "#f59e0b",
-  info: "#3b82f6",
+  success: "var(--success-border, #2E7D47)",
+  failure: "var(--danger-border, #B0432C)",
+  warning: "var(--warning-border, #B87514)",
+  info: "var(--info-border, #2E6B9E)",
   neutral: "var(--muted-foreground)",
 };
 

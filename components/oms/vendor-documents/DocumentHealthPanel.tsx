@@ -75,10 +75,10 @@ export function DocumentHealthPanel({
         {/* Approved */}
         <div className="flex items-center justify-between py-0.5">
           <span className="flex items-center gap-1.5 text-muted-foreground">
-            <CheckCircle2 className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+            <CheckCircle2 className="size-3.5 text-success-text" />
             Approved
           </span>
-          <span className="font-semibold text-emerald-600 dark:text-emerald-400 tabular-nums">
+          <span className="font-semibold text-success-text tabular-nums">
             {health.approved}
           </span>
         </div>
@@ -86,10 +86,10 @@ export function DocumentHealthPanel({
         {/* Expiring soon */}
         <div className="flex items-center justify-between py-0.5">
           <span className="flex items-center gap-1.5 text-muted-foreground">
-            <Clock className="size-3.5 text-amber-500" />
+            <Clock className="size-3.5 text-warning-text" />
             Expiring soon
           </span>
-          <span className="font-semibold text-amber-600 dark:text-amber-400 tabular-nums">
+          <span className="font-semibold text-warning-text tabular-nums">
             {health.expiringSoon}
           </span>
         </div>
@@ -101,7 +101,7 @@ export function DocumentHealthPanel({
               className={cn(
                 "size-3.5",
                 health.missing > 0
-                  ? "text-destructive"
+                  ? "text-danger-text"
                   : "text-muted-foreground/70"
               )}
             />
@@ -111,7 +111,7 @@ export function DocumentHealthPanel({
             className={cn(
               "font-semibold tabular-nums",
               health.missing > 0
-                ? "text-destructive"
+                ? "text-danger-text"
                 : "text-muted-foreground"
             )}
           >
@@ -121,9 +121,9 @@ export function DocumentHealthPanel({
 
         {/* Scan failed (Conditional alert indicator if > 0) */}
         {health.scanFailed > 0 && (
-          <div className="flex items-center justify-between py-0.5 pt-1 border-t border-destructive/20 text-destructive">
+          <div className="flex items-center justify-between py-0.5 pt-1 border-t border-danger-border/20 text-danger-text">
             <span className="flex items-center gap-1.5 font-medium">
-              <XCircle className="size-3.5 text-destructive" />
+              <XCircle className="size-3.5 text-danger-text" />
               Scan failed (blocking)
             </span>
             <span className="font-bold tabular-nums">
@@ -134,9 +134,9 @@ export function DocumentHealthPanel({
 
         {/* Rejected (Conditional alert indicator if > 0) */}
         {health.rejected > 0 && (
-          <div className="flex items-center justify-between py-0.5 pt-1 border-t border-destructive/20 text-destructive">
+          <div className="flex items-center justify-between py-0.5 pt-1 border-t border-danger-border/20 text-danger-text">
             <span className="flex items-center gap-1.5 font-medium">
-              <AlertCircle className="size-3.5 text-destructive" />
+              <AlertCircle className="size-3.5 text-danger-text" />
               Rejected by DIEZ
             </span>
             <span className="font-bold tabular-nums">

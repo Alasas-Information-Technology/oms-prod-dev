@@ -62,7 +62,7 @@ export function WorkforceCore({ isDark }: { isDark?: boolean }) {
         <icosahedronGeometry args={[0.45, 0]} />
         <meshStandardMaterial
           color={isDark ? "#000000" : "#ffffff"}
-          emissive={isDark ? "#818CF8" : "#6366F1"}
+          emissive={isDark ? "#7C8FC4" : "#1B2A4A"}
           emissiveIntensity={isDark ? 1.5 : 2}
           metalness={0.9}
           roughness={0.1}

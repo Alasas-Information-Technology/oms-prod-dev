@@ -165,9 +165,9 @@ export default function InterviewTokensDemoPage() {
               <div
                 className="p-3.5 rounded-xl border flex items-start justify-between gap-3 text-xs"
                 style={{
-                  backgroundColor: "#F0F9FF",
-                  borderColor: "#0284C7",
-                  color: "#075985",
+                  backgroundColor: "var(--info-surface)",
+                  borderColor: "var(--info-border)",
+                  color: "var(--info-text)",
                 }}
               >
                 <div className="flex items-start gap-2.5">
@@ -272,13 +272,13 @@ export default function InterviewTokensDemoPage() {
               <div
                 className="p-3.5 rounded-xl border flex items-start justify-between gap-3 text-xs"
                 style={{
-                  backgroundColor: "#1E2540",
-                  borderColor: "#818CF8",
-                  color: "#C7D2FE",
+                  backgroundColor: "var(--accent-surface)",
+                  borderColor: "var(--accent-border)",
+                  color: "var(--accent-text)",
                 }}
               >
                 <div className="flex items-start gap-2.5">
-                  <Sparkles className="size-4 shrink-0 mt-0.5 text-[#818CF8]" />
+                  <Sparkles className="size-4 shrink-0 mt-0.5 text-[var(--accent-border)]" />
                   <div>
                     <strong className="font-semibold block">Accent (Lightened ~15%)</strong>
                     <span className="opacity-90">Primary actions, suggestions selection, progress rail</span>
@@ -356,13 +356,13 @@ export default function InterviewTokensDemoPage() {
               <div
                 className="p-3.5 rounded-xl border flex items-start justify-between gap-3 text-xs"
                 style={{
-                  backgroundColor: "#142538",
-                  borderColor: "#38BDF8",
-                  color: "#BAE6FD",
+                  backgroundColor: "var(--info-surface)",
+                  borderColor: "var(--info-border)",
+                  color: "var(--info-text)",
                 }}
               >
                 <div className="flex items-start gap-2.5">
-                  <Info className="size-4 shrink-0 mt-0.5 text-[#38BDF8]" />
+                  <Info className="size-4 shrink-0 mt-0.5 text-[var(--info-border)]" />
                   <div>
                     <strong className="font-semibold block">Info (Sky blue)</strong>
                     <span className="opacity-90">Suggestions computed · Blind boundary relay</span>

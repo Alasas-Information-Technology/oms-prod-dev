@@ -61,7 +61,7 @@ function getKpiTheme(title: string, colorProp?: string, bgProp?: string) {
       textColor: colorProp || "text-rose-600 dark:text-rose-400",
       bgColor: bgProp || "bg-rose-500/10 dark:bg-rose-500/15",
       borderColor: "border-rose-500/20",
-      sparklineHex: "#F43F5E", // Rose 500
+      sparklineHex: "#B0432C", // Danger border
     };
   }
   if (colorProp?.includes("orange") || colorProp?.includes("amber")) {
@@ -69,7 +69,7 @@ function getKpiTheme(title: string, colorProp?: string, bgProp?: string) {
       textColor: colorProp || "text-amber-600 dark:text-amber-400",
       bgColor: bgProp || "bg-amber-500/10 dark:bg-amber-500/15",
       borderColor: "border-amber-500/20",
-      sparklineHex: "#F59E0B", // Amber 500
+      sparklineHex: "#B4791F", // Warning border
     };
   }
   if (colorProp?.includes("blue") || colorProp?.includes("sky")) {
@@ -77,7 +77,7 @@ function getKpiTheme(title: string, colorProp?: string, bgProp?: string) {
       textColor: colorProp || "text-blue-600 dark:text-blue-400",
       bgColor: bgProp || "bg-blue-500/10 dark:bg-blue-500/15",
       borderColor: "border-blue-500/20",
-      sparklineHex: "#3B82F6", // Blue 500
+      sparklineHex: "#1B2A4A", // Bedrock Indigo
     };
   }
   if (colorProp?.includes("green") || colorProp?.includes("emerald")) {
@@ -85,7 +85,7 @@ function getKpiTheme(title: string, colorProp?: string, bgProp?: string) {
       textColor: colorProp || "text-emerald-600 dark:text-emerald-400",
       bgColor: bgProp || "bg-emerald-500/10 dark:bg-emerald-500/15",
       borderColor: "border-emerald-500/20",
-      sparklineHex: "#10B981", // Emerald 500
+      sparklineHex: "#3A8F6B", // Success border
     };
   }
   if (colorProp?.includes("purple") || colorProp?.includes("violet")) {
@@ -93,7 +93,7 @@ function getKpiTheme(title: string, colorProp?: string, bgProp?: string) {
       textColor: colorProp || "text-purple-600 dark:text-purple-400",
       bgColor: bgProp || "bg-purple-500/10 dark:bg-purple-500/15",
       borderColor: "border-purple-500/20",
-      sparklineHex: "#8B5CF6", // Purple 500
+      sparklineHex: "#7C6BC4", // Violet
     };
   }
 
@@ -103,7 +103,7 @@ function getKpiTheme(title: string, colorProp?: string, bgProp?: string) {
       textColor: "text-rose-600 dark:text-rose-400",
       bgColor: "bg-rose-500/10 dark:bg-rose-500/15",
       borderColor: "border-rose-500/20",
-      sparklineHex: "#F43F5E", // Vibrant Rose
+      sparklineHex: "#B0432C", // Danger border
     };
   }
   if (t.includes("action") || t.includes("approval") || t.includes("task") || t.includes("session")) {
@@ -111,7 +111,7 @@ function getKpiTheme(title: string, colorProp?: string, bgProp?: string) {
       textColor: "text-blue-600 dark:text-blue-400",
       bgColor: "bg-blue-500/10 dark:bg-blue-500/15",
       borderColor: "border-blue-500/20",
-      sparklineHex: "#3B82F6", // Vibrant Blue
+      sparklineHex: "#1B2A4A", // Bedrock Indigo
     };
   }
   if (t.includes("onboarding") || t.includes("active") || t.includes("complete") || t.includes("verified")) {
@@ -119,7 +119,7 @@ function getKpiTheme(title: string, colorProp?: string, bgProp?: string) {
       textColor: "text-emerald-600 dark:text-emerald-400",
       bgColor: "bg-emerald-500/10 dark:bg-emerald-500/15",
       borderColor: "border-emerald-500/20",
-      sparklineHex: "#10B981", // Vibrant Emerald
+      sparklineHex: "#3A8F6B", // Success border
     };
   }
   if (t.includes("expir") || t.includes("watch") || t.includes("warn") || t.includes("lock") || t.includes("pending")) {
@@ -127,7 +127,7 @@ function getKpiTheme(title: string, colorProp?: string, bgProp?: string) {
       textColor: "text-amber-600 dark:text-amber-400",
       bgColor: "bg-amber-500/10 dark:bg-amber-500/15",
       borderColor: "border-amber-500/20",
-      sparklineHex: "#F59E0B", // Vibrant Amber
+      sparklineHex: "#B4791F", // Warning border
     };
   }
   if (t.includes("candidate") || t.includes("interview") || t.includes("talent")) {
@@ -135,7 +135,7 @@ function getKpiTheme(title: string, colorProp?: string, bgProp?: string) {
       textColor: "text-indigo-600 dark:text-indigo-400",
       bgColor: "bg-indigo-500/10 dark:bg-indigo-500/15",
       borderColor: "border-indigo-500/20",
-      sparklineHex: "#6366F1", // Vibrant Indigo
+      sparklineHex: "#1B2A4A", // Bedrock Indigo
     };
   }
   if (t.includes("vendor") || t.includes("submission") || t.includes("contract")) {
@@ -143,7 +143,7 @@ function getKpiTheme(title: string, colorProp?: string, bgProp?: string) {
       textColor: "text-teal-600 dark:text-teal-400",
       bgColor: "bg-teal-500/10 dark:bg-teal-500/15",
       borderColor: "border-teal-500/20",
-      sparklineHex: "#0D9488", // Vibrant Teal
+      sparklineHex: "#0E5C52", // Brand Teal
     };
   }
   if (t.includes("elevated") || t.includes("account") || t.includes("privilege") || t.includes("integrity")) {
@@ -151,7 +151,7 @@ function getKpiTheme(title: string, colorProp?: string, bgProp?: string) {
       textColor: "text-purple-600 dark:text-purple-400",
       bgColor: "bg-purple-500/10 dark:bg-purple-500/15",
       borderColor: "border-purple-500/20",
-      sparklineHex: "#8B5CF6", // Vibrant Purple
+      sparklineHex: "#7C6BC4", // Violet
     };
   }
   if (t.includes("integration") || t.includes("job") || t.includes("pipeline")) {

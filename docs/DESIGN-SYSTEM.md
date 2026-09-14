@@ -32,41 +32,42 @@ All tokens are defined in [`app/globals.css`](file:///Users/aait/Documents/Devel
 #### Core Brand & Base Palette
 | Token | Light Value | Dark Value | Purpose / Usage |
 | :--- | :--- | :--- | :--- |
-| `--background` | `#FAFBFC` | `#0F1419` | Root page background |
-| `--background-secondary` | `#F1F5F9` | `#1A1F2E` | Secondary background, panel strips |
-| `--background-tertiary` | `#E8EEF5` | `#252D3D` | Embedded container backgrounds |
-| `--foreground` | `#0F1419` | `#F9FAFB` | Primary high-contrast text |
-| `--foreground-secondary` | `#475569` | `#D1D5DB` | Secondary body text, descriptions |
-| `--foreground-tertiary` | `#64748B` | `#9CA3AF` | Supporting labels, muted captions |
-| `--card` | `#FFFFFF` | `#1A1F2E` | Card surfaces |
-| `--card-foreground` | `#0F1419` | `#F9FAFB` | Card primary text |
-| `--primary` | `#5B5FE1` (Vibrant Indigo) | `#818CF8` | Primary brand accent, primary CTA |
-| `--primary-foreground` | `#FFFFFF` | `#0F1419` | Text on primary elements |
-| `--secondary` | `#0C3A8F` (Deep Blue) | `#42A5F5` | Secondary brand actions, navigation active states |
-| `--brand-teal` | `#34BCB2` (DIEZ Teal) | `#34BCB2` | Vendor portal branding, verified checkmarks |
-| `--border` | `#E2E8F0` | `#222B3C` | Subtle dividers, container borders |
-| `--input` | `#F8FAFC` | `#1A1F2E` | Input field surface |
-| `--ring` | `#5B5FE1` | `#818CF8` | Focus rings (3:1 contrast minimum) |
+| `--background` | `#FAF8F3` (Warm Sand) | `#0E0D0B` (Warm Black) | Root page background |
+| `--background-secondary` | `#F1ECE1` | `#171310` | Secondary background, panel strips |
+| `--background-tertiary` | `#EAE3D6` | `#201A14` | Embedded container backgrounds |
+| `--foreground` | `#1A1712` (Warm Charcoal) | `#EDE8DF` (Warm White) | Primary high-contrast text |
+| `--foreground-secondary` | `#544D3F` | `#948C7A` | Secondary body text, descriptions |
+| `--foreground-tertiary` | `#7C7362` | `#6E6657` | Supporting labels, muted captions |
+| `--card` | `#FFFFFF` | `#171310` | Card surfaces |
+| `--card-foreground` | `#1A1712` | `#EDE8DF` | Card primary text |
+| `--primary` | `#1B2A4A` (Bedrock Indigo) | `#7C8FC4` | Primary brand accent, primary CTA |
+| `--primary-foreground` | `#FFFFFF` | `#0E0D0B` | Text on primary elements |
+| `--secondary` | `#0E1830` (Bedrock Deep) | `#5A7BB8` | Secondary brand actions, navigation active states |
+| `--brand-teal` | `#0E5C52` (Brand Teal) | `#3FA394` | Vendor portal branding, verified checkmarks |
+| `--root-bronze` | `#A65A2E` (Root Bronze) | `#D3894F` | Tertiary brand accent, administrative cues |
+| `--border` | `#E5DEC9` | `#262018` | Subtle dividers, container borders |
+| `--input` | `#FFFFFF` | `#1E1812` | Input field surface |
+| `--ring` | `#1B2A4A` | `#7C8FC4` | Focus rings (3:1 contrast minimum) |
 
 #### Semantic Matrix (15-Token System)
 Every semantic meaning is paired as a tri-token: **Surface Tint**, **Border**, and **Text Value**.
 
 | Semantic Meaning | Surface Token | Border Token | Text Token | Typical Usage |
 | :--- | :--- | :--- | :--- | :--- |
-| **Accent** | `--accent-surface` (`#EEF2FF` / `#1E2540`) | `--accent-border` (`#4F46E5` / `#818CF8`) | `--accent-text` (`#3730A3` / `#C7D2FE`) | Selections, active stages, focus states |
-| **Success** | `--success-surface` (`#ECFDF5` / `#142924`) | `--success-border` (`#059669` / `#34D399`) | `--success-text` (`#065F46` / `#A7F3D0`) | Confirmed interviews, approved budgets |
-| **Warning** | `--warning-surface` (`#FFFBEB` / `#2E2416`) | `--warning-border` (`#B45309` / `#FBBF24`) | `--warning-text` (`#78350F` / `#FDE68A`) | Tight deadlines (<2 days), pending review |
-| **Danger** | `--danger-surface` (`#FFF1F2` / `#2E1B22`) | `--danger-border` (`#E11D48` / `#FB7185`) | `--danger-text` (`#881337` / `#FECDD3`) | Urgent deadline (<24h), over-budget, errors |
-| **Info** | `--info-surface` (`#F0F9FF` / `#142538`) | `--info-border` (`#0284C7` / `#38BDF8`) | `--info-text` (`#075985` / `#BAE6FD`) | System notices, automated recommendations |
+| **Accent** | `--accent-surface` (`#EEF2FF` / `#1C2035`) | `--accent-border` (`#3E568A` / `#7C8FC4`) | `--accent-text` (`#1B2A4A` / `#C7D2FE`) | Selections, active stages, focus states |
+| **Success** | `--success-surface` (`#E8F4EC` / `#13251A`) | `--success-border` (`#2E7D47` / `#5AA873`) | `--success-text` (`#1B542E` / `#B8E2C4`) | Confirmed interviews, approved budgets |
+| **Warning** | `--warning-surface` (`#FDF4E2` / `#2A1F0D`) | `--warning-border` (`#B87514` / `#E29A38`) | `--warning-text` (`#7D4A06` / `#F8D89E`) | Tight deadlines (<2 days), pending review |
+| **Danger** | `--danger-surface` (`#FCEEEB` / `#2B1510`) | `--danger-border` (`#B0432C` / `#D45D43`) | `--danger-text` (`#7A2816` / `#F3AEA0`) | Urgent deadline (<24h), over-budget, errors |
+| **Info** | `--info-surface` (`#EBF3F8` / `#10202E`) | `--info-border` (`#2E6B9E` / `#5695C9`) | `--info-text` (`#1A4669` / `#B0D3ED`) | System notices, automated recommendations |
 
 #### Candidate Identity Palette (Interview Planning)
 To differentiate multiple candidates on a single calendar or tray without confusion, candidates are assigned a deterministic chromatic accent:
-- **Violet**: `#8B5CF6`
-- **Teal**: `#0D9488`
-- **Amber**: `#F59E0B`
-- **Rose**: `#F43F5E`
-- **Sky**: `#0284C7`
-- **Lime**: `#65A30D`
+- **Violet**: `#7C6BC4`
+- **Teal**: `#0E7A6E`
+- **Bronze**: `#A65A2E`
+- **Rose**: `#C4586A`
+- **Sky**: `#2F6FA8`
+- **Olive**: `#7A8A3D`
 
 *Rule*: Used exclusively for left borders (3px), avatar backgrounds, and soft tints (8% light / 12% dark). Never as full solid fills behind body copy. Always paired with the candidate reference (`C-021`).
 
@@ -77,10 +78,10 @@ To differentiate multiple candidates on a single calendar or tray without confus
 Dark mode is a **redesign at lower luminance**, not a crude color inversion.
 
 ```
-Elevation 3: Popover / Modal     (--surface-popover)    [#2D364A]
-Elevation 2: Floating Card       (--surface-elevated)   [#212838]
-Elevation 1: Base Card           (--surface-card)       [#161B26]
-Elevation 0: Canvas Background   (--surface-base)       [#0B0F17]
+Elevation 3: Popover / Modal     (--surface-popover)    [#2A2219]
+Elevation 2: Floating Card       (--surface-elevated)   [#201A14]
+Elevation 1: Base Card           (--surface-card)       [#171310]
+Elevation 0: Canvas Background   (--surface-base)       [#0E0D0B]
 ```
 
 - **Luminance Steps**: Each surface elevation step in dark mode is ~4% lighter than the previous layer to establish physical depth.

@@ -57,11 +57,16 @@ export function DocumentRow({
   onUpload,
   className,
 }: DocumentRowProps) {
-  const isExpiringSoon =
-    (doc.expiringWithinDays !== null &&
-      doc.expiringWithinDays !== undefined &&
-      doc.expiringWithinDays <= 90 &&
-      doc.expiringWithinDays >= 0);
+  const isCriticalExpiry =
+    doc.expiringWithinDays !== null &&
+    doc.expiringWithinDays !== undefined &&
+    doc.expiringWithinDays < 30;
+
+  const isWarningExpiry =
+    doc.expiringWithinDays !== null &&
+    doc.expiringWithinDays !== undefined &&
+    doc.expiringWithinDays >= 30 &&
+    doc.expiringWithinDays <= 90;
 
   const isRejected = doc.status === "REJECTED";
   const isScanFailed = doc.status === "SCAN_FAILED";
@@ -103,7 +108,7 @@ export function DocumentRow({
               {doc.file.name}
             </span>
           ) : doc.requiresSignature ? (
-            <span className="inline-flex items-center gap-1.5 text-amber-700 dark:text-amber-300 font-medium">
+            <span className="inline-flex items-center gap-1.5 text-warning-text font-medium">
               <PenTool className="size-3.5" />
               Signature required via DocuSign
             </span>
@@ -123,20 +128,27 @@ export function DocumentRow({
           )}
         </div>
 
-        {/* Expiry Date with amber "· soon" suffix per §1.8 */}
+        {/* Expiry Date per §6.3 Expiry Tracking Engine */}
         {doc.expiresOn && (
           <div
             className={cn(
               "flex items-center gap-1.5 tabular-nums text-xs shrink-0",
-              isExpiringSoon
-                ? "text-amber-600 dark:text-amber-400 font-medium"
+              isCriticalExpiry
+                ? "text-danger-text font-semibold"
+                : isWarningExpiry
+                ? "text-warning-text font-medium"
                 : "text-muted-foreground"
             )}
           >
             <Calendar className="size-3.5 shrink-0" />
             <span>Expires {formatJoiningDate(doc.expiresOn)}</span>
-            {isExpiringSoon && (
-              <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/25 ml-0.5">
+            {isCriticalExpiry && (
+              <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-danger-surface text-danger-text border border-danger-border ml-0.5">
+                · {doc.expiringWithinDays !== null && doc.expiringWithinDays <= 0 ? "expired" : "critical"}
+              </span>
+            )}
+            {isWarningExpiry && (
+              <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-warning-surface text-warning-text border border-warning-border ml-0.5">
                 · soon
               </span>
             )}
@@ -148,13 +160,13 @@ export function DocumentRow({
       {doc.file && (
         <div className="flex items-center flex-wrap gap-3 text-[11px] pt-0.5">
           {doc.malwareScanPassed === true && (
-            <span className="inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-medium">
+            <span className="inline-flex items-center gap-1 text-success-text font-medium">
               <ShieldCheck className="size-3.5 stroke-[2.5]" />
               Malware scan passed
             </span>
           )}
           {doc.malwareScanPassed === false && (
-            <span className="inline-flex items-center gap-1 text-destructive font-semibold">
+            <span className="inline-flex items-center gap-1 text-danger-text font-semibold">
               <ShieldAlert className="size-3.5 stroke-[2.5]" />
               Malware scan failed
             </span>
@@ -171,12 +183,12 @@ export function DocumentRow({
 
       {/* Inline SCAN_FAILED Banner per §1.7 */}
       {isScanFailed && (
-        <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-xs space-y-1">
+        <div className="p-3 rounded-lg bg-danger-surface border border-danger-border text-danger-text text-xs space-y-1">
           <div className="flex items-center gap-1.5 font-semibold">
             <ShieldAlert className="size-4 shrink-0" />
             <span>Malware Scan Failed — Submission Blocked</span>
           </div>
-          <p className="text-[11px] text-destructive/90 leading-normal pl-5.5">
+          <p className="text-[11px] text-danger-text/90 leading-normal pl-5.5">
             {doc.rejectionReason ||
               `File "${doc.file?.name || "attachment"}" failed cybersecurity malware scanning and has been quarantined. You must replace this file before submitting to DIEZ.`}
           </p>
@@ -185,12 +197,12 @@ export function DocumentRow({
 
       {/* Inline REJECTED Banner per §1.6 */}
       {isRejected && (
-        <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-xs space-y-1">
+        <div className="p-3 rounded-lg bg-danger-surface border border-danger-border text-danger-text text-xs space-y-1">
           <div className="flex items-center gap-1.5 font-semibold">
             <AlertCircle className="size-4 shrink-0" />
             <span>Document Declined by DIEZ Review</span>
           </div>
-          <p className="text-[11px] text-destructive/90 leading-normal pl-5.5">
+          <p className="text-[11px] text-danger-text/90 leading-normal pl-5.5">
             {doc.rejectionReason ||
               "Document was rejected during DIEZ compliance review. Please replace with an updated scan."}
           </p>
