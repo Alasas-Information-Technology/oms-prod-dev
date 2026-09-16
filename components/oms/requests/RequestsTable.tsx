@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ChevronDown,
   ChevronLeft,
@@ -121,6 +122,8 @@ export function RequestsTable({
   isNeedsActionTab = false,
   currentUserId = "u-101",
 }: RequestsTableProps) {
+  const router = useRouter();
+
   // Part 3: Default sort on Needs My Action: SLA urgency, then oldest first
   const [sort, setSort] = React.useState<SortState>(() =>
     isNeedsActionTab
@@ -520,6 +523,17 @@ export function RequestsTable({
                               Respond to HR
                             </Button>
                           </Link>
+                        ) : request.currentStage === "Procurement" || request.actualStatus === "HR Approved" || request.nextAction === "Start sourcing" ? (
+                          <Button
+                            size="sm"
+                            className="h-8 w-32 rounded-lg px-2 text-xs font-semibold bg-primary hover:bg-primary/90 text-primary-foreground text-center justify-center shadow-xs"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              router.push(`/app/procurement/sourcing/${request.requestId}`);
+                            }}
+                          >
+                            Source Candidates
+                          </Button>
                         ) : (
                           <Button
                             variant="outline"

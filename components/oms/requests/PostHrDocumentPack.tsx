@@ -109,15 +109,16 @@ export function PostHrDocumentPack({ requestId }: PostHrDocumentPackProps) {
 
   const handlePreparePR = () => {
     setIsPreparingPR(true);
-    toast.loading("Preparing Oracle PR Package...", { id: "pr-prep" });
+    toast.loading("Preparing Oracle PR Package & Sourcing Hand-off...", { id: "pr-prep" });
     setTimeout(() => {
       setIsPreparingPR(false);
       toast.success("Oracle PR Package Prepared Successfully!", {
         id: "pr-prep",
         description:
-          "Requisition hand-off payload compiled and dispatched to Procurement.",
+          "Opening Procurement Sourcing workspace...",
       });
-    }, 1200);
+      router.push(`/app/procurement/sourcing/${request.requestId}`);
+    }, 1000);
   };
 
   return (

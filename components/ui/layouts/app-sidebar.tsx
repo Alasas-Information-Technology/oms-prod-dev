@@ -94,8 +94,11 @@ const navGroups: NavGroup[] = [
     items: [
       {
         title: "Procurement",
-        url: "/app/procurement",
         icon: ShoppingCart,
+        items: [
+          { title: "Overview", url: "/app/procurement" },
+          { title: "Sourcing", url: "/app/procurement/sourcing" },
+        ],
       },
       {
         title: "Vendors",
