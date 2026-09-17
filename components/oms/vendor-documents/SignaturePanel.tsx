@@ -117,13 +117,13 @@ export function SignaturePanel({
       {/* Panel Header: Template Name */}
       <div className="space-y-1 border-b border-border/50 pb-3">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider font-mono flex items-center gap-1.5">
+          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
             <FileSignature className="size-3.5 text-teal-600 dark:text-teal-400" />
             E-Signature
           </span>
           <span
             className={cn(
-              "text-[10px] font-mono px-2 py-0.5 rounded-full border flex items-center gap-1 font-medium",
+              "text-[10px] px-2 py-0.5 rounded-full border flex items-center gap-1 font-medium",
               badgeClass
             )}
           >
@@ -141,7 +141,7 @@ export function SignaturePanel({
 
       {/* Signer Sequence per §4.3 */}
       <div className="space-y-2">
-        <span className="text-[11px] font-mono font-medium text-muted-foreground uppercase tracking-wider">
+        <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
           Signer Order
         </span>
         <div className="space-y-2">
@@ -155,26 +155,26 @@ export function SignaturePanel({
                 className="flex items-center justify-between p-2.5 rounded-lg bg-muted/20 border border-border/40 text-xs"
               >
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="size-5 rounded-full bg-muted flex items-center justify-center font-mono text-[10px] font-semibold text-foreground shrink-0">
+                  <span className="size-5 rounded-full bg-muted flex items-center justify-center text-[10px] font-semibold text-foreground shrink-0">
                     {signer.order}
                   </span>
                   <div className="min-w-0">
                     <p className="font-medium text-foreground truncate">
                       {signer.name || (signer.role === "Candidate" && candidateName ? candidateName : "Signer")}
                     </p>
-                    <p className="text-[10px] text-muted-foreground font-mono">
+                    <p className="text-[10px] text-muted-foreground">
                       {signer.role}
                     </p>
                   </div>
                 </div>
 
                 {isSigned ? (
-                  <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-medium flex items-center gap-1 shrink-0">
+                  <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1 shrink-0">
                     <CheckCircle2 className="size-3" />
                     Signed
                   </span>
                 ) : (
-                  <span className="text-[10px] text-muted-foreground font-mono shrink-0">
+                  <span className="text-[10px] text-muted-foreground shrink-0">
                     Pending
                   </span>
                 )}
@@ -188,7 +188,7 @@ export function SignaturePanel({
       <div className="p-3 rounded-lg bg-muted/15 border border-border/50 text-xs space-y-1">
         <div className="flex items-center justify-between text-muted-foreground">
           <span className="text-[11px]">Envelope status</span>
-          <span className="font-mono text-[11px] font-semibold text-foreground">
+          <span className="text-[11px] font-semibold text-foreground">
             {statusLabel}
           </span>
         </div>

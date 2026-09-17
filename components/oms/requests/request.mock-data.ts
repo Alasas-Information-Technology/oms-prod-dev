@@ -171,3 +171,7 @@ export function createMockDraft(
     isMine: true,
   });
 }
+
+export function getRequestById(id: string): OmsRequest | undefined {
+  return MOCK_REQUESTS.find((r) => r.requestId === id);
+}

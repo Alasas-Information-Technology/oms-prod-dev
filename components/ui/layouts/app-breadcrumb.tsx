@@ -91,7 +91,7 @@ export function AppBreadcrumb() {
   return (
     <nav
       aria-label="Page Bar"
-      className="h-[56px] sticky print:static print:border-none top-0 z-10 flex items-center justify-between px-6 bg-background border-b border-border/50 shrink-0 select-none"
+      className="h-[56px] sticky print:static print:border-none top-0 z-10 flex items-center justify-between px-6 bg-[var(--glass-bg-light)] dark:bg-[var(--glass-bg-dark)] backdrop-blur-[var(--glass-blur)] backdrop-saturate-[var(--glass-saturate)] border-b border-[var(--glass-border-light)] dark:border-[var(--glass-border-dark)] shrink-0 select-none transition-colors duration-150"
     >
       {/* Left: Breadcrumb as Page Title (Part 5) */}
       <div className="min-w-0 max-w-[65%]">

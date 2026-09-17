@@ -282,7 +282,7 @@ export function CandidatePipelineWorkspace() {
                 {/* Requisition Section Header */}
                 <div className="p-4 bg-muted/40 border-b border-border/50 flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-muted border border-border/60 text-foreground">
+                    <span className="text-xs font-bold px-2 py-0.5 rounded bg-muted border border-border/60 text-foreground">
                       {req.id}
                     </span>
                     <div>
@@ -333,10 +333,10 @@ export function CandidatePipelineWorkspace() {
                                 <span className="text-sm font-semibold text-foreground">
                                   {cand.fullName}
                                 </span>
-                                <Badge variant="outline" className="text-[10px] font-mono font-bold uppercase py-0 px-1.5">
+                                <Badge variant="outline" className="text-[10px] font-bold uppercase py-0 px-1.5">
                                   {cand.priority}
                                 </Badge>
-                                <span className="text-[11px] text-muted-foreground font-mono">
+                                <span className="text-[11px] text-muted-foreground">
                                   ({cand.anonymisedRef})
                                 </span>
                               </div>

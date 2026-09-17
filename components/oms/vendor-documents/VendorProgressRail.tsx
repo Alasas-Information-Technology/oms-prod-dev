@@ -128,7 +128,7 @@ export function VendorProgressRail({
             </div>
 
             {/* Stage Label: 11px muted font */}
-            <div className="shrink-0 flex items-center gap-1.5 text-[11px] text-muted-foreground group-hover:text-foreground transition-colors font-mono tabular-nums">
+            <div className="shrink-0 flex items-center gap-1.5 text-[11px] text-muted-foreground group-hover:text-foreground transition-colors tabular-nums">
               <span className="font-sans font-medium text-foreground/85">
                 {stageLabel}
               </span>
@@ -151,7 +151,7 @@ export function VendorProgressRail({
               <span className="font-semibold text-foreground text-xs uppercase tracking-wider">
                 Onboarding Lifecycle
               </span>
-              <span className="text-[11px] font-mono text-muted-foreground">
+              <span className="text-[11px] text-muted-foreground">
                 Stage {currentStage} of {totalStages}
               </span>
             </div>
@@ -203,7 +203,7 @@ export function VendorProgressRail({
                         </p>
                         <span
                           className={cn(
-                            "text-[10px] px-1.5 py-0.2 rounded-full uppercase tracking-wider font-mono",
+                            "text-[10px] px-1.5 py-0.2 rounded-full uppercase tracking-wider",
                             isCompleted && "bg-muted text-muted-foreground",
                             isCurrent && "bg-primary/15 text-primary font-semibold",
                             isPending && "text-muted-foreground/60"

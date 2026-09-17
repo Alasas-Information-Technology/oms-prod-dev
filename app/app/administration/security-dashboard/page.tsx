@@ -8,6 +8,7 @@ import { securityApi } from "@/lib/api/security";
 import { DataTable, RowAction } from "@/components/shared/DataTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { GlassBackground } from "@/components/ui/GlassBackground";
 import { RefreshCcw, Shield, Radio, Activity } from "lucide-react";
 import { Icon } from "@iconify/react";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -216,7 +217,8 @@ export default function SecurityDashboard() {
   ];
 
   return (
-    <div className="p-6 flex flex-col gap-6">
+    <div className="flex-1 w-full max-w-[1600px] mx-auto p-4 md:p-6 space-y-6 pb-20">
+      <GlassBackground />
       <PageBarActions>
         <Button
           type="button"
@@ -240,7 +242,7 @@ export default function SecurityDashboard() {
           {/* Telemetry Status Bar */}
           <div className="flex flex-wrap items-center justify-between gap-3 p-3 px-4 rounded-xl border border-border/60 bg-card/60 backdrop-blur-xs">
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-muted/70 text-xs font-mono">
+              <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-muted/70 text-xs">
                 <span className="flex h-2 w-2 relative">
                   {streamConnected && (
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />

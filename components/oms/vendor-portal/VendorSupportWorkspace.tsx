@@ -146,8 +146,8 @@ export function VendorSupportWorkspace({
             <span className="text-[11px] font-bold tracking-wider uppercase text-muted-foreground">
               Operational Helpdesk
             </span>
-            <span className="text-muted-foreground/40 font-mono">/</span>
-            <span className="text-[11px] font-mono font-medium text-teal-600 dark:text-teal-400">
+            <span className="text-muted-foreground/40">/</span>
+            <span className="text-[11px] font-medium text-teal-600 dark:text-teal-400">
               Procurement Desk
             </span>
           </div>
@@ -184,7 +184,7 @@ export function VendorSupportWorkspace({
           <div className="space-y-1">
             <p className="font-bold text-foreground flex items-center gap-1.5">
               General Operations Support Only — Strict Separation from Candidate Evaluation
-              <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 font-mono">
+              <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300">
                 RFP Section 4.11
               </span>
             </p>
@@ -211,7 +211,7 @@ export function VendorSupportWorkspace({
               <MessageSquare className="w-4 h-4 text-teal-600 dark:text-teal-400" />
               Communication Thread
             </h2>
-            <span className="text-[11px] font-mono text-muted-foreground">
+            <span className="text-[11px] text-muted-foreground">
               {messages.length} Messages Recorded
             </span>
           </div>
@@ -250,7 +250,7 @@ export function VendorSupportWorkspace({
                       <Badge variant="outline" className="text-[10px] border-border/60">
                         {formatCategoryLabel(msg.category)}
                       </Badge>
-                      <span className="font-mono">{msg.sentAt.replace("T", " ").substring(0, 16)}</span>
+                      <span>{msg.sentAt.replace("T", " ").substring(0, 16)}</span>
                     </div>
                   </div>
 
@@ -273,7 +273,7 @@ export function VendorSupportWorkspace({
                         {msg.attachments.map((att) => (
                           <div
                             key={att.id}
-                            className="p-2 rounded-md bg-muted/40 border border-border/60 text-[11px] font-mono text-foreground flex items-center gap-1.5"
+                            className="p-2 rounded-md bg-muted/40 border border-border/60 text-[11px] text-foreground flex items-center gap-1.5"
                           >
                             <FileText className="w-3 h-3 text-teal-600 dark:text-teal-400" />
                             <span>{att.name}</span>

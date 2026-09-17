@@ -196,7 +196,7 @@ export function DocumentUploadModalContent({
         {/* Previous File Retention Card (Replace Flow §1.13) */}
         {isReplaceFlow && doc.file && (
           <div className="p-3 rounded-lg bg-muted/40 border border-border/70 space-y-1.5">
-            <div className="flex items-center justify-between text-muted-foreground font-mono text-[11px]">
+            <div className="flex items-center justify-between text-muted-foreground text-[11px]">
               <span className="uppercase font-semibold">Currently Active File</span>
               <span>Retained until scan clears</span>
             </div>
@@ -210,7 +210,7 @@ export function DocumentUploadModalContent({
                   ({formatBytes(doc.file.sizeBytes)})
                 </span>
               </div>
-              <span className="text-[10px] px-1.5 py-0.2 rounded-full font-mono bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-medium">
+              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-medium">
                 Active
               </span>
             </div>
@@ -326,7 +326,7 @@ export function DocumentUploadModalContent({
             type="date"
             value={expiresOn}
             onChange={(e) => setExpiresOn(e.target.value)}
-            className="text-xs h-8.5 font-mono"
+            className="text-xs h-8.5"
           />
         </div>
       </div>

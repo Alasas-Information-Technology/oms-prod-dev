@@ -55,30 +55,72 @@ export function ContractRunwayWidget({
         </div>
       ) : (
         <div className="flex flex-col gap-3 w-full">
-          {/* Top Buckets Row */}
-          <div className="grid grid-cols-4 gap-2.5">
-            {buckets.map((bucket, i) => (
-              <div 
-                key={bucket.range} 
-                className="flex flex-col p-3 rounded-md border border-border/60 bg-muted/30 dark:bg-slate-800/30 shadow-2xs"
-              >
-                <span className="text-[11px] font-medium text-muted-foreground truncate mb-1">
-                  {bucket.label}
-                </span>
-                <span className={cn(
-                  "text-lg font-bold font-mono tabular-nums leading-none",
-                  i === 0 ? "text-rose-600 dark:text-rose-400" : i === 1 ? "text-amber-600 dark:text-amber-400" : "text-foreground"
-                )}>
-                  {bucket.count}
-                </span>
-              </div>
-            ))}
+          {/* Top Buckets Row with Bucket-Style Bars */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            {buckets.map((bucket, i) => {
+              const maxBucketCount = Math.max(...buckets.map((b) => b.count), 1);
+              const totalContracts = buckets.reduce((sum, b) => sum + b.count, 0) || 1;
+              const barPercent = Math.max(4, Math.min(100, (bucket.count / maxBucketCount) * 100));
+              const sharePercent = Math.round((bucket.count / totalContracts) * 100);
+              const barColor =
+                i === 0
+                  ? "var(--danger-border, #B0432C)"
+                  : i === 1
+                    ? "var(--warning-border, #B4791F)"
+                    : "var(--primary)";
+
+              return (
+                <div
+                  key={bucket.range}
+                  className="p-2.5 rounded-sm bg-muted/30 border hover:bg-accent border-foreground/10 dark:border-foreground/4 transition-colors flex flex-col justify-between"
+                >
+                  <span className="text-[11px] font-medium text-muted-foreground truncate mb-1">
+                    {bucket.label}
+                  </span>
+                  <div className="flex items-baseline justify-between gap-1">
+                    <span
+                      className={cn(
+                        "text-lg font-bold tabular-nums leading-none",
+                        i === 0
+                          ? "text-danger-text"
+                          : i === 1
+                            ? "text-warning-text"
+                            : "text-foreground"
+                      )}
+                    >
+                      {bucket.count}
+                    </span>
+                    <span className="text-[10.5px] text-muted-foreground tabular-nums">
+                      {sharePercent}%
+                    </span>
+                  </div>
+
+                  {/* Bucket-style visual bar per C2 */}
+                  <div
+                    className="w-full bg-muted/60 dark:bg-slate-800/80 rounded-full h-1.5 mt-2 overflow-hidden"
+                    role="progressbar"
+                    aria-valuenow={bucket.count}
+                    aria-valuemin={0}
+                    aria-valuemax={maxBucketCount}
+                    aria-label={`${bucket.label}: ${bucket.count} contracts (${sharePercent}%)`}
+                  >
+                    <div
+                      className="h-full rounded-full transition-all duration-300"
+                      style={{
+                        width: `${barPercent}%`,
+                        backgroundColor: barColor,
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {/* Replacement Window Alert */}
           {replacementWindowCount > 0 && (
-            <Link 
-              href="/app/workforce?filter=ending-soon" 
+            <Link
+              href="/app/workforce?filter=ending-soon"
               className="flex items-center justify-between px-3.5 py-2.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-900 dark:text-amber-300 group hover:bg-amber-500/15 transition-colors shadow-2xs"
             >
               <div className="flex items-center gap-2.5">
@@ -93,7 +135,7 @@ export function ContractRunwayWidget({
 
           {/* Vendors T9 List */}
           {vendors.length > 0 && (
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
               {vendors.slice(0, 3).map((v) => (
                 <DashboardListRow
                   key={v.vendorId}
@@ -102,11 +144,11 @@ export function ContractRunwayWidget({
                   subtitle={`${v.active} active resources`}
                   trailing={
                     v.endingWithin90Days > 0 ? (
-                      <span className="text-amber-600 dark:text-amber-400 font-mono tabular-nums">
+                      <span className="text-amber-600 dark:text-amber-400 tabular-nums">
                         {v.endingWithin90Days} ending &lt;90d
                       </span>
                     ) : (
-                      <span className="text-muted-foreground font-mono tabular-nums">
+                      <span className="text-muted-foreground tabular-nums">
                         0 ending
                       </span>
                     )

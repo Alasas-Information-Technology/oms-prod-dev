@@ -79,7 +79,7 @@ export function ApprovalDetailShell({
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="font-mono text-[11px] font-medium bg-muted/50 border border-border/40 px-1.5 py-0.5 rounded text-foreground">
+              <span className="text-[11px] font-medium bg-muted/50 border border-border/40 px-1.5 py-0.5 rounded text-foreground">
                 {task.subjectRef}
               </span>
               <span>&middot;</span>

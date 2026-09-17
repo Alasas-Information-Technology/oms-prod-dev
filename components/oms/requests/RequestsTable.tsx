@@ -380,7 +380,7 @@ export function RequestsTable({
 
                     <TableCell className="px-3 py-3 whitespace-nowrap">
                       <div className="flex flex-col gap-1">
-                        <span className="whitespace-nowrap font-mono text-xs font-semibold text-foreground/90">
+                        <span className="whitespace-nowrap text-xs font-semibold text-foreground/90">
                           {request.requestId}
                         </span>
                         {request.actingFor && (

@@ -38,6 +38,7 @@ export function RequisitorActionStackTile({
           description={`Out of ${draftsTotal} saved drafts`}
           href="/app/requests?filter=drafts"
           icon="lucide:clock"
+          sparkline={[1, 2, 1, 2, 1, 2, 3, 2, 1, 2, 1, 2, 2]}
           isLoading={isLoading}
           zeroMeaning="GOOD"
           zeroLabel="No expiring drafts"

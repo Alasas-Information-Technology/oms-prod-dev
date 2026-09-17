@@ -60,7 +60,7 @@ export default function ClarificationDevPage() {
       {/* Dev Switcher Bar */}
       <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border px-6 py-2.5 flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="font-mono text-xs bg-primary/10 text-primary border-primary/20 mr-1">
+          <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20 mr-1">
             DEV WORKBENCH
           </Badge>
           <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -101,8 +101,8 @@ export default function ClarificationDevPage() {
         </div>
         <div className="flex items-center gap-3">
           <div className="text-xs text-muted-foreground hidden sm:block">
-            Req: <code className="font-mono text-primary font-semibold">{fixture.requestId}</code> ·{" "}
-            Type: <code className="font-mono text-primary font-semibold">{fixture.type}</code>
+            Req: <code className="text-primary font-semibold">{fixture.requestId}</code> ·{" "}
+            Type: <code className="text-primary font-semibold">{fixture.type}</code>
           </div>
           <Button
             size="sm"

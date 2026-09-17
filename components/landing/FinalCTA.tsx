@@ -12,7 +12,7 @@ export function FinalCTA() {
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="bg-gradient-to-br from-primary/5 via-background to-[#A6DCE6]/5 border-t border-border/40"
+      className="bg-gradient-to-br from-primary/5 via-background to-brand-teal/5 border-t border-border/40"
     >
       <div className="max-w-[1280px] mx-auto px-6 sm:px-8 lg:px-12 py-20 sm:py-24 md:py-32 text-center flex flex-col items-center">
         

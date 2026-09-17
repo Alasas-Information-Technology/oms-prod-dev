@@ -199,7 +199,7 @@ export function VendorSubmissionHistoryWorkspace({
       <div className="w-full bg-background border-b border-border/70 px-4 sm:px-6 py-4 space-y-3 transition-colors">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Link href="/vendor" className="hover:text-foreground transition-colors">
                 Vendor Portal
               </Link>
@@ -214,7 +214,7 @@ export function VendorSubmissionHistoryWorkspace({
                 <Users className="size-6 text-teal-600 dark:text-teal-400" />
                 Submitted Candidates
               </h1>
-              <Badge variant="outline" className="text-xs font-mono border-border/80">
+              <Badge variant="outline" className="text-xs border-border/80">
                 {submissions.length} Total Submissions
               </Badge>
               {actionRequiredCount > 0 && (
@@ -256,7 +256,7 @@ export function VendorSubmissionHistoryWorkspace({
               <span className="text-xs font-medium">All Submissions</span>
               <Users className="size-4 opacity-70" />
             </div>
-            <div className="text-2xl font-bold tracking-tight text-foreground font-mono">
+            <div className="text-2xl font-bold tracking-tight text-foreground">
               {submissions.length}
             </div>
             <div className="text-[11px] text-muted-foreground mt-1">
@@ -282,7 +282,7 @@ export function VendorSubmissionHistoryWorkspace({
               </span>
               <Clock className="size-4" />
             </div>
-            <div className="text-2xl font-bold tracking-tight text-amber-700 dark:text-amber-300 font-mono">
+            <div className="text-2xl font-bold tracking-tight text-amber-700 dark:text-amber-300">
               {actionRequiredCount}
             </div>
             <div className="text-[11px] text-amber-600/90 dark:text-amber-400/90 font-medium mt-1">
@@ -301,7 +301,7 @@ export function VendorSubmissionHistoryWorkspace({
               <span className="text-xs font-medium">Under Review</span>
               <FileText className="size-4 opacity-70" />
             </div>
-            <div className="text-2xl font-bold tracking-tight text-foreground font-mono">
+            <div className="text-2xl font-bold tracking-tight text-foreground">
               {inReviewCount}
             </div>
             <div className="text-[11px] text-muted-foreground mt-1">
@@ -320,7 +320,7 @@ export function VendorSubmissionHistoryWorkspace({
               <span className="text-xs font-medium">Qualified / Hired</span>
               <CheckCircle2 className="size-4 opacity-70 text-teal-600 dark:text-teal-400" />
             </div>
-            <div className="text-2xl font-bold tracking-tight text-foreground font-mono">
+            <div className="text-2xl font-bold tracking-tight text-foreground">
               {qualifiedCount}
             </div>
             <div className="text-[11px] text-muted-foreground mt-1">
@@ -456,7 +456,7 @@ export function VendorSubmissionHistoryWorkspace({
                                 <span className="size-2 rounded-full bg-amber-500 animate-pulse" />
                               )}
                             </div>
-                            <div className="text-[11px] font-mono text-muted-foreground flex items-center gap-1">
+                            <div className="text-[11px] text-muted-foreground flex items-center gap-1">
                               <span className="px-1.5 py-0.2 rounded bg-muted text-muted-foreground border border-border/60">
                                 {item.candidateRef}
                               </span>
@@ -474,7 +474,7 @@ export function VendorSubmissionHistoryWorkspace({
                               {item.positionTitle}
                             </Link>
                             <div className="text-[11px] text-muted-foreground flex items-center gap-1.5">
-                              <span className="font-mono text-xs">{item.requisitionId}</span>
+                              <span className="text-xs">{item.requisitionId}</span>
                               <span>·</span>
                               <span className="line-clamp-1">{item.departmentName}</span>
                             </div>
@@ -496,7 +496,7 @@ export function VendorSubmissionHistoryWorkspace({
 
                         {/* 4. Quoted Rate */}
                         <td className="py-3 px-4 align-top text-right">
-                          <div className="font-semibold font-mono text-foreground text-xs">
+                          <div className="font-semibold text-foreground text-xs">
                             <Amount value={item.quotedCost} currency="AED" />
                           </div>
                           <div className="text-[10px] text-muted-foreground">Annual base</div>
@@ -510,7 +510,7 @@ export function VendorSubmissionHistoryWorkspace({
                         </td>
 
                         {/* 6. Submitted Date */}
-                        <td className="py-3 px-4 align-top text-muted-foreground font-mono text-[11px]">
+                        <td className="py-3 px-4 align-top text-muted-foreground text-[11px]">
                           {formatDate(item.submittedAt)}
                         </td>
 
@@ -568,7 +568,7 @@ export function VendorSubmissionHistoryWorkspace({
               Evaluation progress is updated by DIEZ in real-time. Candidate submissions are strictly
               private to your agency.
             </span>
-            <span className="font-mono text-[10px]">
+            <span className="text-[10px]">
               Showing {filteredSubmissions.length} of {submissions.length} candidates
             </span>
           </div>

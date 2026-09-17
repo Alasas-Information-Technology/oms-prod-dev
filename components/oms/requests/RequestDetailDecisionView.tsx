@@ -141,7 +141,7 @@ export function RequestDetailDecisionView({
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 border-b border-border/40 pb-5">
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="font-mono text-xs font-semibold bg-muted border border-border/50 px-2 py-0.5 rounded text-foreground">
+              <span className="text-xs font-semibold bg-muted border border-border/50 px-2 py-0.5 rounded text-foreground">
                 {task.subjectRef}
               </span>
               <span>&middot;</span>

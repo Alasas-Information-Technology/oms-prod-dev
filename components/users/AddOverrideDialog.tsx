@@ -130,7 +130,7 @@ export function AddOverrideDialog({
               id="perm-select"
               value={selectedPermId}
               onChange={(e) => setSelectedPermId(e.target.value)}
-              className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm font-mono focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
             >
               {COMMON_PERMISSIONS.map((p) => (
                 <option key={p.id} value={p.id}>

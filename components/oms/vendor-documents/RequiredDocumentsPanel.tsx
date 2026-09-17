@@ -63,7 +63,7 @@ export function RequiredDocumentsPanel({
               </h3>
               <Badge
                 variant="secondary"
-                className="text-[11px] font-mono font-semibold px-2 py-0.5 bg-muted text-foreground/90"
+                className="text-[11px] font-semibold px-2 py-0.5 bg-muted text-foreground/90"
               >
                 {`${health.uploaded}/${health.required}`}
               </Badge>

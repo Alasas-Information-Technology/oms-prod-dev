@@ -6,6 +6,7 @@ import { WidgetProps } from "@/lib/dashboard/registry";
 import { TimeInStageData } from "@/types/dashboard";
 import { categoricalScale } from "@/lib/dashboard/chart-tokens";
 import { DataTable, ColumnDef } from "@/components/shared/DataTable";
+import { DotMatrix } from "../charts/DotMatrix";
 
 /**
  * V5 — Time in stage with bottleneck per DASHBOARD-VISUAL-DEPTH.md:
@@ -58,7 +59,7 @@ export function TimeInStageChart({
           <span>{row.label}</span>
           {row.isSlowest && (
             <span className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold bg-amber-500/10 px-1.5 py-0.2 rounded">
-              Slowest
+              Slowest stage
             </span>
           )}
         </div>
@@ -68,18 +69,15 @@ export function TimeInStageChart({
       key: "avgDays",
       header: "Avg Days",
       align: "right",
-      render: (val: any) => <span className="font-mono tabular-nums text-foreground">{typeof val === "number" ? val : String(val)}d</span>,
+      render: (val: any) => <span className="tabular-nums text-foreground">{typeof val === "number" ? val : String(val)}d</span>,
     },
     {
       key: "targetDays",
       header: "Target",
       align: "right",
-      render: (val: any) => <span className="font-mono tabular-nums text-muted-foreground">{val ? `${val}d` : "—"}</span>,
+      render: (val: any) => <span className="tabular-nums text-muted-foreground">{val ? `${val}d` : "—"}</span>,
     },
   ];
-
-  // Stage colors: Blue, Indigo, Violet, Cyan, Amber/Rose
-  const stagePalette = ["#3b82f6", "#6366f1", "#8b5cf6", "#06b6d4", "#f59e0b"];
 
   return (
     <WidgetShell
@@ -113,59 +111,26 @@ export function TimeInStageChart({
             />
           </div>
 
-          {/* Desktop Horizontal Bars View */}
-          <div className="hidden md:flex flex-col gap-2 w-full">
-            {stages.map((stage, idx) => {
-              const isSlowest = stage.isSlowest || stage === slowestStage;
-              const barPercent = Math.min(100, Math.max(5, (stage.avgDays / maxVal) * 100));
-              const targetPercent = stage.targetDays
-                ? Math.min(100, (stage.targetDays / maxVal) * 100)
-                : null;
-              const barColor = isSlowest
-                ? "#f43f5e"
-                : stagePalette[idx % stagePalette.length];
-
-              return (
-                <div key={stage.stage || idx} className="flex flex-col gap-0.5 w-full">
-                  {/* Row Label & Numeric Values */}
-                  <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-medium text-foreground/90 text-[12px]">{stage.label}</span>
-                      {isSlowest && (
-                        <span className="text-[9.5px] font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 px-1.5 py-0.2 rounded border border-rose-500/20">
-                          Slowest
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2 font-mono text-[11px] tabular-nums">
-                      <span className="font-semibold text-foreground">{stage.avgDays}d</span>
-                      {stage.targetDays && (
-                        <span className="text-muted-foreground">(target {stage.targetDays}d)</span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Horizontal Bar Track with Target SLA Marker */}
-                  <div className="relative h-2 w-full bg-muted/40 dark:bg-slate-800/60 rounded-full overflow-hidden">
-                    <div
-                      style={{
-                        width: `${barPercent}%`,
-                        backgroundColor: barColor,
-                      }}
-                      className="h-full rounded-full transition-all duration-300 shadow-2xs"
-                    />
-                    {/* Target SLA dashed line */}
-                    {targetPercent !== null && (
-                      <div
-                        style={{ left: `${targetPercent}%` }}
-                        className="absolute top-0 bottom-0 w-[2px] bg-foreground/70 border-l border-dashed border-background z-10"
-                        title={`SLA Target: ${stage.targetDays} days`}
-                      />
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+          {/* Desktop DotMatrix View (resolves adjacent-duplicate with workforce-by-department) */}
+          <div className="hidden md:flex flex-col gap-1.5 w-full">
+            <div className="flex items-center justify-between text-xs px-1 text-muted-foreground">
+              <span className="font-medium text-[11px]">Duration per stage (days):</span>
+              {slowestStage && (
+                <span className="text-[10.5px] font-semibold text-warning-text bg-warning-surface px-1.5 py-0.2 rounded border border-warning-border">
+                  Slowest: {slowestStage.label} ({slowestStage.avgDays}d)
+                </span>
+              )}
+            </div>
+            <DotMatrix
+              data={stages}
+              valueKey="avgDays"
+              periodKey="label"
+              accessibilitySummary={`Stage duration in days. ${caption}`}
+              color="var(--accent-interactive, var(--primary))"
+              height={82}
+              maxDotsPerColumn={5}
+              valueFormatter={(v) => `${v}d`}
+            />
           </div>
 
           {/* Bottom Assessment & Contextual Caption */}
@@ -173,7 +138,7 @@ export function TimeInStageChart({
             <span className="font-medium text-[11.5px] text-amber-600 dark:text-amber-400">
               {caption}
             </span>
-            <span className="text-[10.5px] text-muted-foreground font-mono tabular-nums">
+            <span className="text-[10.5px] text-muted-foreground tabular-nums">
               Dept avg: {overallAvg.toFixed(1)}d
             </span>
           </div>

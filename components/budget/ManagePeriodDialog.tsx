@@ -350,7 +350,7 @@ export function ManagePeriodDialog({
                           <span className="font-semibold text-foreground truncate">
                             {step.roleDisplayName || step.role}
                           </span>
-                          <span className="text-[10px] text-muted-foreground whitespace-nowrap font-mono shrink-0">
+                          <span className="text-[10px] text-muted-foreground whitespace-nowrap shrink-0">
                             {isApproved ? formatTimestamp(step.approvedAt) : isPending ? "Awaiting" : "—"}
                           </span>
                         </div>
@@ -383,7 +383,7 @@ export function ManagePeriodDialog({
                       </span>
                       {s.label}
                     </span>
-                    <span className="text-[10px] font-mono text-muted-foreground">{s.time}</span>
+                    <span className="text-[10px] text-muted-foreground">{s.time}</span>
                   </div>
                 ))
               )}

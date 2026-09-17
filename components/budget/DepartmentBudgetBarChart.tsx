@@ -46,11 +46,11 @@ const topTenDepartments = [...chartData]
 const chartConfig = {
   allocated: {
     label: "Allocated",
-    color: "#14b8a6",
+    color: "var(--chart-1)",
   },
   committed: {
     label: "Committed",
-    color: "#3b82f6",
+    color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
 
@@ -67,6 +67,16 @@ export function DepartmentBudgetBarChart() {
       <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart accessibilityLayer data={topTenDepartments}>
+            <defs>
+              <linearGradient id="grad-chart-1" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="var(--chart-1)" stopOpacity={1} />
+                <stop offset="100%" stopColor="var(--chart-1)" stopOpacity={0.85} />
+              </linearGradient>
+              <linearGradient id="grad-chart-2" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="var(--chart-2)" stopOpacity={1} />
+                <stop offset="100%" stopColor="var(--chart-2)" stopOpacity={0.85} />
+              </linearGradient>
+            </defs>
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="department"
@@ -79,8 +89,8 @@ export function DepartmentBudgetBarChart() {
               cursor={false}
               content={<ChartTooltipContent indicator="dashed" />}
             />
-            <Bar dataKey="allocated" fill="#14b8a6" radius={4} />
-            <Bar dataKey="committed" fill="#3b82f6" radius={4} />
+            <Bar dataKey="allocated" fill="url(#grad-chart-1)" radius={4} />
+            <Bar dataKey="committed" fill="url(#grad-chart-2)" radius={4} />
           </BarChart>
         </ChartContainer>
       </CardContent>

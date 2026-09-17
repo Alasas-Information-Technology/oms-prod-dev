@@ -217,7 +217,7 @@ export function AuditTrailGrid() {
               ) : (
                 filteredLogs.map((log) => (
                   <TableRow key={log.id} className="hover:bg-muted/30">
-                    <TableCell className="text-xs font-mono text-muted-foreground whitespace-nowrap">
+                    <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
                       {log.date}
                     </TableCell>
                     <TableCell>
@@ -234,7 +234,7 @@ export function AuditTrailGrid() {
                     <TableCell>
                       <Badge
                         variant="outline"
-                        className="text-[10px] font-mono bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/20"
+                        className="text-[10px] bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/20"
                       >
                         {log.oldVal}
                       </Badge>
@@ -242,12 +242,12 @@ export function AuditTrailGrid() {
                     <TableCell>
                       <Badge
                         variant="outline"
-                        className="text-[10px] font-mono bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20"
+                        className="text-[10px] bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20"
                       >
                         {log.newVal}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-right text-xs font-mono text-muted-foreground">
+                    <TableCell className="text-right text-xs text-muted-foreground">
                       {log.ipAddress}
                     </TableCell>
                   </TableRow>
@@ -263,7 +263,7 @@ export function AuditTrailGrid() {
             <Button variant="outline" size="sm" disabled className="h-7 w-7 p-0 rounded-lg">
               <ChevronLeft className="size-3.5" />
             </Button>
-            <span className="font-mono text-[11px] px-1.5">1 / 1</span>
+            <span className="text-[11px] px-1.5">1 / 1</span>
             <Button variant="outline" size="sm" disabled className="h-7 w-7 p-0 rounded-lg">
               <ChevronRight className="size-3.5" />
             </Button>

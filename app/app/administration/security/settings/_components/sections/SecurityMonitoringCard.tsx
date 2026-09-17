@@ -124,7 +124,7 @@ export function SecurityMonitoringCard({ summary, isLoading }: Props) {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute flex flex-col items-center justify-center bottom-2">
-              <span className="text-4xl font-bold font-mono tracking-tight" style={{ color: healthColor }}>
+              <span className="text-4xl font-bold tracking-tight" style={{ color: healthColor }}>
                 {healthScore}%
               </span>
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">
@@ -141,19 +141,19 @@ export function SecurityMonitoringCard({ summary, isLoading }: Props) {
             <div className="space-y-2">
               <div className="flex items-center justify-between p-2 rounded-lg bg-background/80 border border-border/40 text-xs">
                 <span className="text-muted-foreground">Failed Logins Impact ({summary.failedLogins24Hours || 0})</span>
-                <span className={cn("font-mono font-bold", failedLoginImpact > 0 ? "text-red-500" : "text-emerald-500")}>
+                <span className={cn("font-bold", failedLoginImpact > 0 ? "text-red-500" : "text-emerald-500")}>
                   {failedLoginImpact > 0 ? `-${failedLoginImpact} pts` : "0 pts"}
                 </span>
               </div>
               <div className="flex items-center justify-between p-2 rounded-lg bg-background/80 border border-border/40 text-xs">
                 <span className="text-muted-foreground">Replay Violations Impact ({summary.refreshTokenReplayEvents24Hours || 0})</span>
-                <span className={cn("font-mono font-bold", replayImpact > 0 ? "text-red-500" : "text-emerald-500")}>
+                <span className={cn("font-bold", replayImpact > 0 ? "text-red-500" : "text-emerald-500")}>
                   {replayImpact > 0 ? `-${replayImpact} pts` : "0 pts"}
                 </span>
               </div>
               <div className="flex items-center justify-between p-2 rounded-lg bg-background/80 border border-border/40 text-xs">
                 <span className="text-muted-foreground">Locked Users Impact ({summary.lockedUsers || 0})</span>
-                <span className={cn("font-mono font-bold", lockedAccountImpact > 0 ? "text-red-500" : "text-emerald-500")}>
+                <span className={cn("font-bold", lockedAccountImpact > 0 ? "text-red-500" : "text-emerald-500")}>
                   {lockedAccountImpact > 0 ? `-${lockedAccountImpact} pts` : "0 pts"}
                 </span>
               </div>
@@ -168,7 +168,7 @@ export function SecurityMonitoringCard({ summary, isLoading }: Props) {
               <span>Active Sessions</span>
               <Users className="size-3.5 text-blue-500" />
             </div>
-            <span className="text-xl font-bold font-mono text-foreground block">
+            <span className="text-xl font-bold text-foreground block">
               {summary.activeSessions || 0}
             </span>
             <span className="text-[10px] text-muted-foreground">Live connections</span>
@@ -179,7 +179,7 @@ export function SecurityMonitoringCard({ summary, isLoading }: Props) {
               <span>Locked Users</span>
               <Lock className="size-3.5 text-orange-500" />
             </div>
-            <span className="text-xl font-bold font-mono text-foreground block">
+            <span className="text-xl font-bold text-foreground block">
               {summary.lockedUsers || 0}
             </span>
             <span className="text-[10px] text-muted-foreground">Admin unlock req</span>
@@ -190,7 +190,7 @@ export function SecurityMonitoringCard({ summary, isLoading }: Props) {
               <span>Failed Logins</span>
               <ShieldAlert className="size-3.5 text-red-500" />
             </div>
-            <span className="text-xl font-bold font-mono text-foreground block">
+            <span className="text-xl font-bold text-foreground block">
               {summary.failedLogins24Hours || 0}
             </span>
             <span className="text-[10px] text-muted-foreground">Last 24 hours</span>
@@ -201,7 +201,7 @@ export function SecurityMonitoringCard({ summary, isLoading }: Props) {
               <span>Security Events</span>
               <Activity className="size-3.5 text-purple-500" />
             </div>
-            <span className="text-xl font-bold font-mono text-foreground block">
+            <span className="text-xl font-bold text-foreground block">
               {summary.securityEvents24Hours || 0}
             </span>
             <span className="text-[10px] text-muted-foreground">Audit logs</span>
@@ -212,7 +212,7 @@ export function SecurityMonitoringCard({ summary, isLoading }: Props) {
               <span>Replay Attacks</span>
               <Zap className="size-3.5 text-amber-500" />
             </div>
-            <span className="text-xl font-bold font-mono text-foreground block">
+            <span className="text-xl font-bold text-foreground block">
               {summary.refreshTokenReplayEvents24Hours || 0}
             </span>
             <span className="text-[10px] text-muted-foreground">Blocked instances</span>

@@ -131,7 +131,7 @@ export function WhyNeededPanel({
           <span
             data-slot="justification-counter"
             className={cn(
-              "text-[11px] font-mono",
+              "text-[11px]",
               isTooShort
                 ? "text-amber-800 dark:text-amber-400 font-semibold"
                 : "text-emerald-800 dark:text-emerald-400 font-medium"

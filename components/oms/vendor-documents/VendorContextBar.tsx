@@ -83,7 +83,7 @@ export function VendorContextBar({
               Onboarding
             </Link>
             <ChevronRight className="size-3 text-muted-foreground/60" />
-            <span className="font-mono text-foreground/90 font-medium">
+            <span className="text-foreground/90 font-medium">
               {onboardingId}
             </span>
           </nav>
@@ -139,7 +139,7 @@ export function VendorContextBar({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 text-xs border-t border-border/40 pt-2.5">
         {/* Sub-line: candidate, position, resident status */}
         <div className="flex items-center flex-wrap gap-2 text-muted-foreground">
-          <span className="font-semibold text-foreground font-mono">
+          <span className="font-semibold text-foreground">
             {`Candidate ${candidateRef}`}
           </span>
           <span>·</span>

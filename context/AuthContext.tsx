@@ -106,58 +106,39 @@ export function AuthProvider({
   /**
    * Loads authenticated user
    */
-  const fetchUser =
-    async () => {
-
-      try {
-
-        setIsLoading(true);
-
-        const sessionResult =
-          await getAuthSession();
-
-        const mergeProfile = (baseSession: UserSession | null) => {
-          if (!baseSession) return null;
-          let overrides = {};
-          try {
-            if (typeof window !== "undefined") {
-              const cached = localStorage.getItem("oms_user_profile");
-              if (cached) overrides = JSON.parse(cached);
-            }
-          } catch {}
-          return { ...baseSession, ...overrides };
-        };
-
-        if (sessionResult === "REFRESH_REQUIRED") {
-          try {
-            await refreshSession();
-            const newSession = await getAuthSession();
-            setUser(mergeProfile(newSession !== "REFRESH_REQUIRED" ? newSession : null));
-          } catch {
-            setUser(null);
-          }
-        } else {
-          setUser(mergeProfile(sessionResult));
+  const fetchUser = async () => {
+    setIsLoading(true);
+    try {
+      let sessionResult = await getAuthSession();
+      if (sessionResult === "REFRESH_REQUIRED") {
+        try {
+          await refreshSession();
+          sessionResult = await getAuthSession();
+        } catch {
+          sessionResult = null;
         }
-
-      } catch (err) {
-
-        console.error(
-          "Failed to fetch user:",
-          err
-        );
-
-        setUser(
-          null
-        );
-
-      } finally {
-
-        setIsLoading(
-          false
-        );
       }
-    };
+
+      if (sessionResult && sessionResult !== "REFRESH_REQUIRED") {
+        let finalSession = sessionResult as UserSession;
+        try {
+          if (typeof window !== "undefined") {
+            const cachedProfile = localStorage.getItem("oms_user_profile");
+            if (cachedProfile) {
+              const profileData = JSON.parse(cachedProfile);
+              finalSession = { ...finalSession, ...profileData };
+            }
+          }
+        } catch {}
+        setUser(finalSession);
+      } else {
+        setUser(null);
+      }
+    } catch {
+      setUser(null);
+    }
+    setIsLoading(false);
+  };
 
   /**
    * Enterprise Logout
@@ -166,23 +147,27 @@ export function AuthProvider({
     async () => {
 
       try {
-
         await api.post(
           "/auth/logout"
         );
-
       } catch (err) {
-
         console.error(
           err
         );
       }
 
       try {
-
         await clearAuthCookie();
-
       } catch { }
+
+      if (typeof window !== "undefined") {
+        document.cookie = "oms_access_token=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        document.cookie = "oms_refresh_token=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        try {
+          localStorage.removeItem("oms_demo_persona");
+          localStorage.removeItem("oms_user_profile");
+        } catch {}
+      }
 
       setUser(
         null
@@ -192,7 +177,6 @@ export function AuthProvider({
         typeof window !==
         "undefined"
       ) {
-
         window.location.href =
           "/login";
       }
@@ -407,17 +391,18 @@ export function AuthProvider({
 }
 
 export function useAuth() {
-
-  const context =
-    useContext(
-      AuthContext
-    );
+  const context = useContext(AuthContext);
 
   if (!context) {
-
-    throw new Error(
-      "useAuth must be used within AuthProvider"
-    );
+    return {
+      user: null,
+      isLoading: false,
+      login: async () => null,
+      logout: async () => {},
+      fetchUser: async () => {},
+      refreshSession: async () => {},
+      updateUserProfile: () => {},
+    };
   }
 
   return context;

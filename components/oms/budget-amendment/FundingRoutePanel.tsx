@@ -213,7 +213,7 @@ export function FundingRoutePanel({
                       <span className="font-semibold text-foreground text-xs truncate">
                         {line.name}
                       </span>
-                      <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-muted text-muted-foreground shrink-0">
+                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-muted text-muted-foreground shrink-0">
                         {line.code}
                       </span>
                     </div>
@@ -263,7 +263,7 @@ export function FundingRoutePanel({
                 size="md"
                 value={totalAllocated}
                 abbreviate={false}
-                className="font-mono font-bold text-foreground"
+                className="font-bold text-foreground"
               />
             </div>
           </div>

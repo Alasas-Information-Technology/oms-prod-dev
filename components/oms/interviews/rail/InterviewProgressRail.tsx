@@ -55,6 +55,10 @@ interface InterviewProgressRailProps {
   stepLabel?: string; // default "Propose slots"
   className?: string;
   steps?: LifecycleStep[];
+  title?: string;
+  subtitle?: string;
+  ariaLabelPrefix?: string;
+  defaultOpen?: boolean;
 }
 
 export function InterviewProgressRail({
@@ -63,8 +67,12 @@ export function InterviewProgressRail({
   stepLabel = "Propose slots",
   className,
   steps,
+  title = "Interview Process Lifecycle",
+  subtitle,
+  ariaLabelPrefix = "Interview process progress",
+  defaultOpen = false,
 }: InterviewProgressRailProps) {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(defaultOpen);
   const activeSteps = steps || LIFECYCLE_STEPS;
 
   return (
@@ -82,7 +90,7 @@ export function InterviewProgressRail({
             onMouseLeave={() => setIsOpen(false)}
             onFocus={() => setIsOpen(true)}
             onBlur={() => setIsOpen(false)}
-            aria-label={`Interview process progress: ${stepLabel}, step ${currentStep} of ${totalSteps}. Click or focus to view lifecycle details.`}
+            aria-label={`${ariaLabelPrefix}: ${stepLabel}, step ${currentStep} of ${totalSteps}. Click or focus to view lifecycle details.`}
             className="w-full flex items-center justify-between gap-4 group cursor-pointer focus:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/40 rounded-sm py-0.5 text-left"
           >
             {/* 4px Progress Rail: Five segments, 2px gaps (hidden on mobile) */}
@@ -153,10 +161,10 @@ export function InterviewProgressRail({
         >
           <div className="border-b border-border pb-2">
             <h4 className="text-xs font-semibold text-foreground">
-              Interview Process Lifecycle
+              {title}
             </h4>
             <p className="text-[11px] text-muted-foreground">
-              Step {currentStep} of {totalSteps} · Current stage
+              {subtitle || `Step ${currentStep} of ${totalSteps} · Current stage`}
             </p>
           </div>
 

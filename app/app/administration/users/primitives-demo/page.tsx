@@ -55,7 +55,7 @@ export default function UserPrimitivesDemoPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-5">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono px-2 py-0.5 rounded bg-primary/10 text-primary font-semibold">
+            <span className="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary font-semibold">
               DOMAIN 3 • PART 2 & PART 3.3
             </span>
           </div>
@@ -96,7 +96,7 @@ export default function UserPrimitivesDemoPage() {
                 <CheckCircle2 className="size-5 text-primary" />
                 1. UserStatusBadge (§Part 2)
               </CardTitle>
-              <Badge variant="outline" className="text-[11px] font-mono">
+              <Badge variant="outline" className="text-[11px]">
                 UserStatusBadge.tsx
               </Badge>
             </div>
@@ -148,7 +148,7 @@ export default function UserPrimitivesDemoPage() {
                 <Users className="size-5 text-primary" />
                 2. UserAvatar (Sizes 24, 32, 56)
               </CardTitle>
-              <Badge variant="outline" className="text-[11px] font-mono">
+              <Badge variant="outline" className="text-[11px]">
                 UserAvatar.tsx
               </Badge>
             </div>
@@ -206,7 +206,7 @@ export default function UserPrimitivesDemoPage() {
                 <Shield className="size-5 text-primary" />
                 3. RoleChip with Plain Explanation Tooltip
               </CardTitle>
-              <Badge variant="outline" className="text-[11px] font-mono">
+              <Badge variant="outline" className="text-[11px]">
                 RoleChip.tsx
               </Badge>
             </div>
@@ -241,7 +241,7 @@ export default function UserPrimitivesDemoPage() {
                 <Building2 className="size-5 text-primary" />
                 4. SummaryCard Metric Rows (§Part 3.3)
               </CardTitle>
-              <Badge variant="outline" className="text-[11px] font-mono">
+              <Badge variant="outline" className="text-[11px]">
                 SummaryCard.tsx
               </Badge>
             </div>
@@ -293,7 +293,7 @@ export default function UserPrimitivesDemoPage() {
               <Shield className="size-5 text-primary" />
               5. RoleOption Checkbox Rows (§Part 3.5 & Invite Flow)
             </CardTitle>
-            <Badge variant="outline" className="text-[11px] font-mono">
+            <Badge variant="outline" className="text-[11px]">
               RoleOption.tsx
             </Badge>
           </div>
@@ -347,7 +347,7 @@ export default function UserPrimitivesDemoPage() {
               <AlertTriangle className="size-5 text-amber-500" />
               6. Domain 3 Plain Language Error & Permission Mapping Engine
             </CardTitle>
-            <Badge variant="outline" className="text-[11px] font-mono">
+            <Badge variant="outline" className="text-[11px]">
               user-admin.constants.ts
             </Badge>
           </div>
@@ -365,7 +365,7 @@ export default function UserPrimitivesDemoPage() {
               <select
                 value={selectedErrorCode}
                 onChange={(e) => setSelectedErrorCode(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border bg-background text-xs font-mono"
+                className="w-full h-10 px-3 rounded-lg border bg-background text-xs"
               >
                 {Object.keys(ERROR_MESSAGES).map((code) => (
                   <option key={code} value={code}>
@@ -392,7 +392,7 @@ export default function UserPrimitivesDemoPage() {
               <select
                 value={searchPermCode}
                 onChange={(e) => setSearchPermCode(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border bg-background text-xs font-mono"
+                className="w-full h-10 px-3 rounded-lg border bg-background text-xs"
               >
                 {Object.keys(PERMISSION_CAPABILITIES).map((code) => (
                   <option key={code} value={code}>

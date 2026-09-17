@@ -99,14 +99,14 @@ export function EvaluationCostCard({
       <div className="space-y-2 text-xs">
         <div className="flex justify-between items-center">
           <span className="text-muted-foreground">Approved budget</span>
-          <span className="font-mono tabular-nums font-medium text-foreground">
+          <span className="tabular-nums font-medium text-foreground">
             {`AED ${formatAmount(cost.approvedBudget)}`}
           </span>
         </div>
 
         <div className="flex justify-between items-center">
           <span className="text-muted-foreground">Expected annual cost</span>
-          <span className="font-mono tabular-nums font-medium text-foreground">
+          <span className="tabular-nums font-medium text-foreground">
             {`AED ${formatAmount(cost.expectedAnnualCost)}`}
           </span>
         </div>
@@ -128,7 +128,7 @@ export function EvaluationCostCard({
             )}
             Variance
           </span>
-          <span className="font-mono tabular-nums text-xs">
+          <span className="tabular-nums text-xs">
             {varianceText}
           </span>
         </div>

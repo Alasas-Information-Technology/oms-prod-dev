@@ -96,7 +96,7 @@ export function getDeadlineVisuals(deadline: VendorOnboardingDeadline): {
         daysRemaining === 1 ? "day" : "days"
       } left · Joining date at risk`,
       badgeText: `${daysRemaining}d left · Critical`,
-      severityClass: "text-destructive dark:text-red-400 font-semibold",
+      severityClass: "text-danger-text font-semibold",
       isAtRisk: true,
     };
   }
@@ -105,7 +105,7 @@ export function getDeadlineVisuals(deadline: VendorOnboardingDeadline): {
     return {
       noticeText: `Joining ${formattedDate} · ${daysRemaining} days left to complete documents`,
       badgeText: `${daysRemaining}d left · Attention`,
-      severityClass: "text-amber-600 dark:text-amber-400 font-medium",
+      severityClass: "text-warning-text font-medium",
       isAtRisk: false,
     };
   }

@@ -458,8 +458,8 @@ export function VendorRateCardsWorkspace({
             <span className="text-[11px] font-bold tracking-wider uppercase text-muted-foreground">
               Master Data & Commercials
             </span>
-            <span className="text-muted-foreground/40 font-mono">/</span>
-            <span className="text-[11px] font-mono font-medium text-teal-600 dark:text-teal-400">
+            <span className="text-muted-foreground/40">/</span>
+            <span className="text-[11px] font-medium text-teal-600 dark:text-teal-400">
               5 RFP Templates
             </span>
           </div>
@@ -519,7 +519,7 @@ export function VendorRateCardsWorkspace({
           </div>
 
           {/* Stepper Visualization */}
-          <div className="flex items-center gap-2 text-xs font-mono shrink-0">
+          <div className="flex items-center gap-2 text-xs shrink-0">
             <div className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-muted/80 border border-border/60 text-muted-foreground">
               <span className="w-2 h-2 rounded-full bg-slate-400" />
               <span>1. Draft</span>
@@ -543,7 +543,7 @@ export function VendorRateCardsWorkspace({
         <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">Total Rate Cards</span>
-            <p className="text-2xl font-bold font-mono text-foreground">{rateCards.length}</p>
+            <p className="text-2xl font-bold text-foreground">{rateCards.length}</p>
           </div>
           <div className="p-2.5 rounded-lg bg-muted/60 text-muted-foreground">
             <Coins className="w-4 h-4" />
@@ -555,7 +555,7 @@ export function VendorRateCardsWorkspace({
             <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
               Published (Usable in VP2)
             </span>
-            <p className="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400">
+            <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
               {publishedCount}
             </p>
           </div>
@@ -569,7 +569,7 @@ export function VendorRateCardsWorkspace({
             <span className="text-[11px] font-medium text-amber-700 dark:text-amber-300">
               Under Review (Submitted)
             </span>
-            <p className="text-2xl font-bold font-mono text-amber-600 dark:text-amber-400">
+            <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
               {submittedCount}
             </p>
           </div>
@@ -581,7 +581,7 @@ export function VendorRateCardsWorkspace({
         <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">Draft Schedules</span>
-            <p className="text-2xl font-bold font-mono text-muted-foreground">{draftCount}</p>
+            <p className="text-2xl font-bold text-muted-foreground">{draftCount}</p>
           </div>
           <div className="p-2.5 rounded-lg bg-muted/60 text-muted-foreground">
             <Edit2 className="w-4 h-4" />
@@ -603,7 +603,7 @@ export function VendorRateCardsWorkspace({
             )}
           >
             <span>All Cards</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-muted font-mono">
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-muted">
               {rateCards.length}
             </span>
           </button>
@@ -617,7 +617,7 @@ export function VendorRateCardsWorkspace({
             )}
           >
             <span>Published</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-mono">
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
               {publishedCount}
             </span>
           </button>
@@ -631,7 +631,7 @@ export function VendorRateCardsWorkspace({
             )}
           >
             <span>Submitted</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 font-mono">
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400">
               {submittedCount}
             </span>
           </button>
@@ -645,7 +645,7 @@ export function VendorRateCardsWorkspace({
             )}
           >
             <span>Draft</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-muted font-mono">
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-muted">
               {draftCount}
             </span>
           </button>
@@ -729,7 +729,7 @@ export function VendorRateCardsWorkspace({
                 >
                   <div className="space-y-1.5">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-muted text-foreground border border-border/70">
+                      <span className="text-xs font-bold px-2.5 py-0.5 rounded bg-muted text-foreground border border-border/70">
                         {card.code}
                       </span>
                       <Badge
@@ -771,11 +771,11 @@ export function VendorRateCardsWorkspace({
                         Term: {card.effectiveFrom} to {card.effectiveTo}
                       </span>
                       <span>·</span>
-                      <span className="font-mono">
+                      <span>
                         {card.grades.length} Grades Defined ({card.grades.map((g) => g.gradeCode).join(", ")})
                       </span>
                       <span>·</span>
-                      <span className="font-mono">Currency: {card.currency}</span>
+                      <span>Currency: {card.currency}</span>
                     </div>
                   </div>
 
@@ -799,7 +799,7 @@ export function VendorRateCardsWorkspace({
                         <Layers className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                         Approved Role Grade Matrix & Commercial Rates
                       </h4>
-                      <span className="text-muted-foreground font-mono text-[11px]">
+                      <span className="text-muted-foreground text-[11px]">
                         Minor units integer arithmetic · fils
                       </span>
                     </div>
@@ -820,7 +820,7 @@ export function VendorRateCardsWorkspace({
                             <th className="py-2.5 px-3 text-right">Daily Rate</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-border/40 font-mono">
+                        <tbody className="divide-y divide-border/40">
                           {card.grades.map((grade) => (
                             <tr
                               key={grade.gradeCode}
@@ -934,10 +934,10 @@ export function VendorRateCardsWorkspace({
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/30">
+              <span className="text-xs font-bold px-2 py-0.5 rounded bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/30">
                 RFP Master Data Upload
               </span>
-              <span className="text-xs text-muted-foreground font-mono">
+              <span className="text-xs text-muted-foreground">
                 Step: {uploadStep === "CHOOSE_FILE" ? "1 of 2 (Upload)" : "2 of 2 (Parsed Preview)"}
               </span>
             </div>
@@ -1063,7 +1063,7 @@ export function VendorRateCardsWorkspace({
                     id="pv-code"
                     value={cardCode}
                     onChange={(e) => setCardCode(e.target.value)}
-                    className="text-xs h-8 font-mono"
+                    className="text-xs h-8"
                   />
                 </div>
 
@@ -1076,7 +1076,7 @@ export function VendorRateCardsWorkspace({
                     type="date"
                     value={effectiveFrom}
                     onChange={(e) => setEffectiveFrom(e.target.value)}
-                    className="text-xs h-8 font-mono"
+                    className="text-xs h-8"
                   />
                 </div>
 
@@ -1089,7 +1089,7 @@ export function VendorRateCardsWorkspace({
                     type="date"
                     value={effectiveTo}
                     onChange={(e) => setEffectiveTo(e.target.value)}
-                    className="text-xs h-8 font-mono"
+                    className="text-xs h-8"
                   />
                 </div>
               </div>
@@ -1150,7 +1150,7 @@ export function VendorRateCardsWorkspace({
                                 onChange={(e) =>
                                   handleUpdateGradeRow(idx, "gradeCode", e.target.value)
                                 }
-                                className="text-xs h-8 font-mono font-bold w-16"
+                                className="text-xs h-8 font-bold w-16"
                               />
                             </td>
 
@@ -1204,7 +1204,7 @@ export function VendorRateCardsWorkspace({
                                     parseFloat(e.target.value) || 0
                                   )
                                 }
-                                className="text-xs h-8 font-mono tabular-nums w-28"
+                                className="text-xs h-8 tabular-nums w-28"
                               />
                             </td>
 
@@ -1221,7 +1221,7 @@ export function VendorRateCardsWorkspace({
                                     parseFloat(e.target.value) || 0
                                   )
                                 }
-                                className="text-xs h-8 font-mono tabular-nums w-28"
+                                className="text-xs h-8 tabular-nums w-28"
                               />
                             </td>
 
@@ -1239,17 +1239,17 @@ export function VendorRateCardsWorkspace({
                                     parseFloat(e.target.value) || 0
                                   )
                                 }
-                                className="text-xs h-8 font-mono tabular-nums w-20 text-center"
+                                className="text-xs h-8 tabular-nums w-20 text-center"
                               />
                             </td>
 
                             {/* Monthly Rate (Computed) */}
-                            <td className="py-1.5 px-2.5 text-right font-mono font-bold text-teal-600 dark:text-teal-400 tabular-nums">
+                            <td className="py-1.5 px-2.5 text-right font-bold text-teal-600 dark:text-teal-400 tabular-nums">
                               AED {formatAmount(monthlyFils)}
                             </td>
 
                             {/* Daily Rate (Computed) */}
-                            <td className="py-1.5 px-2.5 text-right font-mono text-muted-foreground tabular-nums">
+                            <td className="py-1.5 px-2.5 text-right text-muted-foreground tabular-nums">
                               AED {formatAmount(dailyFils)}
                             </td>
 

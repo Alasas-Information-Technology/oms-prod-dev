@@ -767,7 +767,11 @@ export interface PrivilegeChangesData {
   windowDays: number;
   changes: PrivilegeChangeItem[];
   counts: Partial<Record<PrivilegeChangeType, number>>;
-  trend: { thisWeek: number; lastWeek: number };
+  trend: {
+    thisWeek: number;
+    lastWeek: number;
+    dailyCounts?: Array<{ day: string; count: number }>;
+  };
 }
 
 export interface ElevatedAccessRegisterData {
@@ -942,4 +946,5 @@ export type DashboardPersona =
 export interface WidgetQueryParams {
   period?: string;
   window?: string;
+  degraded?: boolean;
 }

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { ProfileTab, UserProfile } from "./profile.types";
 import { ActiveSession } from "@/lib/types/session.types";
 import { sessionsApi } from "@/lib/api/sessions";
+import { usersApi, vendorUsersApi } from "@/lib/api/authorization";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import axios from "axios";
@@ -64,6 +65,49 @@ export function useProfilePage() {
       }));
     }
   }, [user]);
+
+  // Fetch live API profile data on mount
+  useEffect(() => {
+    async function fetchLiveProfile() {
+      if (!user?.userId) return;
+      try {
+        let liveData: any = null;
+        if (user.userType === "VENDOR") {
+          liveData = await vendorUsersApi.getVendorUserById(user.userId);
+        } else {
+          liveData = await usersApi.getUserById(user.userId);
+        }
+
+        if (liveData) {
+          const profileData = liveData.profile || {};
+          const fullName = profileData.displayName || 
+                           (profileData.firstName ? `${profileData.firstName} ${profileData.lastName || ''}`.trim() : null) || 
+                           user.fullName;
+                           
+          const updates = {
+            fullName: fullName || user.fullName,
+            phone: profileData.phone || user.phone,
+            location: profileData.location || user.location,
+            department: profileData.departmentId || user.department,
+            employeeId: profileData.employeeId || user.employeeId,
+            email: liveData.email || user.email,
+          };
+          
+          setProfile((prev) => {
+            const merged = { ...prev, ...updates };
+            merged.title = `${merged.role} · ${merged.department}`;
+            return merged;
+          });
+          
+          // Also sync to AuthContext so TopBar updates
+          updateUserProfile(updates);
+        }
+      } catch (err) {
+        console.error("Failed to fetch live profile data:", err);
+      }
+    }
+    fetchLiveProfile();
+  }, [user?.userId, user?.userType]);
 
   // Sessions state
   const [sessions, setSessions] = useState<ActiveSession[]>([]);

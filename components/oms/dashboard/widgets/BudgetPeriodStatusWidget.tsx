@@ -69,45 +69,55 @@ export function BudgetPeriodStatusWidget({
           </span>
         </div>
 
-        {/* Approval Progress Nodes */}
-        <div className="flex items-center gap-2 px-1 py-2">
-          {Array.from({ length: totalLevels }).map((_, i) => {
-            const isApproved = i < currentLevel;
-            const isCurrent = i === currentLevel && status !== "CLOSED";
-            return (
-              <div key={i} className="flex items-center flex-1 last:flex-none">
-                <div className="flex flex-col items-center gap-1 shrink-0 relative z-10 bg-card">
-                  {isApproved ? (
-                    <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                  ) : (
-                    <Circle
-                      className={cn(
-                        "w-5 h-5",
-                        isCurrent
-                          ? "text-primary border-primary border-2 rounded-full w-4 h-4 m-0.5"
-                          : "text-muted-foreground/30"
-                      )}
-                    />
+        {/* 4px Stage Rail per D2 / DASHBOARD-PLAN.md 6.1 */}
+        <div className="flex flex-col gap-2 py-2">
+          <div
+            className="grid items-center gap-[3px] h-1 w-full"
+            style={{
+              gridTemplateColumns: `repeat(${totalLevels}, minmax(0, 1fr))`,
+            }}
+            role="progressbar"
+            aria-valuenow={currentLevel}
+            aria-valuemin={0}
+            aria-valuemax={totalLevels}
+            aria-label={`Budget period approval progress: Level ${currentLevel} of ${totalLevels}`}
+          >
+            {Array.from({ length: totalLevels }).map((_, i) => {
+              const isApproved = i < currentLevel;
+              const isCurrent = i === currentLevel && status !== "CLOSED";
+              return (
+                <div
+                  key={i}
+                  style={{
+                    backgroundColor: isApproved
+                      ? "var(--success-border, #3A8F6B)"
+                      : isCurrent
+                      ? "var(--brand-teal, var(--primary))"
+                      : undefined,
+                  }}
+                  className={cn(
+                    "h-1 rounded-[1px] transition-colors duration-200",
+                    !isApproved && !isCurrent && "bg-muted-foreground/20 dark:bg-slate-800/80"
                   )}
-                </div>
-                {i < totalLevels - 1 && (
-                  <div
-                    className={cn(
-                      "h-0.5 flex-1 mx-2 rounded-full",
-                      isApproved ? "bg-emerald-500/80" : "bg-border/60"
-                    )}
-                  />
-                )}
-              </div>
-            );
-          })}
+                  title={`Level ${i + 1}: ${isApproved ? "Approved" : isCurrent ? "Under Review" : "Pending"}`}
+                />
+              );
+            })}
+          </div>
+
+          {/* Rail Stage Sublabels */}
+          <div className="flex items-center justify-between text-[10.5px] text-muted-foreground">
+            <span>Level 1: Dept Review</span>
+            <span>Level 2: Finance Review</span>
+            {totalLevels > 2 && <span>Level {totalLevels}: Executive Sign-off</span>}
+          </div>
         </div>
 
         {/* Last amended footer */}
         {lastAmendedAt && (
           <div className="pt-2 border-t border-border/40 flex justify-between items-center text-[11px] text-muted-foreground">
             <span>Last amended</span>
-            <span className="font-medium text-foreground font-mono">{lastAmendedAt}</span>
+            <span className="font-medium text-foreground">{lastAmendedAt}</span>
           </div>
         )}
       </div>

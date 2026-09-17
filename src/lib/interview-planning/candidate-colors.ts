@@ -3,7 +3,7 @@
  *
  * Rules:
  *  - Fixed palette of six hues assigned by candidate position:
- *    0: violet, 1: teal, 2: amber, 3: rose, 4: sky, 5: lime
+ *    0: violet, 1: plum, 2: bronze, 3: rose, 4: sky, 5: olive
  *  - Used ONLY as:
  *    1. A left border (border-l-4)
  *    2. A soft surface tint (8% light, 12% dark)
@@ -15,10 +15,12 @@
 
 export type CandidateHue =
   | "violet"
-  | "teal"
-  | "amber"
+  | "plum"
+  | "bronze"
   | "rose"
   | "sky"
+  | "olive"
+  | "amber"
   | "lime";
 
 export interface CandidateColorDefinition {
@@ -61,80 +63,80 @@ export const CANDIDATE_PALETTE: readonly CandidateColorDefinition[] = [
     hue: "violet",
     name: "Violet",
     light: {
-      border: "#7C3AED",
-      surface: "#F5F3FF", // 8% blend over #FFFFFF
-      avatarBg: "#DDD6FE",
-      avatarText: "#4C1D95",
-      text: "#5B21B6",
+      border: "#7C6BC4",
+      surface: "#EEEEF6", // 8% blend over #F8F9FA
+      avatarBg: "#DDD7F5",
+      avatarText: "#3C316E",
+      text: "#4B3E8A",
     },
     dark: {
-      border: "#A78BFA",
-      surface: "#272836", // 12% blend over #161B26
-      avatarBg: "#4C1D95",
-      avatarText: "#EDE9FE",
-      text: "#DDD6FE",
+      border: "#9D8FE0",
+      surface: "#262635", // 12% blend over #16181E
+      avatarBg: "#3C316E",
+      avatarText: "#E6E1FA",
+      text: "#DDD7F5",
     },
     classes: {
-      borderLeft: "border-l-4 border-l-[#7C3AED] dark:border-l-[#A78BFA]",
-      surface: "bg-[#8B5CF6]/[0.08] dark:bg-[#A78BFA]/[0.12]",
-      avatar: "bg-[#DDD6FE] text-[#4C1D95] dark:bg-[#4C1D95] dark:text-[#EDE9FE]",
-      text: "text-[#5B21B6] dark:text-[#DDD6FE]",
-      card: "border-l-4 border-l-[#7C3AED] dark:border-l-[#A78BFA] bg-[#8B5CF6]/[0.08] dark:bg-[#A78BFA]/[0.12]",
-      chip: "border-l-2 border-l-[#7C3AED] dark:border-l-[#A78BFA] bg-[#8B5CF6]/[0.08] dark:bg-[#A78BFA]/[0.12] text-[#5B21B6] dark:text-[#DDD6FE]",
+      borderLeft: "border-l-4 border-l-[#7C6BC4] dark:border-l-[#9D8FE0]",
+      surface: "bg-[#7C6BC4]/[0.08] dark:bg-[#9D8FE0]/[0.12]",
+      avatar: "bg-[#DDD7F5] text-[#3C316E] dark:bg-[#3C316E] dark:text-[#E6E1FA]",
+      text: "text-[#4B3E8A] dark:text-[#DDD7F5]",
+      card: "border-l-4 border-l-[#7C6BC4] dark:border-l-[#9D8FE0] bg-[#7C6BC4]/[0.08] dark:bg-[#9D8FE0]/[0.12]",
+      chip: "border-l-2 border-l-[#7C6BC4] dark:border-l-[#9D8FE0] bg-[#7C6BC4]/[0.08] dark:bg-[#9D8FE0]/[0.12] text-[#4B3E8A] dark:text-[#DDD7F5]",
     },
   },
   {
     index: 1,
-    hue: "teal",
-    name: "Teal",
+    hue: "plum",
+    name: "Plum",
     light: {
-      border: "#0D9488",
-      surface: "#F0FDFA", // 8% blend over #FFFFFF
-      avatarBg: "#CCFBF1",
-      avatarText: "#134E4A",
-      text: "#115E59",
+      border: "#8E3B68",
+      surface: "#F0EAEE", // 8% blend over #F8F9FA
+      avatarBg: "#F0D5E3",
+      avatarText: "#521437",
+      text: "#661E47",
     },
     dark: {
-      border: "#2DD4BF",
-      surface: "#183138", // 12% blend over #161B26
-      avatarBg: "#134E4A",
-      avatarText: "#CCFBF1",
-      text: "#99F6E4",
+      border: "#D472A3",
+      surface: "#2D232E", // 12% blend over #16181E
+      avatarBg: "#521437",
+      avatarText: "#F9E5EE",
+      text: "#F2CADF",
     },
     classes: {
-      borderLeft: "border-l-4 border-l-[#0D9488] dark:border-l-[#2DD4BF]",
-      surface: "bg-[#14B8A6]/[0.08] dark:bg-[#2DD4BF]/[0.12]",
-      avatar: "bg-[#CCFBF1] text-[#134E4A] dark:bg-[#134E4A] dark:text-[#CCFBF1]",
-      text: "text-[#115E59] dark:text-[#99F6E4]",
-      card: "border-l-4 border-l-[#0D9488] dark:border-l-[#2DD4BF] bg-[#14B8A6]/[0.08] dark:bg-[#2DD4BF]/[0.12]",
-      chip: "border-l-2 border-l-[#0D9488] dark:border-l-[#2DD4BF] bg-[#14B8A6]/[0.08] dark:bg-[#2DD4BF]/[0.12] text-[#115E59] dark:text-[#99F6E4]",
+      borderLeft: "border-l-4 border-l-[#8E3B68] dark:border-l-[#D472A3]",
+      surface: "bg-[#8E3B68]/[0.08] dark:bg-[#D472A3]/[0.12]",
+      avatar: "bg-[#F0D5E3] text-[#521437] dark:bg-[#521437] dark:text-[#F9E5EE]",
+      text: "text-[#661E47] dark:text-[#F2CADF]",
+      card: "border-l-4 border-l-[#8E3B68] dark:border-l-[#D472A3] bg-[#8E3B68]/[0.08] dark:bg-[#D472A3]/[0.12]",
+      chip: "border-l-2 border-l-[#8E3B68] dark:border-l-[#D472A3] bg-[#8E3B68]/[0.08] dark:bg-[#D472A3]/[0.12] text-[#661E47] dark:text-[#F2CADF]",
     },
   },
   {
     index: 2,
-    hue: "amber",
-    name: "Amber",
+    hue: "bronze",
+    name: "Bronze",
     light: {
-      border: "#D97706",
-      surface: "#FFFBEB", // 8% blend over #FFFFFF
-      avatarBg: "#FEF3C7",
-      avatarText: "#78350F",
-      text: "#92400E",
+      border: "#A65A2E",
+      surface: "#F1ECEA",
+      avatarBg: "#F5DAC9",
+      avatarText: "#592E15",
+      text: "#783E1D",
     },
     dark: {
-      border: "#FBBF24",
-      surface: "#312E26", // 12% blend over #161B26
-      avatarBg: "#78350F",
-      avatarText: "#FEF3C7",
-      text: "#FDE68A",
+      border: "#D3894F",
+      surface: "#2D2624",
+      avatarBg: "#592E15",
+      avatarText: "#F7E2D4",
+      text: "#EBB288",
     },
     classes: {
-      borderLeft: "border-l-4 border-l-[#D97706] dark:border-l-[#FBBF24]",
-      surface: "bg-[#F59E0B]/[0.08] dark:bg-[#FBBF24]/[0.12]",
-      avatar: "bg-[#FEF3C7] text-[#78350F] dark:bg-[#78350F] dark:text-[#FEF3C7]",
-      text: "text-[#92400E] dark:text-[#FDE68A]",
-      card: "border-l-4 border-l-[#D97706] dark:border-l-[#FBBF24] bg-[#F59E0B]/[0.08] dark:bg-[#FBBF24]/[0.12]",
-      chip: "border-l-2 border-l-[#D97706] dark:border-l-[#FBBF24] bg-[#F59E0B]/[0.08] dark:bg-[#FBBF24]/[0.12] text-[#92400E] dark:text-[#FDE68A]",
+      borderLeft: "border-l-4 border-l-[#A65A2E] dark:border-l-[#D3894F]",
+      surface: "bg-[#A65A2E]/[0.08] dark:bg-[#D3894F]/[0.12]",
+      avatar: "bg-[#F5DAC9] text-[#592E15] dark:bg-[#592E15] dark:text-[#F7E2D4]",
+      text: "text-[#783E1D] dark:text-[#EBB288]",
+      card: "border-l-4 border-l-[#A65A2E] dark:border-l-[#D3894F] bg-[#A65A2E]/[0.08] dark:bg-[#D3894F]/[0.12]",
+      chip: "border-l-2 border-l-[#A65A2E] dark:border-l-[#D3894F] bg-[#A65A2E]/[0.08] dark:bg-[#D3894F]/[0.12] text-[#783E1D] dark:text-[#EBB288]",
     },
   },
   {
@@ -142,26 +144,26 @@ export const CANDIDATE_PALETTE: readonly CandidateColorDefinition[] = [
     hue: "rose",
     name: "Rose",
     light: {
-      border: "#E11D48",
-      surface: "#FFF1F2", // 8% blend over #FFFFFF
-      avatarBg: "#FFE4E6",
-      avatarText: "#881337",
-      text: "#9F1239",
+      border: "#C4586A",
+      surface: "#F4ECEE",
+      avatarBg: "#F7D5DB",
+      avatarText: "#6B2632",
+      text: "#8C3646",
     },
     dark: {
-      border: "#FB7185",
-      surface: "#312531", // 12% blend over #161B26
-      avatarBg: "#881337",
-      avatarText: "#FFE4E6",
-      text: "#FECDD3",
+      border: "#E38695",
+      surface: "#2F252C",
+      avatarBg: "#6B2632",
+      avatarText: "#FCE2E7",
+      text: "#F5BAC3",
     },
     classes: {
-      borderLeft: "border-l-4 border-l-[#E11D48] dark:border-l-[#FB7185]",
-      surface: "bg-[#F43F5E]/[0.08] dark:bg-[#FB7185]/[0.12]",
-      avatar: "bg-[#FFE4E6] text-[#881337] dark:bg-[#881337] dark:text-[#FFE4E6]",
-      text: "text-[#9F1239] dark:text-[#FECDD3]",
-      card: "border-l-4 border-l-[#E11D48] dark:border-l-[#FB7185] bg-[#F43F5E]/[0.08] dark:bg-[#FB7185]/[0.12]",
-      chip: "border-l-2 border-l-[#E11D48] dark:border-l-[#FB7185] bg-[#F43F5E]/[0.08] dark:bg-[#FB7185]/[0.12] text-[#9F1239] dark:text-[#FECDD3]",
+      borderLeft: "border-l-4 border-l-[#C4586A] dark:border-l-[#E38695]",
+      surface: "bg-[#C4586A]/[0.08] dark:bg-[#E38695]/[0.12]",
+      avatar: "bg-[#F7D5DB] text-[#6B2632] dark:bg-[#6B2632] dark:text-[#FCE2E7]",
+      text: "text-[#8C3646] dark:text-[#F5BAC3]",
+      card: "border-l-4 border-l-[#C4586A] dark:border-l-[#E38695] bg-[#C4586A]/[0.08] dark:bg-[#E38695]/[0.12]",
+      chip: "border-l-2 border-l-[#C4586A] dark:border-l-[#E38695] bg-[#C4586A]/[0.08] dark:bg-[#E38695]/[0.12] text-[#8C3646] dark:text-[#F5BAC3]",
     },
   },
   {
@@ -169,53 +171,53 @@ export const CANDIDATE_PALETTE: readonly CandidateColorDefinition[] = [
     hue: "sky",
     name: "Sky",
     light: {
-      border: "#0284C7",
-      surface: "#F0F9FF", // 8% blend over #FFFFFF
-      avatarBg: "#E0F2FE",
-      avatarText: "#0C4A6E",
-      text: "#0369A1",
+      border: "#2F6FA8",
+      surface: "#E8EEF3",
+      avatarBg: "#CBE0F2",
+      avatarText: "#133959",
+      text: "#1C4E7A",
     },
     dark: {
-      border: "#38BDF8",
-      surface: "#1A2E3F", // 12% blend over #161B26
-      avatarBg: "#0C4A6E",
-      avatarText: "#E0F2FE",
-      text: "#BAE6FD",
+      border: "#5B9DD9",
+      surface: "#1E2936",
+      avatarBg: "#133959",
+      avatarText: "#DCEDFA",
+      text: "#9DCCF5",
     },
     classes: {
-      borderLeft: "border-l-4 border-l-[#0284C7] dark:border-l-[#38BDF8]",
-      surface: "bg-[#0EA5E9]/[0.08] dark:bg-[#38BDF8]/[0.12]",
-      avatar: "bg-[#E0F2FE] text-[#0C4A6E] dark:bg-[#0C4A6E] dark:text-[#E0F2FE]",
-      text: "text-[#0369A1] dark:text-[#BAE6FD]",
-      card: "border-l-4 border-l-[#0284C7] dark:border-l-[#38BDF8] bg-[#0EA5E9]/[0.08] dark:bg-[#38BDF8]/[0.12]",
-      chip: "border-l-2 border-l-[#0284C7] dark:border-l-[#38BDF8] bg-[#0EA5E9]/[0.08] dark:bg-[#38BDF8]/[0.12] text-[#0369A1] dark:text-[#BAE6FD]",
+      borderLeft: "border-l-4 border-l-[#2F6FA8] dark:border-l-[#5B9DD9]",
+      surface: "bg-[#2F6FA8]/[0.08] dark:bg-[#5B9DD9]/[0.12]",
+      avatar: "bg-[#CBE0F2] text-[#133959] dark:bg-[#133959] dark:text-[#DCEDFA]",
+      text: "text-[#1C4E7A] dark:text-[#9DCCF5]",
+      card: "border-l-4 border-l-[#2F6FA8] dark:border-l-[#5B9DD9] bg-[#2F6FA8]/[0.08] dark:bg-[#5B9DD9]/[0.12]",
+      chip: "border-l-2 border-l-[#2F6FA8] dark:border-l-[#5B9DD9] bg-[#2F6FA8]/[0.08] dark:bg-[#5B9DD9]/[0.12] text-[#1C4E7A] dark:text-[#9DCCF5]",
     },
   },
   {
     index: 5,
-    hue: "lime",
-    name: "Lime",
+    hue: "olive",
+    name: "Olive",
     light: {
-      border: "#65A30D",
-      surface: "#F7FEE7", // 8% blend over #FFFFFF
-      avatarBg: "#ECFCCB",
-      avatarText: "#365314",
-      text: "#3F6212",
+      border: "#7A8A3D",
+      surface: "#EEF0EB",
+      avatarBg: "#DFE5C4",
+      avatarText: "#3C451A",
+      text: "#525E25",
     },
     dark: {
-      border: "#A3E635",
-      surface: "#273327", // 12% blend over #161B26
-      avatarBg: "#365314",
-      avatarText: "#ECFCCB",
-      text: "#D9F99D",
+      border: "#A4B55E",
+      surface: "#292D27",
+      avatarBg: "#3C451A",
+      avatarText: "#F0F4DC",
+      text: "#C8D68F",
     },
     classes: {
-      borderLeft: "border-l-4 border-l-[#65A30D] dark:border-l-[#A3E635]",
-      surface: "bg-[#84CC16]/[0.08] dark:bg-[#A3E635]/[0.12]",
-      avatar: "bg-[#ECFCCB] text-[#365314] dark:bg-[#365314] dark:text-[#ECFCCB]",
-      text: "text-[#3F6212] dark:text-[#D9F99D]",
-      card: "border-l-4 border-l-[#65A30D] dark:border-l-[#A3E635] bg-[#84CC16]/[0.08] dark:bg-[#A3E635]/[0.12]",
-      chip: "border-l-2 border-l-[#65A30D] dark:border-l-[#A3E635] bg-[#84CC16]/[0.08] dark:bg-[#A3E635]/[0.12] text-[#3F6212] dark:text-[#D9F99D]",
+      borderLeft: "border-l-4 border-l-[#7A8A3D] dark:border-l-[#A4B55E]",
+      surface: "bg-[#7A8A3D]/[0.08] dark:bg-[#A4B55E]/[0.12]",
+      avatar: "bg-[#DFE5C4] text-[#3C451A] dark:bg-[#3C451A] dark:text-[#F0F4DC]",
+      text: "text-[#525E25] dark:text-[#C8D68F]",
+      card: "border-l-4 border-l-[#7A8A3D] dark:border-l-[#A4B55E] bg-[#7A8A3D]/[0.08] dark:bg-[#A4B55E]/[0.12]",
+      chip: "border-l-2 border-l-[#7A8A3D] dark:border-l-[#A4B55E] bg-[#7A8A3D]/[0.08] dark:bg-[#A4B55E]/[0.12] text-[#525E25] dark:text-[#C8D68F]",
     },
   },
 ] as const;

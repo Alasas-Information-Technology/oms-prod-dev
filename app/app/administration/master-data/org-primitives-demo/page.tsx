@@ -57,7 +57,7 @@ export default function OrgPrimitivesDemoPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-md bg-card border border-border shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="font-mono text-xs text-primary border-primary/30">
+            <Badge variant="outline" className="text-xs text-primary border-primary/30">
               V2 FOUNDATIONS
             </Badge>
             <span className="text-xs text-muted-foreground">Domain 2 Organization UI (v2)</span>
@@ -67,7 +67,7 @@ export default function OrgPrimitivesDemoPage() {
           </h1>
           <p className="text-sm text-muted-foreground mt-1 max-w-3xl">
             Isolated demonstration and verification of the human-centered visual foundations defined in Part 1 &amp; Part 3 of{" "}
-            <code className="font-mono text-xs text-foreground bg-muted px-1.5 py-0.5 rounded">DOMAIN-2-ORGANIZATION-UI-V2.md</code>:
+            <code className="text-xs text-foreground bg-muted px-1.5 py-0.5 rounded">DOMAIN-2-ORGANIZATION-UI-V2.md</code>:
             OrgUnitCard anatomy, icon-based type badges, natural sentence counts, and light/dark theme compliance.
           </p>
         </div>
@@ -219,7 +219,7 @@ export default function OrgPrimitivesDemoPage() {
             <div className="p-4 rounded-md border border-border bg-card space-y-3">
               <div className="flex items-center justify-between">
                 <OrgTypeIcon type="ORGANIZATION" size="lg" />
-                <Badge variant="outline" className="text-[10px] font-mono">Level 1</Badge>
+                <Badge variant="outline" className="text-[10px]">Level 1</Badge>
               </div>
               <div>
                 <p className="text-sm font-semibold text-foreground">Organization / Holding</p>
@@ -232,7 +232,7 @@ export default function OrgPrimitivesDemoPage() {
             <div className="p-4 rounded-md border border-border bg-card space-y-3">
               <div className="flex items-center justify-between">
                 <OrgTypeIcon type="BUSINESS_UNIT" size="lg" />
-                <Badge variant="outline" className="text-[10px] font-mono">Level 2</Badge>
+                <Badge variant="outline" className="text-[10px]">Level 2</Badge>
               </div>
               <div>
                 <p className="text-sm font-semibold text-foreground">Business Unit</p>
@@ -245,7 +245,7 @@ export default function OrgPrimitivesDemoPage() {
             <div className="p-4 rounded-md border border-border bg-card space-y-3">
               <div className="flex items-center justify-between">
                 <OrgTypeIcon type="DEPARTMENT" size="lg" />
-                <Badge variant="outline" className="text-[10px] font-mono">Level 3</Badge>
+                <Badge variant="outline" className="text-[10px]">Level 3</Badge>
               </div>
               <div>
                 <p className="text-sm font-semibold text-foreground">Department</p>
@@ -258,7 +258,7 @@ export default function OrgPrimitivesDemoPage() {
             <div className="p-4 rounded-md border border-border bg-card space-y-3">
               <div className="flex items-center justify-between">
                 <OrgTypeIcon type="SECTION" size="lg" />
-                <Badge variant="outline" className="text-[10px] font-mono">Level 4</Badge>
+                <Badge variant="outline" className="text-[10px]">Level 4</Badge>
               </div>
               <div>
                 <p className="text-sm font-semibold text-foreground">Section</p>
@@ -310,7 +310,7 @@ export default function OrgPrimitivesDemoPage() {
                   <Input
                     value={sandboxCode}
                     onChange={(e) => setSandboxCode(e.target.value)}
-                    className="h-9 text-xs font-mono uppercase"
+                    className="h-9 text-xs uppercase"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -388,14 +388,14 @@ export default function OrgPrimitivesDemoPage() {
               </div>
 
               {/* Event Log Output */}
-              <div className="p-3 rounded-lg bg-muted/40 border border-border text-xs font-mono text-muted-foreground flex items-center justify-between">
+              <div className="p-3 rounded-lg bg-muted/40 border border-border text-xs text-muted-foreground flex items-center justify-between">
                 <span>Last Action: <strong className="text-foreground">{lastAction}</strong></span>
               </div>
             </div>
 
             {/* Live Preview Pane */}
             <div className="flex flex-col items-center justify-center p-6 rounded-md bg-muted/30 border border-border">
-              <span className="text-[11px] font-mono text-muted-foreground uppercase mb-4 tracking-wider">
+              <span className="text-[11px] text-muted-foreground uppercase mb-4 tracking-wider">
                 Live Render Output
               </span>
               <OrgUnitCard

@@ -73,8 +73,8 @@ export interface SocPanelProps {
   lastUpdated?: Date | null;
 }
 
-const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6", "#06b6d4"];
-const BAR_COLORS = ["#6366f1", "#8b5cf6", "#ec4899", "#f43f5e", "#f59e0b", "#10b981"];
+const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ec4899", "#7C6BC4", "#06b6d4"];
+const BAR_COLORS = ["#6366f1", "#7C6BC4", "#ec4899", "#B0432C", "#f59e0b", "#10b981"];
 
 const safeFormatDate = (dateStr: string | Date, formatStr: string) => {
   try {
@@ -209,7 +209,7 @@ export function SocPanel({
               )}
               <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${streamConnected ? threatPosture.dotColor : "bg-muted-foreground"}`} />
             </span>
-            <span className="text-[11px] font-mono font-medium text-muted-foreground uppercase tracking-wider">
+            <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
               {streamConnected ? "Live" : "Polling"}
             </span>
           </div>
@@ -295,7 +295,7 @@ export function SocPanel({
                         <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold border ${event.badge}`}>
                           {event.label}
                         </span>
-                        <span className="text-[10px] text-muted-foreground font-mono bg-muted/60 px-1.5 py-0.5 rounded">
+                        <span className="text-[10px] text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded">
                           {event.IPAddress || "Local"}
                         </span>
                       </div>
@@ -304,7 +304,7 @@ export function SocPanel({
                       </p>
                     </div>
                   </div>
-                  <span className="text-muted-foreground text-[10px] font-mono tabular-nums whitespace-nowrap shrink-0 pt-0.5">
+                  <span className="text-muted-foreground text-[10px] tabular-nums whitespace-nowrap shrink-0 pt-0.5">
                     {event.CreatedAt ? safeFormatDate(event.CreatedAt, "HH:mm:ss") : "-"}
                   </span>
                 </div>
@@ -315,7 +315,7 @@ export function SocPanel({
       </CardContent>
 
       {/* Footer Info */}
-      <div className="p-2.5 px-4 border-t border-border/50 shrink-0 flex items-center justify-between text-[11px] text-muted-foreground font-mono bg-muted/20">
+      <div className="p-2.5 px-4 border-t border-border/50 shrink-0 flex items-center justify-between text-[11px] text-muted-foreground bg-muted/20">
         <span>Displaying {filteredEvents.length} events</span>
         <span>
           {lastUpdated ? `Sync: ${format(lastUpdated, "HH:mm:ss")}` : "Connecting..."}
@@ -411,7 +411,7 @@ export function EventsByTypeChart({ chartsData }: ChartsDataProps) {
 
   return (
     <ChartCard title="Events by Type" desc="Top security event distribution" h="h-[220px] pl-0" isEmpty={data.length === 0} emptyMsg="No security events found">
-      <ChartContainer config={{ count: { label: "Event Count", color: "#8b5cf6" } }} className="h-full w-full">
+      <ChartContainer config={{ count: { label: "Event Count", color: "#7C6BC4" } }} className="h-full w-full">
         <BarChart className="w-full" data={data} layout="vertical" margin={{ left: 5, right: 25, top: 10, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} className="stroke-muted" />
           <XAxis type="number" tickLine={false} axisLine={false} fontSize={11} allowDecimals={false} className="fill-muted-foreground" />

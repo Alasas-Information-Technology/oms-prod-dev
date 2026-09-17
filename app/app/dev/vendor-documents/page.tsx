@@ -128,7 +128,7 @@ export default function VendorDocumentsDevPage() {
       {/* Dev Switcher Bar */}
       <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border shadow-xs px-4 py-3 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="outline" className="font-mono text-xs bg-primary/10 text-primary border-primary/20 mr-1">
+          <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20 mr-1">
             DEV WORKBENCH
           </Badge>
           <span className="text-xs font-semibold text-muted-foreground hidden sm:inline">
@@ -200,7 +200,7 @@ export default function VendorDocumentsDevPage() {
           <span>·</span>
           <span>{currentFixtureConfig.desc}</span>
         </div>
-        <div className="font-mono text-[11px] text-muted-foreground/80">
+        <div className="text-[11px] text-muted-foreground/80">
           ID: <span className="text-foreground">{activeWorkspace.onboardingId}</span> ({activeWorkspace.candidateRef})
         </div>
       </div>

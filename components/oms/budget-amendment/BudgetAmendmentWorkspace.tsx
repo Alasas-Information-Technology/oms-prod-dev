@@ -372,7 +372,7 @@ export function BudgetAmendmentWorkspace({
               The underlying request and Candidate {data.candidateRef}&apos;s slot will close automatically if this amendment is not submitted and approved.
             </span>
           </div>
-          <span className="hidden md:inline-flex text-[11px] font-mono uppercase tracking-wider bg-destructive/15 text-destructive px-2 py-0.5 rounded font-bold">
+          <span className="hidden md:inline-flex text-[11px] uppercase tracking-wider bg-destructive/15 text-destructive px-2 py-0.5 rounded font-bold">
             Auto-close imminent
           </span>
         </div>

@@ -129,7 +129,7 @@ export function MoneyInput({
         placeholder={placeholder}
         aria-label={ariaLabel || "Allocation amount in AED"}
         className={cn(
-          "w-full h-8 pl-10 pr-2.5 text-xs text-right font-mono font-semibold text-foreground bg-background rounded-md border border-border shadow-2xs transition-colors",
+          "w-full h-8 pl-10 pr-2.5 text-xs text-right font-semibold text-foreground bg-background rounded-md border border-border shadow-2xs transition-colors",
           "focus:outline-hidden focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary",
           exceedsMax && "border-destructive text-destructive focus-visible:ring-destructive focus-visible:border-destructive",
           disabled && "opacity-50 cursor-not-allowed bg-muted/40",

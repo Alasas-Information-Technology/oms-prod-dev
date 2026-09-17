@@ -52,7 +52,7 @@ export function GlobalSearch() {
           <Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
           <span className="truncate">Search master data, actions, pages...</span>
         </div>
-        <kbd className="pointer-events-none inline-flex h-4.5 select-none items-center gap-0.5 rounded border border-border/80 bg-background/80 px-1.5 font-mono text-[11px] font-medium text-muted-foreground shrink-0 shadow-2xs">
+        <kbd className="pointer-events-none inline-flex h-4.5 select-none items-center gap-0.5 rounded border border-border/80 bg-background/80 px-1.5 text-[11px] font-medium text-muted-foreground shrink-0 shadow-2xs">
           <span>⌘</span>K
         </kbd>
       </Button>

@@ -126,8 +126,8 @@ export function VendorContractsWorkspace({
             <span className="text-[11px] font-bold tracking-wider uppercase text-muted-foreground">
               Commercial & Procurement
             </span>
-            <span className="text-muted-foreground/40 font-mono">/</span>
-            <span className="text-[11px] font-mono font-medium text-teal-600 dark:text-teal-400">
+            <span className="text-muted-foreground/40">/</span>
+            <span className="text-[11px] font-medium text-teal-600 dark:text-teal-400">
               Master Agreements
             </span>
           </div>
@@ -172,7 +172,7 @@ export function VendorContractsWorkspace({
           <div className="space-y-0.5">
             <p className="font-semibold text-foreground flex items-center gap-1.5">
               Read-Mostly Master Data — Procurement Origination
-              <span className="text-[10px] px-1.5 py-0.2 rounded bg-teal-500/20 text-teal-700 dark:text-teal-300 font-mono">
+              <span className="text-[10px] px-1.5 py-0.2 rounded bg-teal-500/20 text-teal-700 dark:text-teal-300">
                 Domain 3 Governance
               </span>
             </p>
@@ -197,7 +197,7 @@ export function VendorContractsWorkspace({
         <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">Total Agreements</span>
-            <p className="text-2xl font-bold font-mono text-foreground">{contracts.length}</p>
+            <p className="text-2xl font-bold text-foreground">{contracts.length}</p>
           </div>
           <div className="p-2.5 rounded-lg bg-muted/60 text-muted-foreground">
             <FileText className="w-4 h-4" />
@@ -209,7 +209,7 @@ export function VendorContractsWorkspace({
             <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
               Active MSA
             </span>
-            <p className="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400">
+            <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
               {activeContractsCount}
             </p>
           </div>
@@ -221,7 +221,7 @@ export function VendorContractsWorkspace({
         <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">Historical / Expired</span>
-            <p className="text-2xl font-bold font-mono text-muted-foreground">
+            <p className="text-2xl font-bold text-muted-foreground">
               {expiredContractsCount}
             </p>
           </div>
@@ -233,7 +233,7 @@ export function VendorContractsWorkspace({
         <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">Pre-Agreed Rate Cap</span>
-            <p className="text-lg font-bold font-mono tabular-nums text-foreground">
+            <p className="text-lg font-bold tabular-nums text-foreground">
               AED {formatAmount(contracts[0]?.preAgreedMonthlyRate || 0)}
               <span className="text-[11px] font-normal text-muted-foreground">/mo</span>
             </p>
@@ -258,7 +258,7 @@ export function VendorContractsWorkspace({
             )}
           >
             <span>All Contracts</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-muted font-mono">
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-muted">
               {contracts.length}
             </span>
           </button>
@@ -272,7 +272,7 @@ export function VendorContractsWorkspace({
             )}
           >
             <span>Active Agreements</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-mono">
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
               {activeContractsCount}
             </span>
           </button>
@@ -286,7 +286,7 @@ export function VendorContractsWorkspace({
             )}
           >
             <span>Historical & Expired</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-muted font-mono">
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-muted">
               {expiredContractsCount}
             </span>
           </button>
@@ -330,7 +330,7 @@ export function VendorContractsWorkspace({
                 {/* Top Row: Code, Template, Status, Dates */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/40 pb-4">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-xs font-mono font-bold px-2.5 py-1 rounded bg-muted/80 text-foreground border border-border/70 tracking-wide">
+                    <span className="text-xs font-bold px-2.5 py-1 rounded bg-muted/80 text-foreground border border-border/70 tracking-wide">
                       {contract.contractCode}
                     </span>
                     <Badge
@@ -355,15 +355,15 @@ export function VendorContractsWorkspace({
                   {/* Validity Dates */}
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Calendar className="w-3.5 h-3.5 text-muted-foreground/70" />
-                    <span className="font-mono">
+                    <span>
                       {contract.validFrom} &rarr; {contract.validTo}
                     </span>
                     {isActive ? (
-                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                         Active Term
                       </span>
                     ) : (
-                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
                         Concluded
                       </span>
                     )}
@@ -408,7 +408,7 @@ export function VendorContractsWorkspace({
                         <Coins className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                         Pre-Agreed Contract Rate
                       </span>
-                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-muted font-mono text-muted-foreground">
+                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-muted text-muted-foreground">
                         RFP Mode 3
                       </span>
                     </div>
@@ -416,13 +416,13 @@ export function VendorContractsWorkspace({
                     <div className="pt-1 space-y-1">
                       <div className="flex items-baseline justify-between">
                         <span className="text-xs text-muted-foreground">Monthly Rate:</span>
-                        <span className="text-sm font-bold font-mono tabular-nums text-foreground">
+                        <span className="text-sm font-bold tabular-nums text-foreground">
                           AED {formatAmount(contract.preAgreedMonthlyRate)}
                         </span>
                       </div>
                       <div className="flex items-baseline justify-between">
                         <span className="text-xs text-muted-foreground">Daily Equivalent:</span>
-                        <span className="text-xs font-mono tabular-nums text-muted-foreground">
+                        <span className="text-xs tabular-nums text-muted-foreground">
                           AED {formatAmount(contract.preAgreedDailyRate)}
                         </span>
                       </div>
@@ -474,7 +474,7 @@ export function VendorContractsWorkspace({
             <>
               <DialogHeader>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-muted border text-foreground">
+                  <span className="text-xs font-bold px-2 py-0.5 rounded bg-muted border text-foreground">
                     {selectedContract.contractCode}
                   </span>
                   <Badge
@@ -497,19 +497,19 @@ export function VendorContractsWorkspace({
                 <div className="p-4 rounded-xl bg-teal-500/5 border border-teal-500/20 space-y-2">
                   <div className="flex items-center justify-between font-semibold text-foreground">
                     <span>Approved Pre-Agreed Master Rates:</span>
-                    <span className="text-teal-600 dark:text-teal-400 font-mono">
+                    <span className="text-teal-600 dark:text-teal-400">
                       AED {formatAmount(selectedContract.preAgreedMonthlyRate)} / month
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-muted-foreground">
                     <span>Daily Rate (22 billable days/month):</span>
-                    <span className="font-mono">
+                    <span>
                       AED {formatAmount(selectedContract.preAgreedDailyRate)} / day
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-muted-foreground">
                     <span>Term Validity:</span>
-                    <span className="font-mono">
+                    <span>
                       {selectedContract.validFrom} to {selectedContract.validTo}
                     </span>
                   </div>

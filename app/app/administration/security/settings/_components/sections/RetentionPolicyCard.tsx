@@ -75,7 +75,7 @@ export function RetentionPolicyCard() {
                     <FileText className="size-3.5 text-purple-500" />
                     <span>Security Events Retention (Days)</span>
                   </FormLabel>
-                  <span className="text-[11px] font-mono text-muted-foreground">
+                  <span className="text-[11px] text-muted-foreground">
                     ~{(field.value / 365).toFixed(1)} yrs
                   </span>
                 </div>
@@ -86,7 +86,7 @@ export function RetentionPolicyCard() {
                     max={3650}
                     {...field}
                     onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                    className="font-mono text-sm h-10 rounded-md"
+                    className="text-sm h-10 rounded-md"
                   />
                 </FormControl>
                 <div className="flex items-center gap-1 pt-1">
@@ -122,7 +122,7 @@ export function RetentionPolicyCard() {
                     <Clock className="size-3.5 text-blue-500" />
                     <span>Login History Retention (Days)</span>
                   </FormLabel>
-                  <span className="text-[11px] font-mono text-muted-foreground">
+                  <span className="text-[11px] text-muted-foreground">
                     ~{(field.value / 365).toFixed(1)} yrs
                   </span>
                 </div>
@@ -133,7 +133,7 @@ export function RetentionPolicyCard() {
                     max={3650}
                     {...field}
                     onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                    className="font-mono text-sm h-10 rounded-md"
+                    className="text-sm h-10 rounded-md"
                   />
                 </FormControl>
                 <div className="flex items-center gap-1 pt-1">
@@ -169,7 +169,7 @@ export function RetentionPolicyCard() {
                     <Clock className="size-3.5 text-zinc-500" />
                     <span>Logout History Retention (Days)</span>
                   </FormLabel>
-                  <span className="text-[11px] font-mono text-muted-foreground">
+                  <span className="text-[11px] text-muted-foreground">
                     ~{(field.value / 365).toFixed(1)} yrs
                   </span>
                 </div>
@@ -180,7 +180,7 @@ export function RetentionPolicyCard() {
                     max={3650}
                     {...field}
                     onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                    className="font-mono text-sm h-10 rounded-md"
+                    className="text-sm h-10 rounded-md"
                   />
                 </FormControl>
                 <div className="flex items-center gap-1 pt-1">
@@ -216,7 +216,7 @@ export function RetentionPolicyCard() {
                     <Calendar className="size-3.5 text-red-500" />
                     <span>Failed Login Retention (Days)</span>
                   </FormLabel>
-                  <span className="text-[11px] font-mono text-muted-foreground">
+                  <span className="text-[11px] text-muted-foreground">
                     ~{(field.value / 365).toFixed(1)} yrs
                   </span>
                 </div>
@@ -227,7 +227,7 @@ export function RetentionPolicyCard() {
                     max={3650}
                     {...field}
                     onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                    className="font-mono text-sm h-10 rounded-md"
+                    className="text-sm h-10 rounded-md"
                   />
                 </FormControl>
                 <div className="flex items-center gap-1 pt-1">

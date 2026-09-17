@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   ChevronDown,
   ChevronRight,
@@ -11,6 +12,7 @@ import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { BackgroundJobHealthData } from "@/types/dashboard";
 import { cn } from "@/lib/utils";
+import { SeverityDot, SeverityLevel } from "../SeverityDot";
 
 function formatRelativeTime(isoDate: string): string {
   try {
@@ -81,92 +83,82 @@ export function BackgroundJobHealthWidget({
         />
       }
     >
-      <div className="space-y-1 select-none">
+      <div className="space-y-2 select-none">
         {sortedJobs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-6 text-center text-muted-foreground text-xs">
             <Clock className="w-5 h-5 mb-1.5 opacity-50" />
             No background jobs scheduled.
           </div>
         ) : (
-          sortedJobs.map((job) => {
+          sortedJobs.slice(0, 4).map((job) => {
             const isMissed = job.missedWindows > 0;
             const isFailed = job.lastOutcome === "FAILED";
             const isPartial = job.lastOutcome === "PARTIAL";
             const isExpanded = expandedJob === job.code;
 
             const outcomeStatus = isMissed ? "STALLED" : job.lastOutcome;
+            const severity: SeverityLevel = isMissed || isFailed ? "HIGH" : isPartial ? "MEDIUM" : "LOW";
 
             return (
               <div
                 key={job.code}
                 className={cn(
-                  "rounded-lg transition-colors duration-150 border",
+                  "rounded-sm transition-colors duration-150 border h-[48px]",
                   isMissed || isFailed
-                    ? "bg-rose-500/10 border-rose-500/30 dark:bg-rose-950/20 dark:border-rose-900/40"
+                    ? "bg-[var(--danger-surface)] border-[var(--danger-border)]/50"
                     : isPartial
-                    ? "bg-amber-500/10 border-amber-500/30 dark:bg-amber-950/20 dark:border-amber-900/40"
-                    : "bg-muted/20 hover:bg-muted/50 border-border/30 dark:border-white/[0.04]"
+                      ? "bg-[var(--warning-surface)] border-[var(--warning-border)]/50"
+                      : "bg-muted/20 hover:bg-accent border-foreground/10 dark:border-foreground/4"
                 )}
               >
                 <div
                   onClick={() => setExpandedJob(isExpanded ? null : job.code)}
                   className="flex items-center justify-between min-h-[40px] px-3 py-1 cursor-pointer gap-2"
                 >
-                  {/* Left: Job Name & Schedule */}
+                  {/* Left: Status/Severity Dot + Job Name & Schedule */}
                   <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <SeverityDot
+                      severity={severity}
+                      label={`Job status: ${outcomeStatus}`}
+                      className="shrink-0"
+                    />
                     <div className="flex flex-col min-w-0">
                       <span
                         className={cn(
-                          "text-[12.5px] font-medium truncate leading-tight",
-                          isMissed || isFailed
-                            ? "text-rose-700 dark:text-rose-300 font-semibold"
-                            : "text-foreground/90"
+                          "text-[12px] font-medium truncate",
+                          isMissed || isFailed ? "text-danger-text font-semibold" : "text-foreground"
                         )}
                       >
                         {job.label}
                       </span>
-                      <span className="text-[10.5px] text-muted-foreground truncate leading-tight mt-0.5">
+                      <span className="text-[10.5px] text-muted-foreground">
                         {job.schedule} · last run {formatRelativeTime(job.lastRunAt)}
                       </span>
                     </div>
                   </div>
 
-                  {/* Right: Duration + Status Tooltip Icon */}
+                  {/* Right: Metrics / Missed Badge / State */}
                   <div className="flex items-center gap-2 shrink-0">
-                    {/* Duration & Items Count (Subtle text) */}
-                    {!isMissed && (
-                      <div className="flex items-center gap-1.5 text-right font-mono text-[11px] tabular-nums text-muted-foreground">
-                        <span className="font-medium text-foreground/80">{formatDuration(job.durationMs)}</span>
-                        <span className="text-muted-foreground/60">·</span>
-                        <span>{job.itemsProcessed} items</span>
+                    {/* CRITICAL Correctness Feature: Preserved Missed Windows Prominence */}
+                    {isMissed ? (
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-[var(--danger-surface)] text-danger-text border border-danger-border animate-pulse">
+                        Missed {job.missedWindows} run{job.missedWindows > 1 ? "s" : ""}
+                      </span>
+                    ) : (
+                      <div className="text-right hidden sm:block">
+                        <span className="text-[11px] font-medium text-foreground tabular-nums">
+                          {formatDuration(job.durationMs)}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground ml-1">
+                          · {job.itemsProcessed} items
+                        </span>
                       </div>
                     )}
 
-                    {isMissed && (
-                      <span className="text-[11px] font-bold text-rose-600 dark:text-rose-400 bg-rose-500/20 px-1.5 py-0.2 rounded border border-rose-500/30 tabular-nums">
-                        Missed {job.missedWindows} run{job.missedWindows > 1 ? "s" : ""}
-                      </span>
-                    )}
-
-                    {/* Compact Status Icon with Tooltip */}
-                    <StatusTooltipIcon
-                      status={outcomeStatus}
-                      tooltipTitle={`Job: ${job.label}`}
-                      tooltipDescription={`Outcome: ${outcomeStatus}. Execution took ${formatDuration(job.durationMs)} to process ${job.itemsProcessed} items.`}
-                      tooltipDetails={[
-                        { label: "Status", value: outcomeStatus },
-                        { label: "Schedule", value: job.schedule },
-                        { label: "Duration", value: formatDuration(job.durationMs) },
-                        { label: "Items Processed", value: `${job.itemsProcessed} items` },
-                        { label: "Last Run", value: formatRelativeTime(job.lastRunAt) },
-                      ]}
-                      size="sm"
-                    />
-
-                    {/* Expand Toggle Chevron if error exists */}
+                    {/* Chevron for expandable errors */}
                     {job.lastError ? (
                       isExpanded ? (
-                        <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+                        <ChevronDown className="w-3.5 h-3.5 text-danger-text" />
                       ) : (
                         <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
                       )
@@ -177,7 +169,7 @@ export function BackgroundJobHealthWidget({
                 {/* Expanded Details / Error Callout */}
                 {isExpanded && job.lastError && (
                   <div className="px-3 pb-2.5 pt-1 border-t border-border/20 text-xs">
-                    <div className="p-2 rounded bg-rose-500/15 text-rose-700 dark:text-rose-300 font-mono text-[10.5px] break-all border border-rose-500/30">
+                    <div className="p-2 rounded bg-[var(--danger-surface)] text-danger-text text-[10.5px] break-all border border-[var(--danger-border)]">
                       <strong className="block font-sans font-semibold mb-0.5">Failure Detail:</strong>
                       {job.lastError}
                     </div>
@@ -186,6 +178,17 @@ export function BackgroundJobHealthWidget({
               </div>
             );
           })
+        )}
+
+        {sortedJobs.length > 4 && (
+          <div className="pt-1 text-center">
+            <Link
+              href="/app/administration/jobs"
+              className="text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              View all {sortedJobs.length} background jobs →
+            </Link>
+          </div>
         )}
       </div>
     </WidgetShell>

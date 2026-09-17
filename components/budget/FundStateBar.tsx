@@ -133,7 +133,7 @@ export function FundStateBar({
         <p className="text-xs text-rose-800 dark:text-rose-300 leading-relaxed">
           The sum of individual fund states (<strong>{formattedSum}</strong>) does not equal the
           total baseline budget (<strong>{formattedTotal}</strong>). Unreconciled variance:{" "}
-          <span className="font-mono font-bold">{formattedDiff}</span>.
+          <span className="font-bold">{formattedDiff}</span>.
         </p>
         <div className="text-[11px] text-rose-700/80 dark:text-rose-400/80 flex items-center gap-1.5">
           <Info className="size-3.5" />
@@ -153,7 +153,7 @@ export function FundStateBar({
       {title && (
         <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           <span>{title}</span>
-          <span className="font-mono tabular-nums text-foreground font-bold">
+          <span className="tabular-nums text-foreground font-bold">
             Total {currency} {formatAmount(total)}
           </span>
         </div>
@@ -181,7 +181,7 @@ export function FundStateBar({
               title={`${seg.label}: ${currency} ${formatAmount(seg.fils)} (${seg.percentString})`}
             >
               {showInlineLabel && (
-                <span className="text-[11px] font-bold text-white drop-shadow-xs font-mono tracking-tight px-1 truncate">
+                <span className="text-[11px] font-bold text-white drop-shadow-xs tracking-tight px-1 truncate">
                   {seg.percentString}
                 </span>
               )}
@@ -230,7 +230,7 @@ export function FundStateBar({
                   currency={currency}
                   className="text-[11px] font-bold text-foreground text-left tracking-tight"
                 />
-                <span className={cn("text-[10px] font-semibold font-mono shrink-0", legendLayout === "horizontal" && "ml-auto", seg.textColor)}>
+                <span className={cn("text-[10px] font-semibold shrink-0", legendLayout === "horizontal" && "ml-auto", seg.textColor)}>
                   {seg.percentString}
                 </span>
               </div>

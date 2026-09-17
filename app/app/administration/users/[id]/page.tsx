@@ -854,11 +854,11 @@ function UserDetailPageContent() {
                   </UserPanelRow>
                   <UserPanelRow>
                     <span className="text-muted-foreground w-1/3">Username</span>
-                    <span className="w-2/3 text-foreground font-medium font-mono">@{user.username}</span>
+                    <span className="w-2/3 text-foreground font-medium">@{user.username}</span>
                   </UserPanelRow>
                   <UserPanelRow>
                     <span className="text-muted-foreground w-1/3">Email</span>
-                    <span className="w-2/3 text-foreground font-medium font-mono">{user.email}</span>
+                    <span className="w-2/3 text-foreground font-medium">{user.email}</span>
                   </UserPanelRow>
                   <UserPanelRow>
                     <span className="text-muted-foreground w-1/3">Job Title</span>

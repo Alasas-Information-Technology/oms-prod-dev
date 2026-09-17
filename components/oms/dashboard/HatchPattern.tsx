@@ -13,7 +13,7 @@ export interface HatchPatternProps {
  */
 export function HatchPatternDefs({
   id,
-  color = "currentColor",
+  color = "var(--accent-interactive, var(--primary))",
   strokeWidth = 1,
   opacity = 0.18,
 }: HatchPatternProps) {
@@ -43,7 +43,7 @@ export function HatchPatternDefs({
  */
 export function HatchPattern({
   id: explicitId,
-  color = "currentColor",
+  color = "var(--accent-interactive, var(--primary))",
   strokeWidth = 1,
   opacity = 0.18,
 }: HatchPatternProps) {

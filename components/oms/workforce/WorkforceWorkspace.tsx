@@ -175,7 +175,7 @@ export function WorkforceWorkspace() {
             <span className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wider">
               Annual Active Run-Rate
             </span>
-            <div className="text-xl font-bold font-mono text-foreground">
+            <div className="text-xl font-bold text-foreground">
               AED {(stats.totalSpendFils / 100).toLocaleString()}
             </div>
           </div>
@@ -275,7 +275,7 @@ export function WorkforceWorkspace() {
                       <h3 className="text-base font-bold text-foreground">
                         {member.fullName}
                       </h3>
-                      <span className="font-mono text-xs px-2 py-0.5 rounded bg-muted border border-border/60 text-foreground">
+                      <span className="text-xs px-2 py-0.5 rounded bg-muted border border-border/60 text-foreground">
                         {member.requisitionId}
                       </span>
                     </div>
@@ -335,7 +335,7 @@ export function WorkforceWorkspace() {
                   {/* Financial Rate */}
                   <div className="p-2.5 rounded-lg bg-muted/40 border border-border/40 space-y-0.5 min-w-[170px]">
                     <div className="text-muted-foreground text-[11px]">Monthly / Annual Rate</div>
-                    <div className="font-semibold text-foreground font-mono">
+                    <div className="font-semibold text-foreground">
                       AED {((member.monthlyRate || 0) / 100).toLocaleString()}{" "}
                       <span className="text-muted-foreground font-normal text-[11px]">
                         / AED {((member.annualCost || 0) / 100).toLocaleString()}

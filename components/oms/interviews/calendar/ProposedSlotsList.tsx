@@ -109,7 +109,7 @@ export function ProposedSlotsList({
                         {dateLabel}
                       </span>
                       <span className="text-muted-foreground">·</span>
-                      <span className="font-mono text-xs font-semibold text-primary">
+                      <span className="text-xs font-semibold text-primary">
                         {gstRange}
                       </span>
                       <span className="text-[11px] text-muted-foreground">
@@ -123,7 +123,7 @@ export function ProposedSlotsList({
                         <span className="text-muted-foreground font-medium">
                           Candidate local time:
                         </span>
-                        <span className="font-mono font-semibold text-foreground">
+                        <span className="font-semibold text-foreground">
                           {candidateRange}
                         </span>
                       </div>

@@ -111,7 +111,7 @@ export function VendorRequisitionDetailWorkspace({
       <div className="w-full bg-background border-b border-border/70 px-4 sm:px-6 py-4 space-y-3 transition-colors">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Link href="/vendor" className="hover:text-foreground transition-colors">
                 Vendor Portal
               </Link>
@@ -127,7 +127,7 @@ export function VendorRequisitionDetailWorkspace({
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
                 {requisition.positionTitle}
               </h1>
-              <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-muted/80 text-foreground border border-border/50">
+              <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-muted/80 text-foreground border border-border/50">
                 {requisition.id}
               </span>
               <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20 font-medium">
@@ -322,7 +322,7 @@ export function VendorRequisitionDetailWorkspace({
                 </div>
                 <div className="py-2.5 flex items-center justify-between">
                   <span className="text-muted-foreground">Salary Grade Target:</span>
-                  <span className="font-semibold text-foreground font-mono">Grade {requisition.salaryGrade}</span>
+                  <span className="font-semibold text-foreground">Grade {requisition.salaryGrade}</span>
                 </div>
               </div>
             </Card>

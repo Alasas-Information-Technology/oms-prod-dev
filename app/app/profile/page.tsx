@@ -267,7 +267,7 @@ export default function ProfilePage() {
                 type="text"
                 value={editForm.employeeId}
                 onChange={(e) => setEditForm({ ...editForm, employeeId: e.target.value })}
-                className="text-xs h-9 rounded-md font-mono"
+                className="text-xs h-9 rounded-md"
                 placeholder="DEZ-2024-0087"
               />
             </div>

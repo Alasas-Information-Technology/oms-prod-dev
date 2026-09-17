@@ -77,7 +77,7 @@ export function VendorInterviewResponseWorkspace({
           <h2 className="text-lg font-bold text-foreground">Interview Proposal Not Found</h2>
           <p className="text-xs text-muted-foreground max-w-md">
             Could not find an active interview proposal for candidate reference{" "}
-            <code className="px-1.5 py-0.5 rounded bg-muted font-mono">{candidateRef}</code>.
+            <code className="px-1.5 py-0.5 rounded bg-muted">{candidateRef}</code>.
             The proposal may have already concluded or is assigned to another vendor.
           </p>
         </div>
@@ -209,7 +209,7 @@ export function VendorInterviewResponseWorkspace({
       <div className="w-full bg-background border-b border-border/70 px-4 sm:px-6 py-4 space-y-3 transition-colors">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Link href="/vendor" className="hover:text-foreground transition-colors">
                 Vendor Portal
               </Link>
@@ -221,7 +221,7 @@ export function VendorInterviewResponseWorkspace({
                 Submissions
               </Link>
               <ChevronRight className="size-3.5 text-muted-foreground/60" />
-              <span className="font-mono text-muted-foreground">{proposal.candidateRef}</span>
+              <span className="text-muted-foreground">{proposal.candidateRef}</span>
               <ChevronRight className="size-3.5 text-muted-foreground/60" />
               <span className="text-foreground font-semibold">Interview Schedule</span>
             </div>
@@ -231,7 +231,7 @@ export function VendorInterviewResponseWorkspace({
                 <Calendar className="size-6 text-teal-600 dark:text-teal-400" />
                 Interview Response · {proposal.candidateName}
               </h1>
-              <Badge variant="outline" className="font-mono text-xs border-border/80">
+              <Badge variant="outline" className="text-xs border-border/80">
                 {proposal.candidateRef}
               </Badge>
               {isConfirmed ? (
@@ -324,7 +324,7 @@ export function VendorInterviewResponseWorkspace({
               <ShieldCheck className="size-4 text-teal-600 dark:text-teal-400" />
               Interview Context & Meeting Details
             </span>
-            <span className="text-[11px] font-mono text-muted-foreground">
+            <span className="text-[11px] text-muted-foreground">
               {proposal.requisitionId}
             </span>
           </div>

@@ -23,6 +23,7 @@ import {
   VendorContract,
   VendorProfileData,
   VendorSupportMessage,
+  CandidateAccessToken,
 } from "./entities";
 
 // ============================================================================
@@ -39,8 +40,8 @@ export const REQUISITIONS: Record<string, Requisition> = {
     departmentId: "dept-digital-security",
     departmentName: "Digital Security",
     requestorId: "usr-mariam",
-    currentStage: "AMENDMENT",
-    stageLabel: "Amendment in progress",
+    currentStage: "ONBOARDING",
+    stageLabel: "Onboarding in progress",
     positions: {
       required: 2,
       filled: 0,
@@ -1464,7 +1465,7 @@ export const AMENDMENTS: Record<string, Amendment> = {
     requisitionId: "OMS-2026-0148",
     candidateRef: "C-014",
     positionTitle: "Senior Cybersecurity Analyst",
-    status: "AWAITING_APPROVAL",
+    status: "APPROVED",
     triggeredBy: {
       event: "CANDIDATE_QUALIFIED",
       at: "2026-08-12T11:46:00Z",
@@ -1491,29 +1492,32 @@ export const AMENDMENTS: Record<string, Amendment> = {
         stage: "LINE_MANAGER",
         user: { name: "Omar Al Hashmi", userId: "usr-omar" },
         role: "Line Manager",
-        status: "CURRENT",
-        actionedAt: null,
+        status: "COMPLETED",
+        actionedAt: "2026-08-12T14:15:00Z",
         rejectionConsequence: "Closes this candidate's path and releases reserved funds.",
       },
       {
         stage: "SECTION_HEAD",
         user: { name: "Fatima Al Marri", userId: "usr-fatima" },
         role: "Section Head",
-        status: "PENDING",
+        status: "COMPLETED",
+        actionedAt: "2026-08-13T09:30:00Z",
         rejectionConsequence: "Rejects amendment and returns to Line Manager.",
       },
       {
         stage: "HOD",
         user: { name: "Khalid Al Suwaidi", userId: "usr-khalid" },
         role: "Head of Department",
-        status: "PENDING",
+        status: "COMPLETED",
+        actionedAt: "2026-08-13T15:45:00Z",
         rejectionConsequence: "Rejects amendment back to section level.",
       },
       {
         stage: "FINANCE",
         user: { name: "Rashid Al Mansoori", userId: "usr-rashid-m" },
         role: "Finance Manager",
-        status: "PENDING",
+        status: "COMPLETED",
+        actionedAt: "2026-08-14T11:20:00Z",
         rejectionConsequence: "Declines budget re-allocation.",
       },
     ],
@@ -1536,7 +1540,7 @@ export const AMENDMENTS: Record<string, Amendment> = {
       daysRemaining: 2,
       severity: "WARNING",
     },
-    currentAssigneeId: "usr-omar", // Omar Al Hashmi approves
+    currentAssigneeId: "", // Omar, Fatima, Khalid, and Rashid approved in sequence
     submittedAt: "2026-08-12T12:30:00Z",
     justification:
       "Candidate brings 9 years of specialized threat hunting and incident triage experience, commanding AED 330,000.00. The AED 20,000.00 shortfall is drawn from CS-DIG-001 open surplus balance.",
@@ -1697,7 +1701,7 @@ export const APPROVAL_TASKS: Record<string, ApprovalTask> = {
     assignedAt: "2026-08-12T12:30:00Z",
     sla: { dueAt: "2026-09-11T12:30:00Z", daysRemaining: 2, breached: false },
     priority: "HIGH",
-    status: "PENDING",
+    status: "COMPLETED",
     amendmentId: "amd-2026-0089",
   },
 
@@ -2001,8 +2005,8 @@ export const ONBOARDING_CASES: Record<string, OnboardingCase> = {
   },
 
   // 0148 Onshore Reference Case (C-014 Samir Rahman / Falcon Tech)
-  "ONB-2026-0148": {
-    id: "ONB-2026-0148",
+  "ONB-2026-0061": {
+    id: "ONB-2026-0061",
     requisitionId: "OMS-2026-0148",
     candidateRef: "C-014",
     positionTitle: "Senior Cybersecurity Analyst",
@@ -2282,7 +2286,6 @@ export const ONBOARDING_CASES: Record<string, OnboardingCase> = {
 };
 
 // Aliases for backwards compatibility with sandbox fixtures
-ONBOARDING_CASES["ONB-2026-0061"] = ONBOARDING_CASES["ONB-2026-0148"];
 ONBOARDING_CASES["ONB-2026-0062"] = ONBOARDING_CASES["ONB-2026-0102"];
 ONBOARDING_CASES["ONB-2026-0064"] = ONBOARDING_CASES["ONB-2026-0161"];
 
@@ -2742,5 +2745,37 @@ export const VENDOR_SUPPORT_MESSAGES: Record<string, VendorSupportMessage[]> = {
     },
   ],
 };
+
+// ============================================================================
+// 12. Candidate Access Tokens (Third Surface — Candidate Joining Readiness)
+// Specification: docs/CANDIDATE-JOINING-READINESS.md Part 1 & Part 3
+// ============================================================================
+
+export const CANDIDATE_ACCESS_TOKENS: Record<string, CandidateAccessToken> = {
+  // Flagship Onshore Token for ONB-2026-0061 (C-014 Samir Rahman / Falcon Tech)
+  "tok-demo-c014-onb0061": {
+    tokenId: "tok-2026-0061-c014",
+    onboardingId: "ONB-2026-0061",
+    rawToken: "c-tok-onb0061-c014-samir-rahman-78",
+    tokenHash: "06b0d9124976cf748375fb3424d553db043e06cf110a18765476a6616a9eb789",
+    expiresAt: "2026-09-26T13:00:00Z", // 14-day generous validity window
+    consumedCount: 0,
+    revokedAt: null,
+    createdAt: "2026-08-25T13:00:00Z",
+  },
+  // Offshore Token for ONB-2026-0102 (C-031 Priya Sharma / Falcon Tech)
+  "tok-demo-c031-onb0102": {
+    tokenId: "tok-2026-0102-c031",
+    onboardingId: "ONB-2026-0102",
+    rawToken: "c-tok-onb0102-c031-priya-sharma-offshore",
+    tokenHash: "5f4dcc3b5aa765d61d8327deb882cf992b96decac350e9be432857475f564756",
+    expiresAt: "2026-09-26T13:00:00Z", // 14-day generous validity window
+    consumedCount: 0,
+    revokedAt: null,
+    createdAt: "2026-08-25T13:00:00Z",
+  },
+};
+
+export const CANDIDATE_ACCESS_TOKENS_LIST: CandidateAccessToken[] = Object.values(CANDIDATE_ACCESS_TOKENS);
 
 
