@@ -10,6 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
+  LabelList,
 } from "recharts";
 import { gridStyle, axisStyle, categoricalScale } from "@/lib/dashboard/chart-tokens";
 import { DataTable, ColumnDef } from "@/components/shared/DataTable";
@@ -130,11 +131,31 @@ export function BarChartCard({
             layout={layout}
             margin={{
               top: 5,
-              right: layout === "vertical" ? 20 : 5,
+              right: layout === "vertical" ? 44 : 5,
               left: layout === "vertical" ? 5 : -24,
               bottom: 0,
             }}
           >
+            <defs>
+              {Array.from(
+                new Set([
+                  ...series.map((s, idx) => s.color || scale[idx] || "var(--primary)"),
+                  ...(getCellColor
+                    ? safeData.flatMap((entry, entryIdx) =>
+                        series.map((s) => getCellColor(entry, entryIdx, s.key))
+                      )
+                    : []),
+                ].filter(Boolean))
+              ).map((color) => {
+                const gradId = `grad-${(color as string).replace(/[^a-zA-Z0-9-]/g, "")}`;
+                return (
+                  <linearGradient key={gradId} id={gradId} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={color as string} stopOpacity={1} />
+                    <stop offset="100%" stopColor={color as string} stopOpacity={0.85} />
+                  </linearGradient>
+                );
+              })}
+            </defs>
             {!hideGrid && (
               <CartesianGrid
                 strokeDasharray="3 3"
@@ -199,12 +220,12 @@ export function BarChartCard({
                   dataKey={s.key}
                   name={s.name}
                   stackId={stackId}
-                  fill={defaultColor}
+                  fill={`url(#grad-${defaultColor.replace(/[^a-zA-Z0-9-]/g, "")})`}
                   radius={
                     stacked
                       ? undefined
                       : layout === "horizontal"
-                      ? [3, 3, 0, 0]
+                      ? [4, 4, 0, 0]
                       : [0, 3, 3, 0]
                   }
                   animationDuration={300}
@@ -214,8 +235,25 @@ export function BarChartCard({
                   {/* Per-cell color overrides */}
                   {safeData.map((entry, entryIdx) => {
                     const customColor = getCellColor ? getCellColor(entry, entryIdx, s.key) : undefined;
-                    return customColor ? <Cell key={`cell-${entryIdx}`} fill={customColor} /> : null;
+                    return customColor ? (
+                      <Cell
+                        key={`cell-${entryIdx}`}
+                        fill={`url(#grad-${customColor.replace(/[^a-zA-Z0-9-]/g, "")})`}
+                      />
+                    ) : null;
                   })}
+
+                  {/* 12px muted label at bar's end for horizontal layout per V6 / J3 Task 4 */}
+                  {layout === "vertical" && (
+                    <LabelList
+                      dataKey={s.key}
+                      position="right"
+                      formatter={(val: any) => (xAxisFormatter ? xAxisFormatter(val) : val)}
+                      fill="var(--muted-foreground)"
+                      fontSize={12}
+                      offset={8}
+                    />
+                  )}
                 </Bar>
               );
             })}

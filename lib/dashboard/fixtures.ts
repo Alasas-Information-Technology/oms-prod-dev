@@ -1900,7 +1900,7 @@ export const DASHBOARD_PERSONA_LAYOUTS: Record<DashboardPersona, DashboardLayout
       isOpen: true,
     },
     bands: [
-      {
+{
         band: "A",
         height: "kpi",
         widgets: [
@@ -1927,7 +1927,7 @@ export const DASHBOARD_PERSONA_LAYOUTS: Record<DashboardPersona, DashboardLayout
           { id: "budget-exposure", span: 6, priority: 20 },
         ],
       },
-      {
+            {
         band: "C1",
         height: "strip",
         widgets: [
@@ -1972,7 +1972,7 @@ export const DASHBOARD_PERSONA_LAYOUTS: Record<DashboardPersona, DashboardLayout
       isOpen: true,
     },
     bands: [
-      {
+{
         band: "A",
         height: "kpi",
         widgets: [
@@ -2030,7 +2030,7 @@ export const DASHBOARD_PERSONA_LAYOUTS: Record<DashboardPersona, DashboardLayout
           { id: "workforce-by-department", span: 6, priority: 20 },
         ],
       },
-    ],
+          ],
     updatedAt: "2026-08-31T08:30:00.000Z",
   },
 
@@ -2053,7 +2053,7 @@ export const DASHBOARD_PERSONA_LAYOUTS: Record<DashboardPersona, DashboardLayout
       isOpen: true,
     },
     bands: [
-      {
+{
         band: "A",
         height: "kpi",
         widgets: [
@@ -2111,7 +2111,7 @@ export const DASHBOARD_PERSONA_LAYOUTS: Record<DashboardPersona, DashboardLayout
           { id: "pending-hr-decisions", span: 6, priority: 20 },
         ],
       },
-    ],
+          ],
     updatedAt: "2026-08-31T08:30:00.000Z",
   },
 
@@ -2134,7 +2134,7 @@ export const DASHBOARD_PERSONA_LAYOUTS: Record<DashboardPersona, DashboardLayout
       isOpen: true,
     },
     bands: [
-      {
+{
         band: "A",
         height: "kpi",
         widgets: [
@@ -2174,7 +2174,7 @@ export const DASHBOARD_PERSONA_LAYOUTS: Record<DashboardPersona, DashboardLayout
           { id: "reconciliation-exceptions", span: 6, priority: 20 },
         ],
       },
-    ],
+          ],
     updatedAt: "2026-08-31T08:30:00.000Z",
   },
 
@@ -2196,7 +2196,7 @@ export const DASHBOARD_PERSONA_LAYOUTS: Record<DashboardPersona, DashboardLayout
       isOpen: true,
     },
     bands: [
-      {
+{
         band: "A",
         height: "kpi",
         widgets: [
@@ -2263,7 +2263,7 @@ export const DASHBOARD_PERSONA_LAYOUTS: Record<DashboardPersona, DashboardLayout
           { id: "integration-health", span: 6, priority: 20 },
         ],
       },
-    ],
+          ],
     updatedAt: "2026-08-31T08:30:00.000Z",
   },
 };

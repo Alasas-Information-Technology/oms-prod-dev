@@ -79,14 +79,14 @@ export interface ContrastAuditItem {
   pass: boolean;
 }
 
-// Surfaces
-export const SURFACE_LIGHT_BASE = "#FAF8F3";
+// Surfaces (Monochromatic Architecture)
+export const SURFACE_LIGHT_BASE = "#F8F9FA";
 export const SURFACE_LIGHT_CARD = "#FFFFFF";
 
-export const SURFACE_DARK_BASE = "#0E0D0B";
-export const SURFACE_DARK_CARD = "#171310"; // Elevation 1 (+4%)
-export const SURFACE_DARK_ELEV2 = "#201A14"; // Elevation 2 (+4%)
-export const SURFACE_DARK_ELEV3 = "#2A2219"; // Elevation 3 (+4%)
+export const SURFACE_DARK_BASE = "#0F1115";
+export const SURFACE_DARK_CARD = "#16181E"; // Elevation 1
+export const SURFACE_DARK_ELEV2 = "#1D2027"; // Elevation 2
+export const SURFACE_DARK_ELEV3 = "#242831"; // Elevation 3
 
 export function buildContrastAuditList(): ContrastAuditItem[] {
   const list: ContrastAuditItem[] = [
@@ -410,16 +410,16 @@ export function buildContrastAuditList(): ContrastAuditItem[] {
 
     {
       category: "Candidate Identity",
-      token: "candidate-1 (teal) left border",
+      token: "candidate-1 (plum) left border",
       lightPair: {
-        fg: "#0E7A6E",
+        fg: "#8E3B68",
         bg: SURFACE_LIGHT_CARD,
-        ratio: calculateContrastRatio("#0E7A6E", SURFACE_LIGHT_CARD),
+        ratio: calculateContrastRatio("#8E3B68", SURFACE_LIGHT_CARD),
       },
       darkPair: {
-        fg: "#25B2A2",
+        fg: "#D472A3",
         bg: SURFACE_DARK_CARD,
-        ratio: calculateContrastRatio("#25B2A2", SURFACE_DARK_CARD),
+        ratio: calculateContrastRatio("#D472A3", SURFACE_DARK_CARD),
       },
       minRequired: 3.0,
       description: "Candidate 1 left border identifying C-021",
@@ -429,16 +429,16 @@ export function buildContrastAuditList(): ContrastAuditItem[] {
     },
     {
       category: "Candidate Identity",
-      token: "candidate-1 (teal) avatar text",
+      token: "candidate-1 (plum) avatar text",
       lightPair: {
-        fg: "#074039",
-        bg: "#C5ECE7",
-        ratio: calculateContrastRatio("#074039", "#C5ECE7"),
+        fg: "#521437",
+        bg: "#F0D5E3",
+        ratio: calculateContrastRatio("#521437", "#F0D5E3"),
       },
       darkPair: {
-        fg: "#D1F4F0",
-        bg: "#074039",
-        ratio: calculateContrastRatio("#D1F4F0", "#074039"),
+        fg: "#F9E5EE",
+        bg: "#521437",
+        ratio: calculateContrastRatio("#F9E5EE", "#521437"),
       },
       minRequired: 4.5,
       description: "Candidate 1 initials avatar text",

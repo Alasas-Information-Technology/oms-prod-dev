@@ -7,45 +7,42 @@ import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { RequestExceptionsData, RequestExceptionItem, RequestExceptionType } from "@/types/dashboard";
 import { DashboardListRow } from "../DashboardListRow";
-import { 
-  ClockAlert, 
-  AlertTriangle, 
-  FileWarning, 
-  Hourglass, 
+import { SeverityDot } from "../SeverityDot";
+import {
+  ClockAlert,
+  AlertTriangle,
+  FileWarning,
+  Hourglass,
   UserX,
   type LucideIcon
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const EXCEPTION_CONFIG: Record<RequestExceptionType, { icon: LucideIcon; label: string; color: string; bg: string }> = {
+/**
+ * Exception TYPE is conveyed strictly by icon, never by colour per
+ * DASHBOARD-ADMIN-WIDGETS.md and DASHBOARD-VISUAL-COVERAGE-GEMINI.md C3.
+ * Severity is conveyed by SeverityDot (three allowed colours).
+ */
+const EXCEPTION_CONFIG: Record<RequestExceptionType, { icon: LucideIcon; label: string }> = {
   SLA_BREACH: {
     icon: ClockAlert,
     label: "SLA Breach",
-    color: "text-rose-600 dark:text-rose-400",
-    bg: "bg-rose-500/10",
   },
   BUDGET_MISMATCH: {
     icon: AlertTriangle,
     label: "Budget Mismatch",
-    color: "text-amber-600 dark:text-amber-400",
-    bg: "bg-amber-500/10",
   },
   RECONCILIATION_VARIANCE: {
     icon: FileWarning,
     label: "Reconciliation",
-    color: "text-orange-600 dark:text-orange-400",
-    bg: "bg-orange-500/10",
   },
   STALLED: {
     icon: Hourglass,
     label: "Stalled",
-    color: "text-blue-600 dark:text-blue-400",
-    bg: "bg-blue-500/10",
   },
   APPROVER_UNAVAILABLE: {
     icon: UserX,
     label: "Approver Unavailable",
-    color: "text-purple-600 dark:text-purple-400",
-    bg: "bg-purple-500/10",
   },
 };
 
@@ -66,7 +63,7 @@ export function RequestExceptionsTable({
 
   const handleRowClick = (row: RequestExceptionItem) => {
     if (row.type === "RECONCILIATION_VARIANCE") {
-      router.push(`/app/budget/reconciliation`); 
+      router.push(`/app/budget/reconciliation`);
     } else {
       router.push(`/app/requests/${row.requestId}`);
     }
@@ -102,12 +99,16 @@ export function RequestExceptionsTable({
         ) : undefined
       }
     >
+      <span className="sr-only">
+        Workflow exceptions: {totalCount} total exceptions, {highSeverityCount} high severity.
+      </span>
+
       {items.length === 0 ? (
         <div className="flex items-center justify-center py-10 text-sm text-muted-foreground">
           No request exceptions in the selected scope.
         </div>
       ) : (
-        <div className="flex flex-col gap-1 w-full">
+        <div className="flex flex-col gap-2 w-full">
           {displayItems.map((item) => {
             const config = EXCEPTION_CONFIG[item.type] || EXCEPTION_CONFIG.SLA_BREACH;
             const Icon = config.icon;
@@ -115,9 +116,10 @@ export function RequestExceptionsTable({
             return (
               <DashboardListRow
                 key={item.id}
+                leading={<SeverityDot severity={item.severity} label={`${item.severity} severity`} className="mr-0.5" />}
                 icon={Icon}
-                iconBg={config.bg}
-                iconColor={config.color}
+                iconBg="bg-muted/40 dark:bg-slate-800/60"
+                iconColor="text-foreground/70"
                 title={item.detail}
                 subtitle={`${item.requestCode || item.requestId} · ${item.owner?.name || "Unassigned"}`}
                 trailing={
@@ -126,11 +128,22 @@ export function RequestExceptionsTable({
                   </span>
                 }
                 trailingSubtitle={
-                  item.severity === "HIGH" ? (
-                    <span className="text-rose-600 dark:text-rose-400 font-semibold">High Severity</span>
-                  ) : (
-                    <span className="text-muted-foreground">{config.label}</span>
-                  )
+                  <span
+                    className={cn(
+                      "text-[11px]",
+                      item.severity === "HIGH"
+                        ? "text-danger-text font-semibold"
+                        : item.severity === "MEDIUM"
+                          ? "text-warning-text font-semibold"
+                          : "text-muted-foreground font-normal"
+                    )}
+                  >
+                    {item.severity === "HIGH"
+                      ? "High Severity"
+                      : item.severity === "MEDIUM"
+                        ? "Medium Severity"
+                        : "Low Severity"} · {config.label}
+                  </span>
                 }
                 onClick={() => handleRowClick(item)}
               />

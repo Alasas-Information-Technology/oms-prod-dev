@@ -40,7 +40,7 @@ export interface WidgetShellProps {
  * - Scope indicator: 12px --text-muted with a chevron, right-aligned (not a button).
  * - 28px ⋯ icon button on the right, revealed on card hover.
  * - 20px card padding.
- * - rounded-md corners matching SimpleKpiCard.
+ * - 20px card radius matching U4.
  */
 export function WidgetShell({
   title,
@@ -61,15 +61,15 @@ export function WidgetShell({
   return (
     <Card
       surface="glass"
+      padding="sm"
       className={cn(
         "group relative flex flex-col h-full w-full overflow-hidden select-none",
-        "before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-foreground/[0.06] before:to-transparent",
         className
       )}
       style={{ minHeight: heightStyle }}
     >
-      {/* 38px Clean Header with subtle bottom hairline */}
-      <header className="h-[38px] min-h-[38px] px-3.5 sm:px-4 flex items-center justify-between border-b border-border/30 dark:border-white/[0.04] bg-muted/10 dark:bg-white/[0.01] select-none">
+      {/* 38px Clean Header */}
+      <header className="h-[38px] min-h-[38px] flex items-center justify-between border-b border-border/10 dark:border-white/[0.04]  select-none">
         {/* Left: Widget Title (13px/600 font-sans) */}
         <div className="flex items-center gap-2 min-w-0 pr-2">
           <h2 className="text-[13px] font-semibold text-foreground/90 font-sans tracking-tight truncate">
@@ -130,7 +130,7 @@ export function WidgetShell({
       </header>
 
       {/* Content Area with tighter upmarket padding (p-3.5 sm:p-4) */}
-      <div className="flex-1 flex flex-col p-3.5 sm:p-4 relative min-h-0">
+      <div className="flex-1 flex flex-col relative min-h-0">
         {isLoading ? (
           <div className="flex-1 flex flex-col gap-2.5 justify-center py-2">
             <Skeleton className="h-4 w-1/3 rounded-md" />

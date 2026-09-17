@@ -99,11 +99,11 @@ export function EvaluationOutcomePanel({
             className={cn(
               "text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border tracking-wider",
               selectedOutcome === "QUALIFY"
-                ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
+                ? "bg-[var(--rasikh-gold)] text-[#111827] dark:text-[#0F1115] border-[var(--rasikh-gold)]/60 shadow-2xs"
                 : "bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/30"
             )}
           >
-            {selectedOutcome === "QUALIFY" ? "Qualify" : "Reject"}
+            {selectedOutcome === "QUALIFY" ? "Qualified" : "Reject"}
           </span>
         )}
       </div>

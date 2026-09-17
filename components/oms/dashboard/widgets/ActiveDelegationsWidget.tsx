@@ -57,7 +57,7 @@ export function ActiveDelegationsWidget({
         />
       }
     >
-      <div className="space-y-0.5 select-none">
+      <div className="space-y-2 select-none">
         {delegations.length === 0 ? (
           <div className="py-6 text-center text-xs text-muted-foreground">
             No active authority delegations in place.
@@ -71,10 +71,10 @@ export function ActiveDelegationsWidget({
                 key={del.delegationId}
                 href="/app/administration/delegations"
                 className={cn(
-                  "group flex items-center justify-between h-[38px] px-2.5 sm:px-3 rounded-lg transition-colors border",
+                  "group flex items-center justify-between h-[48px] px-2.5 sm:px-3 rounded-sm transition-colors border",
                   isExpiringSoon
                     ? "bg-amber-500/10 border-amber-500/30 dark:bg-amber-950/20 dark:border-amber-900/40 hover:bg-amber-500/15"
-                    : "bg-transparent hover:bg-muted/40 border-transparent hover:border-border/30 dark:hover:border-white/[0.04]"
+                    : "hover:bg-accent border-foreground/10 dark:border-foreground/4"
                 )}
               >
                 {/* Left: Delegator -> Delegate + Scope */}

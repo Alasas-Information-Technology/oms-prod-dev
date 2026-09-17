@@ -107,7 +107,7 @@ export function DistributionBar({ segments, className, variant = "default" }: Di
         <defs>
           <HatchPatternDefs
             id={hatchPatternId}
-            color="var(--primary)"
+            color="var(--accent-interactive, var(--primary))"
             strokeWidth={1}
             opacity={0.30}
           />
@@ -153,7 +153,9 @@ export function DistributionBar({ segments, className, variant = "default" }: Di
               key={idx}
               style={{
                 width: `${seg.percent}%`,
-                background: seg.isResidual ? `url(#${hatchPatternId})` : undefined,
+                background: seg.isResidual
+                  ? `url(#${hatchPatternId})`
+                  : `linear-gradient(to bottom, ${seg.resolvedColor} 0%, color-mix(in srgb, ${seg.resolvedColor} 85%, transparent) 100%)`,
                 backgroundColor: seg.isResidual
                   ? "color-mix(in srgb, var(--primary) 4%, transparent)"
                   : seg.resolvedColor,

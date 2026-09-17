@@ -7,6 +7,7 @@ import { Info } from "lucide-react";
 import { SegmentedBar } from "../SegmentedBar";
 import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetShell } from "../WidgetShell";
+import { Gauge } from "../Gauge";
 
 export function RateLimitPressureWidget({
   scope,
@@ -50,9 +51,25 @@ export function RateLimitPressureWidget({
       }
 
     >
-      <div className="space-y-3 select-none">
+      <div className="space-y-6 select-none">
+        {/* NEW: Gauge per Tier (M6) */}
+        {tiers.length > 0 && (
+          <div className="grid grid-cols-2 gap-4 pb-2 border-b border-border/30">
+            {tiers.map((t) => (
+              <Gauge
+                key={`gauge-${t.tier}`}
+                value={t.hits}
+                max={t.limit}
+                threshold={t.limit}
+                thresholdCrossed={t.hits > t.limit}
+                label={`Tier ${t.tier}`}
+              />
+            ))}
+          </div>
+        )}
+
         {/* Tier Rows */}
-        <div className="space-y-1">
+        <div className="space-y-2">
           {tiers.length === 0 ? (
             <div className="py-6 text-center text-xs text-muted-foreground">
               No rate limit tiers configured.
@@ -64,7 +81,7 @@ export function RateLimitPressureWidget({
               return (
                 <div
                   key={t.tier}
-                  className="flex items-center justify-between h-[44px] px-3.5 rounded-md hover:bg-muted/40 transition-colors border border-transparent hover:border-border/30"
+                  className="flex items-center justify-between h-[48px] px-2.5 sm:px-3 rounded-sm transition-colors border hover:bg-accent border-foreground/10 dark:border-foreground/4"
                 >
                   {/* Left: Tier Label & Limit */}
                   <div className="flex items-center gap-3 min-w-0 flex-1 pr-3">

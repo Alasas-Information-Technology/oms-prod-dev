@@ -25,11 +25,11 @@ export function GlassBackground({ className }: GlassBackgroundProps) {
         className
       )}
     >
-      {/* Bedrock Indigo — top-left anchor */}
+      {/* Bedrock Indigo / Interactive Accent — top-left anchor */}
       <div
         className="absolute -top-[20%] -left-[10%] w-[60vw] h-[60vh] rounded-full"
         style={{
-          background: "var(--primary)",
+          background: "var(--accent-interactive, var(--primary))",
           opacity: 0.18,
           filter: "blur(80px)",
         }}
@@ -38,7 +38,7 @@ export function GlassBackground({ className }: GlassBackgroundProps) {
       <div
         className="absolute top-[30%] -right-[5%] w-[50vw] h-[50vh] rounded-full"
         style={{
-          background: "#B87333",
+          background: "var(--root-bronze, #B87333)",
           opacity: 0.15,
           filter: "blur(80px)",
         }}

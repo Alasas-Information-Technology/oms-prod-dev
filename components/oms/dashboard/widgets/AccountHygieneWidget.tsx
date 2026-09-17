@@ -8,6 +8,7 @@ import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { AccountHygieneData } from "@/types/dashboard";
 import { cn } from "@/lib/utils";
+import { Progress } from "@/components/ui/progress";
 
 export function AccountHygieneWidget({
   scope,
@@ -32,44 +33,41 @@ export function AccountHygieneWidget({
       count: neverSignedIn,
       filter: "never-signed-in",
       icon: UserMinus,
-      tone: neverSignedIn > 0 ? "neutral" : "default",
     },
     {
       label: "Dormant 90d+",
       count: dormant90Days,
       filter: "dormant-90",
       icon: Clock,
-      tone: dormant90Days > 10 ? "amber" : "neutral",
     },
     {
       label: "Invitations expiring",
       count: invitationsExpiringSoon,
       filter: "invitations-expiring",
       icon: MailWarning,
-      tone: "neutral",
     },
     {
       label: "Invitations expired",
       count: invitationsExpired,
       filter: "invitations-expired",
       icon: UserX,
-      tone: invitationsExpired > 0 ? "amber" : "neutral",
     },
     {
       label: "Users without roles",
       count: usersWithoutRoles,
       filter: "no-roles",
       icon: AlertCircle,
-      tone: usersWithoutRoles > 0 ? "amber" : "neutral",
     },
     {
       label: "Locked out",
       count: lockedOut,
       filter: "locked-out",
       icon: Lock,
-      tone: lockedOut > 0 ? "destructive" : "neutral",
     },
   ];
+
+  // Proportional bar length within E7's own set per TASK 3
+  const maxVal = Math.max(...items.map((i) => i.count), 1);
 
   return (
     <WidgetShell
@@ -100,39 +98,33 @@ export function AccountHygieneWidget({
           showBorder
         />
       }
-
     >
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 select-none">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 select-none h-full">
         {items.map((item) => {
           const Icon = item.icon;
-          const isDestructive = item.tone === "destructive";
-          const isAmber = item.tone === "amber";
+          const barWidth = item.count > 0 ? Math.max(6, Math.min(100, (item.count / maxVal) * 100)) : 0;
 
           return (
             <Link
               key={item.filter}
               href={`/app/administration/users?filter=${item.filter}`}
               className={cn(
-                "p-2.5 rounded-md border transition-all flex flex-col justify-between hover:translate-y-[-1px]",
-                isDestructive && item.count > 0
-                  ? "bg-red-500/10 border-red-500/30 text-red-700 dark:text-red-300"
-                  : isAmber && item.count > 0
-                  ? "bg-amber-500/10 border-amber-500/30 text-amber-800 dark:text-amber-300"
-                  : "bg-muted/30 hover:bg-muted/60 border-border/40 text-foreground"
+                "p-2.5 rounded-sm bg-muted/30 border hover:bg-accent border-foreground/10 dark:border-foreground/4 transition-colors flex flex-col justify-between",
               )}
             >
               <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span className="truncate pr-1">{item.label}</span>
-                <Icon className={cn(
-                  "w-3.5 h-3.5 shrink-0",
-                  isDestructive && item.count > 0 ? "text-red-600 dark:text-red-400" : isAmber && item.count > 0 ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground"
-                )} />
+                <span className="truncate pr-1 font-medium group-hover:text-primary transition-colors">
+                  {item.label}
+                </span>
+                <Icon className="w-3.5 h-3.5 shrink-0 text-foreground/70" />
               </div>
-              <div className={cn(
-                "text-lg font-bold tabular-nums mt-1.5",
-                isDestructive && item.count > 0 ? "text-red-600 dark:text-red-400" : isAmber && item.count > 0 ? "text-amber-700 dark:text-amber-300" : "text-foreground"
-              )}>
-                {item.count}
+
+              {/* Number and Horizontal Bar per TASK 3 */}
+              <div className="flex flex-col gap-1 mt-0.5">
+                <div className="text-base font-bold tabular-nums text-foreground">
+                  {item.count}
+                </div>
+                <Progress value={barWidth} className="h-1.5" />
               </div>
             </Link>
           );

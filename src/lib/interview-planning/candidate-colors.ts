@@ -3,7 +3,7 @@
  *
  * Rules:
  *  - Fixed palette of six hues assigned by candidate position:
- *    0: violet, 1: teal, 2: amber, 3: rose, 4: sky, 5: lime
+ *    0: violet, 1: plum, 2: bronze, 3: rose, 4: sky, 5: olive
  *  - Used ONLY as:
  *    1. A left border (border-l-4)
  *    2. A soft surface tint (8% light, 12% dark)
@@ -15,7 +15,7 @@
 
 export type CandidateHue =
   | "violet"
-  | "teal"
+  | "plum"
   | "bronze"
   | "rose"
   | "sky"
@@ -64,14 +64,14 @@ export const CANDIDATE_PALETTE: readonly CandidateColorDefinition[] = [
     name: "Violet",
     light: {
       border: "#7C6BC4",
-      surface: "#F5F3FB", // 8% blend over #FAF8F3
+      surface: "#EEEEF6", // 8% blend over #F8F9FA
       avatarBg: "#DDD7F5",
       avatarText: "#3C316E",
       text: "#4B3E8A",
     },
     dark: {
       border: "#9D8FE0",
-      surface: "#242133", // 12% blend over #171310
+      surface: "#262635", // 12% blend over #16181E
       avatarBg: "#3C316E",
       avatarText: "#E6E1FA",
       text: "#DDD7F5",
@@ -87,29 +87,29 @@ export const CANDIDATE_PALETTE: readonly CandidateColorDefinition[] = [
   },
   {
     index: 1,
-    hue: "teal",
-    name: "Teal",
+    hue: "plum",
+    name: "Plum",
     light: {
-      border: "#0E7A6E",
-      surface: "#EEF7F6",
-      avatarBg: "#C5ECE7",
-      avatarText: "#074039",
-      text: "#0A544C",
+      border: "#8E3B68",
+      surface: "#F0EAEE", // 8% blend over #F8F9FA
+      avatarBg: "#F0D5E3",
+      avatarText: "#521437",
+      text: "#661E47",
     },
     dark: {
-      border: "#25B2A2",
-      surface: "#142927",
-      avatarBg: "#074039",
-      avatarText: "#D1F4F0",
-      text: "#7EE3D7",
+      border: "#D472A3",
+      surface: "#2D232E", // 12% blend over #16181E
+      avatarBg: "#521437",
+      avatarText: "#F9E5EE",
+      text: "#F2CADF",
     },
     classes: {
-      borderLeft: "border-l-4 border-l-[#0E7A6E] dark:border-l-[#25B2A2]",
-      surface: "bg-[#0E7A6E]/[0.08] dark:bg-[#25B2A2]/[0.12]",
-      avatar: "bg-[#C5ECE7] text-[#074039] dark:bg-[#074039] dark:text-[#D1F4F0]",
-      text: "text-[#0A544C] dark:text-[#7EE3D7]",
-      card: "border-l-4 border-l-[#0E7A6E] dark:border-l-[#25B2A2] bg-[#0E7A6E]/[0.08] dark:bg-[#25B2A2]/[0.12]",
-      chip: "border-l-2 border-l-[#0E7A6E] dark:border-l-[#25B2A2] bg-[#0E7A6E]/[0.08] dark:bg-[#25B2A2]/[0.12] text-[#0A544C] dark:text-[#7EE3D7]",
+      borderLeft: "border-l-4 border-l-[#8E3B68] dark:border-l-[#D472A3]",
+      surface: "bg-[#8E3B68]/[0.08] dark:bg-[#D472A3]/[0.12]",
+      avatar: "bg-[#F0D5E3] text-[#521437] dark:bg-[#521437] dark:text-[#F9E5EE]",
+      text: "text-[#661E47] dark:text-[#F2CADF]",
+      card: "border-l-4 border-l-[#8E3B68] dark:border-l-[#D472A3] bg-[#8E3B68]/[0.08] dark:bg-[#D472A3]/[0.12]",
+      chip: "border-l-2 border-l-[#8E3B68] dark:border-l-[#D472A3] bg-[#8E3B68]/[0.08] dark:bg-[#D472A3]/[0.12] text-[#661E47] dark:text-[#F2CADF]",
     },
   },
   {
@@ -118,14 +118,14 @@ export const CANDIDATE_PALETTE: readonly CandidateColorDefinition[] = [
     name: "Bronze",
     light: {
       border: "#A65A2E",
-      surface: "#FAF2EC",
+      surface: "#F1ECEA",
       avatarBg: "#F5DAC9",
       avatarText: "#592E15",
       text: "#783E1D",
     },
     dark: {
       border: "#D3894F",
-      surface: "#2E2018",
+      surface: "#2D2624",
       avatarBg: "#592E15",
       avatarText: "#F7E2D4",
       text: "#EBB288",
@@ -145,14 +145,14 @@ export const CANDIDATE_PALETTE: readonly CandidateColorDefinition[] = [
     name: "Rose",
     light: {
       border: "#C4586A",
-      surface: "#FAF1F3",
+      surface: "#F4ECEE",
       avatarBg: "#F7D5DB",
       avatarText: "#6B2632",
       text: "#8C3646",
     },
     dark: {
       border: "#E38695",
-      surface: "#2D1B20",
+      surface: "#2F252C",
       avatarBg: "#6B2632",
       avatarText: "#FCE2E7",
       text: "#F5BAC3",
@@ -172,14 +172,14 @@ export const CANDIDATE_PALETTE: readonly CandidateColorDefinition[] = [
     name: "Sky",
     light: {
       border: "#2F6FA8",
-      surface: "#EEF4FA",
+      surface: "#E8EEF3",
       avatarBg: "#CBE0F2",
       avatarText: "#133959",
       text: "#1C4E7A",
     },
     dark: {
       border: "#5B9DD9",
-      surface: "#172330",
+      surface: "#1E2936",
       avatarBg: "#133959",
       avatarText: "#DCEDFA",
       text: "#9DCCF5",
@@ -199,14 +199,14 @@ export const CANDIDATE_PALETTE: readonly CandidateColorDefinition[] = [
     name: "Olive",
     light: {
       border: "#7A8A3D",
-      surface: "#F5F7ED",
+      surface: "#EEF0EB",
       avatarBg: "#DFE5C4",
       avatarText: "#3C451A",
       text: "#525E25",
     },
     dark: {
       border: "#A4B55E",
-      surface: "#252918",
+      surface: "#292D27",
       avatarBg: "#3C451A",
       avatarText: "#F0F4DC",
       text: "#C8D68F",

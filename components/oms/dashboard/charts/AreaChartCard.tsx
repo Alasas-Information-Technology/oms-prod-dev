@@ -80,7 +80,7 @@ export function AreaChartCard({
       <svg className="sr-only" aria-hidden="true" width="0" height="0">
         <defs>
           {series.map((s, idx) => {
-            const color = s.color || scale[idx] || "var(--primary)";
+            const color = s.color || scale[idx] || "var(--accent-interactive, var(--primary))";
             return (
               <HatchPatternDefs
                 key={s.key}

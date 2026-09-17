@@ -6,6 +6,7 @@ import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { ReconciliationExceptionsData } from "@/types/dashboard";
 import { cn } from "@/lib/utils";
+import { SeverityDot, SeverityLevel } from "../SeverityDot";
 
 // TODO(integration-ops): wire to the real exception queue
 
@@ -68,7 +69,7 @@ export function ReconciliationExceptionsWidget({
                 <span className="text-muted-foreground text-[11px]">Oldest:</span>
                 <span className={cn(
                   "font-bold tabular-nums",
-                  oldest > 7 ? "text-rose-600 dark:text-rose-400" : "text-amber-600 dark:text-amber-400"
+                  oldest > 7 ? "text-danger-text" : "text-warning-text"
                 )}>
                   {oldest}d
                 </span>
@@ -76,25 +77,61 @@ export function ReconciliationExceptionsWidget({
             )}
           </div>
 
-          <div className="flex flex-col gap-1">
-            {bySystem.map((sys) => (
-              <div key={sys.system} className="flex items-center justify-between px-2 py-1 rounded-md hover:bg-muted/30 transition-colors text-xs">
-                <span className="text-[12.5px] font-medium text-foreground/90">{sys.label}</span>
-                <div className="flex items-center gap-3">
-                  {sys.exceptionCount > 0 && (
-                    <span className="text-[10.5px] text-muted-foreground">
-                      Oldest: {sys.oldestAgeDays}d
-                    </span>
-                  )}
-                  <span className={cn(
-                    "text-xs font-semibold tabular-nums",
-                    sys.exceptionCount > 0 ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground"
-                  )}>
-                    {sys.exceptionCount}
-                  </span>
-                </div>
-              </div>
-            ))}
+          <div className="flex flex-col gap-2">
+            {(() => {
+              const maxVal = Math.max(...bySystem.map((s) => s.exceptionCount), 1);
+              return bySystem.map((sys) => {
+                const severity: SeverityLevel =
+                  sys.exceptionCount === 0
+                    ? "LOW"
+                    : sys.oldestAgeDays > 7
+                    ? "HIGH"
+                    : "MEDIUM";
+                const barWidth = sys.exceptionCount > 0 ? Math.max(8, Math.min(100, (sys.exceptionCount / maxVal) * 100)) : 0;
+
+                return (
+                  <div
+                    className="flex items-center justify-between h-[48px] px-2.5 sm:px-3 rounded-sm transition-colors border hover:bg-accent border-foreground/10 dark:border-foreground/4 text-xs"
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <SeverityDot
+                        severity={severity}
+                        label={`${severity} severity: ${sys.label}`}
+                      />
+                      <span className="text-[12.5px] font-medium text-foreground/90 truncate">
+                        {sys.label}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2.5 shrink-0">
+                      {sys.exceptionCount > 0 && (
+                        <span className="text-[10.5px] text-muted-foreground hidden md:inline">
+                          Oldest: {sys.oldestAgeDays}d
+                        </span>
+                      )}
+                      {/* Horizontal bar primitive (form: horizontal bar) */}
+                      <div className="hidden sm:block w-12 h-1.5 bg-muted/60 dark:bg-slate-800/80 rounded-full overflow-hidden shrink-0">
+                        <div
+                          className="h-full rounded-full bg-[var(--accent-interactive,var(--primary))] transition-all duration-300"
+                          style={{ width: `${barWidth}%` }}
+                        />
+                      </div>
+                      <span
+                        className={cn(
+                          "text-xs font-semibold tabular-nums min-w-[14px] text-right",
+                          sys.exceptionCount > 0
+                            ? sys.oldestAgeDays > 7
+                              ? "text-danger-text"
+                              : "text-warning-text"
+                            : "text-muted-foreground"
+                        )}
+                      >
+                        {sys.exceptionCount}
+                      </span>
+                    </div>
+                  </div>
+                );
+              });
+            })()}
           </div>
         </div>
       )}

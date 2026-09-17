@@ -324,10 +324,10 @@ export function InterviewPlanTray({
           className={cn(
             "w-full h-10 text-xs font-semibold gap-2 shadow-xs transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] cursor-pointer",
             allCandidatesReady
-              ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
+              ? "bg-[var(--rasikh-gold)] text-[#111827] dark:text-[#0F1115] hover:bg-[var(--rasikh-gold)]/90 border border-[var(--rasikh-gold)]/50 shadow-sm"
               : "opacity-60",
             shouldAnimateLift &&
-              "translate-y-[-2px] shadow-[0_4px_14px_rgba(79,70,229,0.3)] duration-200"
+              "translate-y-[-2px] shadow-[0_4px_16px_rgba(203,168,118,0.4)] dark:shadow-[0_4px_16px_rgba(224,199,154,0.35)] duration-200"
           )}
           style={{
             transform: shouldAnimateLift ? "translateY(-2px)" : undefined,
@@ -335,7 +335,7 @@ export function InterviewPlanTray({
         >
           {allCandidatesReady ? (
             <>
-              <CheckCircle2 className="size-4 text-emerald-300" />
+              <CheckCircle2 className="size-4 text-[#111827] dark:text-[#0F1115]" />
               <span>Review &amp; send interview plan</span>
               <ArrowRight className="size-3.5 ml-0.5" />
             </>

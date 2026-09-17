@@ -106,58 +106,39 @@ export function AuthProvider({
   /**
    * Loads authenticated user
    */
-  const fetchUser =
-    async () => {
-
-      try {
-
-        setIsLoading(true);
-
-        const sessionResult =
-          await getAuthSession();
-
-        const mergeProfile = (baseSession: UserSession | null) => {
-          if (!baseSession) return null;
-          let overrides = {};
-          try {
-            if (typeof window !== "undefined") {
-              const cached = localStorage.getItem("oms_user_profile");
-              if (cached) overrides = JSON.parse(cached);
-            }
-          } catch {}
-          return { ...baseSession, ...overrides };
-        };
-
-        if (sessionResult === "REFRESH_REQUIRED") {
-          try {
-            await refreshSession();
-            const newSession = await getAuthSession();
-            setUser(mergeProfile(newSession !== "REFRESH_REQUIRED" ? newSession : null));
-          } catch {
-            setUser(null);
-          }
-        } else {
-          setUser(mergeProfile(sessionResult));
+  const fetchUser = async () => {
+    setIsLoading(true);
+    try {
+      let sessionResult = await getAuthSession();
+      if (sessionResult === "REFRESH_REQUIRED") {
+        try {
+          await refreshSession();
+          sessionResult = await getAuthSession();
+        } catch {
+          sessionResult = null;
         }
-
-      } catch (err) {
-
-        console.error(
-          "Failed to fetch user:",
-          err
-        );
-
-        setUser(
-          null
-        );
-
-      } finally {
-
-        setIsLoading(
-          false
-        );
       }
-    };
+
+      if (sessionResult && sessionResult !== "REFRESH_REQUIRED") {
+        let finalSession = sessionResult as UserSession;
+        try {
+          if (typeof window !== "undefined") {
+            const cachedProfile = localStorage.getItem("oms_user_profile");
+            if (cachedProfile) {
+              const profileData = JSON.parse(cachedProfile);
+              finalSession = { ...finalSession, ...profileData };
+            }
+          }
+        } catch {}
+        setUser(finalSession);
+      } else {
+        setUser(null);
+      }
+    } catch {
+      setUser(null);
+    }
+    setIsLoading(false);
+  };
 
   /**
    * Enterprise Logout

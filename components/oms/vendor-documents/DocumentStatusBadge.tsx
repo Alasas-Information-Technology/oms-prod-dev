@@ -9,7 +9,6 @@ import {
   AlertTriangle,
   XCircle,
   FileText,
-  FileCheck2,
   PenTool,
 } from "lucide-react";
 import { cn } from "@/lib/utils";

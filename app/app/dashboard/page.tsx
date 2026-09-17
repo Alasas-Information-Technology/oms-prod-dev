@@ -1,10 +1,10 @@
 "use client";
 
-import * as React from "react";
-import { RefreshCw, Layers } from "lucide-react";
+import { DashboardGrid } from "@/components/oms/dashboard/DashboardGrid";
+import { NewRequisitionDialog } from "@/components/oms/requests/NewRequisitionDialog";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { GlassBackground } from "@/components/ui/GlassBackground";
+import { PageBarActions } from "@/components/ui/layouts/page-bar-context";
 import {
   Select,
   SelectContent,
@@ -12,21 +12,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
 import { usePermission } from "@/hooks/usePermission";
 import {
   useDashboardLayout,
   useParallelDashboardWidgets,
 } from "@/lib/dashboard/api";
-import { DashboardGrid } from "@/components/oms/dashboard/DashboardGrid";
 import {
   DashboardPersona,
   DashboardScope,
   WidgetId,
   WidgetPlacement,
 } from "@/types/dashboard";
-import { PageBarActions } from "@/components/ui/layouts/page-bar-context";
-import { NewRequisitionDialog } from "@/components/oms/requests/NewRequisitionDialog";
+import { Layers, RefreshCw } from "lucide-react";
+import * as React from "react";
+
+import { cn } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
+
 
 /**
  * Derives the active dashboard persona dynamically from the logged-in user's roles.
@@ -52,14 +56,24 @@ function resolvePersonaFromRoles(roles?: string[]): DashboardPersona {
 export default function DashboardPage() {
   const { user } = useAuth();
   const { can } = usePermission();
+  const searchParams = useSearchParams();
 
   // Determine default persona based on current logged in user's profile
   const defaultPersona = React.useMemo(() => {
     return resolvePersonaFromRoles(user?.roles);
   }, [user?.roles]);
 
+  const queryPersona = searchParams?.get("persona") as DashboardPersona | null;
+  const initialDegraded = searchParams?.get("degraded") === "true";
+  const [isDegraded, setIsDegraded] = React.useState<boolean>(initialDegraded);
+
   // Allow developer/demo override if selected, otherwise defaults to logged-in user's persona
-  const [selectedPersona, setSelectedPersona] = React.useState<DashboardPersona | null>(null);
+  const [selectedPersona, setSelectedPersona] = React.useState<DashboardPersona | null>(() => {
+    if (queryPersona && ["requestor", "hod", "hr", "finance", "systemAdmin"].includes(queryPersona)) {
+      return queryPersona;
+    }
+    return null;
+  });
   const persona = selectedPersona ?? defaultPersona;
 
   // Resolve current logged-in user's preferred first name
@@ -101,7 +115,10 @@ export default function DashboardPage() {
   }, [layout]);
 
   // Fetch all widget data concurrently in parallel
-  const widgetQueries = useParallelDashboardWidgets(allPlacements);
+  const widgetQueries = useParallelDashboardWidgets(
+    allPlacements,
+    isDegraded ? { degraded: true } : undefined
+  );
 
   // Build response map for DashboardGrid
   const widgetResponses = React.useMemo(() => {
@@ -157,7 +174,7 @@ export default function DashboardPage() {
 
   if (isLayoutLoading) {
     return (
-      <div className="flex flex-1 flex-col gap-4 p-4 md:p-6 pb-20 w-full">
+      <div className="flex flex-1 flex-col gap-6 p-6 pb-20 w-full max-w-[1600px] mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/40">
           <div className="flex items-center gap-2.5">
             <Skeleton className="h-6 w-48 rounded-md" />
@@ -208,31 +225,65 @@ export default function DashboardPage() {
     );
   }
 
+
+  console.log(layout);
+
   return (
-    <div className="flex flex-1 flex-col gap-3.5 p-3.5 sm:p-4 md:p-5 max-w-[1600px] mx-auto pb-16 w-full">
+    <div className="flex flex-1 flex-col gap-6 p-6 max-w-[1600px] mx-auto pb-16 w-full relative z-0">
       <GlassBackground />
+
       {/* Inject Persona Switcher into the sticky Breadcrumb / Page Bar */}
       <PageBarActions>
-        <div className="flex items-center gap-1 bg-muted/40 hover:bg-muted/60 transition-colors px-2 py-0.5 rounded-md border border-border/40 text-[11px] shadow-2xs">
-          <Layers className="size-3 text-muted-foreground" />
-          <span className="text-muted-foreground font-medium text-[11px] hidden sm:inline whitespace-nowrap">
-            View as:
-          </span>
-          <Select
-            value={persona}
-            onValueChange={(val) => setSelectedPersona(val as DashboardPersona)}
-          >
-            <SelectTrigger size="xs" className="h-5 border-none bg-transparent shadow-none text-[11px] font-semibold focus:ring-0 px-1 py-0 text-foreground gap-1">
-              <SelectValue placeholder="Persona" />
-            </SelectTrigger>
-            <SelectContent align="end">
-              <SelectItem value="requestor">Requestor</SelectItem>
-              <SelectItem value="hod">HOD</SelectItem>
-              <SelectItem value="hr">HR</SelectItem>
-              <SelectItem value="finance">Finance</SelectItem>
-              <SelectItem value="systemAdmin">System Admin</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="flex items-center gap-2">
+          {persona === "systemAdmin" && (
+            <button
+              type="button"
+              id="degraded-fixture-toggle"
+              onClick={() => setIsDegraded((prev) => !prev)}
+              className={cn(
+                "px-2 py-0.5 rounded-md border text-[11px] font-medium transition-colors cursor-pointer",
+                isDegraded
+                  ? "bg-[var(--danger-surface)] text-[var(--danger-text)] border-[var(--danger-border)] font-semibold"
+                  : "bg-muted/40 text-muted-foreground border-border/40 hover:bg-muted/60"
+              )}
+            >
+              {isDegraded ? "Fixture: Degraded (Failures Active)" : "Fixture: Healthy"}
+            </button>
+          )}
+          {/* U5 — Comparison Period Control */}
+          <div className="flex items-center gap-1 bg-muted/40 hover:bg-muted/60 transition-colors px-2 py-0.5 rounded-md border border-border/40 text-[11px] shadow-2xs cursor-pointer">
+            <span className="text-muted-foreground font-medium whitespace-nowrap hidden sm:inline">
+              Last 90 days
+            </span>
+            <span className="text-muted-foreground/60 font-normal">vs</span>
+            <span className="text-muted-foreground font-medium whitespace-nowrap hidden sm:inline">
+              Previous 90 days
+            </span>
+            <svg className="size-3 text-muted-foreground/50 ml-0.5" viewBox="0 0 12 12" fill="none">
+              <path d="M3 5L6 8L9 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <div className="flex items-center gap-1 bg-muted/40 hover:bg-muted/60 transition-colors px-2 py-0.5 rounded-md border border-border/40 text-[11px] shadow-2xs">
+            <Layers className="size-3 text-muted-foreground" />
+            <span className="text-muted-foreground font-medium text-[11px] hidden sm:inline whitespace-nowrap">
+              View as:
+            </span>
+            <Select
+              value={persona}
+              onValueChange={(val) => setSelectedPersona(val as DashboardPersona)}
+            >
+              <SelectTrigger size="xs" className="h-5 border-none bg-transparent shadow-none text-[11px] font-semibold focus:ring-0 px-1 py-0 text-foreground gap-1">
+                <SelectValue placeholder="Persona" />
+              </SelectTrigger>
+              <SelectContent align="end">
+                <SelectItem value="requestor">Requestor</SelectItem>
+                <SelectItem value="hod">HOD</SelectItem>
+                <SelectItem value="hr">HR</SelectItem>
+                <SelectItem value="finance">Finance</SelectItem>
+                <SelectItem value="systemAdmin">System Admin</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </PageBarActions>
 

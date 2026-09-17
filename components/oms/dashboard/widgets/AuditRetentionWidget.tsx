@@ -62,7 +62,7 @@ export function AuditRetentionWidget({
           <div className="p-3 rounded-md bg-muted/40 border border-border/40 flex flex-col justify-between">
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>Ingested (24h)</span>
-              <FileText className="w-3.5 h-3.5 text-blue-500" />
+              <FileText className="w-3.5 h-3.5 text-foreground/70" />
             </div>
             <div className="text-xl font-bold text-foreground tabular-nums mt-1">
               {eventsWritten24h.toLocaleString()}
@@ -73,7 +73,7 @@ export function AuditRetentionWidget({
           <div className="p-3 rounded-md bg-muted/40 border border-border/40 flex flex-col justify-between">
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>Total Retained</span>
-              <Database className="w-3.5 h-3.5 text-purple-500" />
+              <Database className="w-3.5 h-3.5 text-foreground/70" />
             </div>
             <div className="text-xl font-bold text-foreground tabular-nums mt-1">
               {totalRetained.toLocaleString()}

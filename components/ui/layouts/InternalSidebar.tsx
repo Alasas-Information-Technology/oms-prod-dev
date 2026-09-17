@@ -141,7 +141,7 @@ export function InternalSidebar({ ...props }: React.ComponentProps<typeof Sideba
   return (
     <Sidebar
       collapsible="icon"
-      className="border-r border-border/50 bg-sidebar select-none w-[240px] data-[state=collapsed]:w-[56px] print:hidden"
+      className="border-r border-sidebar-border bg-sidebar select-none w-[240px] data-[state=collapsed]:w-[56px] print:hidden"
       {...props}
     >
       <SidebarContent className="pt-2 pb-6 px-0 overflow-y-auto">
@@ -160,9 +160,9 @@ export function InternalSidebar({ ...props }: React.ComponentProps<typeof Sideba
                 {!isCollapsed && (
                   <SidebarGroupLabel
                     className={cn(
-                      "text-[11px] font-semibold uppercase tracking-[0.05em] text-muted-foreground/70 px-3 mb-1.5 flex items-center gap-2 relative",
+                      "text-[11px] font-semibold uppercase tracking-[0.05em] text-sidebar-foreground/60 px-3 mb-1.5 flex items-center gap-2 relative",
                       gIdx === 0 ? "mt-2" : "mt-6",
-                      isGroupActive && "text-foreground font-bold"
+                      isGroupActive && "text-sidebar-foreground font-bold"
                     )}
                   >
                     {/* 2px accent bar on the left edge of the group label */}
@@ -199,8 +199,8 @@ export function InternalSidebar({ ...props }: React.ComponentProps<typeof Sideba
                                   className={cn(
                                     "h-9 px-3 rounded-md text-sm font-medium transition-colors",
                                     isItemActive
-                                      ? "bg-accent text-accent-foreground font-medium"
-                                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                                      ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                                      : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/60"
                                   )}
                                   onClick={() => toggleItem(item.title)}
                                 >
@@ -210,11 +210,11 @@ export function InternalSidebar({ ...props }: React.ComponentProps<typeof Sideba
                               </TooltipTrigger>
                               <TooltipContent side="right" align="center" className="text-xs">
                                 <p className="font-semibold">{item.title}</p>
-                                <div className="mt-1 flex flex-col gap-1 border-t border-border/50 pt-1 text-[11px] text-muted-foreground">
+                                <div className="mt-1 flex flex-col gap-1 border-t border-sidebar-border pt-1 text-[11px] text-sidebar-foreground/70">
                                   {item.items!.map((sub) => (
                                     <span
                                       key={sub.url}
-                                      className={cn(sub.url === activeUrl && "font-bold text-foreground")}
+                                      className={cn(sub.url === activeUrl && "font-bold text-sidebar-foreground")}
                                     >
                                       {sub.title}
                                     </span>
@@ -230,8 +230,8 @@ export function InternalSidebar({ ...props }: React.ComponentProps<typeof Sideba
                                 className={cn(
                                   "h-9 px-3 rounded-md text-sm font-medium transition-colors w-full justify-between cursor-pointer",
                                   isItemActive
-                                    ? "bg-accent/60 text-foreground font-medium"
-                                    : "text-muted-foreground hover:text-foreground hover:bg-accent/40"
+                                    ? "bg-sidebar-accent/70 text-sidebar-foreground font-medium"
+                                    : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/60"
                                 )}
                                 onClick={() => toggleItem(item.title)}
                               >
@@ -241,14 +241,14 @@ export function InternalSidebar({ ...props }: React.ComponentProps<typeof Sideba
                                 </div>
                                 <ChevronRight
                                   className={cn(
-                                    "h-3.5 w-3.5 text-muted-foreground/70 transition-transform duration-200 shrink-0",
+                                    "h-3.5 w-3.5 text-sidebar-foreground/50 transition-transform duration-200 shrink-0",
                                     isOpen && "rotate-90"
                                   )}
                                 />
                               </SidebarMenuButton>
 
                               {isOpen && (
-                                <SidebarMenuSub className="ml-4 pl-3 border-l border-border/50 my-0.5 space-y-0.5">
+                                <SidebarMenuSub className="ml-4 pl-3 border-l border-sidebar-border my-0.5 space-y-0.5">
                                   {item.items!.map((sub) => {
                                     const isSubActive = sub.url === activeUrl;
                                     return (
@@ -259,8 +259,8 @@ export function InternalSidebar({ ...props }: React.ComponentProps<typeof Sideba
                                           className={cn(
                                             "h-8 px-2.5 rounded-md text-[13px] font-normal transition-colors",
                                             isSubActive
-                                              ? "bg-accent text-accent-foreground font-medium"
-                                              : "text-muted-foreground hover:text-foreground hover:bg-accent/40"
+                                              ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                                              : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/60"
                                           )}
                                         >
                                           <Link href={sub.url} className="truncate">
@@ -286,8 +286,8 @@ export function InternalSidebar({ ...props }: React.ComponentProps<typeof Sideba
                         className={cn(
                           "h-9 px-3 rounded-md text-sm font-medium transition-colors",
                           isDirectActive
-                            ? "bg-accent text-accent-foreground font-medium"
-                            : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                            : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/60"
                         )}
                       >
                         <Link href={item.url || "#"} className="flex items-center gap-2.5 w-full">

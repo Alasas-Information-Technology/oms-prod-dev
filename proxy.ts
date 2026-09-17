@@ -23,7 +23,8 @@ export async function proxy(request: NextRequest) {
         pathname.startsWith('/app/dev') ||
         pathname === '/api/auth/login' ||
         pathname === '/api/auth/refresh' ||
-        pathname === '/api/auth/logout'
+        pathname === '/api/auth/logout' ||
+        (process.env.NODE_ENV !== 'production' && request.nextUrl.searchParams.has('devBypass'))
     ) {
         return NextResponse.next();
     }

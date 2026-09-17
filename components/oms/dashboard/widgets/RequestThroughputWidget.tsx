@@ -73,11 +73,17 @@ export function RequestThroughputWidget({
   const headerLegend = (
     <div className="flex items-center gap-3 text-[11px] text-muted-foreground select-none">
       <div className="flex items-center gap-1.5">
-        <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
+        <span
+          className="w-2 h-2 rounded-full shrink-0"
+          style={{ backgroundColor: "var(--accent-interactive, var(--primary))" }}
+        />
         <span className="font-medium text-foreground/80">Created</span>
       </div>
       <div className="flex items-center gap-1.5">
-        <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+        <span
+          className="w-2 h-2 rounded-full shrink-0"
+          style={{ backgroundColor: "var(--success-border, #3A8F6B)" }}
+        />
         <span className="font-medium text-foreground/80">Completed</span>
       </div>
     </div>
@@ -101,13 +107,13 @@ export function RequestThroughputWidget({
           <defs>
             <HatchPatternDefs
               id={createdHatchId}
-              color="#3b82f6"
+              color="var(--accent-interactive, var(--primary))"
               strokeWidth={1}
               opacity={0.16}
             />
             <HatchPatternDefs
               id={completedHatchId}
-              color="#10b981"
+              color="var(--success-border, #3A8F6B)"
               strokeWidth={1}
               opacity={0.20}
             />
@@ -152,21 +158,21 @@ export function RequestThroughputWidget({
                 type="monotone"
                 dataKey="created"
                 name="Requests created"
-                stroke="#3b82f6"
+                stroke="var(--accent-interactive, var(--primary))"
                 strokeWidth={2}
                 fill={`url(#${createdHatchId})`}
                 dot={false}
-                activeDot={{ r: 4, strokeWidth: 2, fill: "#3b82f6", stroke: "var(--card)" }}
+                activeDot={{ r: 4, strokeWidth: 2, fill: "var(--accent-interactive, var(--primary))", stroke: "var(--card)" }}
               />
               <Area
                 type="monotone"
                 dataKey="completed"
                 name="Requests completed"
-                stroke="#10b981"
+                stroke="var(--success-border, #3A8F6B)"
                 strokeWidth={2}
                 fill={`url(#${completedHatchId})`}
                 dot={false}
-                activeDot={{ r: 4, strokeWidth: 2, fill: "#10b981", stroke: "var(--card)" }}
+                activeDot={{ r: 4, strokeWidth: 2, fill: "var(--success-border, #3A8F6B)", stroke: "var(--card)" }}
               />
             </AreaChart>
           </ResponsiveContainer>

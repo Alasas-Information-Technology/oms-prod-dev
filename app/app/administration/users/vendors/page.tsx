@@ -10,6 +10,7 @@ import {
   Search,
   RefreshCw,
   AlertTriangle,
+  Users
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -159,49 +160,37 @@ export default function VendorUsersPage() {
 
   return (
     <div className="p-6 space-y-6 w-full">
-      {/* Back button */}
-      <button
-        onClick={() => router.push("/app/administration/users")}
-        className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-      >
-        <ArrowLeft className="size-3.5" />
-        <span>Back to Internal Users</span>
-      </button>
-
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2.5">
-            <Store className="size-7 text-primary" />
-            Vendor User Management
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Governed by Procurement. Vendor accounts are isolated from internal organization structures (Rule V1–V10).
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            onClick={() => setIsCreateOpen(true)}
-            className="gap-1.5 shadow-xs"
+      {/* Unified Single-Row Action Bar */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 w-full border-b border-border/80 pb-4">
+        {/* Left: Navigation Tabs */}
+        <div className="flex items-center gap-1 bg-muted p-1 rounded-md border shrink-0 overflow-x-auto">
+          <button
+            type="button"
+            onClick={() => router.push("/app/administration/users")}
+            className="px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 whitespace-nowrap text-muted-foreground hover:text-foreground"
           >
-            <UserPlus className="size-4" />
-            New Vendor User
-          </Button>
+            <Users className="size-4" />
+            <span>People</span>
+          </button>
+          
+          <button
+            type="button"
+            className="px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 whitespace-nowrap bg-background text-foreground shadow-xs"
+          >
+            <Store className="size-4" />
+            <span>Vendor users</span>
+          </button>
         </div>
-      </div>
 
-      {/* Search & Actions Card */}
-      <Card className="border-border/60 shadow-xs">
-        <CardContent className="p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="relative w-full sm:w-80">
+        {/* Right: Search & Actions */}
+        <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto lg:ml-auto">
+          <div className="relative w-full sm:w-[240px] xl:w-[280px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
               placeholder="Search vendor user, email, vendor ID..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 h-9 text-xs bg-background"
+              className="pl-9 h-9 text-xs bg-background shadow-2xs border-border/80 w-full"
             />
           </div>
 
@@ -210,13 +199,24 @@ export default function VendorUsersPage() {
             size="sm"
             onClick={() => refetch()}
             disabled={isFetching}
-            className="h-8 text-xs gap-1 self-end sm:self-auto"
+            className="h-9 w-9 p-0 shrink-0 text-muted-foreground"
+            title="Refresh"
           >
             <RefreshCw className={`size-3.5 ${isFetching ? "animate-spin" : ""}`} />
-            Refresh
           </Button>
-        </CardContent>
-      </Card>
+
+          <div className="h-5 w-px bg-border/60 mx-1 hidden sm:block" />
+
+          <Button
+            size="sm"
+            onClick={() => setIsCreateOpen(true)}
+            className="gap-1.5 text-xs h-9 shadow-xs shrink-0"
+          >
+            <UserPlus className="size-4" />
+            <span className="hidden sm:inline">New Vendor User</span>
+          </Button>
+        </div>
+      </div>
 
       {/* Vendor Users Table */}
       <Card className="border-border/60 shadow-xs overflow-hidden">

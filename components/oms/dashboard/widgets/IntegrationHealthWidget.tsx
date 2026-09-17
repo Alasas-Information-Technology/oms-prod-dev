@@ -50,7 +50,7 @@ export function IntegrationHealthWidget({
           No health data available.
         </div>
       ) : (
-        <div className="flex flex-col gap-1 select-none">
+        <div className="flex flex-col gap-2 select-none">
           {systems.map((sys) => {
             const isHealthy = sys.status === "HEALTHY";
             const isFailing = sys.status === "FAILING";
@@ -59,7 +59,7 @@ export function IntegrationHealthWidget({
             return (
               <div 
                 key={sys.id} 
-                className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-border/30 dark:hover:border-white/[0.04]"
+                className="flex items-center justify-between h-[48px] px-2.5 sm:px-3 rounded-sm transition-colors border hover:bg-accent border-foreground/10 dark:border-foreground/4"
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
                   <StatusTooltipIcon

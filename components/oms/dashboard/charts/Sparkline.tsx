@@ -91,26 +91,13 @@ export function Sparkline({
         className="w-full h-full block overflow-visible"
       >
         <defs>
-          <pattern
-            id={hatchId}
-            width="6"
-            height="6"
-            patternTransform="rotate(45 0 0)"
-            patternUnits="userSpaceOnUse"
-          >
-            <line
-              x1="0"
-              y1="0"
-              x2="0"
-              y2="6"
-              stroke={color}
-              strokeWidth="1"
-              strokeOpacity="0.12"
-            />
-          </pattern>
+          <linearGradient id={hatchId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity={0.25} />
+            <stop offset="100%" stopColor={color} stopOpacity={0} />
+          </linearGradient>
         </defs>
 
-        {/* 12% Hatch Pattern Area Fill Below Line */}
+        {/* Gradient Area Fill Below Line */}
         <path d={areaPath} fill={`url(#${hatchId})`} />
 
         {/* 1.5px Accent Line (linear segments, never curved/monotone) */}

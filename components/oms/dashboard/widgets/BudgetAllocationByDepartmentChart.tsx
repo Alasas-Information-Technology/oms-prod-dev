@@ -7,7 +7,7 @@ import { WidgetShell } from "../WidgetShell";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { BudgetAllocationByDepartmentData } from "@/types/dashboard";
 import { formatAbbreviated } from "@/lib/money";
-import { BarChartCard } from "../charts/BarChartCard";
+import { ColumnChart } from "../ColumnChart";
 import { semanticColors, categoricalScale } from "@/lib/dashboard/chart-tokens";
 
 export function BudgetAllocationByDepartmentChart({
@@ -94,8 +94,9 @@ export function BudgetAllocationByDepartmentChart({
           <p className="text-sm">No department budget allocations recorded.</p>
         </div>
       ) : (
-        <div className="flex flex-col flex-1 h-full min-h-0 w-full pt-1 pb-2">
-          <BarChartCard
+        <div className="flex flex-col flex-1 h-full min-h-0 w-full pt-4 pb-2">
+          {/* NEW: ColumnChart (M4) */}
+          <ColumnChart
             data={chartData.slice(0, 5)}
             series={[
               {
@@ -104,14 +105,13 @@ export function BudgetAllocationByDepartmentChart({
               },
             ]}
             xAxisKey="name"
-            layout="vertical"
             height="100%"
             className="flex-1 h-full min-h-0"
             hideLegend
             xAxisFormatter={(val) => `${val}%`}
             getCellColor={(entry) => getBarColor(entry)}
             onBarClick={handleRowClick}
-            accessibilitySummary="Horizontal bar chart showing department budget utilisation sorted descending"
+            accessibilitySummary="Column chart showing department budget utilisation sorted descending"
           />
         </div>
       )}

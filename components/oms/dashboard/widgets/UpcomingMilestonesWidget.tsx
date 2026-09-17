@@ -62,6 +62,11 @@ export function UpcomingMilestonesWidget({
       onRetry={onRetry}
       minHeight={215}
     >
+      {/* Screen Reader Accessible Summary */}
+      <span className="sr-only">
+        Upcoming milestones (60-day horizon): {milestones.map((m) => `${m.label} on ${m.formattedDate}: ${m.detail}`).join("; ")}.
+      </span>
+
       {milestones.length === 0 ? (
         <div className="flex items-center justify-center py-8 text-sm text-muted-foreground">
           No upcoming milestones.
@@ -74,7 +79,7 @@ export function UpcomingMilestonesWidget({
           </div>
 
           {/* Milestone List (Accessible detail view & Mobile fallback) */}
-          <div className="flex flex-col gap-0.5 w-full">
+          <div className="flex flex-col gap-2 w-full">
             {milestones.map((milestone) => {
               const cfg = MILESTONE_CONFIG[milestone.type] || {
                 icon: Users,
