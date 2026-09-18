@@ -287,6 +287,22 @@ export const INTERNAL_NAV_GROUPS: InternalNavGroup[] = [
         },
       },
       {
+        id: "nav-active-resource",
+        title: "Active Resource",
+        url: "/app/active-resources",
+        icon: UserCheck,
+        // Active Resource view permission: restricted to HR roles only
+        isPermitted: (ctx) => {
+          if (isPureSystemAdmin(ctx)) return false;
+          return userHasRole(ctx.roles, [
+            "HR_SPECIALIST",
+            "HR_REVIEWER",
+            "HR_MANAGER",
+            "HR",
+          ]);
+        },
+      },
+      {
         id: "nav-vendors",
         title: "Vendors",
         url: "/app/vendors",
