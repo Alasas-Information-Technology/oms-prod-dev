@@ -82,7 +82,7 @@ export function HrReviewRequestSummary({
         </div>
 
         <div className="shrink-0">
-          <span className="font-mono text-[11px] font-medium text-muted-foreground">
+          <span className="text-[11px] font-medium text-muted-foreground">
             {request.id}
           </span>
         </div>

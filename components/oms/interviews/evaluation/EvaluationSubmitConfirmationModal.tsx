@@ -236,7 +236,7 @@ export function EvaluationSubmitConfirmationContent({
                   {rejectionReason.retentionConsequence}
                 </p>
                 {rejectionReason.deletionDate && (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-mono mt-1 text-rose-700 dark:text-rose-300">
+                  <span className="inline-flex items-center gap-1 text-[10px] mt-1 text-rose-700 dark:text-rose-300">
                     <Calendar className="size-2.5" />
                     Scheduled deletion: {rejectionReason.deletionDate}
                   </span>

@@ -82,7 +82,7 @@ export function ConcurrentSessionPolicyCard({ summary }: Props) {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-2xl font-bold font-mono text-foreground">
+            <span className="text-2xl font-bold text-foreground">
               {summary?.activeSessions ?? "0"}
             </span>
             <Button
@@ -132,7 +132,7 @@ export function ConcurrentSessionPolicyCard({ summary }: Props) {
                   max={20}
                   {...field}
                   onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 1)}
-                  className="font-mono text-sm h-10 rounded-md"
+                  className="text-sm h-10 rounded-md"
                 />
               </FormControl>
               <FormDescription className="text-xs">

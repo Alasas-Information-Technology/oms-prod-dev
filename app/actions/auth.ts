@@ -15,8 +15,8 @@ const JWT_AUDIENCE = process.env.JWT_AUDIENCE || 'OMS_USERS';
  */
 export async function clearAuthCookie() {
   const cookieStore = await cookies();
-  cookieStore.delete("oms_access_token");
-  cookieStore.delete("oms_refresh_token");
+  cookieStore.delete({ name: "oms_access_token", path: "/" });
+  cookieStore.delete({ name: "oms_refresh_token", path: "/" });
 }
 
 /**
@@ -48,8 +48,8 @@ export async function serverLogout() {
     }
   }
   
-  cookieStore.delete("oms_access_token");
-  cookieStore.delete("oms_refresh_token");
+  cookieStore.delete({ name: "oms_access_token", path: "/" });
+  cookieStore.delete({ name: "oms_refresh_token", path: "/" });
 }
 
 /**

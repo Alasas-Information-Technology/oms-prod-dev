@@ -359,7 +359,7 @@ export function OrgUnitForm({
                 setCodeManuallyEdited(true);
                 form.setValue("code", e.target.value.toUpperCase());
               }}
-              className="font-mono uppercase text-sm h-11 tracking-wider shadow-2xs"
+              className="uppercase text-sm h-11 tracking-wider shadow-2xs"
             />
             {form.formState.errors.code && (
               <p className="text-xs text-destructive">{form.formState.errors.code.message}</p>
@@ -375,7 +375,7 @@ export function OrgUnitForm({
               id="costCenterCode"
               placeholder="e.g. CC-1040"
               {...form.register("costCenterCode")}
-              className="font-mono uppercase text-sm h-11 shadow-2xs"
+              className="uppercase text-sm h-11 shadow-2xs"
             />
             <p className="text-[11px] text-muted-foreground">
               Used for financial budget tracking.
@@ -452,7 +452,7 @@ export function OrgUnitForm({
                   id="oracleOrgCode"
                   placeholder="e.g. ORCL_801"
                   {...form.register("oracleOrgCode")}
-                  className="font-mono h-9 text-sm"
+                  className="h-9 text-sm"
                 />
               </div>
 

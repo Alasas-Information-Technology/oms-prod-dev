@@ -147,7 +147,7 @@ function PriorityPill({ priority }: { priority: CandidatePriority }) {
   return (
     <Badge
       variant="outline"
-      className={cn("px-1.5 py-0 text-[10px] rounded font-mono", styles[priority])}
+      className={cn("px-1.5 py-0 text-[10px] rounded", styles[priority])}
     >
       {priority}
     </Badge>
@@ -236,7 +236,7 @@ export function CandidateRail({
                 <div className="flex items-center gap-2">
                   <span
                     className={cn(
-                      "font-mono text-xs font-bold tracking-tight",
+                      "text-xs font-bold tracking-tight",
                       isSelected ? "text-primary" : "text-foreground"
                     )}
                   >

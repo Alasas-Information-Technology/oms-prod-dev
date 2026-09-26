@@ -73,7 +73,7 @@ export function BudgetHeaderActions({
               size="sm"
               className="h-9 px-3 gap-1.5 text-xs font-semibold rounded-md bg-background/80 hover:bg-background border-border/70 shadow-2xs cursor-pointer"
             >
-              <span className="font-mono">{currentPeriodMeta.code}</span>
+              <span>{currentPeriodMeta.code}</span>
               <ChevronDown className="size-3.5 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>
@@ -88,7 +88,7 @@ export function BudgetHeaderActions({
                 className="flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs cursor-pointer font-medium"
               >
                 <div className="flex items-center gap-2">
-                  <span className="font-mono">{period.code}</span>
+                  <span>{period.code}</span>
                   {period.id === currentPeriodMeta.id && (
                     <CheckCircle2 className="size-3.5 text-primary" />
                   )}

@@ -159,7 +159,7 @@ export function CandidatePlanCard({
             {candidateIndex + 1}
           </div>
 
-          <span className={cn("font-mono font-bold text-xs", color.classes.text)}>
+          <span className={cn("font-bold text-xs", color.classes.text)}>
             {candidate.candidateRef}
           </span>
 
@@ -186,13 +186,13 @@ export function CandidatePlanCard({
           {isReady ? (
             <Badge
               variant="outline"
-              className="bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800 text-[10px] font-mono font-semibold gap-1 shadow-2xs"
+              className="bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800 text-[10px] font-semibold gap-1 shadow-2xs"
             >
               <Check className="size-3 stroke-[3]" />
               {slots.length} of {targetSlotsCount} · ready
             </Badge>
           ) : (
-            <span className="text-[11px] font-mono font-medium text-muted-foreground">
+            <span className="text-[11px] font-medium text-muted-foreground">
               {slots.length} of {targetSlotsCount}
             </span>
           )}

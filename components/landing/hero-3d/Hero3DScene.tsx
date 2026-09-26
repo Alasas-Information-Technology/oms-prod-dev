@@ -65,7 +65,7 @@ function SceneContent({ isDark }: { isDark: boolean }) {
       {/* Elevated Lighting Setup - adapts to dark mode */}
       <ambientLight intensity={isDark ? 0.3 : 0.15} />
       <directionalLight position={[10, 10, 5]} intensity={isDark ? 1 : 2} color="#ffffff" castShadow />
-      <directionalLight position={[-10, -10, -5]} intensity={isDark ? 0.8 : 1.5} color={isDark ? "#818CF8" : "#6366F1"} />
+      <directionalLight position={[-10, -10, -5]} intensity={isDark ? 0.8 : 1.5} color={isDark ? "#7C8FC4" : "#1B2A4A"} />
       <pointLight position={[0, -2, 5]} intensity={isDark ? 0.5 : 1} color="#E0E7FF" distance={15} />
       <pointLight position={[0, 0, 0]} intensity={isDark ? 2 : 1.5} color={isDark ? "#A5B4FC" : "#6366F1"} distance={5} />
 

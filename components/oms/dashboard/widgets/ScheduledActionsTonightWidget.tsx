@@ -13,13 +13,13 @@ import { cn } from "@/lib/utils";
 function getActionIcon(code: string) {
   switch (code) {
     case "AUTO_CLOSE":
-      return { icon: Coins, bg: "bg-emerald-500/10", color: "text-emerald-600 dark:text-emerald-400" };
+      return { icon: Coins, bg: "bg-muted/40", color: "text-foreground/70" };
     case "DRAFT_PURGE":
-      return { icon: Trash2, bg: "bg-amber-500/10", color: "text-amber-600 dark:text-amber-400" };
+      return { icon: Trash2, bg: "bg-muted/40", color: "text-foreground/70" };
     case "DOC_EXPIRY_REMINDER":
-      return { icon: FileText, bg: "bg-blue-500/10", color: "text-blue-600 dark:text-blue-400" };
+      return { icon: FileText, bg: "bg-muted/40", color: "text-foreground/70" };
     default:
-      return { icon: Users, bg: "bg-muted", color: "text-foreground" };
+      return { icon: Users, bg: "bg-muted/40", color: "text-foreground/70" };
   }
 }
 
@@ -84,21 +84,22 @@ export function ScheduledActionsTonightWidget({
     >
       <div className="space-y-2 select-none">
         {/* Prominent Financial Impact Banner */}
+
         {hasFunds && (
-          <div className="flex items-center justify-between p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-900 dark:text-emerald-100">
+          <div className="flex items-center justify-between p-2.5 rounded-sm bg-[var(--success-surface)] border border-[var(--success-border)]/40 text-foreground">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-6 h-6 rounded-md bg-emerald-500/20 flex items-center justify-center shrink-0">
-                <Coins className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <div className="w-6 h-6 rounded-md bg-[var(--success-surface)] border border-[var(--success-border)]/50 flex items-center justify-center shrink-0">
+                <Coins className="w-3.5 h-3.5 text-success-text" />
               </div>
               <div>
-                <div className="text-[12px] font-semibold">Scheduled Financial Release</div>
-                <div className="text-[10.5px] text-emerald-700/80 dark:text-emerald-300/80">
+                <div className="text-[12px] font-semibold text-foreground">Scheduled Financial Release</div>
+                <div className="text-[10.5px] text-muted-foreground">
                   Unused funds automatically unlocked to departmental budgets
                 </div>
               </div>
             </div>
             <div className="text-right shrink-0">
-              <span className="text-[14px] font-bold text-emerald-700 dark:text-emerald-300 tabular-nums">
+              <span className="text-[14px] font-bold text-success-text tabular-nums">
                 {formatAbbreviated(totalFundsReleased)}
               </span>
             </div>
@@ -106,13 +107,13 @@ export function ScheduledActionsTonightWidget({
         )}
 
         {/* Actions List */}
-        <div className="space-y-0.5">
+        <div className="space-y-2">
           {actions.length === 0 ? (
             <div className="py-6 text-center text-xs text-muted-foreground">
               No scheduled actions queued for tonight&apos;s run.
             </div>
           ) : (
-            actions.map((act) => {
+            actions.slice(0, 4).map((act) => {
               const { icon: Icon, bg, color } = getActionIcon(act.code);
               const link = getActionLink(act.code);
               const hasRowFunds = Number(act.fundsReleased) > 0;
@@ -121,7 +122,7 @@ export function ScheduledActionsTonightWidget({
                 <Link
                   key={act.code}
                   href={link}
-                  className="group flex items-center justify-between h-[38px] px-2.5 sm:px-3 rounded-lg hover:bg-muted/40 transition-colors border border-transparent hover:border-border/30 dark:hover:border-white/[0.04]"
+                  className="group flex items-center justify-between h-[48px] px-2.5 sm:px-3 rounded-sm transition-colors border hover:bg-accent border-foreground/10 dark:border-foreground/4"
                 >
                   <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
                     <div className={cn("w-5.5 h-5.5 rounded-md flex items-center justify-center shrink-0", bg, color)}>
@@ -132,7 +133,7 @@ export function ScheduledActionsTonightWidget({
                         {act.count} {act.label.toLowerCase()}
                       </span>
                       {hasRowFunds && (
-                        <span className="text-[10.5px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20 tabular-nums shrink-0">
+                        <span className="text-[10.5px] font-semibold text-success-text bg-[var(--success-surface)] px-1.5 py-0.2 rounded border border-[var(--success-border)]/40 tabular-nums shrink-0">
                           {formatAbbreviated(act.fundsReleased)}
                         </span>
                       )}
@@ -148,6 +149,17 @@ export function ScheduledActionsTonightWidget({
             })
           )}
         </div>
+
+        {actions.length > 4 && (
+          <div className="pt-1 text-center">
+            <Link
+              href="/app/administration/jobs"
+              className="text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              View all {actions.length} scheduled actions →
+            </Link>
+          </div>
+        )}
       </div>
     </WidgetShell>
   );

@@ -797,3 +797,18 @@ export const MOCK_INTERVIEW_SUGGESTIONS_FIXTURES: Record<string, InterviewSugges
   "OMS-2026-READONLY": FIXTURE_SUGGESTIONS_REFERENCE,
 };
 
+import { getRequisition } from "@/src/lib/demo-data";
+import { mapToInterviewPlanningResponse } from "./mappers";
+
+/**
+ * Demo-data backed Interview Planning fixture.
+ * Returns null if the requisition does not exist in demo-data (real 404).
+ */
+export function getInterviewPlanningFixture(requestId: string): InterviewPlanningResponse | null {
+  if (!requestId) return null;
+  const req = getRequisition(requestId);
+  if (!req) return null;
+
+  return mapToInterviewPlanningResponse(req);
+}
+

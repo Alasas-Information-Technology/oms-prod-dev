@@ -282,7 +282,7 @@ export function WeekCalendar({
           {activeCandidateRef && (
             <span className="text-[11px] text-muted-foreground hidden sm:inline-flex items-center gap-1.5">
               <span>Proposing for:</span>
-              <strong className="text-foreground font-mono font-bold px-1.5 py-0.5 rounded bg-muted border border-border text-[10px]">
+              <strong className="text-foreground font-bold px-1.5 py-0.5 rounded bg-muted border border-border text-[10px]">
                 {activeCandidateRef}
               </strong>
             </span>
@@ -313,7 +313,7 @@ export function WeekCalendar({
         <div className="min-w-[640px] max-h-[540px] overflow-y-auto overscroll-contain">
           {/* Day Headers */}
           <div className="sticky top-0 z-30 grid grid-cols-[60px_repeat(5,1fr)] border-b border-border bg-card/95 backdrop-blur-xs">
-            <div className="p-2 border-r border-border text-[11px] font-mono text-muted-foreground text-center">
+            <div className="p-2 border-r border-border text-[11px] text-muted-foreground text-center">
               GST
             </div>
             {weekDays.map((day) => {
@@ -327,7 +327,7 @@ export function WeekCalendar({
                   <span className="text-xs font-semibold text-foreground block">
                     {weekday}
                   </span>
-                  <span className="text-[11px] font-mono text-muted-foreground">
+                  <span className="text-[11px] text-muted-foreground">
                     {dayNum}
                   </span>
                 </div>
@@ -348,7 +348,7 @@ export function WeekCalendar({
                     className="h-7 border-b border-border/30 px-1 text-right flex items-center justify-end"
                   >
                     {isHour && (
-                      <span className="font-mono text-[10px] text-muted-foreground/80">
+                      <span className="text-[10px] text-muted-foreground/80">
                         {String(hour).padStart(2, "0")}:00
                       </span>
                     )}
@@ -411,7 +411,7 @@ export function WeekCalendar({
                       }}
                       className="absolute inset-x-1 z-25 rounded-md bg-primary/25 border-2 border-primary border-dashed pointer-events-none p-1 flex items-start justify-between shadow-xs transition-all"
                     >
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-primary text-primary-foreground text-[10px] font-bold font-mono">
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-primary text-primary-foreground text-[10px] font-bold">
                         {dragState.durationMinutes}m
                       </span>
                     </div>
@@ -489,7 +489,7 @@ export function WeekCalendar({
         </div>
 
         <div className="text-[11px] text-muted-foreground/80 flex items-center gap-2">
-          <span>Click/drag to propose · Press <kbd className="px-1 py-0.2 rounded bg-muted border font-mono text-[9.5px]">C</kbd> to toggle view</span>
+          <span>Click/drag to propose · Press <kbd className="px-1 py-0.2 rounded bg-muted border text-[9.5px]">C</kbd> to toggle view</span>
         </div>
       </div>
     </div>

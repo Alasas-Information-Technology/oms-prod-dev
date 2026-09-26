@@ -157,7 +157,7 @@ export function HrSendBackLivePreview({
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-muted-foreground font-mono tabular-nums">
+                      <p className="text-[11px] text-muted-foreground tabular-nums">
                         Current:{" "}
                         {field.type === "MONEY"
                           ? `AED ${formatAmount(field.currentValue)}`

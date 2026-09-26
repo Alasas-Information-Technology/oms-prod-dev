@@ -187,14 +187,14 @@ export function DangerZoneCard({ summary }: Props) {
 
           <div className="space-y-3 py-2">
             <label className="text-xs font-semibold text-foreground block">
-              Type <span className="font-mono text-red-600 font-bold">TERMINATE-ALL</span> below to authorize:
+              Type <span className="text-red-600 font-bold">TERMINATE-ALL</span> below to authorize:
             </label>
             <Input
               type="text"
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
               placeholder="TERMINATE-ALL"
-              className="font-mono text-xs h-10 rounded-md"
+              className="text-xs h-10 rounded-md"
             />
           </div>
 

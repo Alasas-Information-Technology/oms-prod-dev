@@ -7,6 +7,7 @@ import { Info } from "lucide-react";
 import { SegmentedBar } from "../SegmentedBar";
 import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetShell } from "../WidgetShell";
+import { Gauge } from "../Gauge";
 
 export function RateLimitPressureWidget({
   scope,
@@ -50,9 +51,25 @@ export function RateLimitPressureWidget({
       }
 
     >
-      <div className="space-y-3 select-none">
+      <div className="space-y-6 select-none">
+        {/* NEW: Gauge per Tier (M6) */}
+        {tiers.length > 0 && (
+          <div className="grid grid-cols-2 gap-4 pb-2 border-b border-border/30">
+            {tiers.map((t) => (
+              <Gauge
+                key={`gauge-${t.tier}`}
+                value={t.hits}
+                max={t.limit}
+                threshold={t.limit}
+                thresholdCrossed={t.hits > t.limit}
+                label={`Tier ${t.tier}`}
+              />
+            ))}
+          </div>
+        )}
+
         {/* Tier Rows */}
-        <div className="space-y-1">
+        <div className="space-y-2">
           {tiers.length === 0 ? (
             <div className="py-6 text-center text-xs text-muted-foreground">
               No rate limit tiers configured.
@@ -64,11 +81,11 @@ export function RateLimitPressureWidget({
               return (
                 <div
                   key={t.tier}
-                  className="flex items-center justify-between h-[44px] px-3.5 rounded-md hover:bg-muted/40 transition-colors border border-transparent hover:border-border/30"
+                  className="flex items-center justify-between h-[48px] px-2.5 sm:px-3 rounded-sm transition-colors border hover:bg-accent border-foreground/10 dark:border-foreground/4"
                 >
                   {/* Left: Tier Label & Limit */}
                   <div className="flex items-center gap-3 min-w-0 flex-1 pr-3">
-                    <span className="text-[11px] font-mono font-semibold text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                    <span className="text-[11px] font-semibold text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
                       T{t.tier}
                     </span>
                     <div className="flex flex-col min-w-0">
@@ -86,7 +103,7 @@ export function RateLimitPressureWidget({
                     <SegmentedBar
                       value={t.hits}
                       max={t.limit}
-                      color={t.hits > 0 ? "#34bcb2" : undefined}
+                      color={t.hits > 0 ? "var(--brand-teal)" : undefined}
                       showPercent={false}
                     />
                   </div>
@@ -95,7 +112,7 @@ export function RateLimitPressureWidget({
                   <div className="flex flex-col items-end shrink-0">
                     <span className={cn(
                       "text-[13px] font-semibold tabular-nums leading-tight",
-                      hasHits ? "text-[#34bcb2]" : "text-muted-foreground"
+                      hasHits ? "text-brand-teal" : "text-muted-foreground"
                     )}>
                       {t.hits} hit{t.hits === 1 ? "" : "s"}
                     </span>

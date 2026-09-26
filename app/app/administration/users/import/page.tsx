@@ -180,7 +180,7 @@ export default function UserImportPage() {
         <CardContent className="space-y-4">
           <textarea
             rows={8}
-            className="w-full p-3 text-xs font-mono rounded-md border border-input bg-muted/20 focus:outline-none focus:ring-2 focus:ring-ring"
+            className="w-full p-3 text-xs rounded-md border border-input bg-muted/20 focus:outline-none focus:ring-2 focus:ring-ring"
             placeholder="Paste CSV rows here..."
             value={csvText}
             onChange={(e) => {
@@ -225,7 +225,7 @@ export default function UserImportPage() {
                 Validation Evaluation: {validationResult.validRows} Valid, {validationResult.invalidRows} Invalid
               </CardTitle>
               {validationResult.importToken && (
-                <Badge variant="outline" className="font-mono text-xs gap-1">
+                <Badge variant="outline" className="text-xs gap-1">
                   <Clock className="size-3" />
                   Token: {validationResult.importToken.substring(0, 12)}... (Valid 30m)
                 </Badge>

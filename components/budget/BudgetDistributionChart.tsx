@@ -19,17 +19,17 @@ const chartData = [
   {
     name: "Allocated",
     value: 750000,
-    fill: "#2ec4b6",
+    fill: "var(--chart-1)",
   },
   {
     name: "Committed",
     value: 650000,
-    fill: "#2997c8",
+    fill: "var(--chart-2)",
   },
   {
     name: "Available",
     value: 350000,
-    fill: "#7ccbc7",
+    fill: "var(--chart-3)",
   },
 ];
 

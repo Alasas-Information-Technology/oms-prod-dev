@@ -24,6 +24,7 @@ import {
   FIXTURE_INTERVIEW_REFERENCE,
   MOCK_INTERVIEW_SUGGESTIONS_FIXTURES,
   FIXTURE_SUGGESTIONS_REFERENCE,
+  getInterviewPlanningFixture,
 } from "./fixtures";
 import { useDebounce } from "@/hooks/useDebounce";
 
@@ -41,10 +42,17 @@ export const interviewPlanningApi = {
    */
   async getPlanning(requestId: string): Promise<InterviewPlanningResponse> {
     if (USE_FIXTURES) {
-      await new Promise((resolve) => setTimeout(resolve, 250));
+      await new Promise((resolve) => setTimeout(resolve, 200));
       const match =
-        MOCK_INTERVIEW_PLANNING_FIXTURES[requestId] ||
-        FIXTURE_INTERVIEW_REFERENCE;
+        getInterviewPlanningFixture(requestId) ||
+        MOCK_INTERVIEW_PLANNING_FIXTURES[requestId];
+      if (!match) {
+        throw {
+          statusCode: 404,
+          code: "NOT_FOUND",
+          message: `Interview planning workspace for requisition ${requestId} not found`,
+        };
+      }
       return JSON.parse(JSON.stringify(match));
     }
 

@@ -51,7 +51,7 @@ export function NeedsAttentionWidget() {
             </div>
 
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground group-hover:text-primary transition-colors">
-              <span className="hidden sm:inline text-[11px] font-mono">
+              <span className="hidden sm:inline text-[11px]">
                 {item.href.split("?")[0]}
               </span>
               <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />

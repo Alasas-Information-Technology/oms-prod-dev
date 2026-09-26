@@ -381,7 +381,7 @@ export function MoveUnitDialog({
                       <span className="font-semibold text-sm text-foreground truncate">
                         {targetParentUnit.name}
                       </span>
-                      <span className="font-mono text-xs font-semibold px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border/50">
+                      <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border/50">
                         {targetParentUnit.code}
                       </span>
                     </div>
@@ -441,7 +441,7 @@ export function MoveUnitDialog({
                       <ul className="text-xs space-y-1 pl-4 list-disc text-foreground/90 max-h-36 overflow-y-auto">
                         {childrenList.map((c) => (
                           <li key={c.orgUnitId} className="truncate">
-                            {c.name} <span className="font-mono text-[10px] text-muted-foreground">({c.code})</span>
+                            {c.name} <span className="text-[10px] text-muted-foreground">({c.code})</span>
                           </li>
                         ))}
                       </ul>

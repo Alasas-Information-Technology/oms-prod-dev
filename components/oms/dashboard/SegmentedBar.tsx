@@ -42,7 +42,7 @@ export function SegmentedBar({
       aria-label={`${percentage}% complete`}
     >
       {showPercent && (
-        <span className="text-xs font-mono font-semibold text-muted-foreground mr-2 tabular-nums">
+        <span className="text-xs font-semibold text-muted-foreground mr-2 tabular-nums">
           ({percentage}%)
         </span>
       )}

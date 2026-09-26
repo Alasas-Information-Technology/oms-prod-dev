@@ -998,7 +998,7 @@ function OrgChartCanvasInner({
         </Button>
 
         <span
-          className="text-[11px] font-mono font-medium text-foreground min-w-[32px] text-center select-none"
+          className="text-[11px] font-medium text-foreground min-w-[32px] text-center select-none"
           title="Current zoom level"
         >
           {zoomPercentage}%
