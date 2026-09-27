@@ -53,7 +53,7 @@ function resolvePersonaFromRoles(roles?: string[]): DashboardPersona {
   return "requestor";
 }
 
-export default function DashboardPage() {
+function DashboardPageContent() {
   const { user } = useAuth();
   const { can } = usePermission();
   const searchParams = useSearchParams();
@@ -309,5 +309,28 @@ export default function DashboardPage() {
         }}
       />
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="space-y-6 animate-pulse p-4">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-8 w-32" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-28 rounded-xl" />
+            ))}
+          </div>
+          <Skeleton className="h-96 rounded-xl" />
+        </div>
+      }
+    >
+      <DashboardPageContent />
+    </React.Suspense>
   );
 }
