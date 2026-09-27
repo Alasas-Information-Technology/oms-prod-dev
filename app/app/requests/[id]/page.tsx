@@ -1,6 +1,6 @@
 "use client";
 
-import { use } from "react";
+import { use, Suspense } from "react";
 import { notFound, useRouter } from "next/navigation";
 import { useApprovalDetail } from "@/hooks/useApprovalDetail";
 import { ApprovalDetailSkeleton } from "@/components/oms/approvals/ApprovalDetailSkeleton";
@@ -36,9 +36,11 @@ export default function RequestDetailPage({ params }: PageProps) {
   };
 
   return (
-    <RequestDetailDecisionView
-      detail={detail}
-      onRefresh={handleDecisionSuccess}
-    />
+    <Suspense fallback={<ApprovalDetailSkeleton />}>
+      <RequestDetailDecisionView
+        detail={detail}
+        onRefresh={handleDecisionSuccess}
+      />
+    </Suspense>
   );
 }
