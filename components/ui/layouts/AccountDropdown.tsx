@@ -98,7 +98,7 @@ export const AccountTrigger = React.forwardRef<HTMLButtonElement, AccountTrigger
                 className={cn(
                     "group relative flex items-center outline-hidden transition-all duration-200 select-none cursor-pointer",
                     showLabel
-                        ? "gap-2 px-2 py-1 rounded-full border border-teal-500/30 hover:border-teal-500/50 hover:bg-white/10 dark:hover:bg-white/5 text-white/90 dark:text-foreground/90"
+                        ? "shadow-lg gap-2 px-1 py-1 rounded-full bg-background border border-2 border-primary-500/30 hover:border-teal-500/50 hover:border-2 dark:hover:bg-white/5 text-foreground/90 dark:text-foreground/90"
                         : "justify-center p-0.5 rounded-full hover:ring-2 hover:ring-primary/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                     className
                 )}
@@ -128,10 +128,10 @@ export const AccountTrigger = React.forwardRef<HTMLButtonElement, AccountTrigger
                 </div>
                 {showLabel && (
                     <div className="hidden sm:flex flex-col text-left pr-1 min-w-0">
-                        <span className="text-xs font-semibold leading-tight truncate max-w-[130px]">
+                        <span className="text-sm font-semibold leading-tight truncate max-w-[130px]">
                             {companyName || displayName}
                         </span>
-                        <span className="text-[10px] text-teal-300 dark:text-teal-400/80 leading-none truncate max-w-[130px]">
+                        <span className="text-xs text-teal-300 dark:text-teal-400/80 leading-none truncate max-w-[130px]">
                             {displayName}
                         </span>
                     </div>
@@ -336,16 +336,16 @@ export function AccountDropdown({
 }: Props) {
     const { user, logout } = useAuth();
     const { can } = usePermission();
-    
+
     let router: any = null;
     try {
         router = useRouter();
-    } catch {}
+    } catch { }
 
     let pathname: string | null = null;
     try {
         pathname = usePathname();
-    } catch {}
+    } catch { }
 
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const [open, setOpen] = useState(defaultOpen || false);
@@ -371,8 +371,8 @@ export function AccountDropdown({
         (user?.username && user.username.trim()
             ? user.username.charAt(0).toUpperCase() + user.username.slice(1)
             : isVendorPortal
-            ? "Layla Hassan"
-            : deriveNameFromEmail(user?.email));
+                ? "Layla Hassan"
+                : deriveNameFromEmail(user?.email));
 
     const displayEmail =
         user?.email || (isVendorPortal ? "layla.hassan@falcontech.ae" : "user@diez.ae");
@@ -384,9 +384,9 @@ export function AccountDropdown({
         rawRole === "VENDOR"
             ? "Vendor Coordinator"
             : rawRole
-                  .split("_")
-                  .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-                  .join(" ");
+                .split("_")
+                .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+                .join(" ");
 
     const companyName = isVendorPortal
         ? user?.department || "Falcon Tech Resourcing LLC"
@@ -425,7 +425,7 @@ export function AccountDropdown({
                 try {
                     localStorage.removeItem("oms_demo_persona");
                     localStorage.removeItem("oms_user_profile");
-                } catch {}
+                } catch { }
                 window.location.href = "/login";
             }
         } finally {

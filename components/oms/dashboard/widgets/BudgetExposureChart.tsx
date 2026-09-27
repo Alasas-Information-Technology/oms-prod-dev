@@ -1,13 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { WidgetShell } from "../WidgetShell";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { BudgetExposureData } from "@/types/dashboard";
 import { DistributionBar, DistributionSegment } from "../DistributionBar";
 import { Amount } from "@/components/budget/Amount";
 import { formatAmount } from "@/lib/money";
-
 import { DataTable, ColumnDef } from "@/components/shared/DataTable";
 
 export function BudgetExposureChart({
@@ -27,52 +26,104 @@ export function BudgetExposureChart({
   const lockedFils = Number(data?.lockedFils ?? 0);
   const consumedFils = Number(data?.consumedFils ?? 0);
 
-  const safeTotal = totalFils > 0 ? totalFils : reservedFils + lockedFils + consumedFils + availableFils || 1;
+  const safeTotal =
+    totalFils > 0
+      ? totalFils
+      : reservedFils + lockedFils + consumedFils + availableFils || 1;
 
-  const segments: DistributionSegment[] = [
-    {
-      label: "Reserved",
-      value: reservedFils,
-      formatted: <Amount value={reservedFils} abbreviate variant="inline" currency={currency} />,
-      percent: (reservedFils / safeTotal) * 100,
-    },
-    {
-      label: "Locked",
-      value: lockedFils,
-      formatted: <Amount value={lockedFils} abbreviate variant="inline" currency={currency} />,
-      percent: (lockedFils / safeTotal) * 100,
-    },
-    {
-      label: "Consumed",
-      value: consumedFils,
-      formatted: <Amount value={consumedFils} abbreviate variant="inline" currency={currency} />,
-      percent: (consumedFils / safeTotal) * 100,
-    },
-    {
-      label: "Available",
-      value: availableFils,
-      formatted: <Amount value={availableFils} abbreviate variant="inline" currency={currency} />,
-      percent: (availableFils / safeTotal) * 100,
-      isResidual: true, // T4 Hatched fill for residual segment
-    },
-  ];
+  const segments: DistributionSegment[] = useMemo(
+    () => [
+      {
+        label: "Reserved",
+        value: reservedFils,
+        formatted: (
+          <Amount
+            value={reservedFils}
+            abbreviate
+            variant="inline"
+            currency={currency}
+          />
+        ),
+        percent: (reservedFils / safeTotal) * 100,
+        subtext: "Funds reserved for active requisitions in pipeline",
+        href: "/app/budget?filter=reserved",
+      },
+      {
+        label: "Locked",
+        value: lockedFils,
+        formatted: (
+          <Amount
+            value={lockedFils}
+            abbreviate
+            variant="inline"
+            currency={currency}
+          />
+        ),
+        percent: (lockedFils / safeTotal) * 100,
+        subtext: "Committed under contracted vendor agreements",
+        href: "/app/budget?filter=locked",
+      },
+      {
+        label: "Consumed",
+        value: consumedFils,
+        formatted: (
+          <Amount
+            value={consumedFils}
+            abbreviate
+            variant="inline"
+            currency={currency}
+          />
+        ),
+        percent: (consumedFils / safeTotal) * 100,
+        subtext: "Invoiced & disbursed year-to-date",
+        href: "/app/budget?filter=consumed",
+      },
+      {
+        label: "Available",
+        value: availableFils,
+        formatted: (
+          <Amount
+            value={availableFils}
+            abbreviate
+            variant="inline"
+            currency={currency}
+          />
+        ),
+        percent: (availableFils / safeTotal) * 100,
+        isResidual: true, // T4 Hatched fill for residual segment
+        subtext: "Uncommitted balance available for new requisitions",
+        href: "/app/budget?filter=available",
+      },
+    ],
+    [reservedFils, lockedFils, consumedFils, availableFils, safeTotal, currency]
+  );
 
   // Mobile Table Fallback Columns below 768px
   const tableColumns: ColumnDef<any>[] = [
     {
       key: "label",
       header: "Category",
-      render: (_, row) => <span className="font-medium text-foreground">{row.label}</span>,
+      render: (_, row) => (
+        <span className="font-medium text-foreground">{row.label}</span>
+      ),
     },
     {
       key: "formatted",
       header: "Amount",
-      render: (_, row) => <span className="tabular-nums font-semibold text-foreground">{row.formatted}</span>,
+      render: (_, row) => (
+        <span className="tabular-nums font-semibold text-foreground">
+          {row.formatted}
+        </span>
+      ),
     },
     {
       key: "percent",
       header: "Share",
-      render: (_, row) => <span className="text-muted-foreground tabular-nums">{row.percent.toFixed(1)}%</span>,
+      render: (_, row) => (
+        <span className="text-muted-foreground tabular-nums">
+          {row.percent.toFixed(1)}%
+        </span>
+      ),
     },
   ];
 
@@ -85,7 +136,7 @@ export function BudgetExposureChart({
       isLoading={isLoading}
       error={error}
       onRetry={onRetry}
-      minHeight={180}
+      minHeight={215}
       headerActions={
         <span className="text-[12px] font-normal text-muted-foreground font-sans">
           {periodLabel}
@@ -94,10 +145,15 @@ export function BudgetExposureChart({
     >
       {/* Screen Reader Accessible Summary */}
       <span className="sr-only">
-        Budget exposure summary for {periodLabel}: Total {currency} {formatAmount(totalFils)}, Consumed: {currency} {formatAmount(consumedFils)}, Locked: {currency} {formatAmount(lockedFils)}, Reserved: {currency} {formatAmount(reservedFils)}, Available: {currency} {formatAmount(availableFils)}.
+        Budget exposure summary for {periodLabel}: Total {currency}{" "}
+        {formatAmount(totalFils)}, Consumed: {currency}{" "}
+        {formatAmount(consumedFils)}, Locked: {currency}{" "}
+        {formatAmount(lockedFils)}, Reserved: {currency}{" "}
+        {formatAmount(reservedFils)}, Available: {currency}{" "}
+        {formatAmount(availableFils)}.
       </span>
 
-      <div className="flex flex-col flex-1 w-full pt-3">
+      <div className="flex flex-col justify-between flex-1 w-full pt-1.5">
         {/* Mobile Table Fallback (< 768px) */}
         <div className="block md:hidden w-full">
           <DataTable
@@ -109,8 +165,8 @@ export function BudgetExposureChart({
           />
         </div>
 
-        {/* Desktop DistributionBar (>= 768px) */}
-        <div className="hidden md:flex flex-col justify-center flex-1 w-full py-2">
+        {/* Desktop Interactive DistributionBar (>= 768px) */}
+        <div className="hidden md:flex flex-col justify-center flex-1 w-full py-1">
           <DistributionBar segments={segments} variant="detailed-legend" />
         </div>
       </div>

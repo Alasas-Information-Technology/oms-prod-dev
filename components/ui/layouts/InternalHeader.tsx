@@ -20,39 +20,54 @@ import { getNeedsAttentionSummary } from "@/lib/fixtures/dashboard-attention.fix
  * - Search, Needs Attention badge, Notification, and Internal Account Dropdown
  */
 export function InternalHeader() {
-  const { toggleSidebar } = useSidebar();
+  const sidebarContext = useSidebar();
+  const toggleSidebar = sidebarContext?.toggleSidebar;
   const { totalCount } = getNeedsAttentionSummary();
 
   return (
-    <header className="h-12 md:h-13 shrink-0 fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 bg-secondary/80 backdrop-blur-md border-b border-border/50 print:hidden">
+    <header className="h-14 md:h-15 shrink-0 w-full z-30 flex items-center justify-between px-4 bg-transparent backdrop-blur-md  print:hidden">
       {/* Left section: Sidebar toggle + Logo + Distinct Internal Wordmark */}
-      <div className="flex items-center gap-2 shrink-0">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 p-0 text-white/80 dark:text-foreground/80 hover:text-white dark:hover:text-foreground hover:bg-white/10 dark:hover:bg-white/5 cursor-pointer"
-          onClick={toggleSidebar}
-          aria-label="Toggle internal sidebar"
-        >
-          <Menu className="h-4.5 w-4.5" />
-        </Button>
+      <div className="flex items-center gap-2.5 shrink-0">
 
-        <Link href="/app" className="flex items-center gap-2">
+        {toggleSidebar && (
+          <div className="p-1 bg-background rounded-full flex items-center gap-3 shadow-lg border border-2 border-primary-500/30 hover:border-teal-500/50 hover:border-2 dark:hover:bg-white/5 text-foreground/90 dark:text-foreground/90 transition-all duration-[800ms] ease-in-out">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 p-0 text-primary/80 dark:text-foreground/80 hover:text-brand-teal dark:hover:text-brand-teal hover:bg-white/10 dark:hover:bg-white/5 cursor-pointer"
+              onClick={toggleSidebar}
+              aria-label="Toggle internal sidebar"
+            >
+              <Menu className="h-4.5 w-4.5" />
+            </Button>
+
+            {!sidebarContext?.open && (
+              <Link href="/app" className="flex items-center gap-2 pr-2">
+                <AppLogo className="h-8" />
+              </Link>
+            )}
+          </div>
+        )}
+
+        {/* <Link href="/app" className="flex items-center gap-2">
           <AppLogo />
           <div className="hidden sm:flex items-center pl-2 border-l border-border/60">
             <span className="font-semibold text-sm tracking-tight text-white dark:text-foreground">
               DIEZ · Outsource Management System
             </span>
           </div>
-        </Link>
+        </Link> */}
       </div>
 
       {/* Center section: Search (420px max, centered) */}
+      {/* 
       <div className="flex-1 flex justify-center px-4 max-w-xl mx-auto">
         <div className="w-full max-w-105">
           <GlobalSearch />
         </div>
-      </div>
+      </div> */}
+
+
 
       {/* Right section: Utilities + Avatar */}
       <div className="flex items-center gap-3 shrink-0">
@@ -72,14 +87,18 @@ export function InternalHeader() {
           </Link>
         )}
 
-        {/* Notification: 32px hit area, 18px glyph */}
-        <Notification />
+        <div className="p-1 bg-background rounded-full flex gap-4 shadow-lg border border-2 border-primary-500/30 hover:border-teal-500/50 hover:border-2 dark:hover:bg-white/5 text-foreground/90 dark:text-foreground/90">
+          <GlobalSearch />
 
-        {/* Theme toggle: 32px hit area, 18px glyph */}
-        <AnimatedThemeToggler variant="circle" duration={600} />
+          {/* Notification: 32px hit area, 18px glyph */}
+          <Notification />
+
+          {/* Theme toggle: 32px hit area, 18px glyph */}
+          <AnimatedThemeToggler variant="circle" duration={600} />
+        </div>
 
         {/* Avatar: 28px */}
-        <AccountDropdown />
+        <AccountDropdown showLabel />
       </div>
     </header>
   );

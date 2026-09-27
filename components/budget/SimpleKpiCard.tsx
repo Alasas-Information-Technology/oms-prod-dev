@@ -52,6 +52,11 @@ export type GenericKpiCardProps = {
   /** Zero states */
   zeroMeaning?: ZeroMeaning;
   zeroLabel?: string;
+
+  /** When true, renders text and icons in white (ideal for dark, gradient, or image backgrounds) */
+  whiteText?: boolean;
+  /** Alias for whiteText */
+  lightText?: boolean;
 };
 
 // Preset palette mapping for varying sparkline & badge colors based on domain/title
@@ -208,7 +213,16 @@ export function SimpleKpiCard({
   delta,
   zeroMeaning,
   zeroLabel,
+  whiteText = false,
+  lightText = false,
 }: GenericKpiCardProps) {
+  // Support explicit prop or automatic detection via className
+  const isWhite = Boolean(
+    whiteText ||
+    lightText ||
+    className?.includes("text-white")
+  );
+
   // Compute theme colors matching security dashboard aesthetic
   const theme = React.useMemo(() => getKpiTheme(title, color, bg), [title, color, bg]);
 
@@ -219,7 +233,7 @@ export function SimpleKpiCard({
 
   const isZero = numValue === 0 || value === "0" || value === 0 || value === null || value === undefined;
   const hasSparkline = sparkline && sparkline.length > 0;
-  const activeSparklineColor = sparklineColor || theme.sparklineHex;
+  const activeSparklineColor = sparklineColor || (isWhite ? "#ffffff" : theme.sparklineHex);
 
   const content = (
     <Card
@@ -227,7 +241,10 @@ export function SimpleKpiCard({
       className={cn(
         "relative rounded-[20px] p-5 flex flex-col justify-between overflow-hidden select-none",
         "bg-card/60 dark:bg-card/40 backdrop-blur-md shadow-sm border border-[var(--glass-border-light)] dark:border-[var(--glass-border-dark)]",
-        "before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-foreground/[0.08] before:to-transparent",
+        isWhite
+          ? "border-white/15 shadow-md before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent"
+          : "before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-foreground/[0.08] before:to-transparent",
+        className?.includes("bg-[url") && "bg-cover bg-center",
         href && "hover:border-primary/40 dark:hover:border-primary/40 cursor-pointer group",
         hasSparkline ? "h-[152px]" : "h-[124px]",
         className
@@ -236,43 +253,74 @@ export function SimpleKpiCard({
       {isLoading ? (
         <div className="flex flex-col justify-between h-full w-full">
           <div className="flex items-start justify-between">
-            <Shimmer className="h-3.5 w-24 mt-1" />
-            {showIcon && <Shimmer className="size-8 rounded-xl" />}
+            <Shimmer className={cn("h-3.5 w-24 mt-1", isWhite && "bg-white/20")} />
+            {showIcon && <Shimmer className={cn("size-8 rounded-xl", isWhite && "bg-white/20")} />}
           </div>
-          <Shimmer className="h-8 w-28 my-auto" />
-          <Shimmer className="h-3 w-32 mb-1" />
-          {hasSparkline && <Shimmer className="h-6 w-full mt-1.5" />}
+          <Shimmer className={cn("h-8 w-28 my-auto", isWhite && "bg-white/20")} />
+          <Shimmer className={cn("h-3 w-32 mb-1", isWhite && "bg-white/20")} />
+          {hasSparkline && <Shimmer className={cn("h-6 w-full mt-1.5", isWhite && "bg-white/20")} />}
         </div>
       ) : (
         <div className="flex flex-col justify-between h-full w-full">
           {/* Top Row: Title and Security-Styled Icon Tile */}
           <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-semibold text-muted-foreground truncate leading-snug">
+            <span
+              className={cn(
+                "text-xs font-semibold truncate leading-snug",
+                isWhite ? "text-white/90" : "text-muted-foreground"
+              )}
+            >
               {title}
             </span>
             {showIcon && icon && (
-              <Icon icon={icon} className="size-4 text-muted-foreground/70 shrink-0" />
+              <Icon
+                icon={icon}
+                className={cn(
+                  "size-4 shrink-0",
+                  isWhite ? "text-white/85" : "text-muted-foreground/70"
+                )}
+              />
             )}
           </div>
 
           {/* Middle Row: Main Numeral */}
           <div className="flex items-baseline gap-1 flex-1 mt-1 mb-0.5">
             {effectivePrefix && (
-              <span className="text-xs font-bold text-muted-foreground leading-none">
+              <span
+                className={cn(
+                  "text-xs font-bold leading-none",
+                  isWhite ? "text-white/80" : "text-muted-foreground"
+                )}
+              >
                 {effectivePrefix}
               </span>
             )}
             <span className="tabular-nums leading-none flex items-baseline">
-              <span className="text-2xl sm:text-[28px] font-extrabold text-foreground tracking-tight">
+              <span
+                className={cn(
+                  "text-2xl sm:text-[28px] font-extrabold tracking-tight",
+                  isWhite ? "text-white" : "text-foreground"
+                )}
+              >
                 {integer}
               </span>
               {fraction && (
-                <span className="text-2xl sm:text-[28px] font-normal text-muted-foreground tracking-tight">
+                <span
+                  className={cn(
+                    "text-2xl sm:text-[28px] font-normal tracking-tight",
+                    isWhite ? "text-white/80" : "text-muted-foreground"
+                  )}
+                >
                   {fraction}
                 </span>
               )}
               {suffix && (
-                <span className="text-2xl sm:text-[28px] font-normal text-muted-foreground tracking-tight pl-1">
+                <span
+                  className={cn(
+                    "text-2xl sm:text-[28px] font-normal tracking-tight pl-1",
+                    isWhite ? "text-white/80" : "text-muted-foreground"
+                  )}
+                >
                   {suffix}
                 </span>
               )}
@@ -284,24 +332,43 @@ export function SimpleKpiCard({
             {isZero && zeroMeaning ? (
               <div className="flex items-center gap-1.5 text-xs font-medium leading-none">
                 {zeroMeaning === "GOOD" && (
-                  <CheckCircle2 className="size-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <CheckCircle2
+                    className={cn(
+                      "size-3.5 shrink-0",
+                      isWhite ? "text-emerald-300" : "text-emerald-600 dark:text-emerald-400"
+                    )}
+                  />
                 )}
                 {zeroMeaning === "NEEDS_ACTION" && (
-                  <AlertCircle className="size-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                  <AlertCircle
+                    className={cn(
+                      "size-3.5 shrink-0",
+                      isWhite ? "text-amber-300" : "text-amber-600 dark:text-amber-400"
+                    )}
+                  />
                 )}
                 <span
                   className={cn(
                     "truncate",
                     zeroMeaning === "NEEDS_ACTION"
-                      ? "text-amber-600 dark:text-amber-400 font-semibold"
-                      : "text-muted-foreground"
+                      ? isWhite
+                        ? "text-amber-200 font-semibold"
+                        : "text-amber-600 dark:text-amber-400 font-semibold"
+                      : isWhite
+                        ? "text-white/80"
+                        : "text-muted-foreground"
                   )}
                 >
                   {zeroLabel || (zeroMeaning === "NO_DATA" ? "Nothing recorded yet" : "No items")}
                 </span>
               </div>
             ) : delta ? (
-              <div className="flex items-center gap-1 text-xs font-medium text-muted-foreground leading-none">
+              <div
+                className={cn(
+                  "flex items-center gap-1 text-xs font-medium leading-none",
+                  isWhite ? "text-white/80" : "text-muted-foreground"
+                )}
+              >
                 <span className="truncate">
                   {delta.label || "vs last month"}
                 </span>
@@ -310,8 +377,12 @@ export function SimpleKpiCard({
                     "inline-flex items-center tabular-nums font-semibold shrink-0",
                     (delta.direction === "up" && delta.increaseIsGood) ||
                       (delta.direction === "down" && !delta.increaseIsGood)
-                      ? "text-emerald-600 dark:text-emerald-400"
-                      : "text-rose-600 dark:text-rose-400"
+                      ? isWhite
+                        ? "text-emerald-300"
+                        : "text-emerald-600 dark:text-emerald-400"
+                      : isWhite
+                        ? "text-rose-300"
+                        : "text-rose-600 dark:text-rose-400"
                   )}
                 >
                   {delta.direction === "up" ? "↗" : "↘"}
@@ -321,7 +392,12 @@ export function SimpleKpiCard({
             ) : description ? (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <p className="text-xs font-medium text-muted-foreground truncate cursor-help leading-none">
+                  <p
+                    className={cn(
+                      "text-xs font-medium truncate cursor-help leading-none",
+                      isWhite ? "text-white/80" : "text-muted-foreground"
+                    )}
+                  >
                     {description}
                   </p>
                 </TooltipTrigger>
@@ -336,7 +412,12 @@ export function SimpleKpiCard({
 
           {/* Visual Trend: Bar-behind-number (U2 default) or Sparkline */}
           {hasSparkline && (
-            <div className="mt-1.5 pt-1.5 -mx-2 -mb-2 border-t border-border/40 overflow-visible">
+            <div
+              className={cn(
+                "mt-1.5 pt-1.5 -mx-2 -mb-2 border-t overflow-visible",
+                isWhite ? "border-white/15" : "border-border/40"
+              )}
+            >
               {visualTreatment === "sparkline" ? (
                 <Sparkline
                   data={sparkline}

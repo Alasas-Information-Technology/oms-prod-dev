@@ -12,7 +12,7 @@ export interface GaugeProps {
   label?: string;
   className?: string;
   /** Force standard threshold semantics if needed (e.g., cross = danger, or cross = success) */
-  thresholdSemantic?: "danger" | "success";
+  thresholdSemantic?: "danger" | "warning" | "success";
 }
 
 export function Gauge({
@@ -42,7 +42,9 @@ export function Gauge({
   // Determine color based on threshold crossed
   const colorClass = useMemo(() => {
     if (!thresholdCrossed) return "text-[var(--brand-teal)] dark:text-[var(--brand-teal)] text-primary"; // fallback just in case
-    return thresholdSemantic === "danger" ? "text-destructive" : "text-success";
+    if (thresholdSemantic === "danger") return "text-destructive";
+    if (thresholdSemantic === "warning") return "text-amber-500";
+    return "text-success";
   }, [thresholdCrossed, thresholdSemantic]);
 
   // Calculate threshold tick coordinates

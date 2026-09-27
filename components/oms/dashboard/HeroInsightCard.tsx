@@ -59,8 +59,8 @@ export function HeroInsightCard({
         // SVG background images
         "bg-cover bg-center",
         isAccent
-          ? "bg-[url('/images/kpi-gradient.svg')] text-[var(--primary-foreground)]"
-          : "bg-[url('/images/kpi-gradient-danger.svg')] text-white",
+          ? "bg-[url('/images/kpi-gradient.svg')] dark:bg-[url('/images/kpi-gradient-dark.svg')] text-[var(--primary-foreground)]"
+          : "bg-[url('/images/kpi-gradient-danger.svg')] dark:bg-[url('/images/kpi-gradient-danger-dark.svg')] text-white",
         // Subtle inner glow
         isAccent
           ? "shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.10)]"
