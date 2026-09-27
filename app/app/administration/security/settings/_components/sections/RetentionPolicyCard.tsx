@@ -40,7 +40,7 @@ export function RetentionPolicyCard() {
   ];
 
   return (
-    <Card className="rounded-md border-border/70 bg-card/70 backdrop-blur-xs shadow-xs">
+    <Card className="rounded-xl border border-foreground/15 bg-card shadow-sm overflow-hidden">
       <CardHeader className="pb-4 border-b border-border/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -70,7 +70,7 @@ export function RetentionPolicyCard() {
             name="securityEventsRetention"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-2">
                   <FormLabel className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     <FileText className="size-3.5 text-purple-500" />
                     <span>Security Events Retention (Days)</span>
@@ -79,29 +79,31 @@ export function RetentionPolicyCard() {
                     ~{(field.value / 365).toFixed(1)} yrs
                   </span>
                 </div>
-                <FormControl>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={3650}
-                    {...field}
-                    onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                    className="text-sm h-10 rounded-md"
-                  />
-                </FormControl>
-                <div className="flex items-center gap-1 pt-1">
-                  {PRESETS.map((p) => (
-                    <Button
-                      key={p.label}
-                      type="button"
-                      variant={field.value === p.days ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => field.onChange(p.days)}
-                      className="h-6 px-2 text-[10px] rounded-md"
-                    >
-                      {p.label}
-                    </Button>
-                  ))}
+                <div className="flex flex-wrap items-center gap-3">
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={3650}
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
+                      className="text-sm h-9 rounded-md w-24 border-border shadow-xs"
+                    />
+                  </FormControl>
+                  <div className="flex items-center gap-1">
+                    {PRESETS.map((p) => (
+                      <Button
+                        key={p.label}
+                        type="button"
+                        variant={field.value === p.days ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => field.onChange(p.days)}
+                        className="h-8 px-2.5 text-xs rounded-md font-medium shadow-xs"
+                      >
+                        {p.label}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
                 <FormDescription className="text-[11px]">
                   Retention for SOC incidents, token replays, and lockouts (1 – 3650 days).
@@ -117,7 +119,7 @@ export function RetentionPolicyCard() {
             name="loginHistoryRetention"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-2">
                   <FormLabel className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     <Clock className="size-3.5 text-blue-500" />
                     <span>Login History Retention (Days)</span>
@@ -126,29 +128,31 @@ export function RetentionPolicyCard() {
                     ~{(field.value / 365).toFixed(1)} yrs
                   </span>
                 </div>
-                <FormControl>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={3650}
-                    {...field}
-                    onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                    className="text-sm h-10 rounded-md"
-                  />
-                </FormControl>
-                <div className="flex items-center gap-1 pt-1">
-                  {PRESETS.map((p) => (
-                    <Button
-                      key={p.label}
-                      type="button"
-                      variant={field.value === p.days ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => field.onChange(p.days)}
-                      className="h-6 px-2 text-[10px] rounded-md"
-                    >
-                      {p.label}
-                    </Button>
-                  ))}
+                <div className="flex flex-wrap items-center gap-3">
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={3650}
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
+                      className="text-sm h-9 rounded-md w-24 border-border shadow-xs"
+                    />
+                  </FormControl>
+                  <div className="flex items-center gap-1">
+                    {PRESETS.map((p) => (
+                      <Button
+                        key={p.label}
+                        type="button"
+                        variant={field.value === p.days ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => field.onChange(p.days)}
+                        className="h-8 px-2.5 text-xs rounded-md font-medium shadow-xs"
+                      >
+                        {p.label}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
                 <FormDescription className="text-[11px]">
                   Historical records of successful user authentications.
@@ -164,7 +168,7 @@ export function RetentionPolicyCard() {
             name="logoutHistoryRetention"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-2">
                   <FormLabel className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     <Clock className="size-3.5 text-zinc-500" />
                     <span>Logout History Retention (Days)</span>
@@ -173,29 +177,31 @@ export function RetentionPolicyCard() {
                     ~{(field.value / 365).toFixed(1)} yrs
                   </span>
                 </div>
-                <FormControl>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={3650}
-                    {...field}
-                    onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                    className="text-sm h-10 rounded-md"
-                  />
-                </FormControl>
-                <div className="flex items-center gap-1 pt-1">
-                  {PRESETS.map((p) => (
-                    <Button
-                      key={p.label}
-                      type="button"
-                      variant={field.value === p.days ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => field.onChange(p.days)}
-                      className="h-6 px-2 text-[10px] rounded-md"
-                    >
-                      {p.label}
-                    </Button>
-                  ))}
+                <div className="flex flex-wrap items-center gap-3">
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={3650}
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
+                      className="text-sm h-9 rounded-md w-24 border-border shadow-xs"
+                    />
+                  </FormControl>
+                  <div className="flex items-center gap-1">
+                    {PRESETS.map((p) => (
+                      <Button
+                        key={p.label}
+                        type="button"
+                        variant={field.value === p.days ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => field.onChange(p.days)}
+                        className="h-8 px-2.5 text-xs rounded-md font-medium shadow-xs"
+                      >
+                        {p.label}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
                 <FormDescription className="text-[11px]">
                   Archived session closure and revocation events.
@@ -211,7 +217,7 @@ export function RetentionPolicyCard() {
             name="failedLoginRetention"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-2">
                   <FormLabel className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     <Calendar className="size-3.5 text-red-500" />
                     <span>Failed Login Retention (Days)</span>
@@ -220,29 +226,31 @@ export function RetentionPolicyCard() {
                     ~{(field.value / 365).toFixed(1)} yrs
                   </span>
                 </div>
-                <FormControl>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={3650}
-                    {...field}
-                    onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                    className="text-sm h-10 rounded-md"
-                  />
-                </FormControl>
-                <div className="flex items-center gap-1 pt-1">
-                  {PRESETS.map((p) => (
-                    <Button
-                      key={p.label}
-                      type="button"
-                      variant={field.value === p.days ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => field.onChange(p.days)}
-                      className="h-6 px-2 text-[10px] rounded-md"
-                    >
-                      {p.label}
-                    </Button>
-                  ))}
+                <div className="flex flex-wrap items-center gap-3">
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={3650}
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
+                      className="text-sm h-9 rounded-md w-24 border-border shadow-xs"
+                    />
+                  </FormControl>
+                  <div className="flex items-center gap-1">
+                    {PRESETS.map((p) => (
+                      <Button
+                        key={p.label}
+                        type="button"
+                        variant={field.value === p.days ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => field.onChange(p.days)}
+                        className="h-8 px-2.5 text-xs rounded-md font-medium shadow-xs"
+                      >
+                        {p.label}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
                 <FormDescription className="text-[11px]">
                   Suspicious attempt history used for security anomaly models.

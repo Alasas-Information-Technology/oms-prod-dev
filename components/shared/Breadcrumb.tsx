@@ -89,7 +89,7 @@ export function Breadcrumb({
               {index > 0 && (
                 <li
                   aria-hidden="true"
-                  className="mx-2 text-muted-foreground/40 select-none text-sm font-normal shrink-0"
+                  className="mx-2.5 text-foreground/60 dark:text-foreground/70 select-none text-sm font-semibold shrink-0"
                 >
                   /
                 </li>

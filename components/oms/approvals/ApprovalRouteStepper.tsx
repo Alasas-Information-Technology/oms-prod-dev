@@ -51,8 +51,12 @@ export function ApprovalRouteStepper({
                 {/* Left Connector Line */}
                 <div
                   className={cn(
-                    "h-[2px] flex-1 transition-colors duration-300",
-                    isFirst ? "opacity-0" : leftLineActive ? "bg-primary" : "bg-border/80"
+                    "h-[2px] flex-1 transition-colors duration-200",
+                    isFirst
+                      ? "opacity-0"
+                      : leftLineActive
+                      ? "bg-primary"
+                      : "bg-slate-200 dark:bg-slate-700"
                   )}
                 />
 
@@ -62,12 +66,12 @@ export function ApprovalRouteStepper({
                     <TooltipTrigger asChild>
                       <div
                         className={cn(
-                          "relative z-10 flex items-center justify-center size-8 sm:size-9 rounded-full text-xs font-bold transition-all duration-300 shrink-0 cursor-default select-none",
+                          "relative z-10 flex items-center justify-center size-8 rounded-full text-xs font-bold transition-all duration-200 shrink-0 cursor-default select-none",
                           isComplete
-                            ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20 hover:scale-105"
+                            ? "bg-primary text-primary-foreground shadow-2xs"
                             : isCurrent
-                            ? "bg-background border-2 border-primary text-primary ring-4 ring-primary/15 shadow-sm font-extrabold hover:scale-105"
-                            : "bg-muted/60 border border-border/80 text-muted-foreground/80 hover:bg-muted"
+                            ? "bg-card border-2 border-primary text-primary ring-2 ring-primary/15 shadow-xs font-extrabold"
+                            : "bg-muted border border-border text-muted-foreground"
                         )}
                       >
                         {isComplete ? (
@@ -87,7 +91,7 @@ export function ApprovalRouteStepper({
                     ) : isCurrent ? (
                       <TooltipContent side="top" className="text-xs">
                         <p className="font-semibold">{step.label}</p>
-                        <p className="text-[11px] text-primary-foreground/80">
+                        <p className="text-[11px] text-primary font-medium">
                           Currently awaiting decision
                         </p>
                       </TooltipContent>
@@ -105,8 +109,12 @@ export function ApprovalRouteStepper({
                 {/* Right Connector Line */}
                 <div
                   className={cn(
-                    "h-[2px] flex-1 transition-colors duration-300",
-                    isLast ? "opacity-0" : rightLineActive ? "bg-primary" : "bg-border/80"
+                    "h-[2px] flex-1 transition-colors duration-200",
+                    isLast
+                      ? "opacity-0"
+                      : rightLineActive
+                      ? "bg-primary"
+                      : "bg-slate-200 dark:bg-slate-700"
                   )}
                 />
               </div>
@@ -133,7 +141,7 @@ export function ApprovalRouteStepper({
                 )}
 
                 {isCurrent && showCurrentBadge && (
-                  <span className="mt-1 inline-flex items-center text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                  <span className="mt-1 inline-flex items-center text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
                     {currentBadgeLabel}
                   </span>
                 )}

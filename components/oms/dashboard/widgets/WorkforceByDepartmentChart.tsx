@@ -26,9 +26,16 @@ export function WorkforceByDepartmentChart({
   updatedAt,
 }: WidgetProps<WorkforceByDepartmentData>) {
   const router = useRouter();
-  const allDepartments = useMemo(() => data?.departments || [], [data]);
-  const displayedDepartments = useMemo(() => allDepartments.slice(0, 8), [allDepartments]);
-  const remainingCount = Math.max(0, allDepartments.length - 8);
+  const allDepartments = useMemo(() => {
+    const list = [...(data?.departments || [])];
+    return list.sort((a, b) => {
+      const aActive = a.active || a.onshore + a.offshore || 0;
+      const bActive = b.active || b.onshore + b.offshore || 0;
+      return bActive - aActive;
+    });
+  }, [data]);
+  const displayedDepartments = useMemo(() => allDepartments.slice(0, 3), [allDepartments]);
+  const remainingCount = Math.max(0, allDepartments.length - 3);
 
   const maxActive = useMemo(() => {
     if (!allDepartments.length) return 50;

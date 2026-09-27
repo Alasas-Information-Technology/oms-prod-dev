@@ -282,9 +282,9 @@ export function RequestWorkspace({ mode }: RequestWorkspaceProps) {
 
   const visibleExpandedRequestId =
     expandedRequestId &&
-    filteredRequests.some(
-      (request) => request.requestId === expandedRequestId
-    )
+      filteredRequests.some(
+        (request) => request.requestId === expandedRequestId
+      )
       ? expandedRequestId
       : null;
 
@@ -354,11 +354,11 @@ export function RequestWorkspace({ mode }: RequestWorkspaceProps) {
       />
 
       <div className="mx-auto flex w-full max-w-[1680px] flex-col gap-5">
-        <p className="text-sm text-muted-foreground">
+        {/* <p className="text-sm text-muted-foreground">
           {isMinePage
             ? "Track the requisitions you created, own, or need to act on."
             : "Monitor every requisition through approval, sourcing, and engagement."}
-        </p>
+        </p> */}
 
         <div className="flex flex-col gap-3">
           <RequestStatusTabs

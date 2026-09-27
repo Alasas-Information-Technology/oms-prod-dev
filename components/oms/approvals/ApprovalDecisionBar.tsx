@@ -46,12 +46,12 @@ export function ApprovalDecisionBar({
 
   return (
     <ApprovalGuard taskDetail={detail}>
-      <div className="sticky bottom-0 z-20 -mx-6 -mb-6 p-5 bg-card/95 backdrop-blur-md border-t border-border/80 rounded-b-lg shadow-lg flex flex-col gap-3">
+      <div className="sticky bottom-4 z-20 p-4 sm:p-5 bg-card border border-border rounded-xl shadow-md flex flex-col gap-3.5">
         {/* Audit Trail Note */}
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-          <History className="size-3.5 text-muted-foreground/70 shrink-0" />
+          <History className="size-3.5 text-muted-foreground shrink-0" />
           <span>
-            Your decision and the budget before/after values will be written to the permanent audit history.
+            Your decision and the budget ledger values will be officially recorded in the permanent audit trail.
           </span>
         </div>
 
@@ -70,21 +70,21 @@ export function ApprovalDecisionBar({
                       disabled={!canApprove}
                       onClick={() => setApproveOpen(true)}
                       className={cn(
-                        "w-full font-semibold gap-2 shadow-sm",
+                        "w-full font-semibold gap-2 h-10 text-sm shadow-xs rounded-lg transition-colors",
                         canApprove
-                          ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                          ? "bg-emerald-700 hover:bg-emerald-800 text-white"
                           : "opacity-60 cursor-not-allowed bg-muted text-muted-foreground hover:bg-muted"
                       )}
                     >
-                      <CheckCircle2 className="size-4" />
-                      Approve
+                      <CheckCircle2 className="size-4 stroke-[2]" />
+                      Approve Requisition
                     </Button>
                   </span>
                 </TooltipTrigger>
                 {!canApprove && (
                   <TooltipContent side="top" className="max-w-[280px] p-2.5 bg-popover text-popover-foreground border border-border text-xs shadow-md">
                     <div className="flex items-start gap-2">
-                      <ShieldAlert className="size-4 text-red-400 shrink-0 mt-0.5" />
+                      <ShieldAlert className="size-4 text-rose-500 shrink-0 mt-0.5" />
                       <span>{disabledReason}</span>
                     </div>
                   </TooltipContent>
@@ -98,10 +98,10 @@ export function ApprovalDecisionBar({
             type="button"
             variant="outline"
             onClick={() => setSendBackOpen(true)}
-            className="flex-1 font-medium border-amber-300/80 text-amber-900 hover:bg-amber-50 hover:text-amber-950 dark:border-amber-700/60 dark:text-amber-300 dark:hover:bg-amber-950/30 gap-1.5"
+            className="flex-1 font-medium border-border text-foreground hover:bg-muted h-10 text-sm gap-1.5 transition-colors rounded-lg"
           >
-            <Undo2 className="size-4 text-amber-600" />
-            Send back
+            <Undo2 className="size-4 text-muted-foreground stroke-[2]" />
+            Send Back
           </Button>
 
           {/* 3. Reject Button (Danger Outline) */}
@@ -109,18 +109,18 @@ export function ApprovalDecisionBar({
             type="button"
             variant="outline"
             onClick={() => setRejectOpen(true)}
-            className="flex-1 font-medium border-red-300/80 text-red-700 hover:bg-red-50 hover:text-red-800 dark:border-red-700/60 dark:text-red-400 dark:hover:bg-red-950/30 gap-1.5"
+            className="flex-1 font-medium border-rose-300 text-rose-700 hover:bg-rose-50 dark:border-rose-800 dark:text-rose-400 h-10 text-sm gap-1.5 transition-colors rounded-lg"
           >
-            <XCircle className="size-4 text-red-600" />
+            <XCircle className="size-4 text-rose-600 dark:text-rose-400 stroke-[2]" />
             Reject
           </Button>
         </div>
 
         {/* If preflight checks failed, show inline stated reason below the bar */}
         {!canApprove && (
-          <div className="flex items-center gap-2 p-2.5 rounded-md bg-red-50/80 border border-red-200 text-xs text-red-800">
-            <ShieldAlert className="size-4 text-red-600 shrink-0" />
-            <span className="font-medium">Cannot approve: {disabledReason}</span>
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-900 dark:bg-rose-950/40 dark:border-rose-800 dark:text-rose-200">
+            <ShieldAlert className="size-4 text-rose-600 dark:text-rose-400 shrink-0" />
+            <span className="font-semibold">Action Restricted: {disabledReason}</span>
           </div>
         )}
 

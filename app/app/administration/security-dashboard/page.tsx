@@ -235,7 +235,7 @@ export default function SecurityDashboard() {
 
       {/* Main Responsive Layout: Left content area + Right Fixed/Sticky Enterprise SOC Panel */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_390px] gap-6 items-start">
-        
+
         {/* Left / Main Dashboard Column */}
         <div className="flex flex-col gap-6 min-w-0">
 
@@ -281,7 +281,8 @@ export default function SecurityDashboard() {
               icon="mdi:shield-account"
               description="Currently active"
               color="text-blue-600"
-              bg="bg-blue-100 dark:bg-blue-500/20"
+              className=" text-white! bg-[url('/images/kpi-success.svg')]"
+
             />
             <SimpleKpiCard
               title="Failed Logins"
