@@ -386,7 +386,7 @@ export function OrgUnitDetailView({
       key: "code",
       header: "Code",
       render: (_, row) => (
-        <span className="font-mono text-xs font-semibold px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border/50">
+        <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border/50">
           {row.code}
         </span>
       ),
@@ -453,7 +453,7 @@ export function OrgUnitDetailView({
       {/* ========================================================================= */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-1.5 min-w-0">
-          <span className="font-mono text-[11px] font-normal px-[7px] py-[3px] rounded-[4px] bg-muted/60 text-muted-foreground border border-border/40 select-none">
+          <span className="text-[11px] font-normal px-[7px] py-[3px] rounded-[4px] bg-muted/60 text-muted-foreground border border-border/40 select-none">
             {unit.code}
           </span>
           <span className="text-muted-foreground/60 text-[13px]">·</span>
@@ -690,13 +690,13 @@ export function OrgUnitDetailView({
                 <dl className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-x-4 gap-y-3 text-[13px]">
                   {/* Code */}
                   <dt className="text-muted-foreground font-normal">Code</dt>
-                  <dd className="font-mono text-[13px] font-normal text-foreground">
+                  <dd className="text-[13px] font-normal text-foreground">
                     {unit.code}
                   </dd>
 
                   {/* Cost Centre */}
                   <dt className="text-muted-foreground font-normal">Cost centre</dt>
-                  <dd className="font-mono text-[13px] font-normal text-foreground">
+                  <dd className="text-[13px] font-normal text-foreground">
                     {unit.costCenterCode || "None"}
                   </dd>
 
@@ -767,7 +767,7 @@ export function OrgUnitDetailView({
                 ) : budgetOwner ? (
                   <div className="space-y-0.5">
                     <p className="text-[13px] font-medium text-foreground">{budgetOwner.name}</p>
-                    <p className="font-mono text-[13px] font-normal text-muted-foreground">
+                    <p className="text-[13px] font-normal text-muted-foreground">
                       {budgetOwner.code} · Cost centre: {budgetOwner.costCenterCode || "None"}
                     </p>
                   </div>
@@ -812,7 +812,7 @@ export function OrgUnitDetailView({
                           )}
 
                           {/* Step Circle */}
-                          <div className="relative z-10 w-5 h-5 rounded-full bg-muted/80 text-[11px] font-mono font-normal flex items-center justify-center text-muted-foreground border border-border/50 shrink-0">
+                          <div className="relative z-10 w-5 h-5 rounded-full bg-muted/80 text-[11px] font-normal flex items-center justify-center text-muted-foreground border border-border/50 shrink-0">
                             {idx + 1}
                           </div>
 

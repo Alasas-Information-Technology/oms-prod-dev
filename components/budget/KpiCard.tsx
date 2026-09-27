@@ -102,7 +102,7 @@ export function KpiCard({
         </div>
 
         {delta && (
-          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-mono">
+          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
             <span
               className={cn(
                 "font-semibold",

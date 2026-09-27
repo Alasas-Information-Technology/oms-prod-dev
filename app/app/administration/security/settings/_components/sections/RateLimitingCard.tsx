@@ -90,7 +90,7 @@ export function RateLimitingCard() {
 
   return (
     <>
-      <Card className="rounded-md border-border/70 bg-card/70 backdrop-blur-xs shadow-xs">
+      <Card className="rounded-xl border border-foreground/15 bg-card shadow-sm overflow-hidden">
         <CardHeader className="pb-4 border-b border-border/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -133,16 +133,16 @@ export function RateLimitingCard() {
               <TableBody>
                 {limits.map((item) => (
                   <TableRow key={item.endpoint} className="hover:bg-muted/30">
-                    <TableCell className="font-mono text-xs font-semibold text-foreground">
+                    <TableCell className="text-xs font-semibold text-foreground">
                       {item.endpoint}
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
                       {item.category}
                     </TableCell>
                     <TableCell className="text-xs font-medium">
-                      <span className="font-mono">{item.limit}</span> reqs (+{item.burstAllowance} burst)
+                      <span>{item.limit}</span> reqs (+{item.burstAllowance} burst)
                     </TableCell>
-                    <TableCell className="text-xs text-muted-foreground font-mono">
+                    <TableCell className="text-xs text-muted-foreground">
                       {item.windowMinutes} min
                     </TableCell>
                     <TableCell className="text-right">

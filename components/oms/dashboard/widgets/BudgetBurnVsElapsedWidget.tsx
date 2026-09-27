@@ -7,12 +7,11 @@ import { BudgetBurnVsElapsedData } from "@/types/dashboard";
 import { formatAbbreviated } from "@/lib/money";
 import { cn } from "@/lib/utils";
 
+import { Gauge } from "../Gauge";
+
 /**
  * V2 — Budget burn vs year elapsed per DASHBOARD-VISUAL-DEPTH.md:
- * - Two stacked horizontal tracks, 12px tall, 8px apart, identical width
- * - Track 1: budget consumed as a percentage, accent fill
- * - Track 2: financial year elapsed as a percentage, neutral at 40%
- * - Percentage labels right-aligned on each track
+ * - Gauge: arc shows % consumed, a tick mark on the arc shows year-elapsed % as the threshold reference
  * - Caption stating the gap AND its meaning:
  *     under plan -> "23.9 points behind — spending is under plan"
  *     on plan    -> "In line with the year to date"
@@ -44,12 +43,6 @@ export function BudgetBurnVsElapsedWidget({
     ? "text-amber-600 dark:text-amber-400"
     : "text-muted-foreground";
 
-  const track1FillColor = isCritical
-    ? "var(--destructive)"
-    : isWarning
-    ? "var(--warning)"
-    : "var(--primary)";
-
   // Caption text
   let caption = "";
   if (assessment === "UNDER_PLAN" || gap < -2) {
@@ -79,46 +72,16 @@ export function BudgetBurnVsElapsedWidget({
       minHeight={180}
     >
       <div className="flex flex-col justify-between h-full gap-3.5 select-none font-sans py-1">
-        {/* Track 1: Budget Consumed */}
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-medium text-foreground/80 text-[12px]">Budget consumed</span>
-            <span className="font-mono font-semibold text-foreground tabular-nums text-[13px]">
-              {consumedPercent.toFixed(1)}%
-            </span>
-          </div>
-          <div className="h-3 w-full bg-muted/40 dark:bg-slate-800/60 rounded-full overflow-hidden p-[1px]">
-            <div
-              style={{
-                width: `${Math.min(100, Math.max(0, consumedPercent))}%`,
-                background: isCritical
-                  ? "linear-gradient(90deg, #f43f5e, #e11d48)"
-                  : isWarning
-                  ? "linear-gradient(90deg, #f59e0b, #d97706)"
-                  : "linear-gradient(90deg, #3b82f6, #6366f1)",
-              }}
-              className="h-full rounded-full transition-all duration-300 shadow-2xs"
-            />
-          </div>
-        </div>
-
-        {/* Track 2: Financial Year Elapsed */}
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-normal text-muted-foreground text-[12px]">Financial year elapsed</span>
-            <span className="font-mono font-medium text-muted-foreground tabular-nums text-[12px]">
-              {elapsedPercent.toFixed(1)}%
-            </span>
-          </div>
-          <div className="h-3 w-full bg-muted/40 dark:bg-slate-800/60 rounded-full overflow-hidden p-[1px]">
-            <div
-              style={{
-                width: `${Math.min(100, Math.max(0, elapsedPercent))}%`,
-                background: "linear-gradient(90deg, rgba(148, 163, 184, 0.4), rgba(100, 116, 139, 0.5))",
-              }}
-              className="h-full rounded-full transition-all duration-300"
-            />
-          </div>
+        {/* NEW: Gauge (M6) replacing stacked bars */}
+        <div className="flex-1 flex flex-col justify-center py-2 pb-6">
+          <Gauge 
+            value={consumedPercent}
+            max={100}
+            threshold={elapsedPercent}
+            thresholdCrossed={consumedPercent > elapsedPercent}
+            thresholdSemantic={isCritical ? "danger" : isWarning ? "warning" : "success"}
+            label="Consumed"
+          />
         </div>
 
         {/* Bottom Assessment & Contextual Caption */}
@@ -128,7 +91,7 @@ export function BudgetBurnVsElapsedWidget({
             {caption}
           </span>
           {consumedFormatted && totalFormatted && (
-            <span className="text-[11px] font-mono text-muted-foreground tabular-nums">
+            <span className="text-[11px] text-muted-foreground tabular-nums">
               {consumedFormatted} / {totalFormatted}
             </span>
           )}

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND_BASE_URL = process.env.BACKEND_BASE_URL || "http://localhost:4000";
+const BACKEND_BASE_URL = (process.env.BACKEND_BASE_URL || "http://localhost:4000").replace(/\/+$/, "");
 
 /**
  * Builds standard forwardable headers from incoming Next.js request.

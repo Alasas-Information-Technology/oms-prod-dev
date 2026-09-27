@@ -2,12 +2,54 @@ import * as React from "react";
 
 import { cn } from "./utils";
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
+/* ─── Padding scale ───────────────────────────────────────────────── */
+const paddingMap = {
+  sm: "p-4",
+  md: "p-5",
+  lg: "p-6",
+} as const;
+
+/* ─── Card ────────────────────────────────────────────────────────── */
+
+interface CardProps extends React.ComponentProps<"div"> {
+  /** Surface style. `solid` (default) for data-dense screens; `glass` for dashboards/overviews. */
+  surface?: "solid" | "glass";
+  /** Padding preset */
+  padding?: "sm" | "md" | "lg";
+}
+
+function Card({
+  className,
+  surface = "solid",
+  padding,
+  ...props
+}: CardProps) {
   return (
     <div
       data-slot="card"
+      data-surface={surface}
       className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-md border shadow-sm transition-all duration-300 ease-out hover:shadow-md hover:-translate-y-[1px]",
+        // Base — exact spec: 20px padding (p-5), 16px gap (gap-4), 20px radius
+        "flex flex-col gap-4 p-5 rounded-[20px] border-0 transition-all duration-300 ease-out",
+        // Light-mode shadow: exact spec
+        "[box-shadow:0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.06)]",
+        // Dark mode: no shadow, elevated surface contrast only
+        "dark:[box-shadow:none]",
+        // Solid surface
+        surface === "solid" && "bg-card text-card-foreground dark:bg-[var(--card)]",
+        // Glass surface
+        surface === "glass" && [
+          "text-card-foreground",
+          "bg-[var(--glass-bg-light)]",
+          "border border-[var(--glass-border-light)] dark:border-[var(--glass-border-dark)]",
+          "backdrop-blur-[var(--glass-blur)] backdrop-saturate-[var(--glass-saturate)]",
+          "[backdrop-filter:blur(var(--glass-blur))_saturate(var(--glass-saturate))]",
+          "[-webkit-backdrop-filter:blur(var(--glass-blur))_saturate(var(--glass-saturate))]",
+          // Dark mode glass — elevated surface contrast
+          "dark:bg-[var(--glass-bg-dark)]",
+        ],
+        // Padding
+        padding && paddingMap[padding],
         className,
       )}
       {...props}
@@ -20,7 +62,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-header"
       className={cn(
-        "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 p-8 pb-4 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
+        "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 has-data-[slot=card-action]:grid-cols-[1fr_auto]",
         className,
       )}
       {...props}
@@ -64,8 +106,7 @@ function CardAction({ className, ...props }: React.ComponentProps<"div">) {
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      data-slot="card-content"
-      className={cn("px-8 [&:last-child]:pb-8", className)}
+      className={cn("", className)}
       {...props}
     />
   );
@@ -74,8 +115,7 @@ function CardContent({ className, ...props }: React.ComponentProps<"div">) {
 function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      data-slot="card-footer"
-      className={cn("flex items-center p-8 pt-0 [.border-t]:pt-8", className)}
+      className={cn("flex items-center", className)}
       {...props}
     />
   );
@@ -90,3 +130,4 @@ export {
   CardDescription,
   CardContent,
 };
+export type { CardProps };

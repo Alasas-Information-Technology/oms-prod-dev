@@ -1,5 +1,6 @@
 "use client";
 
+import { CheckCircle2, RotateCcw, Sparkles, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HrReviewDetailResponse } from "@/types/hr-review";
 import {
@@ -27,22 +28,37 @@ export function HrReviewDecisionBar({ detail, activeDialog, setActiveDialog, onS
 
   return (
     <>
-      <div className="sticky bottom-0 z-10 mt-6 flex w-full items-center border-t border-border bg-background py-4">
-        <Button onClick={() => setActiveDialog("APPROVE")} variant="default" size="sm">
-          Approve as OMS
-        </Button>
+      <div className="sticky bottom-4 z-20 mt-8 flex w-full flex-wrap items-center justify-between rounded-xl border border-border/80 bg-card/95 backdrop-blur-md px-5 py-3.5 shadow-lg">
+        <div className="flex items-center gap-3">
+          <Button
+            onClick={() => setActiveDialog("APPROVE")}
+            variant="default"
+            size="sm"
+            className="bg-brand-teal hover:bg-brand-teal/90 text-white font-semibold shadow-xs gap-1.5 h-9 px-4 cursor-pointer"
+          >
+            <CheckCircle2 className="size-4" />
+            Approve as OMS
+          </Button>
 
-        <Button
-          onClick={() => router.push(`/app/hr-review/${encodeURIComponent(detail.request.id)}/send-back`)}
-          variant="outline"
-          size="sm"
-          className="ml-3"
-        >
-          Send back
-        </Button>
+          <Button
+            onClick={() => router.push(`/app/hr-review/${encodeURIComponent(detail.request.id)}/send-back`)}
+            variant="outline"
+            size="sm"
+            className="border-amber-500/30 text-amber-700 dark:text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/50 font-medium gap-1.5 h-9 px-3.5 cursor-pointer"
+          >
+            <RotateCcw className="size-3.5" />
+            Send back
+          </Button>
+        </div>
 
-        <div className="ml-auto flex items-center gap-3 pl-8 border-l border-border">
-          <Button onClick={() => setActiveDialog("PERM_HIRE")} variant="outline" size="sm">
+        <div className="flex items-center gap-3 pl-4 md:border-l md:border-border">
+          <Button
+            onClick={() => setActiveDialog("PERM_HIRE")}
+            variant="outline"
+            size="sm"
+            className="border-indigo-500/30 text-indigo-700 dark:text-indigo-400 hover:bg-indigo-500/10 hover:border-indigo-500/50 font-medium gap-1.5 h-9 px-3.5 cursor-pointer"
+          >
+            <Sparkles className="size-3.5" />
             Convert to permanent hire
           </Button>
 
@@ -50,8 +66,9 @@ export function HrReviewDecisionBar({ detail, activeDialog, setActiveDialog, onS
             onClick={() => setActiveDialog("REJECT")}
             variant="outline"
             size="sm"
-            className="border-destructive/30 text-destructive hover:bg-destructive-light hover:text-destructive"
+            className="border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 hover:border-rose-500/50 font-medium gap-1.5 h-9 px-3.5 cursor-pointer"
           >
+            <XCircle className="size-3.5" />
             Reject
           </Button>
         </div>

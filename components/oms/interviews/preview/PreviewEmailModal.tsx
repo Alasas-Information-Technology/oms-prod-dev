@@ -82,7 +82,7 @@ export function PreviewEmailModal({
                 Candidate Email Preview
               </DialogTitle>
             </div>
-            <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded-full bg-muted border border-border text-foreground">
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-muted border border-border text-foreground">
               {candidateRef}
             </span>
           </div>
@@ -108,7 +108,7 @@ export function PreviewEmailModal({
         {/* 2. Realistic Email Envelope & Body */}
         <div className="rounded-lg border border-border bg-card shadow-2xs overflow-hidden">
           {/* Email Header Fields */}
-          <div className="p-3.5 bg-muted/30 border-b border-border space-y-1.5 text-xs font-mono">
+          <div className="p-3.5 bg-muted/30 border-b border-border space-y-1.5 text-xs">
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground w-16 shrink-0">From:</span>
               <span className="text-foreground font-sans">
@@ -141,7 +141,7 @@ export function PreviewEmailModal({
                   Talent Acquisition
                 </span>
               </div>
-              <span className="text-[11px] text-muted-foreground font-mono">
+              <span className="text-[11px] text-muted-foreground">
                 Ref: {candidateRef}
               </span>
             </div>
@@ -234,7 +234,7 @@ export function PreviewEmailModal({
                           <span className="text-xs font-semibold text-foreground block">
                             Option {index + 1}: {dateLabel}
                           </span>
-                          <div className="text-xs font-mono text-muted-foreground">
+                          <div className="text-xs text-muted-foreground">
                             <span>{gstRange} GST</span>
                             {offshoreRange && (
                               <span className="text-primary/90 font-medium">

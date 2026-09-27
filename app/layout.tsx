@@ -1,23 +1,19 @@
 import type { Metadata } from "next";
-import { Inter, Montserrat, Merriweather } from "next/font/google";
+import { Urbanist, Google_Sans_Flex } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Providers } from "@/components/providers";
 
-const fontDisplay = Montserrat({
+const fontDisplay = Urbanist({
   subsets: ["latin"],
   variable: "--font-display",
   weight: ["400", "500", "600", "700", "800"],
 });
 
-const fontSans = Inter({
+const fontUI = Google_Sans_Flex({
   subsets: ["latin"],
-  variable: "--font-sans",
-});
-
-const fontSerif = Merriweather({
-  subsets: ["latin"],
-  variable: "--font-serif",
+  variable: "--font-ui",
+  axes: ["wdth", "ROND", "GRAD"],
 });
 
 export const metadata: Metadata = {
@@ -39,8 +35,7 @@ export default function RootLayout({
       className={cn(
         "min-h-full antialiased",
         fontDisplay.variable,
-        fontSans.variable,
-        fontSerif.variable,
+        fontUI.variable,
         "font-sans"
       )}
       suppressHydrationWarning

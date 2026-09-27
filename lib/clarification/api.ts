@@ -19,6 +19,7 @@ import {
 import {
   MOCK_CLARIFICATION_FIXTURES,
   generateMockClarificationPreview,
+  getClarificationFixture,
 } from "./fixtures";
 import { useDebounce } from "@/hooks/useDebounce";
 
@@ -39,12 +40,9 @@ export const clarificationsApi = {
     clarificationId: string
   ): Promise<ClarificationDetail> {
     if (USE_FIXTURES) {
-      await new Promise((resolve) => setTimeout(resolve, 400));
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
-      const match =
-        MOCK_CLARIFICATION_FIXTURES[requestId] ||
-        MOCK_CLARIFICATION_FIXTURES[clarificationId] ||
-        MOCK_CLARIFICATION_FIXTURES["OMS-2026-0139"];
+      const match = getClarificationFixture(requestId, clarificationId);
 
       if (!match) {
         throw new Error(`Clarification not found for request ${requestId}`);

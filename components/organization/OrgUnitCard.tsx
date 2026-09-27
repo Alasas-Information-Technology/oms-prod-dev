@@ -125,7 +125,7 @@ export function OrgUnitCard({
             </Badge>
           )}
 
-          <span className="font-mono text-[10px] text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded border border-border/40">
+          <span className="text-[10px] text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded border border-border/40">
             {code}
           </span>
         </div>
@@ -157,7 +157,7 @@ export function OrgUnitCard({
 
         {/* Subordinate counts or expand trigger */}
         <div className="flex items-center gap-1.5 shrink-0">
-          <span className="text-[11px] text-muted-foreground font-mono">
+          <span className="text-[11px] text-muted-foreground">
             {countSentence}
           </span>
 

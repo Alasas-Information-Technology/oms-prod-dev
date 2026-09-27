@@ -37,7 +37,7 @@ export function RecentActivityFeed({
           No recent activity in your scope.
         </div>
       ) : (
-        <div className="flex flex-col gap-1 w-full">
+        <div className="flex flex-col gap-2 w-full">
           {displayActivities.map((activity) => (
             <DashboardListRow
               key={activity.id}

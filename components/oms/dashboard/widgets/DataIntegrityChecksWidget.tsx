@@ -8,6 +8,7 @@ import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { DataIntegrityChecksData } from "@/types/dashboard";
 import { cn } from "@/lib/utils";
+import { SeverityDot, SeverityLevel } from "../SeverityDot";
 
 function formatRelativeTime(isoDate: string): string {
   try {
@@ -99,37 +100,50 @@ export function DataIntegrityChecksWidget({
         </div>
       }
     >
-      <div className="space-y-0.5 select-none">
+      <div className="space-y-2 select-none">
         {sortedChecks.length === 0 ? (
           <div className="py-6 text-center text-xs text-muted-foreground">
             No integrity checks registered.
           </div>
         ) : (
-          sortedChecks.map((check) => {
+          sortedChecks.slice(0, 4).map((check) => {
             const isFailed = check.state === "FAILED";
             const isCritical = check.severity === "CRITICAL";
+            const severity: SeverityLevel = !isFailed
+              ? "LOW"
+              : isCritical
+                ? "CRITICAL"
+                : check.severity === "HIGH"
+                  ? "HIGH"
+                  : "MEDIUM";
 
             return (
               <Link
                 key={check.code}
                 href={check.detailLink || "/app/administration/integrity"}
                 className={cn(
-                  "group flex items-center justify-between h-[40px] px-2.5 sm:px-3 rounded-lg transition-colors duration-150 border",
+                  "group flex items-center justify-between h-[48px] px-2.5 sm:px-3 rounded-sm transition-colors duration-150 border",
                   isFailed
                     ? cn(
-                        "bg-rose-500/10 border-rose-500/30 dark:bg-rose-950/20 dark:border-rose-900/40 hover:bg-rose-500/15",
-                        isCritical && "border-l-4 border-l-rose-600 dark:border-l-rose-500"
-                      )
-                    : "bg-transparent hover:bg-muted/40 border-transparent hover:border-border/30 dark:hover:border-white/[0.04]"
+                      "bg-[var(--danger-surface)] border-[var(--danger-border)]/40 hover:bg-[var(--danger-surface)]/80",
+                      // CRITICAL correctness feature: left accent bar intact
+                      isCritical && "border-l-2 border-l-[var(--danger-border)]"
+                    )
+                    : "bg-muted/20 hover:bg-accent border-foreground/10 dark:border-foreground/4"
                 )}
               >
-                {/* Left: Label + Last Run */}
-                <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
+                {/* Left: Severity Dot + Label + Last Run */}
+                <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
+                  <SeverityDot
+                    severity={severity}
+                    label={`Severity ${check.severity}: ${check.state}`}
+                    className="shrink-0"
+                  />
                   <div className="flex flex-col min-w-0">
                     <span
                       className={cn(
                         "text-[12.5px] font-medium truncate leading-tight group-hover:text-primary transition-colors",
-                        isFailed ? "text-rose-700 dark:text-rose-300 font-semibold" : "text-foreground/90"
+                        isFailed ? "text-danger-text font-semibold" : "text-foreground/90"
                       )}
                     >
                       {check.label}
@@ -175,6 +189,17 @@ export function DataIntegrityChecksWidget({
               </Link>
             );
           })
+        )}
+
+        {sortedChecks.length > 4 && (
+          <div className="pt-1 text-center">
+            <Link
+              href="/app/administration/integrity"
+              className="text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              View all {sortedChecks.length} integrity checks →
+            </Link>
+          </div>
         )}
       </div>
     </WidgetShell>

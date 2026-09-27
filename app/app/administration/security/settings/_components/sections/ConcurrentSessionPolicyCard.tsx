@@ -42,7 +42,7 @@ export function ConcurrentSessionPolicyCard({ summary }: Props) {
   const autoRevoke = form.watch("autoRevokeOldestSession");
 
   return (
-    <Card className="rounded-md border-border/70 bg-card/70 backdrop-blur-xs shadow-xs">
+    <Card className="rounded-xl border border-foreground/15 bg-card shadow-sm overflow-hidden">
       <CardHeader className="pb-4 border-b border-border/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -82,7 +82,7 @@ export function ConcurrentSessionPolicyCard({ summary }: Props) {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-2xl font-bold font-mono text-foreground">
+            <span className="text-2xl font-bold text-foreground">
               {summary?.activeSessions ?? "0"}
             </span>
             <Button
@@ -105,36 +105,38 @@ export function ConcurrentSessionPolicyCard({ summary }: Props) {
           name="maxConcurrentSessions"
           render={({ field }) => (
             <FormItem className="space-y-2">
-              <div className="flex items-center justify-between">
-                <FormLabel className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                  <Users className="size-3.5 text-muted-foreground" />
-                  <span>Maximum Allowed Sessions per User</span>
-                </FormLabel>
-                <div className="flex items-center gap-1">
-                  {[1, 2, 3, 5, 10].map((preset) => (
-                    <Button
-                      key={preset}
-                      type="button"
-                      variant={field.value === preset ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => field.onChange(preset)}
-                      className="h-6 px-2 text-[11px] rounded-md"
-                    >
-                      {preset}
-                    </Button>
-                  ))}
+                <div className="flex items-center justify-between mb-2">
+                  <FormLabel className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                    <Users className="size-3.5 text-muted-foreground" />
+                    <span>Maximum Allowed Sessions per User</span>
+                  </FormLabel>
                 </div>
-              </div>
-              <FormControl>
-                <Input
-                  type="number"
-                  min={1}
-                  max={20}
-                  {...field}
-                  onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 1)}
-                  className="font-mono text-sm h-10 rounded-md"
-                />
-              </FormControl>
+                <div className="flex flex-wrap items-center gap-3">
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={20}
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 1)}
+                      className="text-sm h-9 rounded-md w-24 border-border shadow-xs"
+                    />
+                  </FormControl>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 5, 10].map((preset) => (
+                      <Button
+                        key={preset}
+                        type="button"
+                        variant={field.value === preset ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => field.onChange(preset)}
+                        className="h-8 px-2.5 text-xs rounded-md font-medium shadow-xs"
+                      >
+                        {preset}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
               <FormDescription className="text-xs">
                 Threshold for concurrent valid refresh tokens allowed per individual employee (1 – 20).
               </FormDescription>

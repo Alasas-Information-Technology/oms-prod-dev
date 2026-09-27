@@ -152,7 +152,7 @@ export function InterviewShortcutsModal({
                         {shortcut.keys.map((k, kIdx) => (
                           <kbd
                             key={kIdx}
-                            className="min-w-5 h-6 px-1.5 flex items-center justify-center rounded-md bg-muted border border-border/80 font-mono text-[11px] font-semibold text-foreground shadow-2xs"
+                            className="min-w-5 h-6 px-1.5 flex items-center justify-center rounded-md bg-muted border border-border/80 text-[11px] font-semibold text-foreground shadow-2xs"
                           >
                             {k}
                           </kbd>

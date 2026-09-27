@@ -148,7 +148,7 @@ export function BudgetLinesTable({
                 // Clicking code links to ledger detail; clicking row selects
                 e.stopPropagation();
               }}
-              className="inline-flex items-center gap-1.5 font-mono text-xs font-bold text-primary hover:text-primary/80 hover:underline transition-colors group cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary/80 hover:underline transition-colors group cursor-pointer"
               title={`View detailed ledger transactions for ${line.code}`}
             >
               <span>{line.code}</span>

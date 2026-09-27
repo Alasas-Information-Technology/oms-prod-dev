@@ -108,7 +108,7 @@ export function KpiRow({ metrics, className }: KpiRowProps) {
                         currency={metric.currency || "AED"}
                       />
                     ) : (
-                      <span className="font-mono tabular-nums leading-none">
+                      <span className="tabular-nums leading-none">
                         <span className="text-[30px] font-semibold text-foreground tracking-tight">
                           {isZero ? "0" : typeof metric.value === "number" ? metric.value.toLocaleString() : metric.value}
                         </span>
@@ -146,7 +146,7 @@ export function KpiRow({ metrics, className }: KpiRowProps) {
                         </span>
                         <span
                           className={cn(
-                            "inline-flex items-center font-mono tabular-nums font-semibold ml-0.5",
+                            "inline-flex items-center tabular-nums font-semibold ml-0.5",
                             (metric.delta.direction === "up" && metric.delta.increaseIsGood) ||
                               (metric.delta.direction === "down" && !metric.delta.increaseIsGood)
                               ? "text-emerald-600 dark:text-emerald-400"

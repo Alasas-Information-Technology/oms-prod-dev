@@ -7,6 +7,7 @@ import { WidgetShell } from "../WidgetShell";
 import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { ConfigurationDriftData } from "@/types/dashboard";
+import { SeverityDot } from "../SeverityDot";
 
 function formatRelativeTime(isoDate: string): string {
   try {
@@ -63,10 +64,10 @@ export function ConfigurationDriftWidget({
       }
 
     >
-      <div className="space-y-1.5 select-none">
+      <div className="space-y-2 select-none">
         {changes.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground text-xs">
-            <SlidersHorizontal className="w-6 h-6 mb-2 opacity-50 text-emerald-600" />
+            <SlidersHorizontal className="w-6 h-6 mb-2 opacity-50 text-success-text" />
             <span className="font-medium text-foreground">All settings are at their defaults.</span>
             <span className="text-[11px] mt-0.5">No configuration drift detected.</span>
           </div>
@@ -75,10 +76,11 @@ export function ConfigurationDriftWidget({
             <Link
               key={idx}
               href="/app/administration/settings"
-              className="group flex items-center justify-between min-h-[44px] px-3.5 py-1.5 rounded-md hover:bg-muted/50 transition-colors border border-transparent hover:border-border/40"
+              className="group flex items-center justify-between h-[48px] px-2.5 sm:px-3 rounded-sm transition-colors border hover:bg-accent border-foreground/10 dark:border-foreground/4"
             >
-              {/* Left: Icon + Setting name + Changed By */}
-              <div className="flex items-center gap-3 min-w-0 flex-1 pr-3">
+              {/* Left: Severity Dot + Icon + Setting name + Changed By */}
+              <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-3">
+                <SeverityDot severity="MEDIUM" label="Configuration drift" className="shrink-0" />
                 <div className="w-6 h-6 rounded flex items-center justify-center shrink-0 bg-muted text-muted-foreground text-xs">
                   <Sliders className="w-3.5 h-3.5" />
                 </div>

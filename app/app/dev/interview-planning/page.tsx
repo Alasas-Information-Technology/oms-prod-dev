@@ -14,11 +14,13 @@ import {
   Keyboard,
 } from "lucide-react";
 import {
+  getInterviewPlanningFixture,
   FIXTURE_SUGGESTIONS_REFERENCE,
   FIXTURE_SUGGESTIONS_OFFSHORE,
   FIXTURE_SUGGESTIONS_DISCONNECTED,
   FIXTURE_INTERVIEW_REFERENCE,
 } from "@/src/lib/interview-planning/fixtures";
+import { ExternalLink } from "lucide-react";
 import { SuggestionList } from "@/components/oms/interviews/suggestions/SuggestionList";
 import { SuggestionCard } from "@/components/oms/interviews/suggestions/SuggestionCard";
 import {
@@ -70,13 +72,44 @@ export default function InterviewPlanningDevPage() {
     }
   }, []);
 
-  // Candidates state
-  const [candidates, setCandidates] = React.useState<InterviewCandidate[]>(
-    FIXTURE_INTERVIEW_REFERENCE.candidates
-  );
-  const [selectedCandidateRef, setSelectedCandidateRef] = React.useState<string>(
-    FIXTURE_INTERVIEW_REFERENCE.candidates[0].candidateRef
-  );
+  const scenarioRequisitionId = React.useMemo(() => {
+    switch (scenario) {
+      case "reference":
+        return "OMS-2026-0148";
+      case "offshore":
+        return "OMS-2026-0102";
+      case "disconnected":
+        return "OMS-2026-0148";
+      case "empty":
+        return "OMS-2026-0141";
+    }
+  }, [scenario]);
+
+  // Candidates state initialized from demo-data
+  const [candidates, setCandidates] = React.useState<InterviewCandidate[]>(() => {
+    const fixture = getInterviewPlanningFixture("OMS-2026-0148");
+    return fixture?.candidates || FIXTURE_INTERVIEW_REFERENCE.candidates;
+  });
+  const [selectedCandidateRef, setSelectedCandidateRef] = React.useState<string>(() => {
+    const fixture = getInterviewPlanningFixture("OMS-2026-0148");
+    return fixture?.candidates[0]?.candidateRef || "C-014";
+  });
+
+  // Re-sync candidates whenever scenario changes
+  React.useEffect(() => {
+    const fixture = getInterviewPlanningFixture(scenarioRequisitionId);
+    if (fixture && fixture.candidates.length > 0) {
+      setCandidates(fixture.candidates);
+      setSelectedCandidateRef(fixture.candidates[0].candidateRef);
+    } else if (scenario === "empty") {
+      setCandidates([]);
+      setSelectedCandidateRef("");
+    } else {
+      setCandidates(FIXTURE_INTERVIEW_REFERENCE.candidates);
+      setSelectedCandidateRef(FIXTURE_INTERVIEW_REFERENCE.candidates[0].candidateRef);
+    }
+    setDismissedSlotIds([]);
+  }, [scenario, scenarioRequisitionId]);
 
   // Suggestions state based on scenario
   const currentDataset = React.useMemo(() => {
@@ -374,7 +407,7 @@ export default function InterviewPlanningDevPage() {
     <div className="p-8 pb-32 max-w-7xl mx-auto space-y-8">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2 text-xs font-mono text-primary font-semibold mb-1 tracking-wider uppercase">
+        <div className="flex items-center gap-2 text-xs text-primary font-semibold mb-1 tracking-wider uppercase">
           UX5 · Calendar Tab &amp; Keyboard Engine
         </div>
         <h1 className="text-3xl font-display font-bold text-heading">
@@ -389,13 +422,16 @@ export default function InterviewPlanningDevPage() {
       {/* Test Controls Bar */}
       <div className="p-4 rounded-xl border border-border bg-card shadow-xs flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-2">
+          <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20 mr-1">
+            DEV WORKBENCH
+          </Badge>
           <Button
             size="sm"
             variant={scenario === "reference" ? "default" : "outline"}
             onClick={() => setScenario("reference")}
             className="text-xs font-semibold cursor-pointer"
           >
-            1. Reference Case (9 suggestions)
+            (a) Reference 0148 (C-014 Samir Rahman)
           </Button>
 
           <Button
@@ -404,7 +440,7 @@ export default function InterviewPlanningDevPage() {
             onClick={() => setScenario("offshore")}
             className="text-xs font-semibold cursor-pointer"
           >
-            2. Offshore Candidate
+            (b) Offshore 0102 (C-031 Priya Sharma)
           </Button>
 
           <Button
@@ -413,7 +449,7 @@ export default function InterviewPlanningDevPage() {
             onClick={() => setScenario("disconnected")}
             className="text-xs font-semibold cursor-pointer"
           >
-            3. Disconnected Calendar
+            (c) Disconnected Calendar (0148)
           </Button>
 
           <Button
@@ -422,7 +458,7 @@ export default function InterviewPlanningDevPage() {
             onClick={() => setScenario("empty")}
             className="text-xs font-semibold cursor-pointer"
           >
-            4. Empty Suggestions
+            (d) Empty Sourcing (0141)
           </Button>
         </div>
 
@@ -436,6 +472,17 @@ export default function InterviewPlanningDevPage() {
           >
             <RotateCcw className="size-3.5" />
             <span>Undo ({undoStack.length})</span>
+          </Button>
+
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => window.open(`/app/candidates/interviews/plan/${scenarioRequisitionId}`, '_blank')}
+            className="text-xs font-semibold gap-1.5 cursor-pointer"
+            title="Open real interview planning route in new tab"
+          >
+            <span>Open Real Page</span>
+            <ExternalLink className="size-3.5" />
           </Button>
           <Button
             size="sm"
@@ -478,10 +525,10 @@ export default function InterviewPlanningDevPage() {
                     isSelected ? "bg-primary-foreground" : candColor.classes.avatar
                   )}
                 />
-                <span className="font-mono">{cand.candidateRef}</span>
+                <span>{cand.candidateRef}</span>
                 <span
                   className={cn(
-                    "text-[10px] px-1 rounded-full font-mono",
+                    "text-[10px] px-1 rounded-full",
                     isSelected
                       ? "bg-primary-foreground/20 text-primary-foreground"
                       : "bg-muted text-muted-foreground"
@@ -498,7 +545,7 @@ export default function InterviewPlanningDevPage() {
             );
           })}
         </div>
-        <span className="text-[11px] text-muted-foreground font-mono">
+        <span className="text-[11px] text-muted-foreground">
           Tip: Press <kbd className="px-1 py-0.5 rounded bg-muted border text-foreground">Tab</kbd> to cycle candidate
         </span>
       </div>
@@ -525,7 +572,7 @@ export default function InterviewPlanningDevPage() {
                 <span>Suggested times</span>
                 <Badge
                   variant="secondary"
-                  className="text-[10px] px-1.5 py-0 h-4 font-mono font-bold"
+                  className="text-[10px] px-1.5 py-0 h-4 font-bold"
                 >
                   {currentDataset.suggestions.filter((s) => !dismissedSlotIds.includes(s.slotId)).length}
                 </Badge>
@@ -547,7 +594,7 @@ export default function InterviewPlanningDevPage() {
                 {calendarCandidateSlots.length > 0 && (
                   <Badge
                     variant="outline"
-                    className="text-[10px] px-1.5 py-0 h-4 font-mono font-bold"
+                    className="text-[10px] px-1.5 py-0 h-4 font-bold"
                   >
                     {calendarCandidateSlots.length}
                   </Badge>
@@ -557,7 +604,7 @@ export default function InterviewPlanningDevPage() {
 
             <div className="flex items-center gap-2 text-[11px] text-muted-foreground pb-3">
               <span className="hidden sm:inline-flex items-center gap-1.5 font-medium">
-                Press <kbd className="px-1.5 py-0.5 rounded bg-muted border font-mono text-[10px] text-foreground">C</kbd> to toggle view
+                Press <kbd className="px-1.5 py-0.5 rounded bg-muted border text-[10px] text-foreground">C</kbd> to toggle view
               </span>
             </div>
           </div>

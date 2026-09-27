@@ -91,7 +91,7 @@ export const ProposedSlotCard = React.memo(function ProposedSlotCard({
         <div className="flex items-center gap-1 min-w-0">
           <span
             className={cn(
-              "px-1 py-0.2 rounded font-mono font-bold text-[9px] tracking-tight shrink-0 shadow-2xs",
+              "px-1 py-0.2 rounded font-bold text-[9px] tracking-tight shrink-0 shadow-2xs",
               color.classes.avatar
             )}
           >
@@ -126,7 +126,7 @@ export const ProposedSlotCard = React.memo(function ProposedSlotCard({
 
       {/* Bottom Footer: Duration & Collision Indicator */}
       <div className="flex items-center justify-between text-[10px] text-muted-foreground mt-auto pt-0.5">
-        <span className="font-mono tabular-nums text-[9.5px]">
+        <span className="tabular-nums text-[9.5px]">
           {slot.durationMinutes}m
         </span>
 

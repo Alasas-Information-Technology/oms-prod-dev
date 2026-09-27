@@ -10,6 +10,61 @@ import { StatusTooltipIcon } from "../StatusTooltipIcon";
 import { WidgetProps } from "@/lib/dashboard/registry";
 import { DocumentPipelineData } from "@/types/dashboard";
 import { cn } from "@/lib/utils";
+import { ColumnChart } from "../ColumnChart";
+import { Progress } from "@/components/ui/progress";
+
+interface MetricCardProps {
+  label: string;
+  value: number;
+  formatted: string;
+  subtext: string;
+  icon: React.ComponentType<{ className?: string }>;
+  hasBar: boolean;
+  isWarning?: boolean;
+  barWidth: number;
+}
+
+function MetricCard({
+  label,
+  formatted,
+  subtext,
+  icon: Icon,
+  hasBar,
+  isWarning,
+  barWidth,
+}: MetricCardProps) {
+  return (
+    <div
+      className={cn(
+        "p-2.5 rounded-sm border flex flex-col justify-between gap-1.5 transition-colors",
+        isWarning
+          ? "bg-[var(--danger-surface)] border-[var(--danger-border)]/40 text-danger-text"
+          : "bg-muted/20 hover:bg-accent border-foreground/10 dark:border-foreground/4 text-foreground"
+      )}
+    >
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <span className="font-medium text-foreground/90">{label}</span>
+        <Icon className="w-3.5 h-3.5 text-foreground/60 shrink-0" />
+      </div>
+
+      <div className="flex flex-col gap-1 mt-0.5">
+        <div className="flex items-baseline justify-between">
+          <span className="text-base font-bold tabular-nums text-foreground">
+            {formatted}
+          </span>
+          <span className="text-[10px] text-muted-foreground">{subtext}</span>
+        </div>
+
+        {/* Horizontal Bar */}
+        {hasBar ? (
+          <Progress value={barWidth} className="h-1.5" />
+        ) : (
+          <div className="w-full h-1.5 bg-muted/40 rounded-full overflow-hidden" />
+        )}
+      </div>
+    </div>
+  );
+}
 
 function formatBytes(bytes: number): string {
   if (bytes === 0) return "0 Bytes";
@@ -65,61 +120,80 @@ export function DocumentPipelineWidget({
       }
 
     >
-      <div className="space-y-4 select-none">
-        {/* Metric Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-          <div className="p-3 rounded-md bg-muted/40 border border-border/40 flex flex-col justify-between">
-            <div className="flex items-center justify-between text-muted-foreground text-xs">
-              <span>Total Stored</span>
-              <FileCheck2 className="w-3.5 h-3.5 text-blue-500" />
-            </div>
-            <div className="text-xl font-bold text-foreground tabular-nums mt-1">{totalStored}</div>
-            <div className="text-[10.5px] text-muted-foreground mt-0.5">Encrypted at rest</div>
-          </div>
-
-          <div className="p-3 rounded-md bg-muted/40 border border-border/40 flex flex-col justify-between">
-            <div className="flex items-center justify-between text-muted-foreground text-xs">
-              <span>Volume</span>
-              <HardDrive className="w-3.5 h-3.5 text-purple-500" />
-            </div>
-            <div className="text-xl font-bold text-foreground tabular-nums mt-1">
-              {formatBytes(totalStorageBytes)}
-            </div>
-            <div className="text-[10.5px] text-muted-foreground mt-0.5">Hot S3 storage</div>
-          </div>
-
-          <div className={cn(
-            "p-3 rounded-md border flex flex-col justify-between",
-            hasMalware
-              ? "bg-red-500/10 border-red-500/30 text-red-700 dark:text-red-300"
-              : "bg-muted/40 border-border/40"
-          )}>
-            <div className="flex items-center justify-between text-xs">
-              <span className={hasMalware ? "font-semibold" : "text-muted-foreground"}>Scan Failures</span>
-              <ShieldCheck className={cn("w-3.5 h-3.5", hasMalware ? "text-red-600 dark:text-red-400" : "text-emerald-500")} />
-            </div>
-            <div className={cn("text-xl font-bold tabular-nums mt-1", hasMalware ? "text-red-600 dark:text-red-400" : "text-foreground")}>
-              {malwareScanFailures}
-            </div>
-            <div className="text-[10.5px] opacity-80 mt-0.5">
-              {hasMalware ? "Quarantined" : "All clean"}
-            </div>
-          </div>
-
-          <div className="p-3 rounded-md bg-muted/40 border border-border/40 flex flex-col justify-between">
-            <div className="flex items-center justify-between text-muted-foreground text-xs">
-              <span>Expiring (30d)</span>
-              <FileWarning className="w-3.5 h-3.5 text-amber-500" />
-            </div>
-            <div className="text-xl font-bold text-foreground tabular-nums mt-1">{expiringWithin30Days}</div>
-            <div className="text-[10.5px] text-muted-foreground mt-0.5">System-wide</div>
-          </div>
+      <div className="space-y-6 select-none">
+        {/* NEW: ColumnChart (M4) */}
+        <div className="pb-4 border-b border-border/30 h-[180px]">
+          <ColumnChart
+            data={[
+              { category: "Stored", count: totalStored },
+              { category: "Scan Fails", count: malwareScanFailures },
+              { category: "Expiring", count: expiringWithin30Days },
+            ]}
+            xAxisKey="category"
+            series={[
+              { key: "count", name: "Documents", color: "var(--primary)" }
+            ]}
+            accessibilitySummary="Document pipeline totals"
+            height={160}
+          />
         </div>
+
+        {/* Three Core Figures with Horizontal Bars per TASK 3 (+ Volume) */}
+        {(() => {
+          const maxVal = Math.max(totalStored, malwareScanFailures, expiringWithin30Days, 1);
+          const metrics = [
+            {
+              label: "Total Stored",
+              value: totalStored,
+              formatted: totalStored.toLocaleString(),
+              subtext: "Encrypted at rest",
+              icon: FileCheck2,
+              hasBar: true,
+            },
+            {
+              label: "Scan Failures",
+              value: malwareScanFailures,
+              formatted: malwareScanFailures.toLocaleString(),
+              subtext: hasMalware ? "Quarantined" : "All clean",
+              icon: ShieldCheck,
+              hasBar: true,
+              isWarning: hasMalware,
+            },
+            {
+              label: "Expiring (30d)",
+              value: expiringWithin30Days,
+              formatted: expiringWithin30Days.toLocaleString(),
+              subtext: "System-wide",
+              icon: FileWarning,
+              hasBar: true,
+            },
+            {
+              label: "Total Volume",
+              value: 0,
+              formatted: formatBytes(totalStorageBytes),
+              subtext: "Hot S3 storage",
+              icon: HardDrive,
+              hasBar: false,
+            },
+          ];
+
+          return (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              {metrics.map((m) => {
+                const barWidth =
+                  m.hasBar && m.value > 0
+                    ? Math.max(6, Math.min(100, (m.value / maxVal) * 100))
+                    : 0;
+                return <MetricCard key={m.label} {...m} barWidth={barWidth} />;
+              })}
+            </div>
+          );
+        })()}
 
         {/* Status Line */}
         <div className="flex items-center justify-between px-3 py-2 rounded bg-muted/30 border border-border/30 text-xs text-muted-foreground">
           <span className="flex items-center gap-2">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-success-text" />
             Pipeline status: ClamAV virus scanning active on ingestion
           </span>
           <span className="text-[11px]">Retention policy: 7 years</span>

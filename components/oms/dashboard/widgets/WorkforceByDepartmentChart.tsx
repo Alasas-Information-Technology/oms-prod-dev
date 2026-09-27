@@ -26,9 +26,16 @@ export function WorkforceByDepartmentChart({
   updatedAt,
 }: WidgetProps<WorkforceByDepartmentData>) {
   const router = useRouter();
-  const allDepartments = useMemo(() => data?.departments || [], [data]);
-  const displayedDepartments = useMemo(() => allDepartments.slice(0, 8), [allDepartments]);
-  const remainingCount = Math.max(0, allDepartments.length - 8);
+  const allDepartments = useMemo(() => {
+    const list = [...(data?.departments || [])];
+    return list.sort((a, b) => {
+      const aActive = a.active || a.onshore + a.offshore || 0;
+      const bActive = b.active || b.onshore + b.offshore || 0;
+      return bActive - aActive;
+    });
+  }, [data]);
+  const displayedDepartments = useMemo(() => allDepartments.slice(0, 3), [allDepartments]);
+  const remainingCount = Math.max(0, allDepartments.length - 3);
 
   const maxActive = useMemo(() => {
     if (!allDepartments.length) return 50;
@@ -80,7 +87,7 @@ export function WorkforceByDepartmentChart({
       header: "Active",
       align: "right",
       render: (val, row) => (
-        <span className="font-mono tabular-nums font-semibold text-foreground">
+        <span className="tabular-nums font-semibold text-foreground">
           {row.active || row.onshore + row.offshore}
         </span>
       ),
@@ -90,7 +97,7 @@ export function WorkforceByDepartmentChart({
       header: "On/Off",
       align: "right",
       render: (val, row) => (
-        <span className="font-mono tabular-nums text-xs text-muted-foreground">
+        <span className="tabular-nums text-xs text-muted-foreground">
           {row.onshore}/{row.offshore}
         </span>
       ),
@@ -149,7 +156,7 @@ export function WorkforceByDepartmentChart({
                     <span className="font-medium text-foreground group-hover:text-primary transition-colors truncate">
                       {dept.name}
                     </span>
-                    <div className="flex items-center gap-1.5 font-mono text-[11px] tabular-nums shrink-0 ml-2">
+                    <div className="flex items-center gap-1.5 text-[11px] tabular-nums shrink-0 ml-2">
                       <span className="font-semibold text-foreground">{activeCount}</span>
                       <span className="text-muted-foreground text-[10px]">
                         ({dept.onshore} on · {dept.offshore} off)
@@ -206,7 +213,7 @@ export function WorkforceByDepartmentChart({
           {totals && (
             <div className="pt-2 border-t border-border/40 flex items-center justify-between text-xs text-muted-foreground">
               <span>Total Active Headcount</span>
-              <span className="font-mono font-semibold text-foreground tabular-nums">
+              <span className="font-semibold text-foreground tabular-nums">
                 {totals.active} ({totals.onshore} onshore · {totals.offshore} offshore)
               </span>
             </div>

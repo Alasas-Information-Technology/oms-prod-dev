@@ -27,33 +27,40 @@ export function HrReviewTabs({
   }));
 
   return (
-    <div className="w-full border-b border-border">
-      <div className="flex h-10 overflow-x-auto">
-        {tabs.map((tab, index) => {
+    <div className="w-full border-b border-border/80">
+      <div className="flex h-10 gap-1 overflow-x-auto">
+        {tabs.map((tab) => {
           const isActive = value === tab.value;
-          
+
           return (
             <button
               key={tab.value}
+              type="button"
               onClick={() => onValueChange(tab.value as HrReviewTab)}
               className={cn(
-                "relative flex h-full items-center whitespace-nowrap px-4 text-[14px] transition-colors focus-visible:outline-none",
-                index === 0 && "pl-0", // First item flush left
+                "group relative flex h-full items-center whitespace-nowrap px-3.5 text-[13.5px] transition-all focus-visible:outline-none cursor-pointer rounded-t-lg",
                 isActive
-                  ? "font-medium text-primary"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "font-semibold text-brand-teal dark:text-brand-teal"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
               )}
             >
               {tab.label}
-              
+
               {tab.count > 0 && (
-                <span className="ml-[6px] text-[13px] font-normal tabular-nums text-muted-foreground/70">
+                <span
+                  className={cn(
+                    "ml-1.5 rounded-full px-1.5 py-0.2 text-[11px] font-semibold tabular-nums",
+                    isActive
+                      ? "bg-brand-teal/15 text-brand-teal"
+                      : "bg-muted text-muted-foreground"
+                  )}
+                >
                   {tab.count}
                 </span>
               )}
 
               {isActive && (
-                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-brand-teal" />
+                <span className="absolute bottom-0 left-0 right-0 h-[2.5px] rounded-t-full bg-brand-teal shadow-[0_-1px_6px_rgba(35,135,156,0.5)]" />
               )}
             </button>
           );

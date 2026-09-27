@@ -960,10 +960,10 @@ export function InterviewPlanningWorkspace({
                         isSelected ? "bg-primary-foreground" : candColor.classes.avatar
                       )}
                     />
-                    <span className="font-mono">{cand.candidateRef}</span>
+                    <span>{cand.candidateRef}</span>
                     <span
                       className={cn(
-                        "text-[10px] px-1 rounded-full font-mono",
+                        "text-[10px] px-1 rounded-full",
                         isSelected
                           ? "bg-primary-foreground/20 text-primary-foreground"
                           : "bg-muted text-muted-foreground"
@@ -1127,7 +1127,7 @@ export function InterviewPlanningWorkspace({
                   {suggestionsData && (
                     <Badge
                       variant="secondary"
-                      className="text-[10px] px-1.5 py-0 h-4 font-mono font-bold"
+                      className="text-[10px] px-1.5 py-0 h-4 font-bold"
                     >
                       {
                         suggestionsData.suggestions.filter(
@@ -1154,7 +1154,7 @@ export function InterviewPlanningWorkspace({
                   {calendarCandidateSlots.length > 0 && (
                     <Badge
                       variant="outline"
-                      className="text-[10px] px-1.5 py-0 h-4 font-mono font-bold"
+                      className="text-[10px] px-1.5 py-0 h-4 font-bold"
                     >
                       {calendarCandidateSlots.length}
                     </Badge>
@@ -1175,7 +1175,7 @@ export function InterviewPlanningWorkspace({
                   </button>
                 )}
                 <span className="hidden md:inline-flex items-center gap-1.5 font-medium">
-                  Press <kbd className="px-1.5 py-0.5 rounded bg-muted border font-mono text-[10px] text-foreground">C</kbd> to toggle
+                  Press <kbd className="px-1.5 py-0.5 rounded bg-muted border text-[10px] text-foreground">C</kbd> to toggle
                 </span>
                 <button
                   type="button"
@@ -1183,7 +1183,7 @@ export function InterviewPlanningWorkspace({
                   className="inline-flex items-center gap-1 hover:text-foreground transition-colors cursor-pointer ml-1"
                   title="Keyboard shortcuts (?)"
                 >
-                  <kbd className="px-1.5 py-0.5 rounded bg-muted border font-mono text-[10px] text-foreground">?</kbd>
+                  <kbd className="px-1.5 py-0.5 rounded bg-muted border text-[10px] text-foreground">?</kbd>
                   <span className="hidden sm:inline">Shortcuts</span>
                 </button>
               </div>

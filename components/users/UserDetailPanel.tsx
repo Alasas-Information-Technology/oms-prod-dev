@@ -259,7 +259,7 @@ export function UserDetailPanel({
                 {user.roles?.[0] && <RoleChip roleCode={user.roles[0]} />}
                 <UserStatusBadge user={user} />
               </div>
-              <p className="text-xs text-muted-foreground font-mono truncate">
+              <p className="text-xs text-muted-foreground truncate">
                 {user.email}
               </p>
             </div>

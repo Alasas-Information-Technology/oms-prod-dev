@@ -51,7 +51,7 @@ export function HeroSection() {
 
       {/* Subtle depth gradients */}
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none -translate-y-1/2 translate-x-1/3" />
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#A6DCE6]/5 rounded-full blur-[100px] pointer-events-none translate-y-1/3 -translate-x-1/3" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-brand-teal/5 rounded-full blur-[100px] pointer-events-none translate-y-1/3 -translate-x-1/3" />
 
       <div className="container relative z-10 mx-auto px-6 sm:px-8 lg:px-12 max-w-[1280px]">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">

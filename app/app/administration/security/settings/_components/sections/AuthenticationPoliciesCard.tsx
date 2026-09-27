@@ -40,7 +40,7 @@ export function AuthenticationPoliciesCard() {
   return (
     <div className="space-y-6">
       {/* ── 1. Token Lifecycles Card ── */}
-      <Card className="rounded-md border-border/70 bg-card/70 backdrop-blur-xs shadow-xs">
+      <Card className="rounded-xl border border-foreground/15 bg-card shadow-sm overflow-hidden">
         <CardHeader className="pb-4 border-b border-border/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -68,11 +68,23 @@ export function AuthenticationPoliciesCard() {
             name="accessTokenLifetime"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-2">
                   <FormLabel className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     <Clock className="size-3.5 text-muted-foreground" />
                     <span>Access Token Lifetime (Minutes)</span>
                   </FormLabel>
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={5}
+                      max={60}
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
+                      className="text-sm h-9 rounded-md w-24 border-border shadow-xs"
+                    />
+                  </FormControl>
                   <div className="flex items-center gap-1">
                     {[15, 30, 45, 60].map((preset) => (
                       <Button
@@ -81,23 +93,13 @@ export function AuthenticationPoliciesCard() {
                         variant={field.value === preset ? "default" : "outline"}
                         size="sm"
                         onClick={() => field.onChange(preset)}
-                        className="h-6 px-2 text-[11px] rounded-md"
+                        className="h-8 px-2.5 text-xs rounded-md font-medium shadow-xs"
                       >
                         {preset}m
                       </Button>
                     ))}
                   </div>
                 </div>
-                <FormControl>
-                  <Input
-                    type="number"
-                    min={5}
-                    max={60}
-                    {...field}
-                    onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                    className="font-mono text-sm h-10 rounded-md"
-                  />
-                </FormControl>
                 <FormDescription className="text-xs">
                   Duration a short-lived access token remains valid before requiring a refresh token rotation (5 – 60 mins).
                 </FormDescription>
@@ -112,11 +114,23 @@ export function AuthenticationPoliciesCard() {
             name="refreshTokenLifetime"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-2">
                   <FormLabel className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     <Clock className="size-3.5 text-muted-foreground" />
                     <span>Refresh Token Lifetime (Days)</span>
                   </FormLabel>
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={90}
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
+                      className="text-sm h-9 rounded-md w-24 border-border shadow-xs"
+                    />
+                  </FormControl>
                   <div className="flex items-center gap-1">
                     {[7, 14, 30, 90].map((preset) => (
                       <Button
@@ -125,23 +139,13 @@ export function AuthenticationPoliciesCard() {
                         variant={field.value === preset ? "default" : "outline"}
                         size="sm"
                         onClick={() => field.onChange(preset)}
-                        className="h-6 px-2 text-[11px] rounded-md"
+                        className="h-8 px-2.5 text-xs rounded-md font-medium shadow-xs"
                       >
                         {preset}d
                       </Button>
                     ))}
                   </div>
                 </div>
-                <FormControl>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={90}
-                    {...field}
-                    onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                    className="font-mono text-sm h-10 rounded-md"
-                  />
-                </FormControl>
                 <FormDescription className="text-xs">
                   Maximum inactivity window before the user must re-authenticate with primary credentials (1 – 90 days).
                 </FormDescription>
@@ -155,7 +159,7 @@ export function AuthenticationPoliciesCard() {
             control={form.control}
             name="requireSessionFingerprinting"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-md border border-border/70 bg-background/50 p-4 transition-all hover:bg-background/80">
+              <FormItem className="flex flex-row items-center justify-between rounded-xl border border-border/50 bg-muted/30 p-4 transition-all hover:bg-muted/50">
                 <div className="space-y-0.5 max-w-[80%]">
                   <FormLabel className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     <Fingerprint className="size-4 text-indigo-500" />
@@ -177,7 +181,7 @@ export function AuthenticationPoliciesCard() {
             control={form.control}
             name="allowMultipleSessions"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-md border border-border/70 bg-background/50 p-4 transition-all hover:bg-background/80">
+              <FormItem className="flex flex-row items-center justify-between rounded-xl border border-border/50 bg-muted/30 p-4 transition-all hover:bg-muted/50">
                 <div className="space-y-0.5 max-w-[80%]">
                   <FormLabel className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     <Users className="size-4 text-emerald-500" />
@@ -197,7 +201,7 @@ export function AuthenticationPoliciesCard() {
       </Card>
 
       {/* ── 2. Account Lockout Defenses Card ── */}
-      <Card className="rounded-md border-border/70 bg-card/70 backdrop-blur-xs shadow-xs">
+      <Card className="rounded-xl border border-foreground/15 bg-card shadow-sm overflow-hidden">
         <CardHeader className="pb-4 border-b border-border/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -235,7 +239,7 @@ export function AuthenticationPoliciesCard() {
                       max={20}
                       {...field}
                       onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                      className="font-mono text-sm h-10 rounded-md"
+                      className="text-sm h-9 rounded-md sm:max-w-[240px] border-border shadow-xs"
                     />
                   </FormControl>
                   <FormDescription className="text-[11px]">
@@ -261,7 +265,7 @@ export function AuthenticationPoliciesCard() {
                       max={1440}
                       {...field}
                       onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                      className="font-mono text-sm h-10 rounded-md"
+                      className="text-sm h-9 rounded-md sm:max-w-[240px] border-border shadow-xs"
                     />
                   </FormControl>
                   <FormDescription className="text-[11px]">

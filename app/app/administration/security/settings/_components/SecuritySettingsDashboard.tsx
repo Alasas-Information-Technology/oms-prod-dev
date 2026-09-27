@@ -166,22 +166,24 @@ export function SecuritySettingsDashboard() {
         </PageBarActions>
 
         {/* ── Executive Hero Banner ── */}
-        <div className="p-6 rounded-md border border-border/70 bg-card/60 backdrop-blur-xs shadow-2xs relative overflow-hidden">
+        <div className="rounded-2xl border border-primary/10 bg-linear-to-r from-primary/10 via-primary/5 to-background p-6 relative overflow-hidden shadow-sm">
+          <div className="absolute top-0 right-0 w-1/3 h-full bg-linear-to-l from-primary/10 to-transparent pointer-events-none" />
+          
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-start gap-4">
-              <div className="size-12 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-inner">
+              <div className="size-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-md">
                 <ShieldCheck className="size-6" />
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <div className="flex items-center gap-2.5">
-                  <h1 className="text-lg md:text-xl font-bold font-display text-foreground tracking-tight">
+                  <h1 className="text-xl md:text-2xl font-bold font-display text-foreground tracking-tight">
                     Security Administration & Access Governance
                   </h1>
                   <Badge className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 text-[10px] font-semibold">
                     SOC Enforced
                   </Badge>
                 </div>
-                <p className="text-xs text-muted-foreground max-w-3xl leading-relaxed">
+                <p className="text-sm text-muted-foreground max-w-3xl leading-relaxed">
                   Configure organization-wide token lifecycles, multi-device limits, brute-force
                   lockout heuristics, zero-trust token replay defenses, and audit log retention.
                 </p>
@@ -190,11 +192,11 @@ export function SecuritySettingsDashboard() {
 
             {/* Quick Status Badges */}
             <div className="flex items-center gap-2 shrink-0">
-              <div className="text-right hidden lg:block">
+              <div className="text-right hidden lg:block bg-background/50 p-2.5 rounded-lg border border-border/50 backdrop-blur-md">
                 <span className="text-[11px] font-bold text-foreground block">
                   UAE Cyber Compliance
                 </span>
-                <span className="text-[10px] text-muted-foreground font-mono">
+                <span className="text-[10px] text-muted-foreground">
                   ISO 27001 / NESA Aligned
                 </span>
               </div>
@@ -204,10 +206,10 @@ export function SecuritySettingsDashboard() {
 
         {/* ── Tabbed Navigation ── */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="w-full justify-start rounded-md border border-border/70 bg-muted/40 p-1 overflow-x-auto overflow-y-hidden flex-nowrap shadow-2xs">
+          <TabsList className="w-full justify-start rounded-full border border-foreground/15 bg-muted p-1 overflow-x-auto overflow-y-hidden flex-nowrap shadow-2xs">
             <TabsTrigger
               value="authentication"
-              className="flex items-center gap-2 h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs transition-all cursor-pointer"
+              className="flex items-center gap-2 h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-lg transition-all cursor-pointer"
             >
               <KeyRound className="size-3.5 text-primary" />
               <span>Authentication & Tokens</span>
@@ -215,7 +217,7 @@ export function SecuritySettingsDashboard() {
 
             <TabsTrigger
               value="sessions"
-              className="flex items-center gap-2 h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs transition-all cursor-pointer"
+              className="flex items-center gap-2 h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-lg transition-all cursor-pointer"
             >
               <Laptop className="size-3.5 text-blue-500" />
               <span>Session Controls</span>
@@ -223,7 +225,7 @@ export function SecuritySettingsDashboard() {
 
             <TabsTrigger
               value="protection"
-              className="flex items-center gap-2 h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs transition-all cursor-pointer"
+              className="flex items-center gap-2 h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-lg transition-all cursor-pointer"
             >
               <ShieldAlert className="size-3.5 text-red-500" />
               <span>Threat Defense & Rate Limits</span>
@@ -231,7 +233,7 @@ export function SecuritySettingsDashboard() {
 
             <TabsTrigger
               value="audit"
-              className="flex items-center gap-2 h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs transition-all cursor-pointer"
+              className="flex items-center gap-2 h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-lg transition-all cursor-pointer"
             >
               <History className="size-3.5 text-purple-500" />
               <span>Audit & Retention</span>
@@ -239,7 +241,7 @@ export function SecuritySettingsDashboard() {
 
             <TabsTrigger
               value="monitoring"
-              className="flex items-center gap-2 h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs transition-all cursor-pointer"
+              className="flex items-center gap-2 h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-lg transition-all cursor-pointer"
             >
               <Activity className="size-3.5 text-emerald-500" />
               <span>System Health & Danger Vault</span>

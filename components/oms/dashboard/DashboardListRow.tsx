@@ -6,6 +6,9 @@ import { type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface DashboardListRowProps {
+  /** Leading element (e.g. SeverityDot) */
+  leading?: React.ReactNode;
+
   /** Leading Icon */
   icon?: LucideIcon | React.ComponentType<{ className?: string }>;
   iconColor?: string;
@@ -39,6 +42,7 @@ export interface DashboardListRowProps {
  * - Trailing value: right-aligned, 14px/600, tabular-nums
  */
 export function DashboardListRow({
+  leading,
   icon: Icon,
   iconColor,
   iconBg,
@@ -54,14 +58,15 @@ export function DashboardListRow({
   const content = (
     <div
       className={cn(
-        "group flex items-center justify-between h-[42px] px-2.5 sm:px-3 rounded-lg hover:bg-muted/50 dark:hover:bg-white/[0.04] transition-all duration-150 select-none w-full",
+        "group flex items-center justify-between h-[48px] px-2.5 sm:px-3 rounded-sm transition-colors border hover:bg-accent border-foreground/10 dark:border-foreground/4 select-none w-full",
         (href || onClick) && "cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
         className
       )}
       onClick={onClick}
     >
-      {/* Left: 28px Icon Container + Title / Subtitle */}
+      {/* Left: Optional Leading (e.g. SeverityDot) + 28px Icon Container + Title / Subtitle */}
       <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
+        {leading && <div className="shrink-0 flex items-center justify-center">{leading}</div>}
         {Icon && (
           <div
             className={cn(
@@ -93,7 +98,7 @@ export function DashboardListRow({
       {(trailing || trailingSubtitle) && (
         <div className="flex flex-col items-end shrink-0 pl-2">
           {trailing && (
-            <div className="text-[13px] font-semibold text-foreground font-mono tabular-nums leading-tight">
+            <div className="text-[13px] font-semibold text-foreground tabular-nums leading-tight">
               {trailing}
             </div>
           )}

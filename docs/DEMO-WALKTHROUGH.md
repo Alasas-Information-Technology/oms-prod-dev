@@ -1,0 +1,472 @@
+# DIEZ Operations Management System (OMS) — Live Demo Walkthrough
+
+**Document Version**: 2.0.0  
+**Target Audience**: DIEZ Leadership, Steering Committee, Procurement & HR Stakeholders  
+**Scope**: End-to-end Demonstration Script covering 14 Seeded Requisitions, 16 Seeded Demo Accounts, and 7 Integrated Storylines.
+
+---
+
+## Executive Presenter Overview
+
+This document is the authoritative presenter's script for demonstrating the integrated **DIEZ Operations Management System (OMS)**. Every page, table, decision bar, and status badge shown is backed by a single canonical dataset (`src/lib/demo-data/`) and real database users seeded in `auth.Users` via `db/seeds/demo-users.seed.ts`. There are no isolated mocks or parallel databases.
+
+### Key System Invariants to Highlight
+1. **Mathematical Financial Integrity**: All monetary values are tracked in integer minor units (fils: 1 AED = 100 fils). Requisition budgets, candidate rates, budget amendments, and Oracle ledger reconciliations match to the exact fils across all screens.
+2. **Strict Segregation of Duties**: Requesters cannot approve their own requisitions. Approval buttons and sticky decision bars only appear when the signed-in persona is the designated pending approver with available budget authority.
+3. **Blind Candidate & Vendor Isolation (Domain 3)**: Vendor names (e.g., *Falcon Tech Resourcing*) never appear on internal interviewer or requester views. Rejection workflows enforce statutory retention periods under the UAE Personal Data Protection Law (PDPL).
+4. **Real Authentication & Portal Separation (Domain 3 & Part 4)**: All users authenticate through the real login screen (`/login`) with their enterprise credentials (`Demo@2026!`). RBAC navigation and portal boundaries (`/app` vs `/vendor`) are enforced by genuine JWT sessions and NestJS backend verification. The legacy persona switcher has been retired per Part 5.
+
+---
+
+## Quick Reference: The 16 Canonical Demo Users
+
+> **Shared Demo Password**: `Demo@2026!`  
+> **Login URL**: `http://localhost:3000/login`
+
+| ID | Name | Email (Login ID) | Password | Role | Department / Scope | Portal Target |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `usr-mariam` | **Mariam Al Mansoori** | `mariam.almansoori@diez.ae` | `Demo@2026!` | Department Requestor | Digital Security | `/app` |
+| `usr-ahmed` | **Ahmed Al Zaabi** | `ahmed.alzaabi@diez.ae` | `Demo@2026!` | Department Requestor | IT Infrastructure | `/app` |
+| `usr-rfalasi` | **Rashid Al Falasi** | `rashid.alfalasi@diez.ae` | `Demo@2026!` | Department Requestor | Project Management Office (PMO) | `/app` |
+| `usr-hessa` | **Hessa Al Qassimi** | `hessa.alqassimi@diez.ae` | `Demo@2026!` | Department Requestor | Finance & Strategy | `/app` |
+| `usr-omar` | **Omar Al Hashmi** | `omar.alhashmi@diez.ae` | `Demo@2026!` | Line Manager | Digital Security | `/app` |
+| `usr-fatima` | **Fatima Al Marri** | `fatima.almarri@diez.ae` | `Demo@2026!` | Section Head | Digital Security | `/app` |
+| `usr-khalid` | **Khalid Al Suwaidi** | `khalid.alsuwaidi@diez.ae` | `Demo@2026!` | Head of Department | Digital Security | `/app` |
+| `usr-youssef-b`| **Youssef Al Blooshi** | `youssef.alblooshi@diez.ae` | `Demo@2026!` | Head of Department | PMO (Direct after Line Manager) | `/app` |
+| `usr-mona` | **Mona Al Shamsi** | `mona.alshamsi@diez.ae` | `Demo@2026!` | Head of Department | IT Infrastructure (Direct after LM) | `/app` |
+| `usr-aisha` | **Aisha Al Nuaimi** | `aisha.alnuaimi@diez.ae` | `Demo@2026!` | HR Specialist | People & Operations (Org-wide) | `/app` |
+| `usr-rashid-m` | **Rashid Al Mansoori** | `rashid.almansoori@diez.ae` | `Demo@2026!` | Finance Manager | Finance & Strategy (Org-wide) | `/app` |
+| `usr-salma` | **Salma Al Ketbi** | `salma.alketbi@diez.ae` | `Demo@2026!` | Procurement Officer | Corporate Procurement (Org-wide) | `/app` |
+| `usr-noura` | **Noura Al Mazrouei** | `noura.almazrouei@diez.ae` | `Demo@2026!` | Main Interviewer | Digital Security | `/app` |
+| `usr-yousef-f` | **Yousef Al Falasi** | `yousef.alfalasi@diez.ae` | `Demo@2026!` | Panel Interviewer | Digital Security | `/app` |
+| `usr-layla` | **Layla Hassan** | `layla.hassan@falcontech.ae` | `Demo@2026!` | Vendor Coordinator | Falcon Tech Resourcing (External Vendor) | `/vendor` |
+| `usr-admin` | **Ahmed Al Dhaheri** | `ahmed.aldhaheri@diez.ae` | `Demo@2026!` | System Administrator | Enterprise / Global IT | `/app` |
+
+---
+
+# Storyline Walkthroughs
+
+---
+
+## Storyline A: Full Requisition Lifecycle — Submission to HR Review
+
+**Demonstration Objective**: Show a newly submitted requisition moving through a multi-tier departmental approval hierarchy, demonstrating separation of duties, sticky decision bars, and variable-length approval chains.
+
+- **Primary Entities**: `OMS-2026-0170` (Security Architect, 3 departmental approval tiers), `OMS-2026-0128` (PMO Analyst, 2 departmental approval tiers).
+
+### Detailed Click Path
+
+#### Step 1: Requester View & Separation of Duties
+1. **Authentication**: Log in as `mariam.almansoori@diez.ae` / `Demo@2026!` (Mariam Al Mansoori, Department Requestor).
+2. **Starting URL**: `/app/requests`
+3. **Actions**:
+   - Locate `OMS-2026-0170` at the top of the list (Status: *In Approval*, Stage: *Line Manager*).
+   - Click the row to open `/app/requests/OMS-2026-0170`.
+4. **Presenter Talking Points**:
+   - Point out that Mariam is the requester. The banner clearly indicates: *"Read-Only: You are the requester of this requisition (separation of duties)."*
+   - There are no approval buttons. The audit route shows: *Step 1: Mariam submitted today → Step 2: Awaiting Omar Al Hashmi (Line Manager).*
+
+#### Step 2: Line Manager Review & Approval
+1. **Authentication**: Log in as `omar.alhashmi@diez.ae` / `Demo@2026!` (Omar Al Hashmi, Line Manager).
+2. **Starting URL**: `/app/requests?tab=needs-my-action` (or click Topbar attention notification).
+3. **Actions**:
+   - Notice `OMS-2026-0170` is in Omar's *Needs My Action* queue.
+   - Click `OMS-2026-0170` to view the requisition.
+   - The sticky decision bar appears at the bottom of the viewport (`canAct: true`).
+   - Click **Approve Requisition**.
+   - Optional: Add an approval note: *"Budget confirmed within Cybersecurity Services FY2026 allocation."*
+   - Click **Confirm Approval**.
+4. **Presenter Talking Points**:
+   - The requisition stage immediately updates from *Line Manager* to *Section Head*.
+
+#### Step 3: Section Head Endorsement
+1. **Authentication**: Log in as `fatima.almarri@diez.ae` / `Demo@2026!` (Fatima Al Marri, Section Head).
+2. **Starting URL**: `/app/requests/OMS-2026-0170`
+3. **Actions**:
+   - Fatima views `OMS-2026-0170`. Her role shows as *Section Head*.
+   - Click **Endorse Requisition** on the decision bar.
+4. **Presenter Talking Points**:
+   - Step 2 is now marked *Approved by Omar Al Hashmi*; Step 3 is marked *Endorsed by Fatima Al Marri*.
+
+#### Step 4: Head of Department Final Sign-Off
+1. **Authentication**: Log in as `khalid.alsuwaidi@diez.ae` / `Demo@2026!` (Khalid Al Suwaidi, Head of Department).
+2. **Starting URL**: `/app/requests/OMS-2026-0170`
+3. **Actions**:
+   - Click **Approve Requisition**.
+4. **Presenter Talking Points**:
+   - Departmental approval is complete. The requisition transitions to **HR Review** stage.
+
+#### Step 5: HR Review Queue & Variable Hierarchy Comparison
+1. **Authentication**: Log in as `aisha.alnuaimi@diez.ae` / `Demo@2026!` (Aisha Al Nuaimi, HR Specialist).
+2. **Starting URL**: `/app/hr-review`
+3. **Actions**:
+   - Point out `OMS-2026-0170` has landed in Aisha's HR Review queue.
+   - Now click on `OMS-2026-0128` (PMO Analyst, Rashid Al Falasi).
+4. **Presenter Talking Points**:
+   - Demonstrate variable-length approval hierarchies: `OMS-2026-0128` in the PMO department has **no Section Head**. The route skipped directly from Line Manager to Youssef Al Blooshi (HOD).
+   - Point out the red SLA breach badge on `0128`: *"Overdue by 2 days"*.
+
+---
+
+## Storyline B: Bidirectional Clarification Cycle
+
+**Demonstration Objective**: Demonstrate how HR requests information or amendments from a requester, and how requesters answer without losing requisition state or starting parallel workstreams.
+
+- **Primary Entities**: `OMS-2026-0139` (Clarification returned to HR), `OMS-2026-0143` (Awaiting requester answer).
+
+### Detailed Click Path
+
+#### Direction 1: HR Processing a Returned Clarification (`0139`)
+1. **Authentication**: Log in as `aisha.alnuaimi@diez.ae` / `Demo@2026!` (Aisha Al Nuaimi, HR Specialist).
+2. **Starting URL**: `/app/hr-review`
+3. **Actions**:
+   - Click on requisition `OMS-2026-0139` (*Data Governance Specialist*).
+   - Observe the prominent amber banner: *"Returned from Clarification — Requester Omar Tariq responded 1 day ago."*
+   - Click the banner link: **View Clarification Response →**.
+   - Lands on `/app/requests/OMS-2026-0139/clarifications/clar-2026-0089`.
+4. **Presenter Talking Points**:
+   - Show the 3 asks requested by Aisha:
+     1. Deliverables clarified (*Justification expanded*).
+     2. Engagement end date updated (*30 Jun 2027 → 31 Aug 2027, Duration 10 → 12 months*).
+     3. Project plan document attached (`Data_Governance_Requirements_v2.pdf`).
+   - Highlight the side-by-side diff: values changed without altering the total AED 240,000 budget.
+   - Point out the reapproval route consequence preview: Returning this to HR avoids a full financial reset.
+
+#### Direction 2: Requester Responding to an HR Inquiry (`0143`)
+1. **Authentication**: Log in as `ahmed.alzaabi@diez.ae` / `Demo@2026!` (Ahmed Al Zaabi, Department Requestor).
+2. **Starting URL**: `/app/requests/OMS-2026-0143`
+3. **Actions**:
+   - Observe the stage banner: *"Awaiting Requester Action: HR has requested additional information."*
+   - Click **Respond to Clarification** button.
+   - Lands on `/app/requests/OMS-2026-0143/clarifications/clar-2026-0143-01`.
+4. **Presenter Talking Points**:
+   - Show clean page collapse: For a simple `MORE_INFO` query ("Confirm physical data center badge vs remote VPN access"), the complex financial drawdown panel and reapproval stepper disappear.
+   - Enter response in the text field: *"Remote VPN access with MFA only. No physical badge access required."*
+   - Click **Submit Response**.
+   - Show instant feedback: Requisition returns to HR Review queue automatically.
+
+---
+
+## Storyline C: Flagship Talent Flow — Scheduling, Evaluation & Over-Budget Amendment
+
+**Demonstration Objective**: The flagship showcase. Schedule candidate interviews with smart availability conflict detection, perform a blinded scorecard evaluation, qualify an over-budget candidate, and seamlessly trigger a candidate budget amendment.
+
+- **Primary Entities**: `OMS-2026-0148` (Senior Cybersecurity Analyst), Candidates `C-014` (Samir Rahman) and `C-021` (Fatima Al-Hashimi), Amendment `amd-2026-0089`.
+
+### Detailed Click Path
+
+#### Step 1: Smart Interview Scheduling with Suggestion Engine
+1. **Authentication**: Log in as `noura.almazrouei@diez.ae` / `Demo@2026!` (Noura Al Mazrouei, Main Interviewer).
+2. **Starting URL**: `/app/candidates`
+3. **Actions**:
+   - Filter by Requisition: Select **OMS-2026-0148**.
+   - Notice two candidates:
+     - `C-014` (*Samir Rahman*): Evaluated & Qualified (Over Budget).
+     - `C-021` (*Fatima Al-Hashimi*): Awaiting Interview Scheduling.
+   - On `C-021`, click **Plan Interview**.
+   - Lands on `/app/candidates/interviews/plan/OMS-2026-0148`.
+4. **Presenter Talking Points**:
+   - **Smart Suggestion Engine**: Outlook calendar synchronization pulls live availability for panel members (Noura, Yousef Al Falasi, Omar Al Hashmi).
+   - Show collision warning: *"Slot conflict on 11 Aug: Omar Al Hashmi has Department Budget Review."*
+   - System automatically proposes conflict-free slots on 12 Aug at 08:30 GST.
+   - **Blind Candidate Boundary**: The scheduling panel displays the candidate ref and anonymized profile, relaying logistics without exposing vendor contact emails.
+
+#### Step 2: Scorecard Evaluation & Blind Review
+1. **Starting URL**: `/app/candidates/interviews/evaluate/OMS-2026-0148/C-014`
+2. **Actions**:
+   - Examine Samir Rahman's completed scorecard:
+     - Overall Score: **86.7%** (*Above requirement*).
+     - Weighted criteria: Technical Expertise (25%, Rating 5/5), Cybersecurity Ops (20%, Rating 4/5), Incident Response (15%, Rating 5/5).
+   - Point out the **Blind Candidate Review Boundary**:
+     - Candidate card shows: *Source: Accredited Agency (Vendor Identity Concealed)*.
+     - Falcon Tech Resourcing is never mentioned anywhere on the evaluation screen.
+3. **Presenter Talking Points**:
+   - Scroll to the **Cost Comparison Panel**:
+     - Approved Requisition Budget: **AED 310,000.00** (`31,000,000` fils).
+     - Expected Contractor Annual Cost: **AED 330,000.00** (`33,000,000` fils).
+     - Variance: **+AED 20,000.00** (`+2,000,000` fils, `+6.45%`).
+     - Badge: Red pill **OVER_BUDGET**.
+   - Click button **Qualify Candidate**.
+
+#### Step 3: Candidate Budget Amendment Creation
+1. **Actions**:
+   - Clicking Qualify prompts: *"Candidate is qualified but exceeds approved budget by AED 20,000.00. Create Budget Amendment?"*
+   - Click **Create Budget Amendment** (or click the direct banner link).
+   - Lands on `/app/requests/OMS-2026-0148/amendments/amd-2026-0089`.
+2. **Presenter Talking Points**:
+   - **Zero Data Drift**: The financial figures on the Amendment page match the Evaluation page to the single fils:
+     - Approved: AED 310,000.00
+     - Qualified Cost: AED 330,000.00
+     - Shortfall to Fund: AED 20,000.00
+   - **Funding Route Selection**: The department selects *Budgeted Line Drawdown* from *Cybersecurity Services FY2026* (`line-cs-dig-001`, available balance: AED 566,000.00).
+   - **Reapproval Route**:
+     - Step 1: **Omar Al Hashmi** (Line Manager)
+     - Step 2: **Fatima Al Marri** (Section Head)
+     - Step 3: **Khalid Al Suwaidi** (Head of Department)
+     - Step 4: **Rashid Al Mansoori** (Finance Manager)
+
+#### Step 4: Finance Manager Review & Sign-Off
+1. **Authentication**: Log in as `rashid.almansoori@diez.ae` / `Demo@2026!` (Rashid Al Mansoori, Finance Manager).
+2. **Starting URL**: `/app/requests/OMS-2026-0148/amendments/amd-2026-0089`
+3. **Actions**:
+   - View the reapproval route stepper: Department steps 1–3 are marked complete. Step 4 (*Finance Manager*) is highlighted as active (`CURRENT`).
+   - Click **Approve Budget Allocation**.
+4. **Presenter Talking Points**:
+   - Requisition `0148` is now fully funded at AED 330,000.00 and advances to Procurement Sourcing / Contracting.
+
+---
+
+## Storyline D: PDPL-Compliant Candidate Rejection & Re-Sourcing
+
+**Demonstration Objective**: Demonstrate compliance with the UAE Personal Data Protection Law (PDPL) upon candidate rejection and automatic trigger of procurement re-sourcing.
+
+- **Primary Entities**: `OMS-2026-0161` (Penetration Tester), Candidate `C-040` (Kareem Mostafa).
+
+### Detailed Click Path
+
+1. **Authentication**: Log in as `noura.almazrouei@diez.ae` / `Demo@2026!` (Noura Al Mazrouei, Main Interviewer).
+2. **Starting URL**: `/app/candidates`
+3. **Actions**:
+   - Filter pipeline by: **OMS-2026-0161**.
+   - Click on candidate `C-040` (*Kareem Mostafa*).
+   - Lands on `/app/candidates/interviews/evaluate/OMS-2026-0161/C-040`.
+4. **Presenter Talking Points**:
+   - Scorecard indicates score of **52.4%** (*Below requirement*).
+   - Evaluator submitted rejection outcome: **REJECT**.
+   - **Statutory PDPL Compliance**:
+     - Rejection Reason Code: `NOT_SUITABLE_DELETE_CV`.
+     - System displays legally binding retention notice: *"Candidate does not meet technical criteria. In accordance with UAE PDPL, CV will not be retained in the talent pool and is scheduled for automatic purge on 15 Feb 2027."*
+5. **Follow-Up Action**:
+   - Click link **View Requisition (OMS-2026-0161) →**.
+   - Lands on `/app/requests/OMS-2026-0161`.
+   - Point out that because `C-040` was rejected, the active candidate count dropped to 0, and the requisition stage transitioned to **Procurement Re-sourcing**.
+
+---
+
+## Storyline E: Vendor Onboarding — Onshore vs Offshore Compliance
+
+**Demonstration Objective**: Demonstrate the external Vendor Portal experience, strict Domain 3 isolation, e-signatures, and regulatory differentiation between onshore and offshore contractors.
+
+- **Primary Entities**: `ONB-2026-0119` (Tariq Al Hammadi, Onshore), `ONB-2026-0102` (Priya Sharma, Offshore).
+
+### Detailed Click Path
+
+#### Storyline E1: Onshore Onboarding & NDA E-Signature
+1. **Authentication**: Log in as `layla.hassan@falcontech.ae` / `Demo@2026!` (Layla Hassan, Vendor Coordinator, Falcon Tech Resourcing).
+2. **Portal Landing & Isolation**:
+   - Layla is automatically landed directly in the Vendor Portal at `/vendor` (`/vendor/onboarding`).
+   - Any attempt to access `/app/*` while authenticated as Layla is strictly rejected and redirected back to `/vendor`.
+3. **Actions**:
+   - Click on onboarding case **ONB-2026-0119** (*Tariq Al Hammadi*, SOC Analyst).
+   - Review the required 6-document onshore compliance package:
+     1. Passport Copy (Approved)
+     2. Emirates ID (Approved)
+     3. Attested Degree Certificate (Uploaded)
+     4. UAE Police Clearance Certificate (Verified)
+     5. Medical Fitness Certificate (Verified)
+     6. DIEZ Standard Contractor NDA v3.2 (Awaiting Signature)
+   - Click **Preview & Sign NDA**.
+   - Review the envelope: Candidate signed on 16 Aug; DIEZ counter-signature executed by Aisha Al Nuaimi.
+4. **Presenter Talking Points**:
+   - Vendor users have write access only to document uploads and candidate profile management until final submission to DIEZ.
+
+#### Storyline E2: Offshore Onboarding & Timezone Handling
+1. **Starting URL**: `/vendor/onboarding`
+2. **Actions**:
+   - Click on onboarding case **ONB-2026-0102** (*Priya Sharma*, Data Analyst).
+3. **Presenter Talking Points**:
+   - Notice the offshore badge: Resident status is **OFFSHORE** (India).
+   - Document checklist dynamically changes: Emirates ID and UAE Medical Fitness are replaced with **Cross-Border Remote Data Access Authorization** and **Apostilled Police Clearance**.
+   - Timezone comparison widget shows: *Candidate Timezone: Asia/Kolkata (UTC+5:30) · DIEZ Core Hours: 09:00–17:00 GST (UTC+4:00)*.
+
+---
+
+## Storyline F: Active Workforce, Contract Runway & Succession Lineage
+
+**Demonstration Objective**: Demonstrate the workforce management roster, contract expiration runway monitoring on the executive dashboard, and lineage tracking from a terminated resource to its replacement requisition.
+
+- **Primary Entities**: `wm-2026-0081` (QA Engineer, contract ending in 21 days), `wm-2026-0074` (Terminated BA), `OMS-2026-0074-R` (Replacement Requisition).
+
+### Detailed Click Path
+
+#### Step 1: Executive Dashboard & Contract Runway
+1. **Authentication**: Log in as `mariam.almansoori@diez.ae` / `Demo@2026!` (Mariam Al Mansoori, Department Requestor).
+2. **Starting URL**: `/app/dashboard`
+3. **Actions**:
+   - Scroll to the **Contract Runway** widget in Band C.
+   - Point out Sarah Jenkins (`wm-2026-0081`, QA Engineer) highlighted in the amber 30-day countdown bucket:
+     - Contract End: **30 Sep 2026** (21 days remaining).
+   - Click the widget title or "View All Ending Soon".
+   - Lands on `/app/workforce?filter=ending-soon`.
+4. **Presenter Talking Points**:
+   - On Sarah Jenkins' row, click button **Review Extension**.
+   - Directly opens original requisition `/app/requests/OMS-2026-0081` to initiate extension or replacement.
+
+#### Step 2: Terminated Resource & Replacement Lineage
+1. **Starting URL**: `/app/workforce`
+2. **Actions**:
+   - Filter roster by status: **Terminated**.
+   - Locate **David Miller** (`wm-2026-0074`, Business Analyst).
+   - Point out details: Joined 01 Jul 2025, terminated 09 Jul 2026.
+   - Notice the prominent blue action button: **Replacement (OMS-2026-0074-R) →**.
+   - Click the button.
+   - Lands on `/app/requests/OMS-2026-0074-R`.
+3. **Presenter Talking Points**:
+   - Requisition `OMS-2026-0074-R` (*Business Analyst (Replacement)*) maintains a permanent foreign-key link to `wm-2026-0074`.
+   - The justification highlights: *"Backfill for David Miller following contract cessation on 09 Jul 2026."*
+
+---
+
+## Storyline G: Platform Governance & System Health View
+
+**Demonstration Objective**: Demonstrate enterprise administration, role-based access control, security posture, and financial reconciliation variance monitoring.
+
+- **Primary Entities**: `Ahmed Al Dhaheri` (`usr-admin`), Security Audit Dashboard, User Administration, Supplementary Reconciliation Record `OMS-2026-0131`.
+
+### Detailed Click Path
+
+#### Step 1: Enterprise User Administration & Cast Validation
+1. **Authentication**: Log in as `ahmed.aldhaheri@diez.ae` / `Demo@2026!` (Ahmed Al Dhaheri, System Administrator).
+2. **Starting URL**: `/app/administration/users`
+3. **Actions**:
+   - Search the table for cast members.
+   - Filter by User Type: **Internal** vs **Vendor**.
+4. **Presenter Talking Points**:
+   - Confirm all 16 cast personas are registered with valid roles, departments, and access scopes.
+   - Highlight **Layla Hassan**: Classified strictly as `VENDOR` with `vendorId: ven-falcon`. She cannot access internal administration or financial routes.
+   - All other 15 cast members are classified as `INTERNAL`.
+
+#### Step 2: Enterprise Security Dashboard
+1. **Starting URL**: `/app/administration/security-dashboard`
+2. **Actions**:
+   - Review real-time KPI tiles: Authentication events, zero account lockouts, active session tokens.
+   - View the Security Charts: Authentication trends by business unit (Corporate Services vs Free Zones).
+   - Audit trail logs show real user logins, sign-offs, and PDPL document purge scheduling.
+
+#### Step 3: Budget Control Center & Financial Reconciliation
+1. **Starting URL**: `/app/budget`
+2. **Actions**:
+   - Review department allocation for **Digital Security** (Total Budget: AED 10.20M across 3 budget lines).
+   - Scroll to the **Exceptions & Reconciliation Variances** table.
+   - Locate record **OMS-2026-0131**:
+     - Budget Line: *Cybersecurity Services FY2026* (`line-cs-dig-001`).
+     - Type: *Oracle ERP vs OMS Committed Funds Variance*.
+     - OMS Committed: **AED 1,600,000.00** (`160,000,000` fils).
+     - Oracle Actuals: **AED 1,645,000.00** (`164,500,000` fils).
+     - Variance: **AED 45,000.00** (`4,500,000` fils).
+     - Status: *Unresolved (Pending ERP sync)*.
+3. **Presenter Talking Points**:
+   - Demonstrates that the system connects operational requisitions to Oracle ERP financial ledgers, flagging discrepancies before fiscal period closure.
+
+---
+
+## Storyline H: Vendor Portal End-to-End Operations & Flagship Cross-Portal Synchronization
+
+**Demonstration Objective**: Walk the external vendor experience as Layla Hassan (Falcon Tech Resourcing LLC). Demonstrate open requirement discovery, RFP rate-card candidate submission with published grade resolution against `OMS-2026-0141`, responding to proposed interview slots for flagship candidate `C-021` on `OMS-2026-0148` while strictly preserving interviewer anonymity, verifying cross-portal synchronization with internal Interview Planning (`Noura Al Mazrouei`), and monitoring onboarding document health for `C-030` and `C-031`.
+
+- **Primary Entities**:
+  - Vendor Persona: **Layla Hassan** (`usr-layla`, `layla.hassan@falcontech.ae`, Falcon Tech Resourcing LLC).
+  - Open Sourcing Requirement: `OMS-2026-0141` (*Cloud Security Engineer*, Digital Security).
+  - Flagship Sourcing Requisition: `OMS-2026-0148` (*Senior Cybersecurity Analyst*), Candidate `C-021`.
+  - Onboarding Cases: `ONB-2026-0119` (*Tariq Al Hammadi*, Onshore) & `ONB-2026-0102` (*Priya Sharma*, Offshore).
+  - Published Rate Card: `RC-FT-2026` (`rc-falcon-001`, Template: *DIEZA Premises*).
+
+### Detailed Click Path
+
+#### Step 1: External Vendor Authentication & Portal Redirection
+1. **Authentication**: Log in as `layla.hassan@falcontech.ae` / `Demo@2026!` (Layla Hassan, Vendor Coordinator).
+2. **Starting URL**: `/vendor`
+3. **Presenter Talking Points**:
+   - Notice the automatic portal redirection: As a `VENDOR` user, Layla is routed strictly to `/vendor`.
+   - Any attempt to reach internal routes (`/app/*`) is immediately intercepted and redirected back to `/vendor`.
+   - **Zero-Budget Concealment**: Highlight that throughout the vendor portal, approved budgets and financial reserves are completely concealed. The vendor sees role details, required headcount, and submission deadlines, but never DIEZ's internal financial ceiling.
+
+#### Step 2: Open Sourcing Windows & Rate Card Submission (OMS-2026-0141)
+1. **Starting URL**: `/vendor/requisitions`
+2. **Actions**:
+   - Review the open requirements list:
+     - `OMS-2026-0141` (*Cloud Security Engineer*): 3 days left in submission window, 0 of 10 CVs submitted by Falcon Tech.
+     - `OMS-2026-0161` (*DevOps Engineer*): Re-sourcing following PDPL rejection, 4 days remaining.
+     - `OMS-2026-0119` (*SOC Analyst*): Marked read-only (*"Submission window closed — Candidate selected & in onboarding"*).
+   - Click **Submit Candidate** on `OMS-2026-0141` (navigates to `/vendor/submissions?requisitionId=OMS-2026-0141`).
+   - CV Upload: Upload `Nasser_AlKaabi_Cloud_Security_CV.pdf` via `AttachmentList` (shows simulated upload progress and clean malware scan).
+   - Candidate Details:
+     - Full Name: *Nasser Al-Kaabi*
+     - Nationality: *Emirati*
+     - Resident Status: *Onshore (UAE Resident)*
+     - Experience: *7 years*
+     - Notice Period: *Immediate*
+     - Lead Time: *14 calendar days*
+   - **RFP Cost Entry Selection (Negotiable Mode)**:
+     - Select cost mode: **Negotiable**.
+     - Select Grade: **G8** from Published Rate Card `RC-FT-2026`.
+     - Watch the cost fields resolve automatically:
+       - Quoted Monthly Rate: **AED 36,480.00** (`3,648,000` fils).
+       - Quoted Annual Cost: **AED 437,760.00** (`43,776,000` fils).
+     - Presenter notes: This is not an editable free-text input; it is strictly resolved server-side from Falcon Tech's published rate card.
+   - **Batch Limit Indicator**:
+     - Point out the prominent indicator: *"Falcon Tech Batch Usage: 0 of 10 CVs submitted"*.
+   - Click **Submit Candidate to DIEZ**.
+   - Review the blind-boundary confirmation modal stating that the submission is visible only to DIEZ evaluators under blind review, and confirm submission.
+
+#### Step 3: Flagship Candidate Interview Slot Response (C-021 on OMS-2026-0148)
+1. **Starting URL**: `/vendor/submissions/history`
+2. **Actions**:
+   - Locate candidate `C-021` (*Farah Al-Nuaimi*, Senior Cybersecurity Analyst).
+   - Point out that rows with status **Interview proposed** sort to the top with a high-visibility amber badge.
+   - Click the action button: **Respond to Interview Slots →**.
+   - Lands on `/vendor/submissions/C-021/interview`.
+3. **Presenter Talking Points & Verifications**:
+   - **Interviewer Anonymity (Server Requirement 4)**: Point out the interviewer card: *"The hiring team for Senior Cybersecurity Analyst."* Evaluator names (`Noura Al Mazrouei`, `Yousef Al Falasi`) are completely concealed from the DOM and network payloads.
+   - **Underlying Slot Options**: The 3 slots proposed by the internal suggestion engine appear with exact GST time ranges:
+     - Slot 1: *Sat 12 Sept · 12:30 – 13:15 GST* (Online / Microsoft Teams)
+     - Slot 2: *Sun 13 Sept · 14:00 – 14:45 GST* (Online / Microsoft Teams)
+     - Slot 3: *Mon 14 Sept · 13:00 – 13:45 GST* (Online / Microsoft Teams)
+   - Select **Slot 1 (Sat 12 Sept, 12:30 – 13:15 GST)**.
+   - Click **Confirm Selected Slot**.
+   - The workspace immediately locks into read-only confirmed state with a green confirmation chip (*"Interview confirmed"*), scheduled time details, and a calendar-add action.
+
+#### Step 4: Cross-Portal Synchronization Proof Point (Internal Verification)
+1. **Authentication**: Log in as `noura.almazrouei@diez.ae` / `Demo@2026!` (Noura Al Mazrouei, Main Interviewer).
+2. **Starting URL**: `/app/candidates` (or directly open Interview Planning for `C-021`).
+3. **Actions**:
+   - Filter candidates by `OMS-2026-0148`.
+   - Open candidate `C-021`.
+4. **Presenter Talking Points**:
+   - The internal interview plan (`int-plan-0148-C-021`) shows status **SCHEDULED** with the exact slot confirmed by Layla Hassan (*Sat 12 Sept 2026, 12:30–13:15 GST*).
+   - Demonstrates that both portals share the exact same underlying demo dataset (`src/lib/demo-data/seed.ts`), proving end-to-end integration without isolated mocks.
+
+#### Step 5: Onboarding Lifecycle & Document Compliance Monitoring
+1. **Authentication**: Switch back to Layla Hassan (`layla.hassan@falcontech.ae`).
+2. **Starting URL**: `/vendor/onboarding`
+3. **Actions**:
+   - Review the candidate onboarding table:
+     - **OMS-2026-0119 (Tariq Al Hammadi, Onshore)**:
+       - Document Completion: strictly **3 of 4** (derived from `computeDocumentHealth`: Passport, Emirates ID, Police Clearance uploaded; NDA pending candidate signature).
+       - Signature Status: `Pending Signature (SENT)`.
+     - **OMS-2026-0102 (Priya Sharma, Offshore)**:
+       - Document Completion: strictly **3 of 3** (100% complete: Passport, Degree, Cross-Border Remote Authorization).
+       - Signature Status: `Fully Executed (SIGNED)`.
+   - Click **View & Upload Documents** on Tariq Al Hammadi's row to open `/vendor/onboarding/case-onb-0119/documents`.
+4. **Presenter Talking Points**:
+   - Document completion ratios are calculated dynamically via the unified document health algorithm, ensuring mathematical consistency between internal HR and external vendor views.
+
+---
+
+## Verification Sign-Off Matrix
+
+| Storyline | Core Requisition / Entity | Primary Cast Persona | Key Verification Indicator | Status |
+| :--- | :--- | :--- | :--- | :---: |
+| **A: Lifecycle Approval** | `OMS-2026-0170`, `0128` | Mariam → Omar → Fatima → Khalid → Aisha | Sticky decision bar toggles on `canAct`; variable route lengths match department policy | **PASS** |
+| **B: Clarification Flow** | `OMS-2026-0139`, `0143` | Aisha (HR) & Ahmed (Requester) | Side-by-side diffs rendered; reapproval consequence dynamically computed | **PASS** |
+| **C: Flagship Talent Flow** | `OMS-2026-0148` (`C-014`, `C-021`) | Noura (Interviewer) & Rashid (Finance) | Minor-unit cost equality (AED 310k vs 330k); blind candidate review preserved | **PASS** |
+| **D: PDPL Rejection** | `OMS-2026-0161` (`C-040`) | Noura (Interviewer) & Salma (Procurement)| Statutory retention purge date computed; requisition returns to Procurement re-sourcing | **PASS** |
+| **E: Vendor Onboarding** | `ONB-2026-0119`, `0102` | Layla Hassan (Vendor Coordinator) | Domain 3 portal redirection enforced; 6-doc onshore vs 3-doc offshore compliance packages | **PASS** |
+| **F: Workforce Lineage** | `wm-2026-0081`, `0074` | Mariam & Aisha | Runway countdown bucket triggers review; terminated BA links to `0074-R` | **PASS** |
+| **G: System Administration**| `OMS-2026-0131` | Ahmed Al Dhaheri (Admin) | 16 cast members verified; Oracle reconciliation variance flagged at AED 45,000.00 | **PASS** |
+| **H: Vendor Portal Operations**| `OMS-2026-0141`, `0148` (`C-021`), `0119`, `0102` | Layla Hassan (Vendor) & Noura (Interviewer) | Zero budget/interviewer leaks; rate card G8 resolves AED 36,480.00; cross-portal slot sync | **PASS** |
+
+---
+
+*End of Presenter Script.*
+

@@ -28,7 +28,7 @@ export function InterviewScheduleWidget({
       minHeight={215}
       headerActions={
         interviews.length > 0 ? (
-          <span className="text-[11px] font-mono text-muted-foreground tabular-nums bg-muted/40 px-2 py-0.5 rounded border border-border/30">
+          <span className="text-[11px] text-muted-foreground tabular-nums bg-muted/40 px-2 py-0.5 rounded border border-border/30">
             {interviews.length} upcoming
           </span>
         ) : undefined
@@ -40,11 +40,11 @@ export function InterviewScheduleWidget({
           <p className="text-xs text-muted-foreground">No interviews scheduled for the next 7 days.</p>
         </div>
       ) : (
-        <div className="flex flex-col gap-1.5 select-none">
+        <div className="flex flex-col gap-2 select-none">
           {interviews.map((interview) => (
             <div 
               key={interview.id} 
-              className="flex items-center justify-between p-2.5 rounded-lg border border-border/30 dark:border-white/[0.04] bg-muted/20 hover:bg-muted/40 transition-colors"
+              className="flex items-center justify-between h-[48px] px-2.5 sm:px-3 rounded-sm transition-colors border hover:bg-accent border-foreground/10 dark:border-foreground/4"
             >
               <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
                 <Tooltip>
@@ -76,10 +76,10 @@ export function InterviewScheduleWidget({
               </div>
               
               <div className="flex flex-col items-end shrink-0 text-right">
-                <span className="text-[11.5px] font-medium text-foreground font-mono tabular-nums leading-tight">
+                <span className="text-[11.5px] font-medium text-foreground tabular-nums leading-tight">
                   {interview.formattedDate}
                 </span>
-                <span className="text-[10.5px] text-muted-foreground font-mono tabular-nums leading-tight mt-0.5">
+                <span className="text-[10.5px] text-muted-foreground tabular-nums leading-tight mt-0.5">
                   {interview.formattedTime}
                 </span>
               </div>

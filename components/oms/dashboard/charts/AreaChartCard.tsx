@@ -65,7 +65,7 @@ export function AreaChartCard({
       header: s.name,
       align: "right" as const,
       render: (val: any, row: any) => (
-        <span className="font-mono tabular-nums text-muted-foreground">
+        <span className="tabular-nums text-muted-foreground">
           {typeof row[s.key] === "number" ? row[s.key].toLocaleString() : row[s.key]}
         </span>
       ),
@@ -80,7 +80,7 @@ export function AreaChartCard({
       <svg className="sr-only" aria-hidden="true" width="0" height="0">
         <defs>
           {series.map((s, idx) => {
-            const color = s.color || scale[idx] || "var(--primary)";
+            const color = s.color || scale[idx] || "var(--accent-interactive, var(--primary))";
             return (
               <HatchPatternDefs
                 key={s.key}

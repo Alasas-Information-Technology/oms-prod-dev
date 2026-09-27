@@ -3,15 +3,19 @@
 import * as React from "react";
 import { GitFork, Check } from "lucide-react";
 import { ClarificationRouteStep } from "@/types/clarification";
+import { ReapprovalRouteStep } from "@/src/types/budget-amendment";
 import { cn } from "@/lib/utils";
 
+export type AnyRouteStep = ClarificationRouteStep | ReapprovalRouteStep | any;
+
 export interface ReapprovalRouteProps {
-  route?: ClarificationRouteStep[];
+  route?: AnyRouteStep[];
   variant?: "after-submit" | "return-path";
   isLoading?: boolean;
   className?: string;
   title?: string;
   note?: string;
+  hideNote?: boolean;
 }
 
 export function ReapprovalRoute({
@@ -21,6 +25,7 @@ export function ReapprovalRoute({
   className,
   title,
   note,
+  hideNote = false,
 }: ReapprovalRouteProps) {
   if (!route || route.length === 0) {
     return null;
@@ -45,7 +50,7 @@ export function ReapprovalRoute({
           </span>
         </div>
         <span className="text-xs text-muted-foreground font-semibold px-2 py-0.5 rounded-full bg-muted border border-border/60">
-          {route.length} stages
+          {`${route.length} stages`}
         </span>
       </div>
 
@@ -53,13 +58,15 @@ export function ReapprovalRoute({
       <div className="p-4 sm:p-5 space-y-4">
         <div className="relative">
           <div className="flex flex-col gap-3.5">
-            {route.map((step, idx) => {
+            {route.map((step: any, idx) => {
               const isLast = idx === route.length - 1;
-              const isComplete = step.state === "COMPLETE";
-              const isCurrent = step.state === "CURRENT";
+              const isComplete = step.state === "COMPLETE" || step.status === "COMPLETED";
+              const isCurrent = step.state === "CURRENT" || step.status === "CURRENT";
+              const stepLabel = step.label || step.role || (step.stage ? step.stage.replace(/_/g, " ") : `Stage ${idx + 1}`);
+              const userRole = step.user?.role || step.role;
 
               return (
-                <div key={`${step.stage}-${idx}`} className="flex items-start gap-3.5 relative">
+                <div key={`${step.stage || idx}-${idx}`} className="flex items-start gap-3.5 relative">
                   {/* Step Icon / Indicator */}
                   <div className="flex flex-col items-center">
                     <div
@@ -88,11 +95,13 @@ export function ReapprovalRoute({
                   <div className="min-w-0 flex-1 pt-0.5">
                     <div className="flex items-center justify-between gap-2">
                       <p className="text-sm font-semibold text-foreground truncate">
-                        {step.label}
+                        {stepLabel}
                       </p>
-                      <span className="text-[10.5px] uppercase px-2 py-0.5 rounded-md bg-muted/60 text-muted-foreground font-semibold">
-                        {step.stage.replace(/_/g, " ")}
-                      </span>
+                      {step.stage && (
+                        <span className="text-[10.5px] uppercase px-2 py-0.5 rounded-md bg-muted/60 text-muted-foreground font-semibold">
+                          {step.stage.replace(/_/g, " ")}
+                        </span>
+                      )}
                     </div>
 
                     {step.user && (
@@ -100,9 +109,9 @@ export function ReapprovalRoute({
                         <span className="font-medium text-foreground">
                           {step.user.name}
                         </span>
-                        {step.user.role && (
+                        {userRole && userRole !== stepLabel && (
                           <span className="text-muted-foreground/80">
-                            · {step.user.role}
+                            · {userRole}
                           </span>
                         )}
                       </p>
@@ -115,12 +124,14 @@ export function ReapprovalRoute({
         </div>
 
         {/* Note beneath stepper */}
-        <p className="pt-2 border-t border-border/40 text-[11.5px] text-muted-foreground leading-normal">
-          {note ||
-            (isReturnPath
-              ? "Request returns to HR after these approvals are completed."
-              : "Everyone in this list is notified in the system and by email.")}
-        </p>
+        {!hideNote && (
+          <p className="pt-2 border-t border-border/40 text-[11.5px] text-muted-foreground leading-normal">
+            {note ||
+              (isReturnPath
+                ? "Request returns to HR after these approvals are completed."
+                : "Everyone in this list is notified in the system and by email.")}
+          </p>
+        )}
       </div>
     </div>
   );

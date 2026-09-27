@@ -59,13 +59,13 @@ export function EvaluationCandidateCard({
           Candidate
         </h3>
         <div className="flex items-center gap-2">
-          <span className="font-mono text-xs font-bold text-foreground">
+          <span className="text-xs font-bold text-foreground">
             {candidateRef}
           </span>
           <Badge
             variant="outline"
             className={cn(
-              "px-1.5 py-0.5 text-[10px] rounded font-mono uppercase tracking-wider",
+              "px-1.5 py-0.5 text-[10px] rounded uppercase tracking-wider",
               PRIORITY_STYLES[priority] || PRIORITY_STYLES.P2
             )}
           >

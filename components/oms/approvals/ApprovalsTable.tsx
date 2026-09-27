@@ -44,7 +44,7 @@ export function ApprovalsTable({
       render: (_, row) => (
         <div className="flex flex-col gap-1 min-w-[200px]">
           <div className="flex items-center gap-2">
-            <span className="font-mono text-[11px] text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded border border-border/40">
+            <span className="text-[11px] text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded border border-border/40">
               {row.subjectRef}
             </span>
             {row.actingFor && (

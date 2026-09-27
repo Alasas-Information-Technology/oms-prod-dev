@@ -21,6 +21,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -58,7 +63,8 @@ import {
   UserCheck,
   UserPlus,
   UserX,
-  Users
+  Users,
+  SlidersHorizontal
 } from "lucide-react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import * as React from "react";
@@ -235,12 +241,12 @@ function PeopleListPageContent() {
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-foreground truncate">{displayName}</span>
                   {empId && (
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground shrink-0">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground shrink-0">
                       {empId}
                     </span>
                   )}
                 </div>
-                <div className="text-xs text-muted-foreground font-mono truncate">
+                <div className="text-xs text-muted-foreground truncate">
                   @{row.username}
                 </div>
               </div>
@@ -252,7 +258,7 @@ function PeopleListPageContent() {
         key: "email",
         header: "Email",
         render: (_, row) => (
-          <span className="text-xs font-mono text-muted-foreground">{row.email}</span>
+          <span className="text-xs text-muted-foreground">{row.email}</span>
         ),
       },
       {
@@ -392,14 +398,15 @@ function PeopleListPageContent() {
 
   return (
     <div className="p-6 space-y-6 w-full">
-      {/* 3-Tab Header Structure (§Part 1) */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/80 pb-4">
-        <div className="flex items-center gap-1 bg-muted p-1 rounded-md border">
+      {/* Unified Single-Row Action Bar */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 w-full border-b border-border/80 pb-4">
+        {/* Left: Navigation Tabs */}
+        <div className="flex items-center gap-1 bg-muted p-1 rounded-md border shrink-0 overflow-x-auto">
           {/* Tab 1: People */}
           <button
             type="button"
             onClick={() => setActiveTab("people")}
-            className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 ${activeTab === "people"
+            className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === "people"
                 ? "bg-background text-foreground shadow-xs"
                 : "text-muted-foreground hover:text-foreground"
               }`}
@@ -408,7 +415,7 @@ function PeopleListPageContent() {
             <span>People</span>
           </button>
 
-          {/* Tab 2: Vendor Users (Gated on VENDORUSER.MANAGE per Part 1) */}
+          {/* Tab 2: Vendor Users */}
           {can("VENDORUSER.MANAGE") && (
             <button
               type="button"
@@ -416,7 +423,7 @@ function PeopleListPageContent() {
                 setActiveTab("vendors");
                 router.push("/app/administration/users/vendors");
               }}
-              className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 ${activeTab === "vendors"
+              className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === "vendors"
                   ? "bg-background text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
                 }`}
@@ -425,169 +432,143 @@ function PeopleListPageContent() {
               <span>Vendor users</span>
             </button>
           )}
-
-          {/* Tab 3: Invite Someone (Inline / Action) */}
-          {can("USER.CREATE") && (
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab("invite");
-                router.push("/app/administration/users/new");
-              }}
-              className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 ${activeTab === "invite"
-                  ? "bg-background text-foreground shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
-                }`}
-            >
-              <UserPlus className="size-4" />
-              <span>Invite someone</span>
-            </button>
-          )}
         </div>
 
-        {/* Secondary Import & Action utilities */}
-        <div className="flex items-center gap-2">
+        {/* Right: Search, Filters & Secondary Actions */}
+        <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto lg:ml-auto">
+          {/* Search Input */}
+          <div className="relative w-full sm:w-[240px] xl:w-[280px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Input
+              placeholder="Search..."
+              value={searchInput}
+              onChange={(e) => {
+                setSearchInput(e.target.value);
+                setPage(1);
+              }}
+              className="pl-9 h-9 text-xs bg-background shadow-2xs border-border/80 w-full"
+            />
+          </div>
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="sm" className="h-9 text-xs gap-1.5 shadow-2xs border-border/80 relative shrink-0">
+                <SlidersHorizontal className="size-3.5" />
+                Filters
+                {(selectedStatus !== "ALL" || selectedRole !== "ALL" || selectedDepartment || hasNoRoleOnly) && (
+                  <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-teal opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-teal"></span>
+                  </span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-[320px] p-4 shadow-xl border-border/80">
+              <div className="space-y-4">
+                <div className="font-semibold text-sm">Filter users</div>
+                
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Status</label>
+                  <Select value={selectedStatus} onValueChange={(val) => { setSelectedStatus(val); setPage(1); }}>
+                    <SelectTrigger className="h-9 text-xs">
+                      <SelectValue placeholder="Status: All" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ALL">All Statuses</SelectItem>
+                      <SelectItem value="ACTIVE">Active</SelectItem>
+                      <SelectItem value="INVITED">Hasn&apos;t signed in yet</SelectItem>
+                      <SelectItem value="LOCKED">Locked out</SelectItem>
+                      <SelectItem value="INACTIVE">Access turned off</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Role</label>
+                  <Select value={selectedRole} onValueChange={(val) => { setSelectedRole(val); setPage(1); }}>
+                    <SelectTrigger className="h-9 text-xs">
+                      <SelectValue placeholder="Role: All" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ALL">All Roles</SelectItem>
+                      {Object.values(ROLE_DEFINITIONS).filter((r) => r.category !== "VENDOR").map((r) => (
+                        <SelectItem key={r.code} value={r.code}>{r.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Department</label>
+                  <OrgUnitPicker
+                    value={selectedDepartment?.orgUnitId || null}
+                    onChange={(unit) => { setSelectedDepartment(unit); setPage(1); }}
+                    filterByType={3}
+                    placeholder="Filter by department..."
+                    className="h-9 text-xs w-full"
+                  />
+                </div>
+
+                <div className="pt-2 border-t mt-2">
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <Checkbox checked={hasNoRoleOnly} onCheckedChange={(c) => { setHasNoRoleOnly(Boolean(c)); setPage(1); }} />
+                    <span className="text-xs font-medium text-foreground flex items-center gap-1.5">
+                      <span className="size-2 rounded-full bg-amber-500 inline-block" />
+                      Show people without assigned roles
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          {hasActiveFilters && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleClearFilters}
+              className="h-9 text-xs text-muted-foreground hover:text-foreground shrink-0"
+            >
+              Clear
+            </Button>
+          )}
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => refetch()}
+            disabled={isFetching}
+            className="h-9 w-9 p-0 shrink-0 text-muted-foreground"
+            title="Refresh"
+          >
+            <RefreshCw className={`size-3.5 ${isFetching ? "animate-spin" : ""}`} />
+          </Button>
+
+          <div className="h-5 w-px bg-border/60 mx-1 hidden sm:block" />
+
           {can("USER.IMPORT") && (
             <Button
               variant="outline"
               size="sm"
               onClick={() => router.push("/app/administration/users/import")}
-              className="gap-1.5 text-xs h-9"
+              className="gap-1.5 text-xs h-9 shrink-0"
             >
               <FileSpreadsheet className="size-4" />
-              Import staff
+              <span className="hidden sm:inline">Import</span>
             </Button>
           )}
           {can("USER.CREATE") && (
             <Button
               size="sm"
               onClick={() => router.push("/app/administration/users/new")}
-              className="gap-1.5 text-xs h-9 shadow-xs"
+              className="gap-1.5 text-xs h-9 shadow-xs shrink-0"
             >
               <Plus className="size-4" />
-              Invite someone
+              <span className="hidden sm:inline">Invite</span>
             </Button>
           )}
         </div>
       </div>
-
-      {/* Filter & Search Bar */}
-      <Card className="border-border/80 shadow-2xs">
-        <CardContent className="p-4 space-y-3">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {/* Search Input with 500ms debounce */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-              <Input
-                placeholder="Search name, email, employee ID..."
-                value={searchInput}
-                onChange={(e) => {
-                  setSearchInput(e.target.value);
-                  setPage(1);
-                }}
-                className="pl-9 h-9 text-xs bg-background"
-              />
-            </div>
-
-            {/* Status Filter (All 4 plain states) */}
-            <Select
-              value={selectedStatus}
-              onValueChange={(val) => {
-                setSelectedStatus(val);
-                setPage(1);
-              }}
-            >
-              <SelectTrigger className="h-9 text-xs">
-                <SelectValue placeholder="Status: All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">All Statuses</SelectItem>
-                <SelectItem value="ACTIVE">Active</SelectItem>
-                <SelectItem value="INVITED">Hasn&apos;t signed in yet</SelectItem>
-                <SelectItem value="LOCKED">Locked out</SelectItem>
-                <SelectItem value="INACTIVE">Access turned off</SelectItem>
-              </SelectContent>
-            </Select>
-
-            {/* Role Filter */}
-            <Select
-              value={selectedRole}
-              onValueChange={(val) => {
-                setSelectedRole(val);
-                setPage(1);
-              }}
-            >
-              <SelectTrigger className="h-9 text-xs">
-                <SelectValue placeholder="Role: All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">All Roles</SelectItem>
-                {Object.values(ROLE_DEFINITIONS)
-                  .filter((r) => r.category !== "VENDOR")
-                  .map((r) => (
-                    <SelectItem key={r.code} value={r.code}>
-                      {r.name}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-
-            {/* Department Filter via OrgUnitPicker */}
-            <OrgUnitPicker
-              value={selectedDepartment?.orgUnitId || null}
-              onChange={(unit) => {
-                setSelectedDepartment(unit);
-                setPage(1);
-              }}
-              filterByType={3} // 3 = Department
-              placeholder="Filter by department..."
-              className="h-9 text-xs"
-            />
-          </div>
-
-          {/* Secondary Filter Row: "No Role" Toggle & Clear Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t text-xs text-muted-foreground">
-            <div className="flex items-center gap-4">
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <Checkbox
-                  checked={hasNoRoleOnly}
-                  onCheckedChange={(c) => {
-                    setHasNoRoleOnly(Boolean(c));
-                    setPage(1);
-                  }}
-                />
-                <span className="text-xs font-medium text-foreground flex items-center gap-1.5">
-                  <span className="size-2 rounded-full bg-amber-500 inline-block" />
-                  Show people without assigned roles
-                </span>
-              </label>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {hasActiveFilters && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleClearFilters}
-                  className="h-7 text-xs text-muted-foreground hover:text-foreground"
-                >
-                  Clear all filters
-                </Button>
-              )}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => refetch()}
-                disabled={isFetching}
-                className="h-7 text-xs gap-1"
-              >
-                <RefreshCw className={`size-3 ${isFetching ? "animate-spin" : ""}`} />
-                Refresh
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* People DataTable */}
       <div className="space-y-3">
