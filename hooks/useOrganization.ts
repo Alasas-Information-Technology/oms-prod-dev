@@ -14,6 +14,7 @@ import {
 import {
   OrgUnitSummaryDto,
   OrgUnitDetailDto,
+  OrgUnitMemberDto,
   OrgUnitTreeNodeDto,
   OrgUnitTypeDto,
   AllowedParentTypeDto,
@@ -47,6 +48,7 @@ export const orgKeys = {
   tree: () => [...orgKeys.units(), 'tree'] as const,
   unit: (id?: string) => [...orgKeys.units(), 'detail', id ?? ''] as const,
   children: (id?: string) => [...orgKeys.unit(id), 'children'] as const,
+  members: (id?: string) => [...orgKeys.unit(id), 'members'] as const,
   ancestors: (id?: string) => [...orgKeys.unit(id), 'ancestors'] as const,
   descendants: (id?: string) => [...orgKeys.unit(id), 'descendants'] as const,
   changeLog: (id?: string, page?: number, pageSize?: number) =>
@@ -138,6 +140,19 @@ export function useOrgUnitChildren(
   return useQuery({
     queryKey: orgKeys.children(id),
     queryFn: () => (id ? orgUnitsApi.getChildren(id) : Promise.resolve([])),
+    enabled: Boolean(id) && (options?.enabled ?? true),
+    staleTime: 30 * 1000,
+    ...options,
+  });
+}
+
+export function useOrgUnitMembers(
+  id?: string,
+  options?: Omit<UseQueryOptions<OrgUnitMemberDto[], Error>, 'queryKey' | 'queryFn'>,
+) {
+  return useQuery({
+    queryKey: orgKeys.members(id),
+    queryFn: () => (id ? orgUnitsApi.getMembers(id) : Promise.resolve([])),
     enabled: Boolean(id) && (options?.enabled ?? true),
     staleTime: 30 * 1000,
     ...options,

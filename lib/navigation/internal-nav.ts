@@ -58,10 +58,12 @@ export interface InternalNavGroup {
 
 export interface NavUserContext {
   userId?: string;
+  username?: string;
   roles: string[];
   permissions: string[];
   scopes?: Array<{ scopeCode: string; departmentId?: string; vendorId?: string }>;
   isSystemAdmin?: boolean;
+  isSuperAdmin?: boolean;
 }
 
 /**
@@ -89,9 +91,23 @@ export function userHasRole(roles: string[], targetRole: string | string[]): boo
 }
 
 /**
+ * Checks if user is Super Administrator (e.g. username 'admin' or holding SUPER_ADMIN role).
+ * Superadmin acts as a superadmin and not a system admin, having full access across all pages.
+ */
+export function isSuperAdmin(context: NavUserContext): boolean {
+  if (context.isSuperAdmin) return true;
+  if (context.username?.toLowerCase() === "admin") return true;
+  if (userHasRole(context.roles, ["SUPER_ADMIN", "SUPERADMIN"])) return true;
+  return false;
+}
+
+/**
  * Checks if user is pure System Administrator
  */
 export function isPureSystemAdmin(context: NavUserContext): boolean {
+  // Superadmin acts as a superadmin, NOT a system admin, and has full access
+  if (isSuperAdmin(context)) return false;
+
   const isSysAdmin =
     context.isSystemAdmin ||
     userHasRole(context.roles, ["SYSTEM_ADMIN", "ADMIN"]);
@@ -148,6 +164,7 @@ export const INTERNAL_NAV_GROUPS: InternalNavGroup[] = [
         // REQUISITION.VIEW, own scope: Anyone who can raise a request
         // Part 2.2: Department Requestor, Line Manager, Section Head, Main Interviewer
         isPermitted: (ctx) => {
+          if (isSuperAdmin(ctx)) return true;
           if (isPureSystemAdmin(ctx)) return false;
           const hasPerm =
             userHasPermission(ctx.permissions, "REQUISITION.VIEW") ||
@@ -172,6 +189,7 @@ export const INTERNAL_NAV_GROUPS: InternalNavGroup[] = [
         // REQUISITION.VIEW, broader scope: HOD, HR, Finance, Procurement, Line Manager, Section Head
         // Part 2.2: Line Manager, Section Head, HOD, HR Specialist, Finance Manager, Procurement Officer
         isPermitted: (ctx) => {
+          if (isSuperAdmin(ctx)) return true;
           if (isPureSystemAdmin(ctx)) return false;
           const hasPerm =
             userHasPermission(ctx.permissions, "REQUISITION.VIEW") ||
@@ -201,6 +219,7 @@ export const INTERNAL_NAV_GROUPS: InternalNavGroup[] = [
         icon: UserCheck,
         // HR review permission: HR Specialist only (Part 2.1 & 2.2)
         isPermitted: (ctx) => {
+          if (isSuperAdmin(ctx)) return true;
           if (isPureSystemAdmin(ctx)) return false;
           const hasPerm =
             userHasPermission(ctx.permissions, "HR_REVIEW.VIEW") ||
@@ -227,6 +246,7 @@ export const INTERNAL_NAV_GROUPS: InternalNavGroup[] = [
         url: "/app/budget",
         // BUDGET.VIEW: Finance, HOD (own department) (Part 2.1 & 2.2)
         isPermitted: (ctx) => {
+          if (isSuperAdmin(ctx)) return true;
           if (isPureSystemAdmin(ctx)) return false;
           const hasPerm = userHasPermission(ctx.permissions, "BUDGET.VIEW");
           const hasEligibleRole = userHasRole(ctx.roles, [
@@ -250,6 +270,7 @@ export const INTERNAL_NAV_GROUPS: InternalNavGroup[] = [
         icon: Users,
         // CANDIDATE.VIEW: Main Interviewer, HR, Procurement, HOD (Part 2.1 & 2.2)
         isPermitted: (ctx) => {
+          if (isSuperAdmin(ctx)) return true;
           if (isPureSystemAdmin(ctx)) return false;
           const hasPerm = userHasPermission(ctx.permissions, "CANDIDATE.VIEW");
           const hasEligibleRole = userHasRole(ctx.roles, [
@@ -275,6 +296,7 @@ export const INTERNAL_NAV_GROUPS: InternalNavGroup[] = [
         icon: UserPlus,
         // Workforce view permission: HR, Line Manager, HOD (Part 2.1 & 2.2)
         isPermitted: (ctx) => {
+          if (isSuperAdmin(ctx)) return true;
           if (isPureSystemAdmin(ctx)) return false;
           const hasPerm =
             userHasPermission(ctx.permissions, "WORKFORCE.VIEW") ||
@@ -300,6 +322,7 @@ export const INTERNAL_NAV_GROUPS: InternalNavGroup[] = [
         icon: Store,
         // VENDOR.VIEW: Procurement Officer (Part 2.1 & 2.2)
         isPermitted: (ctx) => {
+          if (isSuperAdmin(ctx)) return true;
           if (isPureSystemAdmin(ctx)) return false;
           const hasPerm = userHasPermission(ctx.permissions, "VENDOR.VIEW");
           const hasEligibleRole = userHasRole(ctx.roles, [
@@ -317,6 +340,7 @@ export const INTERNAL_NAV_GROUPS: InternalNavGroup[] = [
         icon: BarChart3,
         // Reports view permission: HOD, HR Specialist, Finance Manager, Procurement Officer (Part 2.1 & 2.2)
         isPermitted: (ctx) => {
+          if (isSuperAdmin(ctx)) return true;
           if (isPureSystemAdmin(ctx)) return false;
           const hasPerm =
             userHasPermission(ctx.permissions, "REPORTS.VIEW") ||
@@ -342,9 +366,9 @@ export const INTERNAL_NAV_GROUPS: InternalNavGroup[] = [
   {
     id: "group-administration",
     groupLabel: "Administration",
-    // The Administration group renders ONLY for SYSTEM_ADMIN (Part 2.1)
+    // The Administration group renders for SYSTEM_ADMIN and SUPER_ADMIN (Part 2.1)
     requiredRole: "SYSTEM_ADMIN",
-    isPermitted: (ctx) => userHasRole(ctx.roles, ["SYSTEM_ADMIN", "ADMIN"]),
+    isPermitted: (ctx) => isSuperAdmin(ctx) || userHasRole(ctx.roles, ["SYSTEM_ADMIN", "ADMIN"]),
     items: [
       {
         id: "nav-admin-group",
@@ -376,39 +400,46 @@ export const INTERNAL_NAV_GROUPS: InternalNavGroup[] = [
 /**
  * Filters the internal navigation tree for the authenticated user.
  * Unmet items and empty groups are completely omitted (never disabled).
+ * Superadmin user has full access across all pages.
  */
 export function getFilteredNavGroups(context: NavUserContext): InternalNavGroup[] {
   const result: InternalNavGroup[] = [];
+  const isSuper = isSuperAdmin(context);
 
   for (const group of INTERNAL_NAV_GROUPS) {
-    // 1. Check group-level permissions
-    if (group.requiredRole && !userHasRole(context.roles, group.requiredRole)) {
-      continue;
-    }
-    if (group.isPermitted && !group.isPermitted(context)) {
-      continue;
+    // 1. Check group-level permissions (superadmin has access to all groups)
+    if (!isSuper) {
+      if (group.requiredRole && !userHasRole(context.roles, group.requiredRole)) {
+        continue;
+      }
+      if (group.isPermitted && !group.isPermitted(context)) {
+        continue;
+      }
     }
 
     // 2. Filter items inside group
     const visibleItems: InternalNavItem[] = [];
 
     for (const item of group.items) {
-      if (item.requiredRoles && !userHasRole(context.roles, item.requiredRoles)) {
-        continue;
-      }
-      if (item.requiredPermission && !userHasPermission(context.permissions, item.requiredPermission)) {
-        continue;
-      }
-      if (item.requiredPermissions && !item.requiredPermissions.every((p) => userHasPermission(context.permissions, p))) {
-        continue;
-      }
-      if (item.isPermitted && !item.isPermitted(context)) {
-        continue;
+      if (!isSuper) {
+        if (item.requiredRoles && !userHasRole(context.roles, item.requiredRoles)) {
+          continue;
+        }
+        if (item.requiredPermission && !userHasPermission(context.permissions, item.requiredPermission)) {
+          continue;
+        }
+        if (item.requiredPermissions && !item.requiredPermissions.every((p) => userHasPermission(context.permissions, p))) {
+          continue;
+        }
+        if (item.isPermitted && !item.isPermitted(context)) {
+          continue;
+        }
       }
 
       // Filter subitems if any
       if (item.items && item.items.length > 0) {
         const visibleSubItems = item.items.filter((sub) => {
+          if (isSuper) return true;
           if (sub.requiredRole && !userHasRole(context.roles, sub.requiredRole)) return false;
           if (sub.requiredPermission && !userHasPermission(context.permissions, sub.requiredPermission)) return false;
           return true;

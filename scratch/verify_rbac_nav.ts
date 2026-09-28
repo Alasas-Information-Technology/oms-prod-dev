@@ -111,6 +111,30 @@ const testCases: TestCase[] = [
     },
     expectedItems: ["Dashboard", "Administration"],
   },
+  {
+    roleName: "Super Administrator (Admin User)",
+    context: {
+      userId: "1053433E-F36B-1410-85ED-009A959FB122",
+      username: "admin",
+      roles: ["SUPER_ADMIN", "SYSTEM_ADMIN"],
+      permissions: ["*"],
+      scopes: [{ scopeCode: "GLOBAL" }],
+      isSuperAdmin: true,
+      isSystemAdmin: false,
+    },
+    expectedItems: [
+      "Dashboard",
+      "My Requests",
+      "All Requests",
+      "HR Review",
+      "Budget",
+      "Candidates",
+      "Workforce",
+      "Vendors",
+      "Reports",
+      "Administration",
+    ],
+  },
 ];
 
 console.log("================================================================================");

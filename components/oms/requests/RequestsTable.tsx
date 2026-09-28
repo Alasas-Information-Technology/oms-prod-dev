@@ -176,13 +176,13 @@ export function RequestsTable({
     setSort((current) =>
       current.key === key
         ? {
-            key,
-            direction: current.direction === "asc" ? "desc" : "asc",
-          }
+          key,
+          direction: current.direction === "asc" ? "desc" : "asc",
+        }
         : {
-            key,
-            direction: "asc",
-          }
+          key,
+          direction: "asc",
+        }
     );
   };
 
@@ -191,9 +191,9 @@ export function RequestsTable({
   };
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-border/60 dark:border-white/[0.08] bg-card shadow-xs">
+    <div className="overflow-x-auto rounded-lg border border-foreground/15 dark:border-white/[0.08] bg-card shadow-xs">
       <Table className="w-full border-none">
-        <TableHeader className="border-b border-border/60 bg-muted/40">
+        <TableHeader className="border-b order-foreground/15 bg-muted/40">
           <TableRow className="hover:bg-muted/40">
             <TableHead className="w-9 px-2">
               <span className="sr-only">Expand request</span>
@@ -459,9 +459,8 @@ export function RequestsTable({
                             isClaimedByMe ? (
                               <div className="flex items-center gap-1.5">
                                 <Link
-                                  href={`/app/requests/${
-                                    request.approvalTaskId || request.requestId
-                                  }?action=approve`}
+                                  href={`/app/requests/${request.approvalTaskId || request.requestId
+                                    }?action=approve`}
                                 >
                                   <Button
                                     size="sm"
@@ -498,9 +497,8 @@ export function RequestsTable({
                             )
                           ) : (
                             <Link
-                              href={`/app/requests/${
-                                request.approvalTaskId || request.requestId
-                              }?action=approve`}
+                              href={`/app/requests/${request.approvalTaskId || request.requestId
+                                }?action=approve`}
                             >
                               <Button
                                 size="sm"

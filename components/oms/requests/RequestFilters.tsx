@@ -66,7 +66,7 @@ function FilterSelect({
       value={value}
       onValueChange={onValueChange}
     >
-      <SelectTrigger className="h-9 min-w-0 bg-background/80 dark:bg-card/40">
+      <SelectTrigger className="h-8 min-w-[140px] bg-background border-border/50 text-xs shadow-sm">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
 
@@ -123,223 +123,173 @@ export function RequestFilters({
   ].filter(Boolean).length;
 
   return (
-    <Card className="gap-4 rounded-lg bg-card border-border/60 dark:border-white/[0.08] p-4 shadow-xs hover:translate-y-0">
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(250px,1.5fr)_repeat(4,minmax(160px,1fr))]">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-
-          <Input
-            value={filters.search}
-            onChange={(event) =>
-              updateFilter(
-                "search",
-                event.target.value
-              )
-            }
-            placeholder="Search request ID or position"
-            className="h-9 rounded-md bg-background/80 dark:bg-card/40 pl-9"
-          />
-        </div>
-
-        <FilterSelect
-          value={filters.organization}
-          placeholder="All organisations"
-          values={options.organizations}
-          onValueChange={(value) =>
-            updateFilter("organization", value)
+    <div className="flex flex-wrap items-center gap-2 p-1.5 bg-muted/40 border border-foreground/15 rounded-lg shadow-sm">
+      {/* Search Input */}
+      <div className="relative flex-1 min-w-[200px] max-w-sm">
+        <Search className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          value={filters.search}
+          onChange={(event) =>
+            updateFilter("search", event.target.value)
           }
-        />
-
-        <FilterSelect
-          value={filters.department}
-          placeholder="All departments"
-          values={options.departments}
-          onValueChange={(value) =>
-            updateFilter("department", value)
-          }
-        />
-
-        <FilterSelect
-          value={filters.actualStatus}
-          placeholder="All statuses"
-          values={options.statuses}
-          onValueChange={(value) =>
-            updateFilter("actualStatus", value)
-          }
-        />
-
-        <FilterSelect
-          value={filters.currentOwner}
-          placeholder="All owners"
-          values={options.owners}
-          onValueChange={(value) =>
-            updateFilter("currentOwner", value)
-          }
+          placeholder="Search ID or position..."
+          className="h-8 rounded-md bg-background border-border/50 pl-8 text-xs shadow-sm"
         />
       </div>
 
-      <div className="flex flex-col gap-3 border-t border-border/70 pt-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id={`${idPrefix}-active-only`}
-              checked={filters.activeOnly}
-              onCheckedChange={(checked) =>
-                updateFilter(
-                  "activeOnly",
-                  Boolean(checked)
-                )
-              }
-            />
+      {/* Tools & Secondary Filters */}
+      <div className="flex flex-wrap items-center gap-1.5 ml-auto">
+        <Select
+          value={filters.savedView}
+          onValueChange={(value) =>
+            updateFilter("savedView", value as RequestSavedView)
+          }
+        >
+          <SelectTrigger className="h-8 w-[140px] bg-background border-border/50 text-xs shadow-sm w-auto">
+            <Bookmark className="size-3.5 text-muted-foreground mr-1.5 shrink-0" />
+            <SelectValue placeholder="Saved views" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="default">Default view</SelectItem>
+            <SelectItem value="my-active">My active requests</SelectItem>
+            <SelectItem value="needs-action">Needs my action</SelectItem>
+            <SelectItem value="sla-attention">SLA attention</SelectItem>
+          </SelectContent>
+        </Select>
 
-            <Label
-              htmlFor={`${idPrefix}-active-only`}
-              className="font-normal"
+        <div className="w-[1px] h-4 bg-border/60 mx-1 hidden sm:block" />
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 rounded-md px-2.5 text-xs bg-background border-border/50 shadow-sm"
             >
-              Active requests only
-            </Label>
-          </div>
+              <CalendarRange className="size-3.5 mr-1.5" />
+              Date
+            </Button>
+          </PopoverTrigger>
 
-          <Select
-            value={filters.savedView}
-            onValueChange={(value) =>
-              updateFilter(
-                "savedView",
-                value as RequestSavedView
-              )
-            }
-          >
-            <SelectTrigger className="h-9 w-[190px] bg-background/80 dark:bg-card/40">
-              <Bookmark className="size-4 text-muted-foreground" />
+          <PopoverContent align="end" className="w-80">
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm font-semibold">Engagement date range</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Filter by planned start and end dates.
+                </p>
+              </div>
 
-              <SelectValue placeholder="Saved views" />
-            </SelectTrigger>
+              <div className="space-y-2">
+                <Label htmlFor={`${idPrefix}-start-date`}>Starts on or after</Label>
+                <Input
+                  id={`${idPrefix}-start-date`}
+                  type="date"
+                  value={filters.startDate}
+                  onChange={(event) =>
+                    updateFilter("startDate", event.target.value)
+                  }
+                  className="h-9 rounded-md"
+                />
+              </div>
 
-            <SelectContent>
-              <SelectItem value="default">
-                Default view
-              </SelectItem>
+              <div className="space-y-2">
+                <Label htmlFor={`${idPrefix}-end-date`}>Ends on or before</Label>
+                <Input
+                  id={`${idPrefix}-end-date`}
+                  type="date"
+                  value={filters.endDate}
+                  onChange={(event) =>
+                    updateFilter("endDate", event.target.value)
+                  }
+                  className="h-9 rounded-md"
+                />
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
 
-              <SelectItem value="my-active">
-                My active requests
-              </SelectItem>
-
-              <SelectItem value="needs-action">
-                Needs my action
-              </SelectItem>
-
-              <SelectItem value="sla-attention">
-                SLA attention
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-9 rounded-lg"
-              >
-                <CalendarRange className="size-4" />
-                Date range
-              </Button>
-            </PopoverTrigger>
-
-            <PopoverContent
-              align="end"
-              className="w-80"
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 rounded-md px-2.5 text-xs bg-background border-border/50 shadow-sm"
             >
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm font-semibold">
-                    Engagement date range
-                  </p>
+              <Filter className="size-3.5 mr-1.5" />
+              More
+              {activeFilterCount > 0 && (
+                <Badge className="ml-1.5 min-w-4 px-1 py-0 text-[10px]">
+                  {activeFilterCount}
+                </Badge>
+              )}
+            </Button>
+          </PopoverTrigger>
 
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Filter by planned start and end
-                    dates.
-                  </p>
-                </div>
+          <PopoverContent align="end" className="w-80">
+            <div className="space-y-5">
+              <div>
+                <p className="text-sm font-semibold">More filters</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Narrow the current request view.
+                </p>
+              </div>
 
-                <div className="space-y-2">
-                  <Label
-                    htmlFor={`${idPrefix}-start-date`}
-                  >
-                    Starts on or after
-                  </Label>
-
-                  <Input
-                    id={`${idPrefix}-start-date`}
-                    type="date"
-                    value={filters.startDate}
-                    onChange={(event) =>
-                      updateFilter(
-                        "startDate",
-                        event.target.value
-                      )
-                    }
-                    className="h-9 rounded-md"
+              {/* Primary Filters Moved Here */}
+              <div className="space-y-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Organisation</Label>
+                  <FilterSelect
+                    value={filters.organization}
+                    placeholder="Organisations"
+                    values={options.organizations}
+                    onValueChange={(value) => updateFilter("organization", value)}
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label
-                    htmlFor={`${idPrefix}-end-date`}
-                  >
-                    Ends on or before
-                  </Label>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Department</Label>
+                  <FilterSelect
+                    value={filters.department}
+                    placeholder="Departments"
+                    values={options.departments}
+                    onValueChange={(value) => updateFilter("department", value)}
+                  />
+                </div>
 
-                  <Input
-                    id={`${idPrefix}-end-date`}
-                    type="date"
-                    value={filters.endDate}
-                    onChange={(event) =>
-                      updateFilter(
-                        "endDate",
-                        event.target.value
-                      )
-                    }
-                    className="h-9 rounded-md"
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Status</Label>
+                  <FilterSelect
+                    value={filters.actualStatus}
+                    placeholder="Statuses"
+                    values={options.statuses}
+                    onValueChange={(value) => updateFilter("actualStatus", value)}
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Owner</Label>
+                  <FilterSelect
+                    value={filters.currentOwner}
+                    placeholder="Owners"
+                    values={options.owners}
+                    onValueChange={(value) => updateFilter("currentOwner", value)}
                   />
                 </div>
               </div>
-            </PopoverContent>
-          </Popover>
 
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-9 rounded-lg"
-              >
-                <Filter className="size-4" />
-                More filters
-
-                {activeFilterCount > 0 && (
-                  <Badge className="ml-1 min-w-5 px-1.5 py-0 text-[10px]">
-                    {activeFilterCount}
-                  </Badge>
-                )}
-              </Button>
-            </PopoverTrigger>
-
-            <PopoverContent
-              align="end"
-              className="w-72"
-            >
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm font-semibold">
-                    More filters
-                  </p>
-
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Narrow the current request view.
-                  </p>
+              <div className="pt-2 border-t border-border/50 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id={`${idPrefix}-active-only`}
+                    checked={filters.activeOnly}
+                    onCheckedChange={(checked) =>
+                      updateFilter("activeOnly", Boolean(checked))
+                    }
+                  />
+                  <Label htmlFor={`${idPrefix}-active-only`} className="font-normal text-sm">
+                    Active requests only
+                  </Label>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -347,17 +297,10 @@ export function RequestFilters({
                     id={`${idPrefix}-sla-only`}
                     checked={filters.slaOnly}
                     onCheckedChange={(checked) =>
-                      updateFilter(
-                        "slaOnly",
-                        Boolean(checked)
-                      )
+                      updateFilter("slaOnly", Boolean(checked))
                     }
                   />
-
-                  <Label
-                    htmlFor={`${idPrefix}-sla-only`}
-                    className="font-normal"
-                  >
+                  <Label htmlFor={`${idPrefix}-sla-only`} className="font-normal text-sm">
                     SLA attention only
                   </Label>
                 </div>
@@ -367,48 +310,41 @@ export function RequestFilters({
                     id={`${idPrefix}-action-only`}
                     checked={filters.needsActionOnly}
                     onCheckedChange={(checked) =>
-                      updateFilter(
-                        "needsActionOnly",
-                        Boolean(checked)
-                      )
+                      updateFilter("needsActionOnly", Boolean(checked))
                     }
                   />
-
-                  <Label
-                    htmlFor={`${idPrefix}-action-only`}
-                    className="font-normal"
-                  >
+                  <Label htmlFor={`${idPrefix}-action-only`} className="font-normal text-sm">
                     Needs my action only
                   </Label>
                 </div>
               </div>
-            </PopoverContent>
-          </Popover>
+            </div>
+          </PopoverContent>
+        </Popover>
 
-          {activeFilterCount > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-9 rounded-lg"
-              onClick={onClear}
-            >
-              <X className="size-4" />
-              Clear
-            </Button>
-          )}
-
+        {activeFilterCount > 0 && (
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
-            className="h-9 rounded-lg"
-            onClick={onExport}
-            disabled={exportDisabled}
+            className="h-8 rounded-md px-2.5 text-xs text-muted-foreground hover:text-foreground"
+            onClick={onClear}
           >
-            <Download className="size-4" />
-            Export to Excel
+            <X className="size-3.5 mr-1" />
+            Clear
           </Button>
-        </div>
+        )}
+
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 rounded-md px-2.5 text-xs bg-background border-border/50 shadow-sm"
+          onClick={onExport}
+          disabled={exportDisabled}
+        >
+          <Download className="size-3.5 mr-1.5" />
+          Export
+        </Button>
       </div>
-    </Card>
+    </div>
   );
 }
