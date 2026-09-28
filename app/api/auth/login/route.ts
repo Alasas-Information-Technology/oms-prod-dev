@@ -56,6 +56,23 @@ export async function POST(request: NextRequest) {
 
         const loginResult = data?.data || data;
 
+        if (loginResult?.user) {
+            const isSuper =
+                loginResult.user.username?.toLowerCase() === "admin" ||
+                loginResult.user.roles?.includes("SUPER_ADMIN") ||
+                loginResult.user.roles?.includes("SUPERADMIN");
+
+            if (isSuper) {
+                loginResult.user.isSuperAdmin = true;
+                if (!loginResult.user.roles?.includes("SUPER_ADMIN")) {
+                    loginResult.user.roles = ["SUPER_ADMIN", ...(loginResult.user.roles || [])];
+                }
+                if (!loginResult.user.permissions?.includes("*")) {
+                    loginResult.user.permissions = ["*", ...(loginResult.user.permissions || [])];
+                }
+            }
+        }
+
         // Build response without tokens in the body (tokens stored securely in HttpOnly cookies)
         const response = NextResponse.json({
             success: true,

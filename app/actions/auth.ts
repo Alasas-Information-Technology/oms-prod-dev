@@ -79,15 +79,30 @@ export async function getAuthSession() {
       return null;
     }
 
+    const username = (payload.username as string) || '';
+    const roles = Array.isArray(payload.roles) ? [...payload.roles] : [];
+    const permissions = Array.isArray(payload.permissions) ? [...payload.permissions] : [];
+    const isSuper = username.toLowerCase() === 'admin' || roles.includes('SUPER_ADMIN') || roles.includes('SUPERADMIN');
+
+    if (isSuper) {
+      if (!roles.includes('SUPER_ADMIN')) {
+        roles.unshift('SUPER_ADMIN');
+      }
+      if (!permissions.includes('*')) {
+        permissions.unshift('*');
+      }
+    }
+
     return {
       userId,
-      username: (payload.username as string) || '',
+      username,
       email: (payload.email as string) || '',
       userType: (payload.userType as string) || 'INTERNAL',
-      roles: Array.isArray(payload.roles) ? payload.roles : [],
-      permissions: Array.isArray(payload.permissions) ? payload.permissions : [],
+      roles,
+      permissions,
       scopes: Array.isArray(payload.scopes) ? payload.scopes : [],
       loginSessionId: (payload.loginSessionId as string) || '',
+      isSuperAdmin: isSuper,
     };
   } catch {
     if (refreshToken) return "REFRESH_REQUIRED";

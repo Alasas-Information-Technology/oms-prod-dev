@@ -2,6 +2,7 @@ import api from './axios';
 import {
   OrgUnitSummaryDto,
   OrgUnitDetailDto,
+  OrgUnitMemberDto,
   OrgUnitTreeNodeDto,
   OrgUnitTypeDto,
   AllowedParentTypeDto,
@@ -54,6 +55,14 @@ export const orgUnitsApi = {
    */
   getChildren: async (id: string): Promise<OrgUnitSummaryDto[]> => {
     const response = await api.get(`/organization/units/${id}/children`);
+    return response.data;
+  },
+
+  /**
+   * Retrieves assigned staff and members of an organization unit.
+   */
+  getMembers: async (id: string): Promise<OrgUnitMemberDto[]> => {
+    const response = await api.get(`/organization/units/${id}/members`);
     return response.data;
   },
 

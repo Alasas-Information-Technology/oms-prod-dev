@@ -15,6 +15,12 @@ export interface RoleDefinition {
 }
 
 export const ROLE_DEFINITIONS: Record<string, RoleDefinition> = {
+  SUPER_ADMIN: {
+    code: 'SUPER_ADMIN',
+    name: 'Super Administrator',
+    explanation: 'Unrestricted enterprise access across all business processes, platform modules, and administration.',
+    category: 'ADMIN',
+  },
   SYSTEM_ADMIN: {
     code: 'SYSTEM_ADMIN',
     name: 'System Administrator',
@@ -157,17 +163,25 @@ export interface ScopeLevelDefinition {
   hierarchyRank: number; // 1 (broadest) to 5 (narrowest)
 }
 
+export const SCOPE_DEFINITION_IDS = {
+  GLOBAL: 'F004F0CF-0BA4-4E14-B34F-87E8D0F8A597',
+  ORGANIZATION: '0CA1433E-F36B-1410-85EE-009A959FB122',
+  BUSINESS_UNIT: 'FD4D587F-8771-4014-8184-7F886C421465',
+  DEPARTMENT: '71135412-8E6B-403B-8669-E037C5BC98A1',
+  SECTION: '9833A8F2-46CF-4AB8-8C9F-DD66F162BD48',
+} as const;
+
 export const SCOPE_LEVEL_DEFINITIONS: ScopeLevelDefinition[] = [
   {
     code: 'GLOBAL',
-    scopeDefinitionId: '3053433E-F36B-1410-85ED-009A959FB341',
+    scopeDefinitionId: SCOPE_DEFINITION_IDS.GLOBAL,
     label: 'Everything',
     explanation: 'All departments across DIEZ',
     hierarchyRank: 1,
   },
   {
     code: 'BUSINESS_UNIT',
-    scopeDefinitionId: '3053433E-F36B-1410-85ED-009A959FB342',
+    scopeDefinitionId: SCOPE_DEFINITION_IDS.BUSINESS_UNIT,
     label: 'One business unit',
     explanation: 'That business unit and everything inside it',
     unitTypeId: 2,
@@ -175,7 +189,7 @@ export const SCOPE_LEVEL_DEFINITIONS: ScopeLevelDefinition[] = [
   },
   {
     code: 'DEPARTMENT',
-    scopeDefinitionId: '3053433E-F36B-1410-85ED-009A959FB343',
+    scopeDefinitionId: SCOPE_DEFINITION_IDS.DEPARTMENT,
     label: 'One department',
     explanation: 'That department and its sections',
     unitTypeId: 3,
@@ -183,7 +197,7 @@ export const SCOPE_LEVEL_DEFINITIONS: ScopeLevelDefinition[] = [
   },
   {
     code: 'SECTION',
-    scopeDefinitionId: '3053433E-F36B-1410-85ED-009A959FB344',
+    scopeDefinitionId: SCOPE_DEFINITION_IDS.SECTION,
     label: 'One section',
     explanation: 'Just that section',
     unitTypeId: 4,

@@ -181,7 +181,21 @@ export interface OrgUnitSummaryDto {
 export interface OrgUnitDetailDto extends OrgUnitSummaryDto {
   childCount: number;
   descendantCount: number;
+  peopleCount?: number;
   breadcrumb: OrgUnitBreadcrumbDto[];
+}
+
+export interface OrgUnitMemberDto {
+  userId: string;
+  username: string;
+  displayName: string;
+  email?: string | null;
+  jobTitle?: string | null;
+  mobileNo?: string | null;
+  isHead: boolean;
+  managerRoleCode?: string | null;
+  roles: string[];
+  isActive: boolean;
 }
 
 export interface OrgUnitTreeNodeDto extends OrgUnitSummaryDto {

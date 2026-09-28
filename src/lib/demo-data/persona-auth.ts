@@ -214,6 +214,11 @@ export const PERSONA_AUTH_MAP: Record<string, { roles: string[]; permissions: st
     permissions: ["*"],
     scopes: [{ scopeCode: "GLOBAL" }],
   },
+  "usr-superadmin": {
+    roles: ["SUPER_ADMIN"],
+    permissions: ["*"],
+    scopes: [{ scopeCode: "GLOBAL" }],
+  },
 };
 
 /**

@@ -29,6 +29,7 @@ export interface UserSession {
     department?: string;
     employeeId?: string;
     avatarUrl?: string;
+    isSuperAdmin?: boolean;
 }
 
 export interface User {

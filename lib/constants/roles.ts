@@ -21,4 +21,6 @@ export const ROLES = {
     VENDOR: "VENDOR",
 
     SYSTEM_ADMIN: "SYSTEM_ADMIN",
+
+    SUPER_ADMIN: "SUPER_ADMIN",
 } as const;
