@@ -514,14 +514,14 @@ function OrganizationPageContent() {
       <Sheet open={isDetailOpen} onOpenChange={setIsDetailOpen}>
         <SheetContent
           side="right"
-          className="w-full sm:max-w-2xl p-0 overflow-y-auto border-l border-border bg-background shadow-2xl"
+          className="w-full sm:max-w-2xl p-0 flex flex-col border-l-0 bg-background shadow-2xl sm:rounded-l-3xl overflow-hidden"
         >
           <SheetHeader className="sr-only">
             <SheetTitle>Organization Unit Details</SheetTitle>
             <SheetDescription>Detailed breakdown of reporting lines, teams, and staff.</SheetDescription>
           </SheetHeader>
           {detailPanelUnitId && (
-            <div className="p-0">
+            <div className="flex-1 min-h-0">
               <OrgUnitDetailView
                 unitId={detailPanelUnitId}
                 onNavigateUnit={(targetId) => {

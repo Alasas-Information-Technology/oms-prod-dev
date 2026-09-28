@@ -1,458 +1,16 @@
-"use client";
+const fs = require('fs');
+const path = 'components/organization/OrgUnitDetailView.tsx';
+let content = fs.readFileSync(path, 'utf8');
 
-import * as React from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import {
-  ChevronRight,
-  Edit2,
-  ArrowRightLeft,
-  Trash2,
-  Archive,
-  Plus,
-  Loader2,
-  FileQuestion,
-  RefreshCw,
-  MoreHorizontal,
-  User,
-  Crown,
-  Users,
-  Mail,
-} from "lucide-react";
+const returnStartIdx = content.indexOf('  return (', content.indexOf('const effectiveHeadSince ='));
+const returnEndIdx = content.lastIndexOf('  );');
 
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { DataTable, ColumnDef } from "@/components/shared/DataTable";
-import { OrgTypeIcon, OrgBreadcrumbItem } from "@/components/organization";
-import { OrgUnitForm } from "@/components/organization/OrgUnitForm";
-import { AddOrgUnitWizard } from "@/components/organization/AddOrgUnitWizard";
-import { MoveUnitDialog } from "@/components/organization/MoveUnitDialog";
-import { ArchiveUnitDialog } from "@/components/organization/ArchiveUnitDialog";
-import { DeleteUnitDialog } from "@/components/organization/DeleteUnitDialog";
-import { ManagerAssignmentPanel } from "@/components/organization/ManagerAssignmentPanel";
-
-import {
-  useOrgUnit,
-  useOrgUnitChildren,
-  useOrgUnitAncestors,
-  useOrgUnitChangeLog,
-  useOrgUnitCurrentHead,
-  useOrgUnitMembers,
-  useApprovalChain,
-  useBudgetOwner,
-  useUpdateOrgUnit,
-  useCreateOrgUnit,
-  useActivateOrgUnit,
-  useDeactivateOrgUnit,
-  useAssignManager,
-} from "@/hooks/useOrganization";
-import { usePermission } from "@/hooks/usePermission";
-import {
-  OrgUnitSummaryDto,
-  OrgUnitMemberDto,
-  OrgUnitChangeLogDto,
-  UpdateOrgUnitDto,
-  CreateOrgUnitDto,
-  ORG_PERMISSIONS,
-} from "@/lib/types/organization.types";
-import { cn } from "@/lib/utils";
-
-export interface OrgUnitDetailViewProps {
-  unitId: string;
-  onNavigateUnit?: (targetUnitId: string) => void;
-  onClose?: () => void;
-  className?: string;
+if (returnStartIdx === -1 || returnEndIdx === -1) {
+  console.error("Could not find bounds");
+  process.exit(1);
 }
 
-/**
- * Derives dynamic child tab and sub-unit terminology based on unit type.
- * Part 3.4: "Sections" under a department, "Departments" under a business unit.
- */
-function getChildTabMeta(canonicalLevel?: number, typeCode?: string): {
-  tabLabel: string;
-  singularLabel: string;
-  emptyPrompt: string;
-  targetTypeId?: number;
-} {
-  const norm = String(typeCode || "").toUpperCase();
-  if (norm === "ORGANIZATION" || norm === "ORG" || canonicalLevel === 1) {
-    return {
-      tabLabel: "Business Units",
-      singularLabel: "Business Unit",
-      emptyPrompt: "No business units yet. Add one to group related departments.",
-      targetTypeId: 2,
-    };
-  }
-  if (norm === "BUSINESS_UNIT" || norm === "BU" || canonicalLevel === 2) {
-    return {
-      tabLabel: "Departments",
-      singularLabel: "Department",
-      emptyPrompt: "No departments yet. Add one to group related teams and budgets.",
-      targetTypeId: 3,
-    };
-  }
-  if (norm === "DEPARTMENT" || norm === "DEP" || canonicalLevel === 3) {
-    return {
-      tabLabel: "Sections",
-      singularLabel: "Section",
-      emptyPrompt: "No sections yet. Add one to group this department's teams.",
-      targetTypeId: 4,
-    };
-  }
-  return {
-    tabLabel: "Teams",
-    singularLabel: "Team",
-    emptyPrompt: "No teams inside this unit yet.",
-    targetTypeId: undefined,
-  };
-}
-
-/**
- * Formats subordinate counts into a natural plain-language sentence.
- */
-function formatCountSentence(
-  childCount?: number,
-  childTypeWord?: string,
-  peopleCount?: number
-): string {
-  const parts: string[] = [];
-
-  if (childCount !== undefined && childCount > 0) {
-    parts.push(`${childCount} ${childTypeWord || "units"}`);
-  }
-
-  if (peopleCount !== undefined && peopleCount > 0) {
-    parts.push(`${peopleCount} ${peopleCount === 1 ? "person" : "people"}`);
-  }
-
-  if (parts.length === 0) {
-    return "0 units inside";
-  }
-
-  return parts.join(" · ");
-}
-
-/**
- * Formats a date string as '31 Dec 2025' per Part 3.5.
- */
-function formatDisplayDate(dateStr?: string | null): string {
-  if (!dateStr) return "";
-  try {
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return dateStr;
-    return d.toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  } catch {
-    return dateStr;
-  }
-}
-
-/**
- * Extracts 2 initials from a person's display name.
- */
-function getInitials(name?: string | null): string {
-  if (!name) return "";
-  const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-}
-
-/**
- * OrgUnitDetailView — Slide-Over Detail Panel for Organization Units.
- *
- * Implements:
- * - Part 1: Clean surface rules (white card, neutral borders, mono codes).
- * - Part 2: Vocabulary compliance (Part of, What's inside, Who's in charge, Archive/Remove).
- * - Part 3.4: Slide-over anatomy (code chip, panel label, ⋯ menu, dynamic child tab, definition list).
- * - Part 6.5: Genuine 404 error page, indented skeletons, inviting empty states.
- */
-export function OrgUnitDetailView({
-  unitId,
-  onNavigateUnit,
-  onClose,
-  className,
-}: OrgUnitDetailViewProps) {
-  const router = useRouter();
-  const { can } = usePermission();
-
-  const [activeTab, setActiveTab] = React.useState("overview");
-  const [isEditOpen, setIsEditOpen] = React.useState(false);
-  const [isMoveOpen, setIsMoveOpen] = React.useState(false);
-  const [isArchiveOpen, setIsArchiveOpen] = React.useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = React.useState(false);
-  const [isAddChildOpen, setIsAddChildOpen] = React.useState(false);
-
-  // Data Queries
-  const {
-    data: unit,
-    isLoading: isLoadingUnit,
-    isError: isErrorUnit,
-    refetch: refetchUnit,
-  } = useOrgUnit(unitId);
-
-  const { data: ancestorsList } = useOrgUnitAncestors(unitId);
-  const { data: childrenList, isLoading: isLoadingChildren } = useOrgUnitChildren(unitId);
-  const { data: changeLogsData, isLoading: isLoadingLogs } = useOrgUnitChangeLog(unitId, 1, 50);
-  const { data: approvalChain, isLoading: isLoadingChain } = useApprovalChain(unitId);
-  const { data: budgetOwner, isLoading: isLoadingBudget } = useBudgetOwner(unitId);
-  const { data: currentHead } = useOrgUnitCurrentHead(unitId);
-  const { data: membersList } = useOrgUnitMembers(unitId);
-
-  // Mutations
-  const updateMutation = useUpdateOrgUnit();
-  const createMutation = useCreateOrgUnit();
-  const activateMutation = useActivateOrgUnit();
-  const deactivateMutation = useDeactivateOrgUnit();
-  const assignMutation = useAssignManager();
-
-  // Derived metadata
-  const typeCode = unit?.type?.code || unit?.orgUnitType?.code;
-  const canonicalLevel = unit?.type?.canonicalLevel || unit?.orgUnitType?.canonicalLevel || unit?.depth || 1;
-  const childMeta = getChildTabMeta(canonicalLevel, typeCode);
-  const typeName = unit?.type?.name || unit?.orgUnitType?.name || childMeta.singularLabel;
-
-  // Ancestor Breadcrumb Items
-  const breadcrumbItems: OrgBreadcrumbItem[] = React.useMemo(() => {
-    if (!ancestorsList || ancestorsList.length === 0) return [];
-    return ancestorsList.map((a) => ({
-      orgUnitId: a.orgUnitId,
-      name: a.name,
-      nameAr: a.nameAr || undefined,
-      code: a.code,
-      typeCode: a.type?.code || a.orgUnitType?.code,
-    }));
-  }, [ancestorsList]);
-
-  // Loading State: Skeleton Screen (Part 6.5)
-  if (isLoadingUnit) {
-    return (
-      <div className={cn("space-y-6 p-6", className)} aria-label="Loading details...">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-5 w-16 rounded" />
-            <Skeleton className="h-4 w-32 rounded" />
-          </div>
-          <div className="flex items-center justify-between pt-2">
-            <div className="flex items-center gap-3">
-              <Skeleton className="h-8 w-8 rounded-lg" />
-              <Skeleton className="h-7 w-48 rounded" />
-            </div>
-            <div className="flex gap-2">
-              <Skeleton className="h-8 w-16 rounded" />
-              <Skeleton className="h-8 w-8 rounded" />
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-4 pt-4">
-          <Skeleton className="h-48 rounded-md" />
-          <Skeleton className="h-32 rounded-md" />
-        </div>
-      </div>
-    );
-  }
-
-  // Error State: Genuine 404 (Part 6.5 & Vocabulary: Never say "Scope")
-  if (isErrorUnit || !unit) {
-    return (
-      <div className={cn("p-12 text-center flex flex-col items-center justify-center min-h-[450px] space-y-4 bg-card rounded-md border border-border", className)}>
-        <div className="h-16 w-16 rounded-full bg-muted/60 flex items-center justify-center text-muted-foreground">
-          <FileQuestion className="h-8 w-8 text-muted-foreground/60" />
-        </div>
-        <div className="space-y-1.5 max-w-md">
-          <h2 className="text-xl font-bold text-foreground">Department Not Available</h2>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            This department isn&apos;t available or you don&apos;t have access to view it.
-          </p>
-        </div>
-        <div className="flex items-center gap-3 pt-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetchUnit()}
-            className="gap-1.5 text-xs"
-          >
-            <RefreshCw className="h-3.5 w-3.5" />
-            Retry
-          </Button>
-          <Button asChild size="sm" className="text-xs">
-            <Link href="/app/administration/master-data/organization">
-              Return to Organization
-            </Link>
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  const handleUpdateSubmit = async (data: UpdateOrgUnitDto) => {
-    try {
-      await updateMutation.mutateAsync({ id: unit.orgUnitId, dto: data });
-      toast.success(`${data.name} updated successfully.`);
-      setIsEditOpen(false);
-      refetchUnit();
-    } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to update.";
-      toast.error(errorMsg);
-    }
-  };
-
-  const handleAddChildSubmit = async (data: CreateOrgUnitDto, leaderUserId?: string | null) => {
-    try {
-      const created = await createMutation.mutateAsync({ ...data, parentOrgUnitId: unit.orgUnitId });
-      if (leaderUserId) {
-        try {
-          await assignMutation.mutateAsync({
-            unitId: created.orgUnitId,
-            dto: {
-              userId: leaderUserId,
-              managerRoleCode: "HEAD",
-              isPrimary: true,
-              effectiveFrom: new Date().toISOString().split("T")[0],
-            },
-          });
-        } catch {
-          // Leadership assignment fallback
-        }
-      }
-      toast.success(`${created.name} added under ${unit.name}.`);
-      setIsAddChildOpen(false);
-      refetchUnit();
-      onNavigateUnit?.(created.orgUnitId);
-    } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to add.";
-      toast.error(errorMsg);
-    }
-  };
-
-  const handleToggleArchive = async () => {
-    try {
-      if (unit.isActive) {
-        await deactivateMutation.mutateAsync({
-          id: unit.orgUnitId,
-          effectiveTo: new Date().toISOString().split("T")[0],
-        });
-        toast.success(`${unit.name} archived.`);
-      } else {
-        await activateMutation.mutateAsync(unit.orgUnitId);
-        toast.success(`${unit.name} restored from archive.`);
-      }
-      refetchUnit();
-    } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to update status.";
-      toast.error(errorMsg);
-    }
-  };
-
-  // Child Units Table Columns (Part 3.4)
-  const childrenColumns: ColumnDef<OrgUnitSummaryDto>[] = [
-    {
-      key: "name",
-      header: "Name",
-      render: (_, row) => (
-        <div
-          className="flex items-center gap-2 cursor-pointer group"
-          onClick={() => onNavigateUnit?.(row.orgUnitId)}
-        >
-          <OrgTypeIcon type={row.orgUnitTypeId} size="xs" />
-          <div className="space-y-0.5 min-w-0">
-            <span className="font-semibold text-xs text-foreground group-hover:text-primary group-hover:underline truncate block">
-              {row.name}
-            </span>
-            {row.nameAr && (
-              <span dir="rtl" lang="ar" className="text-[11px] text-muted-foreground font-arabic truncate block">
-                {row.nameAr}
-              </span>
-            )}
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: "code",
-      header: "Code",
-      render: (_, row) => (
-        <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border/50">
-          {row.code}
-        </span>
-      ),
-    },
-    {
-      key: "head",
-      header: "Who's in charge",
-      render: (_, row) =>
-        row.head?.displayName || row.head?.userDisplayName ? (
-          <span className="text-xs font-medium text-foreground flex items-center gap-1.5 truncate">
-            <User className="h-3 w-3 text-muted-foreground" />
-            {row.head?.displayName || row.head?.userDisplayName}
-          </span>
-        ) : (
-          <span className="text-xs text-muted-foreground font-normal">No one in charge</span>
-        ),
-    },
-    {
-      key: "counts",
-      header: "What's inside",
-      render: (_, row) => (
-        <span className="text-xs text-muted-foreground">
-          {row.childCount || 0} teams
-        </span>
-      ),
-    },
-    {
-      key: "status",
-      header: "Status",
-      render: (_, row) => (
-        <Badge
-          variant={row.isActive ? "default" : "secondary"}
-          className="text-[10px] uppercase font-semibold"
-        >
-          {row.isActive ? "Active" : "Archived"}
-        </Badge>
-      ),
-    },
-  ];
-
-  const totalInsideCount = unit.descendantCount ?? unit.childCount ?? 0;
-  const countSentence = formatCountSentence(
-    unit.childCount,
-    childMeta.tabLabel.toLowerCase(),
-    (unit as any).peopleCount ?? (unit as any).assignedUserCount
-  );
-
-  const headName =
-    currentHead?.userDisplayName ||
-    currentHead?.username ||
-    unit.head?.displayName ||
-    unit.head?.userDisplayName;
-  const isHeadAssigned = Boolean(headName && headName !== "Assigned Head");
-  const effectiveHeadSince = currentHead?.effectiveFrom
-    ? String(currentHead.effectiveFrom).split("T")[0]
-    : unit.head?.effectiveFrom
-      ? String(unit.head.effectiveFrom).split("T")[0]
-      : null;
-
-  return (
+const replacement = `  return (
     <div className={cn("flex flex-col h-full bg-[#f5f5f7] dark:bg-black", className)}>
       {/* ── HEADER ── */}
       <div className="bg-background shrink-0 rounded-t-xl overflow-hidden">
@@ -541,7 +99,7 @@ export function OrgUnitDetailView({
                       className="gap-2 text-[13px] font-medium cursor-pointer rounded-lg py-2"
                     >
                       <Archive className="size-4 text-amber-600" />
-                      <span>{unit.isActive ? `Archive ${typeName.toLowerCase()}` : `Restore ${typeName.toLowerCase()}`}</span>
+                      <span>{unit.isActive ? \`Archive \${typeName.toLowerCase()}\` : \`Restore \${typeName.toLowerCase()}\`}</span>
                     </DropdownMenuItem>
                   )}
                   {can(ORG_PERMISSIONS.DELETE) && (
@@ -653,7 +211,7 @@ export function OrgUnitDetailView({
                        </div>
                        <div className="min-w-0">
                          <p className="text-[15px] font-medium text-foreground truncate">{isHeadAssigned ? headName : "Unassigned"}</p>
-                         <p className="text-[13px] text-slate-500 mt-0.5 truncate">{isHeadAssigned ? `Head · Since ${formatDisplayDate(effectiveHeadSince)}` : "No active leader"}</p>
+                         <p className="text-[13px] text-slate-500 mt-0.5 truncate">{isHeadAssigned ? \`Head · Since \${formatDisplayDate(effectiveHeadSince)}\` : "No active leader"}</p>
                        </div>
                     </div>
                  </div>
@@ -758,7 +316,7 @@ export function OrgUnitDetailView({
                    keyField="orgUnitId"
                    loading={isLoadingChildren}
                    onRowClick={(row) => onNavigateUnit?.(row.orgUnitId)}
-                   emptyMessage={`No ${childMeta.tabLabel.toLowerCase()} added under ${unit.name} yet.`}
+                   emptyMessage={\`No \${childMeta.tabLabel.toLowerCase()} added under \${unit.name} yet.\`}
                  />
                </div>
              </div>
@@ -801,17 +359,17 @@ export function OrgUnitDetailView({
                            })
                          : "Recently";
 
-                       let sentence = `${unit.name} updated — ${operator}, ${formattedDate}`;
+                       let sentence = \`\${unit.name} updated — \${operator}, \${formattedDate}\`;
                        if (isMove) {
-                         sentence = `Moved from ${oldParent} to ${newParent} — ${operator}, ${formattedDate}`;
+                         sentence = \`Moved from \${oldParent} to \${newParent} — \${operator}, \${formattedDate}\`;
                        } else if (log.changeType === "MANAGER_ASSIGNED") {
-                         sentence = `Assigned leader — ${operator}, ${formattedDate}`;
+                         sentence = \`Assigned leader — \${operator}, \${formattedDate}\`;
                        } else if (log.changeType === "CREATED") {
-                         sentence = `Created under ${newParent} — ${operator}, ${formattedDate}`;
+                         sentence = \`Created under \${newParent} — \${operator}, \${formattedDate}\`;
                        } else if (log.changeType === "DEACTIVATED") {
-                         sentence = `Archived — ${operator}, ${formattedDate}`;
+                         sentence = \`Archived — \${operator}, \${formattedDate}\`;
                        } else if (log.changeType === "ACTIVATED") {
-                         sentence = `Restored — ${operator}, ${formattedDate}`;
+                         sentence = \`Restored — \${operator}, \${formattedDate}\`;
                        }
 
                        const friendlyTag =
@@ -925,5 +483,8 @@ export function OrgUnitDetailView({
         }}
       />
     </div>
-  );
-}
+  );`;
+
+const newContent = content.substring(0, returnStartIdx) + replacement + "\n}\n";
+fs.writeFileSync(path, newContent);
+console.log('Successfully updated OrgUnitDetailView.tsx properly');
