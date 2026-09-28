@@ -115,11 +115,28 @@ const ROSTER: UserExpectation[] = [
     expectedSidebar: ["Onboarding", "Compliance", "Company Profile"],
     isVendor: true,
   },
+  {
+    email: "admin",
+    name: "System Administrator",
+    expectedRoleDescription: "Super Administrator",
+    expectedSidebar: [
+      "Dashboard",
+      "My Requests",
+      "All Requests",
+      "HR Review",
+      "Budget",
+      "Candidates",
+      "Workforce",
+      "Vendors",
+      "Reports",
+      "Administration",
+    ],
+  },
 ];
 
 async function main() {
   console.log("================================================================================");
-  console.log("TESTING REAL LOGIN & RBAC SIDEBAR RENDERING FOR ALL 16 CANONICAL USERS");
+  console.log("TESTING REAL LOGIN & RBAC SIDEBAR RENDERING FOR ALL CANONICAL USERS + ADMIN");
   console.log("================================================================================\n");
 
   const results: any[] = [];
@@ -136,6 +153,7 @@ async function main() {
     let loginError: string | null = null;
 
     try {
+      const password = (item as any).email === "admin" ? "Admin@123" : DEMO_PASSWORD;
       const res = await fetch("http://localhost:3000/api/auth/login", {
         method: "POST",
         headers: {
@@ -144,7 +162,7 @@ async function main() {
         },
         body: JSON.stringify({
           username: item.email,
-          password: DEMO_PASSWORD,
+          password,
           confirmRevokeOldest: true,
         }),
       });
@@ -192,12 +210,20 @@ async function main() {
       // Fixed Vendor Portal IA
       actualSidebar = ["Onboarding", "Compliance", "Company Profile"];
     } else {
+      const isSuper =
+        sessionData.username?.toLowerCase() === "admin" ||
+        sessionData.roles?.includes("SUPER_ADMIN") ||
+        sessionData.roles?.includes("SUPERADMIN") ||
+        Boolean(sessionData.isSuperAdmin);
+
       const context: NavUserContext = {
         userId: sessionData.userId,
+        username: sessionData.username,
         roles: sessionData.roles || [],
         permissions: sessionData.permissions || [],
         scopes: sessionData.scopes || [],
-        isSystemAdmin: sessionData.roles?.includes("SYSTEM_ADMIN") || sessionData.roles?.includes("ADMIN"),
+        isSystemAdmin: !isSuper && (sessionData.roles?.includes("SYSTEM_ADMIN") || sessionData.roles?.includes("ADMIN")),
+        isSuperAdmin: isSuper,
       };
 
       const groups = getFilteredNavGroups(context);

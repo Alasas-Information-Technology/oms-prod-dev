@@ -54,12 +54,24 @@ export function InternalSidebar({ ...props }: React.ComponentProps<typeof Sideba
   // Build resolved user context combining active JWT session with demo persona fallback
   const userContext: NavUserContext = React.useMemo(() => {
     if (user && user.roles && user.roles.length > 0) {
+      const isSuper =
+        user.username?.toLowerCase() === "admin" ||
+        user.roles.includes("SUPER_ADMIN") ||
+        user.roles.includes("SUPERADMIN") ||
+        Boolean((user as any).isSuperAdmin);
+
       return {
         userId: user.userId,
-        roles: user.roles,
-        permissions: user.permissions || [],
+        username: user.username,
+        roles: isSuper && !user.roles.includes("SUPER_ADMIN")
+          ? ["SUPER_ADMIN", ...user.roles]
+          : user.roles,
+        permissions: isSuper && !user.permissions?.includes("*")
+          ? ["*", ...(user.permissions || [])]
+          : (user.permissions || []),
         scopes: user.scopes || [],
-        isSystemAdmin: user.roles.includes("SYSTEM_ADMIN") || user.roles.includes("ADMIN"),
+        isSystemAdmin: !isSuper && (user.roles.includes("SYSTEM_ADMIN") || user.roles.includes("ADMIN")),
+        isSuperAdmin: isSuper,
       };
     }
 
@@ -67,12 +79,19 @@ export function InternalSidebar({ ...props }: React.ComponentProps<typeof Sideba
     const personaId = getActivePersonaId();
     const config = PERSONA_AUTH_MAP[personaId];
     if (config) {
+      const isSuper =
+        personaId === "usr-superadmin" ||
+        config.roles.includes("SUPER_ADMIN") ||
+        config.roles.includes("SUPERADMIN");
+
       return {
         userId: personaId,
+        username: personaId.replace("usr-", ""),
         roles: config.roles,
         permissions: config.permissions,
         scopes: config.scopes,
-        isSystemAdmin: config.roles.includes("SYSTEM_ADMIN") || config.roles.includes("ADMIN"),
+        isSystemAdmin: !isSuper && (config.roles.includes("SYSTEM_ADMIN") || config.roles.includes("ADMIN")),
+        isSuperAdmin: isSuper,
       };
     }
 
@@ -82,6 +101,7 @@ export function InternalSidebar({ ...props }: React.ComponentProps<typeof Sideba
       permissions: ["REQUISITION.VIEW", "REQUISITION.CREATE"],
       scopes: [],
       isSystemAdmin: false,
+      isSuperAdmin: false,
     };
   }, [user]);
 

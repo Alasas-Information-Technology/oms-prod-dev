@@ -377,11 +377,19 @@ export function AccountDropdown({
     const displayEmail =
         user?.email || (isVendorPortal ? "layla.hassan@falcontech.ae" : "user@diez.ae");
 
-    const rawRole =
-        user?.roles?.[0] || user?.userType || (isVendorPortal ? "Vendor Coordinator" : "Internal");
+    const isSuper =
+        user?.username?.toLowerCase() === "admin" ||
+        user?.roles?.includes("SUPER_ADMIN") ||
+        user?.roles?.includes("SUPERADMIN") ||
+        Boolean((user as any)?.isSuperAdmin);
 
-    const userRole =
-        rawRole === "VENDOR"
+    const rawRole = isSuper
+        ? "SUPER_ADMIN"
+        : user?.roles?.[0] || user?.userType || (isVendorPortal ? "Vendor Coordinator" : "Internal");
+
+    const userRole = isSuper
+        ? "Super Administrator"
+        : rawRole === "VENDOR"
             ? "Vendor Coordinator"
             : rawRole
                 .split("_")
@@ -400,7 +408,8 @@ export function AccountDropdown({
     // Permission check for Administration menu item
     const canAccessAdmin =
         !isVendorPortal &&
-        (can("ADMIN.VIEW") ||
+        (isSuper ||
+            can("ADMIN.VIEW") ||
             can("USER.CREATE") ||
             can("ORG.VIEW") ||
             user?.roles?.includes("SYSTEM_ADMIN") ||

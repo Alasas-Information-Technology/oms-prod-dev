@@ -499,6 +499,9 @@ function UserDetailPageContent() {
             dto: {
               scopeDefinitionId: stagedScope.scopeDefinitionId,
               orgUnitId: stagedScope.orgUnitId || undefined,
+              departmentId: stagedScope.levelCode === "DEPARTMENT" ? stagedScope.orgUnitId || undefined : undefined,
+              businessUnitId: stagedScope.levelCode === "BUSINESS_UNIT" ? stagedScope.orgUnitId || undefined : undefined,
+              sectionId: stagedScope.levelCode === "SECTION" ? stagedScope.orgUnitId || undefined : undefined,
             },
           });
 

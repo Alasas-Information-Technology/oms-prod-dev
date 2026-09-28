@@ -130,6 +130,17 @@ export function AuthProvider({
             }
           }
         } catch {}
+
+        if (finalSession.username?.toLowerCase() === "admin" || finalSession.roles?.includes("SUPER_ADMIN")) {
+          finalSession.isSuperAdmin = true;
+          if (!finalSession.roles?.includes("SUPER_ADMIN")) {
+            finalSession.roles = ["SUPER_ADMIN", ...(finalSession.roles || [])];
+          }
+          if (!finalSession.permissions?.includes("*")) {
+            finalSession.permissions = ["*", ...(finalSession.permissions || [])];
+          }
+        }
+
         setUser(finalSession);
       } else {
         setUser(null);
@@ -228,6 +239,16 @@ export function AuthProvider({
             session !== "REFRESH_REQUIRED"
               ? session
               : (response.data?.session ?? null);
+
+          if (resolvedSession && (resolvedSession.username?.toLowerCase() === "admin" || resolvedSession.roles?.includes("SUPER_ADMIN"))) {
+            resolvedSession.isSuperAdmin = true;
+            if (!resolvedSession.roles?.includes("SUPER_ADMIN")) {
+              resolvedSession.roles = ["SUPER_ADMIN", ...(resolvedSession.roles || [])];
+            }
+            if (!resolvedSession.permissions?.includes("*")) {
+              resolvedSession.permissions = ["*", ...(resolvedSession.permissions || [])];
+            }
+          }
 
           setUser(resolvedSession);
           return resolvedSession;

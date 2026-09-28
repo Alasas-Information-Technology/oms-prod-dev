@@ -61,6 +61,12 @@ export async function proxy(request: NextRequest) {
         const permissions = Array.isArray(payload.permissions) ? payload.permissions : [];
         const scopes = Array.isArray(payload.scopes) ? payload.scopes : [];
 
+        const username = (payload.username as string) || '';
+        const isSuperAdmin =
+            username.toLowerCase() === 'admin' ||
+            roles.includes('SUPER_ADMIN') ||
+            roles.includes('SUPERADMIN');
+
         if (!userId) {
             throw new Error('Invalid JWT payload: missing userId');
         }
@@ -72,7 +78,7 @@ export async function proxy(request: NextRequest) {
 
         // Internal Portal Protection
         if (INTERNAL_ROUTES.some((route) => pathname.startsWith(route))) {
-            if (userType !== 'INTERNAL') {
+            if (userType !== 'INTERNAL' && !isSuperAdmin) {
                 if (isApiRoute) {
                     return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
                 }
@@ -82,7 +88,7 @@ export async function proxy(request: NextRequest) {
 
         // Vendor Portal Protection
         if (VENDOR_ROUTES.some((route) => pathname.startsWith(route))) {
-            if (userType !== 'VENDOR') {
+            if (userType !== 'VENDOR' && !isSuperAdmin) {
                 if (isApiRoute) {
                     return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
                 }

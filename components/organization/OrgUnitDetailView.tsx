@@ -16,6 +16,9 @@ import {
   RefreshCw,
   MoreHorizontal,
   User,
+  Crown,
+  Users,
+  Mail,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -51,6 +54,7 @@ import {
   useOrgUnitAncestors,
   useOrgUnitChangeLog,
   useOrgUnitCurrentHead,
+  useOrgUnitMembers,
   useApprovalChain,
   useBudgetOwner,
   useUpdateOrgUnit,
@@ -62,6 +66,7 @@ import {
 import { usePermission } from "@/hooks/usePermission";
 import {
   OrgUnitSummaryDto,
+  OrgUnitMemberDto,
   OrgUnitChangeLogDto,
   UpdateOrgUnitDto,
   CreateOrgUnitDto,
@@ -211,6 +216,7 @@ export function OrgUnitDetailView({
   const { data: approvalChain, isLoading: isLoadingChain } = useApprovalChain(unitId);
   const { data: budgetOwner, isLoading: isLoadingBudget } = useBudgetOwner(unitId);
   const { data: currentHead } = useOrgUnitCurrentHead(unitId);
+  const { data: membersList } = useOrgUnitMembers(unitId);
 
   // Mutations
   const updateMutation = useUpdateOrgUnit();
