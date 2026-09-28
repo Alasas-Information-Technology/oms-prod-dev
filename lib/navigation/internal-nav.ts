@@ -14,6 +14,7 @@
 import React from "react";
 import {
   LayoutDashboard,
+  CalendarDays,
   FileText,
   Wallet,
   Users,
@@ -132,6 +133,12 @@ export const INTERNAL_NAV_GROUPS: InternalNavGroup[] = [
         icon: LayoutDashboard,
         // Dashboard is always visible to any authenticated internal user
         isPermitted: (ctx) => !ctx.isSystemAdmin || true,
+      },
+      {
+        id: "nav-leave",
+        title: "Leave",
+        url: "/app/leave",
+        icon: CalendarDays,
       },
       {
         id: "nav-my-requests",
