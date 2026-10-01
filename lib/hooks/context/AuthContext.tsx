@@ -1,0 +1,430 @@
+"use client";
+
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
+import { UserSession } from "@/lib/types/auth.types";
+
+import {
+  clearAuthCookie,
+  getAuthSession,
+} from "@/app/actions/auth";
+
+import api from "@/lib/api/axios";
+
+interface AuthContextType {
+  user: UserSession | null;
+
+  isLoading: boolean;
+
+  login: (
+    username: string,
+    password: string,
+    confirmRevokeOldest?: boolean
+  ) => Promise<UserSession | null>;
+
+  logout: () => Promise<void>;
+
+  fetchUser: () => Promise<void>;
+
+  refreshSession: () => Promise<void>;
+
+  updateUserProfile: (profile: Partial<UserSession>) => void;
+}
+
+const AuthContext =
+  createContext<
+    AuthContextType | undefined
+  >(undefined);
+
+export function AuthProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
+
+  const [user, setUser] =
+    useState<UserSession | null>(
+      null
+    );
+
+  const [isLoading, setIsLoading] =
+    useState(true);
+
+  /**
+   * Sync API client headers with user state
+   */
+  // useEffect(() => {
+  //   if (user) {
+  //     api.defaults.headers.common["x-user-id"] = user.userId;
+  //     api.defaults.headers.common["x-login-session-id"] = user.loginSessionId;
+  //   } else {
+  //     delete api.defaults.headers.common["x-user-id"];
+  //     delete api.defaults.headers.common["x-login-session-id"];
+  //   }
+  // }, [user]);
+
+  /**
+   * Prevent multiple refreshes
+   * running simultaneously
+   */
+  const refreshInProgress =
+    useRef<Promise<void> | null>(null);
+
+  /**
+   * Silent Refresh
+   */
+  const refreshSession =
+    async () => {
+
+      if (
+        refreshInProgress.current
+      ) {
+        return refreshInProgress.current;
+      }
+
+      const promise = (async () => {
+        try {
+          await api.post(
+            "/auth/refresh"
+          );
+        } finally {
+          refreshInProgress.current = null;
+        }
+      })();
+
+      refreshInProgress.current = promise;
+      return promise;
+    };
+
+  /**
+   * Loads authenticated user
+   */
+  const fetchUser = async () => {
+    setIsLoading(true);
+    try {
+      let sessionResult = await getAuthSession();
+      if (sessionResult === "REFRESH_REQUIRED") {
+        try {
+          await refreshSession();
+          sessionResult = await getAuthSession();
+        } catch {
+          sessionResult = null;
+        }
+      }
+
+      if (sessionResult && sessionResult !== "REFRESH_REQUIRED") {
+        let finalSession = sessionResult as UserSession;
+        try {
+          if (typeof window !== "undefined") {
+            const cachedProfile = localStorage.getItem("oms_user_profile");
+            if (cachedProfile) {
+              const profileData = JSON.parse(cachedProfile);
+              finalSession = { ...finalSession, ...profileData };
+            }
+          }
+        } catch {}
+
+        if (finalSession.username?.toLowerCase() === "admin" || finalSession.roles?.includes("SUPER_ADMIN")) {
+          finalSession.isSuperAdmin = true;
+          if (!finalSession.roles?.includes("SUPER_ADMIN")) {
+            finalSession.roles = ["SUPER_ADMIN", ...(finalSession.roles || [])];
+          }
+          if (!finalSession.permissions?.includes("*")) {
+            finalSession.permissions = ["*", ...(finalSession.permissions || [])];
+          }
+        }
+
+        setUser(finalSession);
+      } else {
+        setUser(null);
+      }
+    } catch {
+      setUser(null);
+    }
+    setIsLoading(false);
+  };
+
+  /**
+   * Enterprise Logout
+   */
+  const forceLogout =
+    async () => {
+
+      try {
+        await api.post(
+          "/auth/logout"
+        );
+      } catch (err) {
+        console.error(
+          err
+        );
+      }
+
+      try {
+        await clearAuthCookie();
+      } catch { }
+
+      if (typeof window !== "undefined") {
+        document.cookie = "oms_access_token=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        document.cookie = "oms_refresh_token=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        try {
+          localStorage.removeItem("oms_demo_persona");
+          localStorage.removeItem("oms_user_profile");
+        } catch {}
+      }
+
+      setUser(
+        null
+      );
+
+      if (
+        typeof window !==
+        "undefined"
+      ) {
+        window.location.href =
+          "/login";
+      }
+    };
+
+  /**
+   * Login
+   */
+    const login =
+      async (
+        username: string,
+        password: string,
+        confirmRevokeOldest?: boolean
+      ) => {
+  
+        try {
+          const response =
+            await api.post(
+              "/auth/login",
+              {
+                username,
+                password,
+                confirmRevokeOldest
+              }
+            );
+  
+          if (
+            !response.data.success
+          ) {
+  
+            throw new Error(
+              response.data.message ??
+              "Login failed"
+            );
+          }
+  
+          /**
+           * Login API already set:
+           *
+           * oms_access_token
+           * oms_refresh_token
+           * oms_device_id
+           */
+  
+          const session =
+            await getAuthSession();
+  
+          const resolvedSession =
+            session !== "REFRESH_REQUIRED"
+              ? session
+              : (response.data?.session ?? null);
+
+          if (resolvedSession && (resolvedSession.username?.toLowerCase() === "admin" || resolvedSession.roles?.includes("SUPER_ADMIN"))) {
+            resolvedSession.isSuperAdmin = true;
+            if (!resolvedSession.roles?.includes("SUPER_ADMIN")) {
+              resolvedSession.roles = ["SUPER_ADMIN", ...(resolvedSession.roles || [])];
+            }
+            if (!resolvedSession.permissions?.includes("*")) {
+              resolvedSession.permissions = ["*", ...(resolvedSession.permissions || [])];
+            }
+          }
+
+          setUser(resolvedSession);
+          return resolvedSession;
+        } catch (error: any) {
+          if (error.response?.data?.code === "CONFIRM_REVOKE_OLDEST") {
+            const customError = new Error("CONFIRM_REVOKE_OLDEST");
+            (customError as any).code = "CONFIRM_REVOKE_OLDEST";
+            throw customError;
+          }
+          throw new Error(error.response?.data?.message || error.message || "Login failed");
+        }
+      };
+
+  /**
+   * Logout
+   */
+  const logout =
+    async () => {
+
+      await forceLogout();
+    };
+
+  /**
+   * Initial App Load
+   *
+   * Auto Login
+   */
+  useEffect(() => {
+
+    fetchUser();
+
+  }, []);
+
+  /**
+   * Refresh every 10 minutes
+   *
+   * Access token = 15 mins
+   */
+  useEffect(() => {
+
+    const interval =
+      setInterval(
+        async () => {
+
+          try {
+
+            await refreshSession();
+
+          } catch {
+
+            /**
+             * Ignore
+             *
+             * User may already
+             * be logged out.
+             */
+          }
+
+        },
+        10 * 60 * 1000
+      );
+
+    return () =>
+      clearInterval(
+        interval
+      );
+
+  }, []);
+
+  /**
+   * Refresh when tab
+   * becomes active again
+   *
+   * Solves:
+   *
+   * Laptop sleep
+   * Browser reopen
+   * Long inactivity
+   */
+  useEffect(() => {
+
+    const handleFocus =
+      async () => {
+
+        try {
+
+          const sessionResult =
+            await getAuthSession();
+
+          if (sessionResult === "REFRESH_REQUIRED") {
+            try {
+              await refreshSession();
+              const newSession = await getAuthSession();
+              setUser(newSession !== "REFRESH_REQUIRED" ? newSession : null);
+            } catch {
+              setUser(null);
+            }
+          } else {
+            setUser(sessionResult);
+          }
+
+        } catch {
+
+          setUser(
+            null
+          );
+        }
+      };
+
+    window.addEventListener(
+      "focus",
+      handleFocus
+    );
+
+    return () => {
+
+      window.removeEventListener(
+        "focus",
+        handleFocus
+      );
+    };
+
+  }, []);
+
+
+
+  const updateUserProfile = (profileData: Partial<UserSession>) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const updated = { ...prev, ...profileData };
+      try {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("oms_user_profile", JSON.stringify(profileData));
+        }
+      } catch {}
+      return updated;
+    });
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+
+        isLoading,
+
+        login,
+
+        logout,
+
+        fetchUser,
+
+        refreshSession,
+
+        updateUserProfile,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    return {
+      user: null,
+      isLoading: false,
+      login: async () => null,
+      logout: async () => {},
+      fetchUser: async () => {},
+      refreshSession: async () => {},
+      updateUserProfile: () => {},
+    };
+  }
+
+  return context;
+}
