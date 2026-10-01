@@ -176,7 +176,7 @@ export default function VisualCoveragePrimitivesDemo() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-4 rounded-xl border border-border/70 bg-card/60 backdrop-blur-xs">
+          <div className="p-4 rounded-lg border border-border/70 bg-card/60 backdrop-blur-xs">
             <div className="flex items-center justify-between mb-4">
               <span className="text-xs font-semibold text-muted-foreground">Onboarding Cases per Week</span>
               <span className="text-xs text-muted-foreground tabular-nums font-medium">8 Weeks</span>
@@ -192,7 +192,7 @@ export default function VisualCoveragePrimitivesDemo() {
             />
           </div>
 
-          <div className="p-4 rounded-xl border border-border/70 bg-card/60 backdrop-blur-xs">
+          <div className="p-4 rounded-lg border border-border/70 bg-card/60 backdrop-blur-xs">
             <div className="flex items-center justify-between mb-4">
               <span className="text-xs font-semibold text-muted-foreground">Notifications Sent per Day</span>
               <span className="text-xs text-muted-foreground tabular-nums font-medium">Last 7 Days</span>
@@ -221,7 +221,7 @@ export default function VisualCoveragePrimitivesDemo() {
           </p>
         </div>
 
-        <div className="p-4 rounded-xl border border-border/70 bg-card/60 backdrop-blur-xs space-y-4">
+        <div className="p-4 rounded-lg border border-border/70 bg-card/60 backdrop-blur-xs space-y-4">
           <DistributionBar
             segments={distributionSegments}
           />
@@ -240,7 +240,7 @@ export default function VisualCoveragePrimitivesDemo() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-4 rounded-xl border border-border/70 bg-card/60 space-y-2">
+          <div className="p-4 rounded-lg border border-border/70 bg-card/60 space-y-2">
             <div className="flex justify-between text-xs">
               <span className="font-medium text-muted-foreground">Emiratisation (14.1% / 15%)</span>
               <span className="font-semibold text-amber-600 dark:text-amber-400">14.1%</span>
@@ -248,7 +248,7 @@ export default function VisualCoveragePrimitivesDemo() {
             <SegmentedBar value={14.1} color="var(--warning-border)" />
           </div>
 
-          <div className="p-4 rounded-xl border border-border/70 bg-card/60 space-y-2">
+          <div className="p-4 rounded-lg border border-border/70 bg-card/60 space-y-2">
             <div className="flex justify-between text-xs">
               <span className="font-medium text-muted-foreground">Compliant Quota (18.5% / 15%)</span>
               <span className="font-semibold text-emerald-600 dark:text-emerald-400">18.5%</span>
@@ -256,7 +256,7 @@ export default function VisualCoveragePrimitivesDemo() {
             <SegmentedBar value={18.5} color="var(--success-border)" />
           </div>
 
-          <div className="p-4 rounded-xl border border-border/70 bg-card/60 space-y-2">
+          <div className="p-4 rounded-lg border border-border/70 bg-card/60 space-y-2">
             <div className="flex justify-between text-xs">
               <span className="font-medium text-muted-foreground">Vendor Acceptance Rate</span>
               <span className="font-semibold text-foreground">78.0%</span>
@@ -277,7 +277,7 @@ export default function VisualCoveragePrimitivesDemo() {
           </p>
         </div>
 
-        <div className="p-4 rounded-xl border border-border/70 bg-card/60 space-y-3">
+        <div className="p-4 rounded-lg border border-border/70 bg-card/60 space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
             {testSeverities.map((item) => (
               <div
@@ -334,7 +334,7 @@ export default function VisualCoveragePrimitivesDemo() {
           </p>
         </div>
 
-        <div className="p-4 rounded-xl border border-border/70 bg-card/60">
+        <div className="p-4 rounded-lg border border-border/70 bg-card/60">
           <Sparkline data={kpiData30} height={28} color="var(--accent-interactive, var(--primary))" />
         </div>
       </section>
@@ -474,7 +474,7 @@ export default function VisualCoveragePrimitivesDemo() {
         {/* Persona Specific Band D Sections per Verification Requirement */}
         <div className="pt-8 space-y-8 border-t border-border/60">
           {/* HR Persona Band D */}
-          <div className="space-y-3 p-4 rounded-xl border border-border/70 bg-card/40">
+          <div className="space-y-3 p-4 rounded-lg border border-border/70 bg-card/40">
             <div className="border-b border-border/40 pb-2 flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-primary">
@@ -503,7 +503,7 @@ export default function VisualCoveragePrimitivesDemo() {
           </div>
 
           {/* Finance Persona Band D */}
-          <div className="space-y-3 p-4 rounded-xl border border-border/70 bg-card/40">
+          <div className="space-y-3 p-4 rounded-lg border border-border/70 bg-card/40">
             <div className="border-b border-border/40 pb-2 flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-primary">
@@ -532,7 +532,7 @@ export default function VisualCoveragePrimitivesDemo() {
           </div>
 
           {/* Line Manager Persona Band D */}
-          <div className="space-y-3 p-4 rounded-xl border border-border/70 bg-card/40">
+          <div className="space-y-3 p-4 rounded-lg border border-border/70 bg-card/40">
             <div className="border-b border-border/40 pb-2 flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-primary">
@@ -579,7 +579,7 @@ export default function VisualCoveragePrimitivesDemo() {
         </div>
 
         {/* Task 1: High-Stakes Correctness & Failure Detection (E1, E2) - Degraded Fixture */}
-        <div className="space-y-4 p-5 rounded-xl border-2 border-danger-border/60 bg-danger-surface/20">
+        <div className="space-y-4 p-5 rounded-lg border-2 border-danger-border/60 bg-danger-surface/20">
           <div className="border-b border-danger-border/40 pb-3 flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2">
@@ -618,7 +618,7 @@ export default function VisualCoveragePrimitivesDemo() {
         </div>
 
         {/* Task 1 Baseline: Healthy State (E1, E2) */}
-        <div className="space-y-4 p-5 rounded-xl border border-border/70 bg-card/40">
+        <div className="space-y-4 p-5 rounded-lg border border-border/70 bg-card/40">
           <div className="border-b border-border/40 pb-3 flex items-center justify-between">
             <div>
               <h3 className="text-base font-bold text-foreground">
@@ -652,7 +652,7 @@ export default function VisualCoveragePrimitivesDemo() {
         </div>
 
         {/* Task 2 & Task 4: Trend Visuals (E4 DotMatrix) & Limits (E8 SegmentedBar) */}
-        <div className="space-y-4 p-5 rounded-xl border border-border/70 bg-card/40">
+        <div className="space-y-4 p-5 rounded-lg border border-border/70 bg-card/40">
           <div className="border-b border-border/40 pb-3">
             <h3 className="text-base font-bold text-foreground">
               Task 2 &amp; Task 4: Privilege Changes (E4) &amp; Rate Limit Pressure (E8)
@@ -677,7 +677,7 @@ export default function VisualCoveragePrimitivesDemo() {
         </div>
 
         {/* Task 3: Proportional Horizontal Bars (E7, E9, E10) */}
-        <div className="space-y-4 p-5 rounded-xl border border-border/70 bg-card/40">
+        <div className="space-y-4 p-5 rounded-lg border border-border/70 bg-card/40">
           <div className="border-b border-border/40 pb-3">
             <h3 className="text-base font-bold text-foreground">
               Task 3: Horizontal Bars Replaced Flat Numbers (E7, E9, E10)
@@ -707,7 +707,7 @@ export default function VisualCoveragePrimitivesDemo() {
         </div>
 
         {/* Task 5 & Task 6: Allow-List & Semantic Statuses (E3, E5, E6, E11, E12) */}
-        <div className="space-y-4 p-5 rounded-xl border border-border/70 bg-card/40">
+        <div className="space-y-4 p-5 rounded-lg border border-border/70 bg-card/40">
           <div className="border-b border-border/40 pb-3">
             <h3 className="text-base font-bold text-foreground">
               Task 5 &amp; Task 6: Allow-List Text Widgets &amp; Semantic Status (E3, E5, E6, E11, E12)

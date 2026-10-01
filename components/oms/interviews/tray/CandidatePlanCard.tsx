@@ -130,7 +130,7 @@ export function CandidatePlanCard({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       className={cn(
-        "relative rounded-xl border p-4 transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] cursor-pointer focus:outline-hidden",
+        "relative rounded-lg border p-4 transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] cursor-pointer focus:outline-hidden",
         color.classes.borderLeft,
         color.classes.surface,
         isSelected

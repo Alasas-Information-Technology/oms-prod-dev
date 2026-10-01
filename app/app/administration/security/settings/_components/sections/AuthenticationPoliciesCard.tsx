@@ -40,7 +40,7 @@ export function AuthenticationPoliciesCard() {
   return (
     <div className="space-y-6">
       {/* ── 1. Token Lifecycles Card ── */}
-      <Card className="rounded-xl border border-foreground/15 bg-card shadow-sm overflow-hidden">
+      <Card className="rounded-lg border border-foreground/15 bg-card shadow-sm overflow-hidden">
         <CardHeader className="pb-4 border-b border-border/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -159,7 +159,7 @@ export function AuthenticationPoliciesCard() {
             control={form.control}
             name="requireSessionFingerprinting"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-xl border border-border/50 bg-muted/30 p-4 transition-all hover:bg-muted/50">
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border border-border/50 bg-muted/30 p-4 transition-all hover:bg-muted/50">
                 <div className="space-y-0.5 max-w-[80%]">
                   <FormLabel className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     <Fingerprint className="size-4 text-indigo-500" />
@@ -181,7 +181,7 @@ export function AuthenticationPoliciesCard() {
             control={form.control}
             name="allowMultipleSessions"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-xl border border-border/50 bg-muted/30 p-4 transition-all hover:bg-muted/50">
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border border-border/50 bg-muted/30 p-4 transition-all hover:bg-muted/50">
                 <div className="space-y-0.5 max-w-[80%]">
                   <FormLabel className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     <Users className="size-4 text-emerald-500" />
@@ -201,7 +201,7 @@ export function AuthenticationPoliciesCard() {
       </Card>
 
       {/* ── 2. Account Lockout Defenses Card ── */}
-      <Card className="rounded-xl border border-foreground/15 bg-card shadow-sm overflow-hidden">
+      <Card className="rounded-lg border border-foreground/15 bg-card shadow-sm overflow-hidden">
         <CardHeader className="pb-4 border-b border-border/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">

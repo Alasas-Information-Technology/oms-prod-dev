@@ -176,7 +176,7 @@ export function VendorSupportWorkspace({
       </div>
 
       {/* Prominent Blind-Review Boundary Callout (Mandatory requirement from 4.11) */}
-      <div className="p-4 sm:p-5 rounded-xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent text-xs text-foreground/90 backdrop-blur-sm space-y-2">
+      <div className="p-4 sm:p-5 rounded-lg border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent text-xs text-foreground/90 backdrop-blur-sm space-y-2">
         <div className="flex items-start gap-3">
           <div className="p-2 rounded-lg bg-amber-500/20 text-amber-700 dark:text-amber-300 shrink-0 mt-0.5">
             <ShieldAlert className="w-4 h-4" />
@@ -224,7 +224,7 @@ export function VendorSupportWorkspace({
                 <Card
                   key={msg.id}
                   className={cn(
-                    "p-5 rounded-xl border transition-all duration-200 text-xs space-y-3 bg-card",
+                    "p-5 rounded-lg border transition-all duration-200 text-xs space-y-3 bg-card",
                     isVendor
                       ? "border-teal-500/30 bg-teal-500/[0.02]"
                       : "border-border/70 dark:border-white/[0.08]"
@@ -290,7 +290,7 @@ export function VendorSupportWorkspace({
         </div>
 
         {/* Right 5 Cols: Compose New Message */}
-        <Card className="lg:col-span-5 p-5 sm:p-6 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card space-y-4 sticky top-6">
+        <Card className="lg:col-span-5 p-5 sm:p-6 rounded-lg border border-border/70 dark:border-white/[0.08] bg-card space-y-4 sticky top-6">
           <div className="border-b border-border/40 pb-3">
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
               <Send className="w-4 h-4 text-teal-600 dark:text-teal-400" />
@@ -400,7 +400,7 @@ export function VendorSupportWorkspace({
 
       {/* Floating Toast */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 p-4 rounded-xl bg-card border border-teal-500/40 shadow-xl text-xs flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 max-w-md">
+        <div className="fixed bottom-6 right-6 z-50 p-4 rounded-lg bg-card border border-teal-500/40 shadow-xl text-xs flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 max-w-md">
           <div className="p-2 rounded-lg bg-teal-500/20 text-teal-600 dark:text-teal-400 shrink-0">
             <CheckCircle2 className="w-4 h-4" />
           </div>

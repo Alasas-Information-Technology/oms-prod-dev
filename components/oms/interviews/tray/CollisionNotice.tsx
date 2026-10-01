@@ -28,7 +28,7 @@ export function CollisionNotice({ collisions, className }: CollisionNoticeProps)
         return (
           <div
             key={item.slotStart}
-            className="p-3 rounded-xl border border-amber-300 dark:border-amber-800/80 bg-amber-50/90 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 text-xs shadow-2xs flex items-start gap-2.5"
+            className="p-3 rounded-lg border border-amber-300 dark:border-amber-800/80 bg-amber-50/90 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 text-xs shadow-2xs flex items-start gap-2.5"
             role="alert"
           >
             <Link2 className="size-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />

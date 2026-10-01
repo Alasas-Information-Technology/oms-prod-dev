@@ -132,7 +132,7 @@ export function AskList({
     return (
       <div
         className={cn(
-          "rounded-xl border border-border/80 bg-card shadow-xs overflow-hidden",
+          "rounded-lg border border-border/80 bg-card shadow-xs overflow-hidden",
           className
         )}
       >
@@ -274,7 +274,7 @@ export function AskList({
   return (
     <div
       className={cn(
-        "rounded-xl border border-border/80 bg-card shadow-xs overflow-hidden space-y-4",
+        "rounded-lg border border-border/80 bg-card shadow-xs overflow-hidden space-y-4",
         className
       )}
     >

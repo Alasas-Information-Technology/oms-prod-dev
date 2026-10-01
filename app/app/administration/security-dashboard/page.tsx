@@ -240,7 +240,7 @@ export default function SecurityDashboard() {
         <div className="flex flex-col gap-6 min-w-0">
 
           {/* Telemetry Status Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 p-3 px-4 rounded-xl border border-border/60 bg-card/60 backdrop-blur-xs">
+          <div className="flex flex-wrap items-center justify-between gap-3 p-3 px-4 rounded-lg border border-border/60 bg-card/60 backdrop-blur-xs">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-muted/70 text-xs">
                 <span className="flex h-2 w-2 relative">

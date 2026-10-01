@@ -31,14 +31,14 @@ export function AutoCloseWatchTile({
   // Loading shimmer state
   if (isLoading) {
     return (
-      <div className="rounded-[20px] bg-muted/40 animate-pulse h-[152px]" />
+      <div className="rounded-lg bg-muted/40 animate-pulse h-[152px]" />
     );
   }
 
   // Error state — fall back to a non-hero card
   if (error) {
     return (
-      <div className="rounded-[20px] border border-destructive/30 bg-destructive/5 p-4 h-[152px] flex items-center justify-center text-xs text-destructive">
+      <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 h-[152px] flex items-center justify-center text-xs text-destructive">
         Unable to load auto-close data
       </div>
     );

@@ -101,7 +101,7 @@ export function CandidateMinimalHeader({
               </DialogHeader>
 
               {/* Coordinator Card */}
-              <div className="p-4 rounded-xl bg-muted/40 border border-border/60 space-y-3 mt-2">
+              <div className="p-4 rounded-lg bg-muted/40 border border-border/60 space-y-3 mt-2">
                 <div>
                   <span className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground block">
                     Your Onboarding Coordinator

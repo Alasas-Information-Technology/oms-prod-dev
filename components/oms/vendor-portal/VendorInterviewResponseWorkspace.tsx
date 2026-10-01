@@ -271,7 +271,7 @@ export function VendorInterviewResponseWorkspace({
       <div className="px-4 sm:px-6 max-w-4xl mx-auto w-full space-y-6">
         {/* Success / Notification Banner */}
         {actionSuccessMessage && (
-          <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-800 dark:text-emerald-200 text-xs flex items-center gap-3">
+          <div className="p-4 rounded-lg border border-emerald-500/30 bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-800 dark:text-emerald-200 text-xs flex items-center gap-3">
             <CheckCircle2 className="size-5 text-emerald-600 shrink-0" />
             <div className="flex-1 font-medium">{actionSuccessMessage}</div>
           </div>
@@ -281,7 +281,7 @@ export function VendorInterviewResponseWorkspace({
         {!isConfirmed && !isAlternativeRequested && (
           <div
             className={cn(
-              "p-4 rounded-xl border text-xs flex items-start gap-3 transition-colors shadow-2xs",
+              "p-4 rounded-lg border text-xs flex items-start gap-3 transition-colors shadow-2xs",
               proposal.urgencySeverity === "red"
                 ? "border-rose-500/40 bg-rose-50/70 dark:bg-rose-950/30 text-rose-900 dark:text-rose-200"
                 : proposal.urgencySeverity === "amber"
@@ -318,7 +318,7 @@ export function VendorInterviewResponseWorkspace({
 
         {/* 3. Requisition & Anonymized Interviewer Card */}
         {/* Server Requirement 4: The interviewer renders ONLY as "The hiring team for {Position}." */}
-        <Card className="p-4 sm:p-5 rounded-xl border border-border/80 bg-card shadow-2xs space-y-4">
+        <Card className="p-4 sm:p-5 rounded-lg border border-border/80 bg-card shadow-2xs space-y-4">
           <div className="flex items-center justify-between border-b border-border/60 pb-3">
             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
               <ShieldCheck className="size-4 text-teal-600 dark:text-teal-400" />
@@ -374,7 +374,7 @@ export function VendorInterviewResponseWorkspace({
 
         {/* 4. CONFIRMED READ-ONLY MODE */}
         {isConfirmed && proposal.scheduledSlot ? (
-          <Card className="p-6 rounded-xl border-2 border-emerald-500/40 bg-emerald-50/30 dark:bg-emerald-950/20 shadow-sm space-y-6">
+          <Card className="p-6 rounded-lg border-2 border-emerald-500/40 bg-emerald-50/30 dark:bg-emerald-950/20 shadow-sm space-y-6">
             <div className="flex items-start gap-4">
               <div className="size-10 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                 <CalendarCheck className="size-6" />
@@ -424,7 +424,7 @@ export function VendorInterviewResponseWorkspace({
           </Card>
         ) : isAlternativeRequested ? (
           /* ALTERNATIVE REQUESTED READ-ONLY MODE */
-          <Card className="p-6 rounded-xl border border-blue-500/40 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs space-y-4">
+          <Card className="p-6 rounded-lg border border-blue-500/40 bg-blue-50/20 dark:bg-blue-950/20 shadow-2xs space-y-4">
             <div className="flex items-center gap-3">
               <div className="size-8 rounded-full bg-blue-500/20 text-blue-600 flex items-center justify-center shrink-0">
                 <MessageSquare className="size-4" />
@@ -458,7 +458,7 @@ export function VendorInterviewResponseWorkspace({
           /* 5. INTERACTIVE SLOT SELECTION MODE */
           <div className="space-y-6">
             {/* Slot Options Card */}
-            <Card className="p-5 sm:p-6 rounded-xl border border-border/80 bg-card shadow-2xs space-y-5">
+            <Card className="p-5 sm:p-6 rounded-lg border border-border/80 bg-card shadow-2xs space-y-5">
               <div className="space-y-1">
                 <h2 className="text-base font-bold text-foreground flex items-center gap-2">
                   <Clock className="size-4 text-teal-600 dark:text-teal-400" />
@@ -563,7 +563,7 @@ export function VendorInterviewResponseWorkspace({
 
             {/* 6. REQUEST ALTERNATIVE SLOTS SECTION */}
             {/* Per RFP's "select a timeslot... or request alternative slots" */}
-            <Card className="p-4 sm:p-5 rounded-xl border border-border/80 bg-card shadow-2xs space-y-3">
+            <Card className="p-4 sm:p-5 rounded-lg border border-border/80 bg-card shadow-2xs space-y-3">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <h3 className="text-sm font-semibold text-foreground">

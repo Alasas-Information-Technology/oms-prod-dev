@@ -119,14 +119,14 @@ export function ClarificationInlineFieldEditors({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-border/80 bg-card shadow-xs overflow-hidden",
+        "rounded-lg border border-border/80 bg-card shadow-xs overflow-hidden",
         className
       )}
     >
       {/* Block Header */}
       <div className="px-5 py-4 bg-muted/40 border-b border-border/70 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="size-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-2xs">
+          <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-2xs">
             {readOnly ? <Lock className="size-4.5" /> : <SlidersHorizontal className="size-4.5" />}
           </div>
           <div>
@@ -183,7 +183,7 @@ export function ClarificationInlineFieldEditors({
               key={field.key}
               id={`field-${field.key}`}
               className={cn(
-                "rounded-xl border transition-all duration-200 overflow-hidden bg-card",
+                "rounded-lg border transition-all duration-200 overflow-hidden bg-card",
                 isChanged
                   ? "border-primary/40 shadow-xs ring-1 ring-primary/20"
                   : "border-border/70 hover:border-border",
@@ -308,7 +308,7 @@ export function ClarificationInlineFieldEditors({
                               id={`input-${field.key}`}
                               variant="outline"
                               className={cn(
-                                "w-full max-w-[280px] h-10 justify-between text-left font-medium text-sm bg-background border-border/80 hover:bg-muted/40 shadow-2xs rounded-lg px-3.5",
+                                "w-full max-w-[280px] justify-between text-left font-normal transition-[color,box-shadow,border-color] duration-200 ease-out hover:border-ring/50 focus-visible:border-ring focus-visible:ring-ring/20 focus-visible:ring-[3px]",
                                 !activeValue && "text-muted-foreground"
                               )}
                             >
@@ -333,7 +333,7 @@ export function ClarificationInlineFieldEditors({
                               <ChevronDown className="size-3.5 text-muted-foreground/70" />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0 border border-border/80 shadow-lg rounded-xl" align="start">
+                          <PopoverContent className="w-auto p-0 border border-border/80 shadow-lg rounded-lg" align="start">
                             <Calendar
                               mode="single"
                               selected={

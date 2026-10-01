@@ -378,7 +378,7 @@ export default function RasikhTokensGatePage() {
       </div>
 
       {/* Interactive Lightness Adjustment Toggle */}
-      <div className="p-4 rounded-xl border border-amber-200 dark:border-amber-900/40 bg-amber-500/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-4 rounded-lg border border-amber-200 dark:border-amber-900/40 bg-amber-500/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2 font-semibold text-sm text-amber-900 dark:text-amber-200">
             <AlertTriangle className="size-4.5 text-amber-600 dark:text-amber-400" />
@@ -420,7 +420,7 @@ export default function RasikhTokensGatePage() {
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           {/* Light Theme Panel */}
           <div
-            className="p-6 rounded-2xl border space-y-6 shadow-sm"
+            className="p-6 rounded-lg border space-y-6 shadow-sm"
             style={{ backgroundColor: "#FAF8F3", color: "#1A1712", borderColor: "#E6DFD0" }}
           >
             <div className="flex items-center justify-between border-b pb-3" style={{ borderColor: "#E6DFD0" }}>
@@ -446,7 +446,7 @@ export default function RasikhTokensGatePage() {
 
             {/* Operational Interactive Controls */}
             <div
-              className="p-4 rounded-xl border space-y-3 shadow-xs"
+              className="p-4 rounded-lg border space-y-3 shadow-xs"
               style={{ backgroundColor: "#FFFFFF", borderColor: "#E6DFD0" }}
             >
               <div className="text-xs font-semibold text-[#544D3F] uppercase tracking-wider">
@@ -481,7 +481,7 @@ export default function RasikhTokensGatePage() {
 
             {/* Dashboard Mode Simulation on Wash */}
             <div
-              className="p-4 rounded-xl border space-y-3"
+              className="p-4 rounded-lg border space-y-3"
               style={{ backgroundColor: RASIKH_PART2_TOKENS.wash.light, borderColor: "#D5D8E8" }}
             >
               <div className="flex items-center justify-between">
@@ -602,7 +602,7 @@ export default function RasikhTokensGatePage() {
 
             {/* Gold Rare Moment Preview */}
             <div
-              className="p-3.5 rounded-xl border flex items-center justify-between"
+              className="p-3.5 rounded-lg border flex items-center justify-between"
               style={{ backgroundColor: "#FFFFFF", borderColor: "#E6DFD0" }}
             >
               <div>
@@ -626,7 +626,7 @@ export default function RasikhTokensGatePage() {
 
           {/* Dark Theme Panel */}
           <div
-            className="p-6 rounded-2xl border space-y-6 shadow-sm"
+            className="p-6 rounded-lg border space-y-6 shadow-sm"
             style={{ backgroundColor: "#0E0D0B", color: "#F7F5F0", borderColor: "#2A2620" }}
           >
             <div className="flex items-center justify-between border-b pb-3" style={{ borderColor: "#2A2620" }}>
@@ -652,7 +652,7 @@ export default function RasikhTokensGatePage() {
 
             {/* Operational Interactive Controls */}
             <div
-              className="p-4 rounded-xl border space-y-3 shadow-xs"
+              className="p-4 rounded-lg border space-y-3 shadow-xs"
               style={{ backgroundColor: "#171310", borderColor: "#2A2620" }}
             >
               <div className="text-xs font-semibold text-[#C9C2B3] uppercase tracking-wider">
@@ -687,7 +687,7 @@ export default function RasikhTokensGatePage() {
 
             {/* Dashboard Mode Simulation on Wash */}
             <div
-              className="p-4 rounded-xl border space-y-3"
+              className="p-4 rounded-lg border space-y-3"
               style={{ backgroundColor: RASIKH_PART2_TOKENS.wash.dark, borderColor: "#262C44" }}
             >
               <div className="flex items-center justify-between">
@@ -809,7 +809,7 @@ export default function RasikhTokensGatePage() {
 
             {/* Gold Rare Moment Preview */}
             <div
-              className="p-3.5 rounded-xl border flex items-center justify-between"
+              className="p-3.5 rounded-lg border flex items-center justify-between"
               style={{ backgroundColor: "#171310", borderColor: "#2A2620" }}
             >
               <div>
@@ -847,7 +847,7 @@ export default function RasikhTokensGatePage() {
           </p>
         </div>
 
-        <div className="overflow-x-auto rounded-xl border bg-card shadow-xs">
+        <div className="overflow-x-auto rounded-lg border bg-card shadow-xs">
           <table className="w-full text-xs text-left">
             <thead className="bg-muted/50 text-muted-foreground border-b uppercase text-[10px] tracking-wider font-semibold">
               <tr>

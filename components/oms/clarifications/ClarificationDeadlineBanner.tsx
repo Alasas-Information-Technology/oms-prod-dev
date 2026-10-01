@@ -35,7 +35,7 @@ export function ClarificationDeadlineBanner({
     <div
       role="alert"
       className={cn(
-        "rounded-xl border px-4 py-3.5 flex items-start sm:items-center gap-3 shadow-xs animate-in fade-in-50 duration-300",
+        "rounded-lg border px-4 py-3.5 flex items-start sm:items-center gap-3 shadow-xs animate-in fade-in-50 duration-300",
         "bg-red-500/10 border-red-500/30 text-red-700 dark:text-red-300",
         className
       )}

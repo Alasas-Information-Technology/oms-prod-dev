@@ -99,7 +99,7 @@ export function CandidateSummaryPanel({
       )}
       aria-label="Candidate Summary Reference"
     >
-      <div className="bg-card border border-border/70 rounded-xl p-4.5 shadow-xs space-y-4">
+      <div className="bg-card border border-border/70 rounded-lg p-4.5 shadow-xs space-y-4">
         {/* Panel Header */}
         <div className="space-y-1.5 border-b border-border/50 pb-3">
           <div className="flex items-center justify-between gap-2">

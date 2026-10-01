@@ -29,7 +29,7 @@ export function SubmissionReceiptCard({
   return (
     <div
       className={cn(
-        "p-4.5 sm:p-5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-950 dark:text-emerald-100 shadow-sm space-y-3",
+        "p-4.5 sm:p-5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-950 dark:text-emerald-100 shadow-sm space-y-3",
         className
       )}
       role="status"

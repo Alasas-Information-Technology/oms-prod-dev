@@ -53,7 +53,7 @@ export function RequiredDocumentsPanel({
       aria-label={`Required documents for ${locationLabel} candidate`}
       className={cn("space-y-4 min-w-0", className)}
     >
-      <div className="bg-card border border-border/70 rounded-xl p-5 shadow-xs space-y-4">
+      <div className="bg-card border border-border/70 rounded-lg p-5 shadow-xs space-y-4">
         {/* Panel Header per §4.2: Count and Location-Driven set */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/50 pb-3">
           <div className="space-y-0.5">

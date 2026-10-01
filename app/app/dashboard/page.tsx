@@ -204,7 +204,7 @@ function DashboardPageContent() {
   if (layoutError || !layout) {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center w-full">
-        <div className="p-8 bg-card border border-destructive/30 rounded-xl max-w-md w-full shadow-sm">
+        <div className="p-8 bg-card border border-destructive/30 rounded-lg max-w-md w-full shadow-sm">
           <h2 className="text-base font-semibold text-foreground">
             Unable to load dashboard layout
           </h2>
@@ -233,7 +233,7 @@ function DashboardPageContent() {
       <GlassBackground />
 
       {/* Inject Persona Switcher into the sticky Breadcrumb / Page Bar */}
-      <PageBarActions>
+      <div>
         <div className="flex items-center gap-2">
           {persona === "systemAdmin" && (
             <button
@@ -285,7 +285,7 @@ function DashboardPageContent() {
             </Select>
           </div>
         </div>
-      </PageBarActions>
+      </div>
 
 
 
@@ -323,10 +323,10 @@ export default function DashboardPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} className="h-28 rounded-xl" />
+              <Skeleton key={i} className="h-28 rounded-lg" />
             ))}
           </div>
-          <Skeleton className="h-96 rounded-xl" />
+          <Skeleton className="h-96 rounded-lg" />
         </div>
       }
     >

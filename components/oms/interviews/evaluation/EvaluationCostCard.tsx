@@ -57,7 +57,7 @@ export function EvaluationCostCard({
     <section
       aria-labelledby="cost-panel-heading"
       className={cn(
-        "bg-card border rounded-xl p-5 space-y-4 shadow-2xs transition-colors",
+        "bg-card border rounded-lg p-5 space-y-4 shadow-2xs transition-colors",
         isOverBudget
           ? "border-amber-500/50 bg-amber-500/5 dark:bg-amber-500/5"
           : "border-border",

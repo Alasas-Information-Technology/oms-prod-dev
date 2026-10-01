@@ -164,7 +164,7 @@ export function VendorContractsWorkspace({
       </div>
 
       {/* Procurement Origination Notice (Part 4.6 Read-Mostly Requirement) */}
-      <div className="p-4 rounded-xl border border-teal-500/30 bg-gradient-to-r from-teal-500/10 via-teal-500/5 to-transparent text-xs text-foreground/90 backdrop-blur-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+      <div className="p-4 rounded-lg border border-teal-500/30 bg-gradient-to-r from-teal-500/10 via-teal-500/5 to-transparent text-xs text-foreground/90 backdrop-blur-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
         <div className="flex items-start gap-3">
           <div className="p-2 rounded-lg bg-teal-500/20 text-teal-700 dark:text-teal-300 shrink-0 mt-0.5 sm:mt-0">
             <ShieldCheck className="w-4 h-4" />
@@ -194,7 +194,7 @@ export function VendorContractsWorkspace({
 
       {/* KPI Metrics Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-        <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
+        <Card className="p-4 rounded-lg border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">Total Agreements</span>
             <p className="text-2xl font-bold text-foreground">{contracts.length}</p>
@@ -204,7 +204,7 @@ export function VendorContractsWorkspace({
           </div>
         </Card>
 
-        <Card className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-500/10 flex items-center justify-between">
+        <Card className="p-4 rounded-lg border border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-500/10 flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
               Active MSA
@@ -218,7 +218,7 @@ export function VendorContractsWorkspace({
           </div>
         </Card>
 
-        <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
+        <Card className="p-4 rounded-lg border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">Historical / Expired</span>
             <p className="text-2xl font-bold text-muted-foreground">
@@ -230,7 +230,7 @@ export function VendorContractsWorkspace({
           </div>
         </Card>
 
-        <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
+        <Card className="p-4 rounded-lg border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">Pre-Agreed Rate Cap</span>
             <p className="text-lg font-bold tabular-nums text-foreground">
@@ -307,7 +307,7 @@ export function VendorContractsWorkspace({
       {/* Contracts List Grid */}
       <div className="space-y-4">
         {filteredContracts.length === 0 ? (
-          <Card className="p-8 rounded-xl border border-dashed text-center space-y-2">
+          <Card className="p-8 rounded-lg border border-dashed text-center space-y-2">
             <p className="text-sm font-semibold text-foreground">No contracts found</p>
             <p className="text-xs text-muted-foreground">
               No commercial agreements matched your filter criteria.
@@ -321,7 +321,7 @@ export function VendorContractsWorkspace({
               <Card
                 key={contract.id}
                 className={cn(
-                  "p-5 sm:p-6 rounded-xl border transition-all duration-200 bg-card space-y-5",
+                  "p-5 sm:p-6 rounded-lg border transition-all duration-200 bg-card space-y-5",
                   isActive
                     ? "border-teal-500/30 hover:border-teal-500/50 hover:shadow-xs"
                     : "border-border/60 opacity-80 hover:opacity-100"
@@ -402,7 +402,7 @@ export function VendorContractsWorkspace({
                   </div>
 
                   {/* Pre-Agreed Commercial Rate Card (Minor units format via formatAmount) */}
-                  <div className="p-4 rounded-xl bg-muted/20 border border-border/60 space-y-2.5">
+                  <div className="p-4 rounded-lg bg-muted/20 border border-border/60 space-y-2.5">
                     <div className="flex items-center justify-between text-xs">
                       <span className="font-semibold text-foreground flex items-center gap-1">
                         <Coins className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
@@ -494,7 +494,7 @@ export function VendorContractsWorkspace({
 
               <div className="space-y-4 py-3 text-xs text-foreground/90">
                 {/* Commercial Summary Box */}
-                <div className="p-4 rounded-xl bg-teal-500/5 border border-teal-500/20 space-y-2">
+                <div className="p-4 rounded-lg bg-teal-500/5 border border-teal-500/20 space-y-2">
                   <div className="flex items-center justify-between font-semibold text-foreground">
                     <span>Approved Pre-Agreed Master Rates:</span>
                     <span className="text-teal-600 dark:text-teal-400">
@@ -599,7 +599,7 @@ export function VendorContractsWorkspace({
 
       {/* Simulated Download Notification */}
       {isDownloadToastOpen && (
-        <div className="fixed bottom-6 right-6 z-50 p-4 rounded-xl bg-card border border-teal-500/40 shadow-lg text-xs flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2">
+        <div className="fixed bottom-6 right-6 z-50 p-4 rounded-lg bg-card border border-teal-500/40 shadow-lg text-xs flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2">
           <div className="p-2 rounded-lg bg-teal-500/20 text-teal-600 dark:text-teal-400">
             <FileCheck className="w-4 h-4" />
           </div>

@@ -743,11 +743,11 @@ function NavigationSection() {
             <div>
                 <SL>Tabs — Contract Details View</SL>
                 <Tabs defaultValue="overview">
-                    <TabsList className="h-9 rounded-md">
-                        <TabsTrigger value="overview" className="rounded text-xs">Overview</TabsTrigger>
-                        <TabsTrigger value="documents" className="rounded text-xs">Documents (4)</TabsTrigger>
-                        <TabsTrigger value="approvals" className="rounded text-xs">Approvals</TabsTrigger>
-                        <TabsTrigger value="history" className="rounded text-xs">Activity Log</TabsTrigger>
+                    <TabsList>
+                        <TabsTrigger value="overview">Overview</TabsTrigger>
+                        <TabsTrigger value="documents">Documents (4)</TabsTrigger>
+                        <TabsTrigger value="approvals">Approvals</TabsTrigger>
+                        <TabsTrigger value="history">Activity Log</TabsTrigger>
                     </TabsList>
                     <TabsContent value="overview" className="mt-4">
                         <Card className="rounded-md shadow-none border-slate-200">

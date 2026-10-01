@@ -78,9 +78,9 @@ export function TechShowcase() {
             <motion.div
               key={i}
               variants={itemVariants}
-              className="bg-card border border-border/70 rounded-xl p-6 sm:p-7 flex items-start gap-4 hover:shadow-md hover:border-primary/30 transition-all duration-300 ease-out"
+              className="bg-card border border-border/70 rounded-lg p-6 sm:p-7 flex items-start gap-4 hover:shadow-md hover:border-primary/30 transition-all duration-300 ease-out"
             >
-              <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 text-primary">
+              <div className="size-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 text-primary">
                 <Icon className="size-6" />
               </div>
               <div className="min-w-0 flex-1">

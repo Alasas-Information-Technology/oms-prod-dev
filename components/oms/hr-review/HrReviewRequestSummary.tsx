@@ -41,7 +41,7 @@ function MetricItem({
   };
 
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-border/70 bg-card/60 p-3 transition-all hover:border-border hover:bg-card">
+    <div className="flex items-center gap-3 rounded-lg border border-border/70 bg-card/60 p-3 transition-all hover:border-border hover:bg-card">
       <div className={cn("flex size-9 shrink-0 items-center justify-center rounded-lg border", colorMap[colorScheme])}>
         <Icon className="size-4" />
       </div>
@@ -57,7 +57,7 @@ export function HrReviewRequestSummary({
   request,
 }: HrReviewRequestSummaryProps) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border/80 bg-gradient-to-b from-card via-card to-card/90 p-5 shadow-xs before:absolute before:inset-x-0 before:top-0 before:h-[2px] before:bg-gradient-to-r before:from-brand-teal/90 before:via-primary/70 before:to-brand-teal/40">
+    <div className="relative overflow-hidden rounded-lg border border-border/80 bg-gradient-to-b from-card via-card to-card/90 p-5 shadow-xs before:absolute before:inset-x-0 before:top-0 before:h-[2px] before:bg-gradient-to-r before:from-brand-teal/90 before:via-primary/70 before:to-brand-teal/40">
       <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
         <div className="min-w-0">
           <h1 className="text-[22px] font-bold text-foreground tracking-tight">

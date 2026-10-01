@@ -100,7 +100,7 @@ export function ProcessJourney() {
                     <div className="hidden md:block w-[calc(50%-2rem)]" />
 
                     {/* Step Number Node */}
-                    <div className="relative z-10 size-10 sm:size-12 rounded-xl bg-card border-2 border-primary text-primary flex items-center justify-center font-extrabold text-sm sm:text-base shadow-md shrink-0 md:mx-auto">
+                    <div className="relative z-10 size-10 sm:size-12 rounded-lg bg-card border-2 border-primary text-primary flex items-center justify-center font-extrabold text-sm sm:text-base shadow-md shrink-0 md:mx-auto">
                       {i + 1}
                     </div>
 
@@ -109,7 +109,7 @@ export function ProcessJourney() {
                       w-[calc(100%-3.5rem)] md:w-[calc(50%-2rem)] pl-4 md:pl-0
                       ${isEven ? 'md:pr-8 md:text-right' : 'md:pl-8 md:text-left'}
                     `}>
-                      <div className="bg-card border border-border/70 rounded-xl p-5 sm:p-6 shadow-2xs hover:shadow-md transition-shadow">
+                      <div className="bg-card border border-border/70 rounded-lg p-5 sm:p-6 shadow-2xs hover:shadow-md transition-shadow">
                         <h3 className="text-base sm:text-lg font-bold text-heading mb-1.5 leading-snug tracking-tight">
                           {step.title}
                         </h3>

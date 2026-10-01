@@ -45,7 +45,7 @@ export default function AppNotFound() {
           onClick={() => router.back()}
           variant="outline"
           size="sm"
-          className="h-9 px-4 text-xs rounded-xl shadow-2xs gap-1.5 cursor-pointer"
+          className="h-9 px-4 text-xs rounded-lg shadow-2xs gap-1.5 cursor-pointer"
         >
           <ArrowLeft className="size-3.5" />
           <span>Go Back</span>
@@ -54,7 +54,7 @@ export default function AppNotFound() {
         <Button
           asChild
           size="sm"
-          className="h-9 px-4 text-xs rounded-xl shadow-xs gap-1.5 font-semibold"
+          className="h-9 px-4 text-xs rounded-lg shadow-xs gap-1.5 font-semibold"
         >
           <Link href="/app">
             <LayoutDashboard className="size-3.5" />
@@ -67,7 +67,7 @@ export default function AppNotFound() {
           asChild
           variant="outline"
           size="sm"
-          className="h-9 px-4 text-xs rounded-xl shadow-2xs gap-1.5"
+          className="h-9 px-4 text-xs rounded-lg shadow-2xs gap-1.5"
         >
           <Link href="/app/requests">
             <FileText className="size-3.5" />
@@ -85,9 +85,9 @@ export default function AppNotFound() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Link
             href="/app"
-            className="p-3.5 rounded-xl border border-border/70 bg-card hover:bg-muted/40 hover:border-primary/40 transition-all duration-200 flex items-center gap-3 group shadow-2xs"
+            className="p-3.5 rounded-lg border border-border/70 bg-card hover:bg-muted/40 hover:border-primary/40 transition-all duration-200 flex items-center gap-3 group shadow-2xs"
           >
-            <div className="size-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
               <LayoutDashboard className="size-4.5" />
             </div>
             <div className="min-w-0">
@@ -102,9 +102,9 @@ export default function AppNotFound() {
 
           <Link
             href="/app/requests"
-            className="p-3.5 rounded-xl border border-border/70 bg-card hover:bg-muted/40 hover:border-emerald-500/40 transition-all duration-200 flex items-center gap-3 group shadow-2xs"
+            className="p-3.5 rounded-lg border border-border/70 bg-card hover:bg-muted/40 hover:border-emerald-500/40 transition-all duration-200 flex items-center gap-3 group shadow-2xs"
           >
-            <div className="size-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+            <div className="size-9 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
               <FileText className="size-4.5" />
             </div>
             <div className="min-w-0">
@@ -119,9 +119,9 @@ export default function AppNotFound() {
 
           <Link
             href="/app/budget"
-            className="p-3.5 rounded-xl border border-border/70 bg-card hover:bg-muted/40 hover:border-amber-500/40 transition-all duration-200 flex items-center gap-3 group shadow-2xs"
+            className="p-3.5 rounded-lg border border-border/70 bg-card hover:bg-muted/40 hover:border-amber-500/40 transition-all duration-200 flex items-center gap-3 group shadow-2xs"
           >
-            <div className="size-9 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+            <div className="size-9 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
               <Wallet className="size-4.5" />
             </div>
             <div className="min-w-0">
@@ -136,9 +136,9 @@ export default function AppNotFound() {
 
           <Link
             href="/app/administration/security-dashboard"
-            className="p-3.5 rounded-xl border border-border/70 bg-card hover:bg-muted/40 hover:border-purple-500/40 transition-all duration-200 flex items-center gap-3 group shadow-2xs"
+            className="p-3.5 rounded-lg border border-border/70 bg-card hover:bg-muted/40 hover:border-purple-500/40 transition-all duration-200 flex items-center gap-3 group shadow-2xs"
           >
-            <div className="size-9 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
+            <div className="size-9 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
               <ShieldCheck className="size-4.5" />
             </div>
             <div className="min-w-0">

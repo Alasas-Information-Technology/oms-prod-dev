@@ -199,7 +199,7 @@ export function HrSendBackSubmitDialog({
 
         {/* TASK 4: Error Banner with Plain Messages */}
         {formattedError && (
-          <div className="rounded-xl bg-destructive/10 border border-destructive/30 p-3.5 text-xs text-destructive space-y-2">
+          <div className="rounded-lg bg-destructive/10 border border-destructive/30 p-3.5 text-xs text-destructive space-y-2">
             <div className="flex items-start gap-2.5">
               <XCircle className="size-4 shrink-0 mt-0.5" />
               <div className="space-y-1 min-w-0 flex-1">
@@ -236,7 +236,7 @@ export function HrSendBackSubmitDialog({
 
         {/* TASK 2: Warning 1 — Re-approval mode with no fields selected (warns and allows) */}
         {hasNoFieldsWarning && (
-          <div className="rounded-xl bg-amber-500/10 border border-amber-500/30 p-3.5 text-xs text-amber-900 dark:text-amber-200 space-y-2.5">
+          <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 p-3.5 text-xs text-amber-900 dark:text-amber-200 space-y-2.5">
             <div className="flex items-start gap-2.5">
               <AlertTriangle className="size-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
               <div className="space-y-1 min-w-0 flex-1">
@@ -266,7 +266,7 @@ export function HrSendBackSubmitDialog({
 
         {/* TASK 2: Warning 2 — No asks added (warns and allows) */}
         {hasNoAsksWarning && (
-          <div className="rounded-xl bg-blue-500/10 border border-blue-500/30 p-3.5 text-xs text-blue-900 dark:text-blue-200">
+          <div className="rounded-lg bg-blue-500/10 border border-blue-500/30 p-3.5 text-xs text-blue-900 dark:text-blue-200">
             <div className="flex items-start gap-2.5">
               <Info className="size-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
               <div className="space-y-1 min-w-0 flex-1">
@@ -284,7 +284,7 @@ export function HrSendBackSubmitDialog({
         {/* TASK 1: Restatement Section */}
         <div className="space-y-3 py-1">
           {/* 1. Which mode, in plain words */}
-          <div className="p-3.5 rounded-xl border border-border/80 bg-muted/30 space-y-1.5">
+          <div className="p-3.5 rounded-lg border border-border/80 bg-muted/30 space-y-1.5">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
                 <ModeIcon className="size-3.5 text-primary" />

@@ -259,25 +259,25 @@ export function HrReviewWorkspace() {
             <div className="min-w-0">
               {activeTab === "overview" && <HrReviewOverview detail={detailResponse} onNavigateTab={(tab) => setActiveTab(tab)} />}
               {activeTab === "approval-trail" && (
-                <div className="rounded-xl border border-border bg-card p-6 shadow-xs">
+                <div className="rounded-lg border border-border bg-card p-6 shadow-xs">
                   <h3 className="text-[14px] font-semibold text-foreground mb-4">Approval Trail</h3>
                   <DepartmentApprovalTrail items={detailResponse.approvalTrail} detailed />
                 </div>
               )}
               {activeTab === "budget" && (
-                <div className="rounded-xl border border-border bg-card p-6 shadow-xs">
+                <div className="rounded-lg border border-border bg-card p-6 shadow-xs">
                   <h3 className="text-[14px] font-semibold text-foreground mb-4">Budget Position</h3>
                   <p className="text-[13px] font-normal text-muted-foreground">Full BudgetPositionPanel placeholder (Waiting for Budget component update)</p>
                 </div>
               )}
               {activeTab === "attachments" && (
-                <div className="rounded-xl border border-border bg-card p-6 shadow-xs">
+                <div className="rounded-lg border border-border bg-card p-6 shadow-xs">
                   <h3 className="text-[14px] font-semibold text-foreground mb-4">Attachments</h3>
                   <p className="text-[13px] font-normal text-muted-foreground">Attachments tab placeholder</p>
                 </div>
               )}
               {activeTab === "audit" && (
-                <div className="rounded-xl border border-border bg-card p-6 shadow-xs">
+                <div className="rounded-lg border border-border bg-card p-6 shadow-xs">
                   <h3 className="text-[14px] font-semibold text-foreground mb-4">Audit Trail</h3>
                   <p className="text-[13px] font-normal text-muted-foreground">Audit trail tab placeholder</p>
                 </div>
@@ -292,7 +292,7 @@ export function HrReviewWorkspace() {
             />
           </div>
         ) : (
-          <Card className="flex min-h-[440px] items-center justify-center rounded-xl bg-card p-8 text-center shadow-xs hover:translate-y-0">
+          <Card className="flex min-h-[440px] items-center justify-center rounded-lg bg-card p-8 text-center shadow-xs hover:translate-y-0">
             <div>
               <CheckCircle2 className="mx-auto size-10 text-muted-foreground/50" />
               <p className="mt-4 text-[14px] font-semibold text-foreground">

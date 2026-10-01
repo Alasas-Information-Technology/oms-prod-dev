@@ -365,7 +365,7 @@ export function HrSendBackWorkspace({
       />
 
       {/* 4. Your Message Textarea */}
-      <div className="rounded-xl border border-border/80 bg-card shadow-xs overflow-hidden space-y-4">
+      <div className="rounded-lg border border-border/80 bg-card shadow-xs overflow-hidden space-y-4">
         <div className="px-4 py-3 sm:px-5 sm:py-3.5 bg-muted/40 border-b border-border/70 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <MessageSquareText className="size-4 text-primary" />

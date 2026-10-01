@@ -59,7 +59,7 @@ export function ApprovalPreflightPanel({ preflight }: ApprovalPreflightPanelProp
   const totalCount = preflight.checks.length;
 
   return (
-    <div className="rounded-xl border border-border bg-card p-6 shadow-xs flex flex-col gap-4">
+    <div className="rounded-lg border border-border bg-card p-6 shadow-xs flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <ShieldCheck className="size-4 text-primary" />
@@ -84,7 +84,7 @@ export function ApprovalPreflightPanel({ preflight }: ApprovalPreflightPanelProp
             <div
               key={check.code}
               className={cn(
-                "flex items-center gap-3 px-3.5 py-2.5 rounded-xl border text-xs font-semibold transition-all hover:shadow-2xs",
+                "flex items-center gap-3 px-3.5 py-2.5 rounded-lg border text-xs font-semibold transition-all hover:shadow-2xs",
                 style.card
               )}
             >
@@ -101,7 +101,7 @@ export function ApprovalPreflightPanel({ preflight }: ApprovalPreflightPanelProp
       </div>
 
       {preflight.blockingMessage && (
-        <div className="mt-1 p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 flex items-start gap-3 text-rose-950 dark:text-rose-200 shadow-2xs">
+        <div className="mt-1 p-4 rounded-lg border border-rose-500/30 bg-rose-500/10 flex items-start gap-3 text-rose-950 dark:text-rose-200 shadow-2xs">
           <ShieldAlert className="size-5 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />
           <div className="flex flex-col gap-1">
             <span className="font-bold text-xs uppercase tracking-wide">Action Blocked</span>

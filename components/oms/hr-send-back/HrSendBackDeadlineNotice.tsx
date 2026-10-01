@@ -28,7 +28,7 @@ export function HrSendBackDeadlineNotice({
   return (
     <div
       className={cn(
-        "rounded-xl border border-border/80 bg-muted/40 p-4 text-xs text-foreground flex items-start gap-3 shadow-2xs",
+        "rounded-lg border border-border/80 bg-muted/40 p-4 text-xs text-foreground flex items-start gap-3 shadow-2xs",
         className
       )}
     >

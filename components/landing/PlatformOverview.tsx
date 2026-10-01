@@ -97,9 +97,9 @@ export function PlatformOverview() {
             <motion.div
               key={i}
               variants={itemVariants}
-              className="bg-card border border-border/70 rounded-xl p-6 sm:p-7 text-center group hover:shadow-lg hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 ease-out flex flex-col items-center"
+              className="bg-card border border-border/70 rounded-lg p-6 sm:p-7 text-center group hover:shadow-lg hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 ease-out flex flex-col items-center"
             >
-              <div className="size-14 rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300 text-primary">
+              <div className="size-14 rounded-lg bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300 text-primary">
                 <Icon className="size-6 transition-colors" />
               </div>
               <h3 className="text-base sm:text-lg font-bold text-heading mb-2 leading-snug">
