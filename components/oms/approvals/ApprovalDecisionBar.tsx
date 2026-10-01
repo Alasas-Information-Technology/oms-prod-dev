@@ -46,7 +46,7 @@ export function ApprovalDecisionBar({
 
   return (
     <ApprovalGuard taskDetail={detail}>
-      <div className="sticky bottom-4 z-20 p-4 sm:p-5 bg-card border border-border rounded-xl shadow-md flex flex-col gap-3.5">
+      <div className="sticky bottom-4 z-20 p-4 sm:p-5 bg-card border border-border rounded-lg shadow-md flex flex-col gap-3.5">
         {/* Audit Trail Note */}
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
           <History className="size-3.5 text-muted-foreground shrink-0" />

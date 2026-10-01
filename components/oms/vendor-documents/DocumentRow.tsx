@@ -74,7 +74,7 @@ export function DocumentRow({
   return (
     <div
       className={cn(
-        "p-4 rounded-xl border transition-all duration-200 space-y-3",
+        "p-4 rounded-lg border transition-all duration-200 space-y-3",
         isScanFailed && "bg-destructive/5 border-destructive/40 shadow-xs",
         isRejected && "bg-destructive/5 border-destructive/30 shadow-xs",
         !isScanFailed && !isRejected && "bg-card/50 hover:bg-card border-border/70 hover:border-border",

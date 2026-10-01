@@ -500,7 +500,7 @@ export function VendorRateCardsWorkspace({
       </div>
 
       {/* 3-Step Lifecycle Visual Stepper & Governance Rule */}
-      <div className="p-4 sm:p-5 rounded-xl border border-teal-500/30 bg-gradient-to-r from-teal-500/10 via-teal-500/5 to-transparent text-xs backdrop-blur-sm space-y-3">
+      <div className="p-4 sm:p-5 rounded-lg border border-teal-500/30 bg-gradient-to-r from-teal-500/10 via-teal-500/5 to-transparent text-xs backdrop-blur-sm space-y-3">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
@@ -540,7 +540,7 @@ export function VendorRateCardsWorkspace({
 
       {/* KPI Metrics Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-        <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
+        <Card className="p-4 rounded-lg border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">Total Rate Cards</span>
             <p className="text-2xl font-bold text-foreground">{rateCards.length}</p>
@@ -550,7 +550,7 @@ export function VendorRateCardsWorkspace({
           </div>
         </Card>
 
-        <Card className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-500/10 flex items-center justify-between">
+        <Card className="p-4 rounded-lg border border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-500/10 flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
               Published (Usable in VP2)
@@ -564,7 +564,7 @@ export function VendorRateCardsWorkspace({
           </div>
         </Card>
 
-        <Card className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 dark:bg-amber-500/10 flex items-center justify-between">
+        <Card className="p-4 rounded-lg border border-amber-500/30 bg-amber-500/5 dark:bg-amber-500/10 flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-amber-700 dark:text-amber-300">
               Under Review (Submitted)
@@ -578,7 +578,7 @@ export function VendorRateCardsWorkspace({
           </div>
         </Card>
 
-        <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
+        <Card className="p-4 rounded-lg border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">Draft Schedules</span>
             <p className="text-2xl font-bold text-muted-foreground">{draftCount}</p>
@@ -697,7 +697,7 @@ export function VendorRateCardsWorkspace({
       {/* Rate Cards Accordion / List */}
       <div className="space-y-4">
         {filteredCards.length === 0 ? (
-          <Card className="p-8 rounded-xl border border-dashed text-center space-y-2">
+          <Card className="p-8 rounded-lg border border-dashed text-center space-y-2">
             <p className="text-sm font-semibold text-foreground">No rate cards found</p>
             <p className="text-xs text-muted-foreground">
               No commercial rate cards matched the selected filters.
@@ -714,7 +714,7 @@ export function VendorRateCardsWorkspace({
               <Card
                 key={card.id}
                 className={cn(
-                  "rounded-xl border transition-all duration-200 overflow-hidden bg-card",
+                  "rounded-lg border transition-all duration-200 overflow-hidden bg-card",
                   isPublished
                     ? "border-teal-500/30 shadow-xs"
                     : isSubmitted
@@ -998,7 +998,7 @@ export function VendorRateCardsWorkspace({
               {/* Drag and Drop Zone */}
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="p-8 rounded-xl border-2 border-dashed border-border/80 hover:border-teal-500/60 bg-muted/20 hover:bg-muted/30 transition-all text-center cursor-pointer space-y-3"
+                className="p-8 rounded-lg border-2 border-dashed border-border/80 hover:border-teal-500/60 bg-muted/20 hover:bg-muted/30 transition-all text-center cursor-pointer space-y-3"
               >
                 <input
                   ref={fileInputRef}
@@ -1021,7 +1021,7 @@ export function VendorRateCardsWorkspace({
               </div>
 
               {/* Or Load Sample Preview Action */}
-              <div className="flex items-center justify-between p-4 rounded-xl bg-teal-500/5 border border-teal-500/20">
+              <div className="flex items-center justify-between p-4 rounded-lg bg-teal-500/5 border border-teal-500/20">
                 <div className="space-y-0.5">
                   <p className="font-semibold text-foreground flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
@@ -1047,7 +1047,7 @@ export function VendorRateCardsWorkspace({
           {uploadStep === "PARSED_PREVIEW" && (
             <div className="space-y-5 py-2 text-xs">
               {/* Header Fields */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 p-3.5 rounded-xl bg-muted/30 border border-border/60">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 p-3.5 rounded-lg bg-muted/30 border border-border/60">
                 <div className="space-y-1">
                   <Label className="text-[11px] text-muted-foreground">Template</Label>
                   <p className="font-semibold text-foreground text-xs">
@@ -1324,7 +1324,7 @@ export function VendorRateCardsWorkspace({
 
       {/* Floating Notification Toast */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 p-4 rounded-xl bg-card border border-teal-500/40 shadow-xl text-xs flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 max-w-md">
+        <div className="fixed bottom-6 right-6 z-50 p-4 rounded-lg bg-card border border-teal-500/40 shadow-xl text-xs flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 max-w-md">
           <div className="p-2 rounded-lg bg-teal-500/20 text-teal-600 dark:text-teal-400 shrink-0">
             <CheckCircle2 className="w-4 h-4" />
           </div>

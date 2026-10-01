@@ -85,7 +85,7 @@ export function EvaluationAuditTrail({
   return (
     <div
       className={cn(
-        "rounded-xl border border-border bg-card shadow-2xs transition-colors overflow-hidden",
+        "rounded-lg border border-border bg-card shadow-2xs transition-colors overflow-hidden",
         className
       )}
     >

@@ -40,7 +40,7 @@ export function RetentionPolicyCard() {
   ];
 
   return (
-    <Card className="rounded-xl border border-foreground/15 bg-card shadow-sm overflow-hidden">
+    <Card className="rounded-lg border border-foreground/15 bg-card shadow-sm overflow-hidden">
       <CardHeader className="pb-4 border-b border-border/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">

@@ -53,7 +53,7 @@ export function HrSendBackLivePreview({
           asksAddressed={[]}
         />
       ) : (
-        <div className="rounded-xl border border-border/80 bg-card shadow-xs overflow-hidden">
+        <div className="rounded-lg border border-border/80 bg-card shadow-xs overflow-hidden">
           <div className="px-4 py-3 sm:px-5 sm:py-3.5 bg-muted/40 border-b border-border/70 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <ListChecks className="size-4 text-primary" />
@@ -72,7 +72,7 @@ export function HrSendBackLivePreview({
       )}
 
       {/* 2. Message preview beneath the checklist as it will appear to her */}
-      <div className="rounded-xl border border-border/80 bg-card shadow-xs overflow-hidden">
+      <div className="rounded-lg border border-border/80 bg-card shadow-xs overflow-hidden">
         {/* Header with HR Author details matching ClarificationMessagePanel */}
         <div className="px-4 py-3.5 sm:px-5 sm:py-4 bg-muted/40 border-b border-border/70 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5 min-w-0">
@@ -119,7 +119,7 @@ export function HrSendBackLivePreview({
       </div>
 
       {/* 3. List of fields she will be able to change */}
-      <div className="rounded-xl border border-border/80 bg-card shadow-xs overflow-hidden">
+      <div className="rounded-lg border border-border/80 bg-card shadow-xs overflow-hidden">
         <div className="px-4 py-3 sm:px-5 sm:py-3.5 bg-muted/40 border-b border-border/70 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sliders className="size-4 text-primary" />

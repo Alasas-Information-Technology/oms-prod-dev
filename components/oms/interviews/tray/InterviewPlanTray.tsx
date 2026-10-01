@@ -362,7 +362,7 @@ export function InterviewPlanTray({
         )}
         aria-label="Interview planning tray"
       >
-        <div className="p-4 rounded-2xl border border-border bg-card/95 backdrop-blur-xs shadow-xs max-h-[calc(100vh-120px)] overflow-y-auto overscroll-contain">
+        <div className="p-4 rounded-lg border border-border bg-card/95 backdrop-blur-xs shadow-xs max-h-[calc(100vh-120px)] overflow-y-auto overscroll-contain">
           {trayContent}
         </div>
       </aside>

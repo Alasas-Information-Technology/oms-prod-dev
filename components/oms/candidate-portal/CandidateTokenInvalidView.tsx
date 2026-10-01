@@ -34,7 +34,7 @@ export function CandidateTokenInvalidView() {
         </div>
 
         {/* Security Icon Pill */}
-        <div className="size-16 rounded-2xl bg-muted/70 dark:bg-muted/40 border border-border/80 flex items-center justify-center mb-6 shadow-xs">
+        <div className="size-16 rounded-lg bg-muted/70 dark:bg-muted/40 border border-border/80 flex items-center justify-center mb-6 shadow-xs">
           <Link2Off className="size-8 text-muted-foreground/80" aria-hidden="true" />
         </div>
 
@@ -49,7 +49,7 @@ export function CandidateTokenInvalidView() {
         </p>
 
         {/* Support Note */}
-        <div className="w-full p-4 rounded-xl bg-card border border-border/60 text-xs text-muted-foreground text-left flex items-start gap-3 shadow-2xs">
+        <div className="w-full p-4 rounded-lg bg-card border border-border/60 text-xs text-muted-foreground text-left flex items-start gap-3 shadow-2xs">
           <ShieldAlert className="size-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
           <div className="space-y-1">
             <span className="font-medium text-foreground block">

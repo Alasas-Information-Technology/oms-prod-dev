@@ -17,10 +17,10 @@ export function HrReviewAudit({
   entries,
 }: HrReviewAuditProps) {
   return (
-    <Card className="gap-4 rounded-xl bg-card p-5 shadow-xs hover:translate-y-0">
+    <Card className="gap-4 rounded-lg bg-card p-5 shadow-xs hover:translate-y-0">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex items-start gap-3">
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
             <History className="size-4" />
           </span>
 
@@ -63,7 +63,7 @@ export function HrReviewAudit({
                 <Activity className="size-4" />
               </span>
 
-              <div className="min-w-0 flex-1 rounded-xl border border-border/70 bg-muted/30 p-3">
+              <div className="min-w-0 flex-1 rounded-lg border border-border/70 bg-muted/30 p-3">
                 <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
                   <p className="whitespace-normal text-[13px] font-semibold text-foreground">
                     {entry.action}

@@ -25,7 +25,7 @@ function TabsList({
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        "bg-muted/70 text-muted-foreground inline-flex items-center justify-center rounded-lg p-1 border border-border/50 shadow-xs gap-1",
+        "bg-muted/70 text-muted-foreground inline-flex items-center justify-center rounded-md p-1 border border-border/50 shadow-xs gap-0.5",
         className
       )}
       {...props}
@@ -41,7 +41,7 @@ function TabsTrigger({
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:font-semibold data-[state=active]:shadow-xs data-[state=active]:border-border/60 text-muted-foreground hover:text-foreground hover:bg-background/50 inline-flex items-center justify-center gap-2 rounded-md border border-transparent px-4 py-1.5 text-xs sm:text-sm font-medium whitespace-nowrap transition-all duration-200 outline-none select-none cursor-pointer disabled:pointer-events-none disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:font-semibold data-[state=active]:shadow-xs data-[state=active]:border-border/60 text-muted-foreground hover:text-foreground hover:bg-background/50 inline-flex items-center justify-center gap-2 rounded-sm border border-transparent px-3 py-1.5 text-xs sm:text-sm font-medium whitespace-nowrap transition-all duration-200 outline-none select-none cursor-pointer disabled:pointer-events-none disabled:opacity-40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}

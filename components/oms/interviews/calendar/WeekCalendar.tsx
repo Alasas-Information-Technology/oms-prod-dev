@@ -236,7 +236,7 @@ export function WeekCalendar({
     <div
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      className="rounded-xl border border-border bg-card shadow-xs overflow-hidden focus:outline-none focus:ring-1 focus:ring-primary/40"
+      className="rounded-lg border border-border bg-card shadow-xs overflow-hidden focus:outline-none focus:ring-1 focus:ring-primary/40"
       aria-label="Interactive Interview Planning Calendar"
     >
       {/* SVG Hatch Patterns (Once per calendar) */}

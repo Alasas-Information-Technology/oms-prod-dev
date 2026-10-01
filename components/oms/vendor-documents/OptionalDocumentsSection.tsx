@@ -44,7 +44,7 @@ export function OptionalDocumentsSection({
   return (
     <div
       className={cn(
-        "bg-card border border-border/70 rounded-xl p-4.5 shadow-xs space-y-3 transition-colors",
+        "bg-card border border-border/70 rounded-lg p-4.5 shadow-xs space-y-3 transition-colors",
         className
       )}
     >

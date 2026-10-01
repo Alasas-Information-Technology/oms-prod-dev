@@ -307,7 +307,7 @@ export function UserPermissionsList({
           Evaluating effective capabilities and attribution...
         </div>
       ) : filteredActiveGroups.length === 0 && filteredRevoked.length === 0 ? (
-        <div className="py-12 text-center border border-dashed border-border/60 rounded-xl bg-muted/20">
+        <div className="py-12 text-center border border-dashed border-border/60 rounded-lg bg-muted/20">
           <Key className="size-8 text-muted-foreground/30 mx-auto mb-3" />
           <p className="text-[14px] font-medium text-foreground">No capabilities found</p>
           <p className="text-[13px] text-muted-foreground mt-1">

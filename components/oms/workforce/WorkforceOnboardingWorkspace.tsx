@@ -79,13 +79,13 @@ export function WorkforceOnboardingWorkspace() {
 
         {/* ── KPI Strip ── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-1">
+          <div className="p-3.5 rounded-lg border border-border/60 bg-card shadow-2xs space-y-1">
             <span className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wider">
               Active Onboarding Cases
             </span>
             <div className="text-xl font-bold text-foreground">{allCases.length}</div>
           </div>
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-1">
+          <div className="p-3.5 rounded-lg border border-border/60 bg-card shadow-2xs space-y-1">
             <span className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wider">
               Onshore Cases
             </span>
@@ -93,7 +93,7 @@ export function WorkforceOnboardingWorkspace() {
               {allCases.filter((c) => c.residentStatus === "ONSHORE").length}
             </div>
           </div>
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-1">
+          <div className="p-3.5 rounded-lg border border-border/60 bg-card shadow-2xs space-y-1">
             <span className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wider">
               Offshore Cases
             </span>
@@ -101,7 +101,7 @@ export function WorkforceOnboardingWorkspace() {
               {allCases.filter((c) => c.residentStatus === "OFFSHORE").length}
             </div>
           </div>
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-1">
+          <div className="p-3.5 rounded-lg border border-border/60 bg-card shadow-2xs space-y-1">
             <span className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wider">
               Pending E-Signature
             </span>
@@ -121,7 +121,7 @@ export function WorkforceOnboardingWorkspace() {
             return (
               <div
                 key={onb.id}
-                className="p-5 rounded-xl border border-border/70 bg-card shadow-2xs space-y-4 hover:border-border transition-all"
+                className="p-5 rounded-lg border border-border/70 bg-card shadow-2xs space-y-4 hover:border-border transition-all"
               >
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   <div className="flex items-start gap-3.5">

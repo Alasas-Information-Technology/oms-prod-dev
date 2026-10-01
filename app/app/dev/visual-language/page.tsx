@@ -134,7 +134,7 @@ export default function VisualLanguageDevPage() {
           </p>
         </div>
 
-        <div className="p-4 rounded-xl border border-border/60 bg-card space-y-1">
+        <div className="p-4 rounded-lg border border-border/60 bg-card space-y-1">
           <DashboardListRow
             icon={ClockAlert}
             iconBg="bg-rose-500/10"
@@ -202,7 +202,7 @@ export default function VisualLanguageDevPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-6 rounded-xl border border-border/60 bg-card">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-6 rounded-lg border border-border/60 bg-card">
           <div className="flex flex-col gap-2">
             <span className="text-xs font-medium text-muted-foreground">Exact Display Amount</span>
             <Amount value={124832000} variant="display" />
@@ -229,7 +229,7 @@ export default function VisualLanguageDevPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-6 rounded-xl border border-border/60 bg-card">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-6 rounded-lg border border-border/60 bg-card">
           <div className="flex flex-col gap-2">
             <span className="text-xs font-medium text-muted-foreground">72% Progress</span>
             <SegmentedBar value={72} />
@@ -256,7 +256,7 @@ export default function VisualLanguageDevPage() {
           </p>
         </div>
 
-        <div className="p-6 rounded-xl border border-border/60 bg-card">
+        <div className="p-6 rounded-lg border border-border/60 bg-card">
           <DistributionBar segments={distributionSegments} />
         </div>
       </section>
@@ -272,7 +272,7 @@ export default function VisualLanguageDevPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Hatched Area Chart */}
-          <div className="p-5 rounded-xl border border-border/60 bg-card space-y-3">
+          <div className="p-5 rounded-lg border border-border/60 bg-card space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-foreground">Hatched Area Trend (T4)</span>
             </div>
@@ -288,7 +288,7 @@ export default function VisualLanguageDevPage() {
           </div>
 
           {/* Step Line Chart */}
-          <div className="p-5 rounded-xl border border-border/60 bg-card space-y-3">
+          <div className="p-5 rounded-lg border border-border/60 bg-card space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-foreground">Discrete Step Line (T3, T8)</span>
             </div>

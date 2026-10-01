@@ -17,7 +17,7 @@ const formatTimestamp = (isoString: string) => {
 
 export function SystemChecksPanel({ checks }: SystemChecksPanelProps) {
   return (
-    <div className="rounded-xl border border-border/80 bg-card p-5 shadow-xs space-y-3.5 transition-colors hover:border-border">
+    <div className="rounded-lg border border-border/80 bg-card p-5 shadow-xs space-y-3.5 transition-colors hover:border-border">
       <div className="flex items-center gap-2">
         <div className="flex size-7 items-center justify-center rounded-md bg-teal-500/10 text-teal-600 dark:text-teal-400">
           <ServerCog className="size-4" />

@@ -113,7 +113,7 @@ export function HrSendBackModeChooser({
               disabled={disabled}
               onClick={() => onSelectMode(item.code)}
               className={cn(
-                "relative text-left p-4 rounded-xl border transition-all flex flex-col justify-between cursor-pointer",
+                "relative text-left p-4 rounded-lg border transition-all flex flex-col justify-between cursor-pointer",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/20",
                 isSelected
                   ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/30"

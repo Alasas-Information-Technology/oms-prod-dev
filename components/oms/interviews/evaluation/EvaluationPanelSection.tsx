@@ -86,7 +86,7 @@ export function EvaluationPanelSection({
     <section
       aria-labelledby="panel-heading"
       className={cn(
-        "bg-card border border-border rounded-xl p-5 sm:p-6 space-y-4 shadow-2xs transition-colors",
+        "bg-card border border-border rounded-lg p-5 sm:p-6 space-y-4 shadow-2xs transition-colors",
         className
       )}
     >

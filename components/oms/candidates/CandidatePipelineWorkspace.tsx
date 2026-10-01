@@ -175,31 +175,31 @@ export function CandidatePipelineWorkspace() {
 
         {/* Metric KPI Chips */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-1">
+          <div className="p-3.5 rounded-lg border border-border/60 bg-card shadow-2xs space-y-1">
             <span className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wider">
               Total Seed Candidates
             </span>
             <div className="text-xl font-bold text-foreground">{stats.total}</div>
           </div>
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-1">
+          <div className="p-3.5 rounded-lg border border-border/60 bg-card shadow-2xs space-y-1">
             <span className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wider">
               Interview Planning
             </span>
             <div className="text-xl font-bold text-blue-600">{stats.interviewCount}</div>
           </div>
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-1">
+          <div className="p-3.5 rounded-lg border border-border/60 bg-card shadow-2xs space-y-1">
             <span className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wider">
               Evaluated / Amendment
             </span>
             <div className="text-xl font-bold text-indigo-600">{stats.evaluatedCount}</div>
           </div>
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-1">
+          <div className="p-3.5 rounded-lg border border-border/60 bg-card shadow-2xs space-y-1">
             <span className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wider">
               Vendor Onboarding
             </span>
             <div className="text-xl font-bold text-emerald-600">{stats.onboardingCount}</div>
           </div>
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-1">
+          <div className="p-3.5 rounded-lg border border-border/60 bg-card shadow-2xs space-y-1">
             <span className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wider">
               Rejected
             </span>
@@ -208,7 +208,7 @@ export function CandidatePipelineWorkspace() {
         </div>
 
         {/* Filter Toolbar */}
-        <div className="p-3.5 rounded-xl border border-border/60 bg-card/60 backdrop-blur-xs flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+        <div className="p-3.5 rounded-lg border border-border/60 bg-card/60 backdrop-blur-xs flex flex-wrap items-center justify-between gap-3 shadow-2xs">
           <div className="flex flex-wrap items-center gap-3 flex-1 min-w-[280px]">
             {/* Search Input */}
             <div className="relative flex-1 min-w-[200px] max-w-sm">
@@ -277,7 +277,7 @@ export function CandidatePipelineWorkspace() {
             return (
               <div
                 key={req.id}
-                className="rounded-xl border border-border/70 bg-card overflow-hidden shadow-2xs transition-all"
+                className="rounded-lg border border-border/70 bg-card overflow-hidden shadow-2xs transition-all"
               >
                 {/* Requisition Section Header */}
                 <div className="p-4 bg-muted/40 border-b border-border/50 flex flex-wrap items-center justify-between gap-3">

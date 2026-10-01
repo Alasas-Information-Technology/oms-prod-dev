@@ -93,7 +93,7 @@ export function ClarificationShell({
   ) : null;
 
   const readOnlyAlert = !canRespond ? (
-    <div className="rounded-xl bg-muted/60 border border-border/80 p-4 text-xs text-foreground flex items-center gap-3 shadow-2xs">
+    <div className="rounded-lg bg-muted/60 border border-border/80 p-4 text-xs text-foreground flex items-center gap-3 shadow-2xs">
       <Lock className="size-4 text-muted-foreground shrink-0" />
       <span>
         <strong>Read-only mode:</strong> {readOnlyReason || "You are viewing this clarification in read-only mode."}
@@ -146,7 +146,7 @@ export function ClarificationShell({
   );
 
   const defaultRight = !isMoreInfo ? (
-    <div className="rounded-xl border border-border/70 bg-card p-6 shadow-xs space-y-4">
+    <div className="rounded-lg border border-border/70 bg-card p-6 shadow-xs space-y-4">
       <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
         <Sparkles className="size-4 text-primary" />
         <span>Governance & Impact Preview</span>

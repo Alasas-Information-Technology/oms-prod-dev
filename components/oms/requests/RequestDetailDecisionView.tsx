@@ -131,14 +131,14 @@ export function RequestDetailDecisionView({
 
         {/* Read-Only Status Line when canAct is false (Requirement 4) */}
         {!canAct && (
-          <div className="p-4 rounded-xl bg-amber-500/[0.08] border border-amber-500/25 text-xs text-amber-950 dark:text-amber-200 font-semibold flex items-center gap-2.5 shadow-2xs">
+          <div className="p-4 rounded-lg bg-amber-500/[0.08] border border-amber-500/25 text-xs text-amber-950 dark:text-amber-200 font-semibold flex items-center gap-2.5 shadow-2xs">
             <Clock3 className="size-4 text-amber-600 dark:text-amber-400 shrink-0" />
             <span>{readOnlyLine}</span>
           </div>
         )}
 
         {/* Request Title & Stage Header - Executive Banner */}
-        <div className="rounded-xl border border-border bg-card p-6 sm:p-7 shadow-xs">
+        <div className="rounded-lg border border-border bg-card p-6 sm:p-7 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
             <div className="flex flex-col gap-2.5">
               <div className="flex flex-wrap items-center gap-2 text-sm">
@@ -166,7 +166,7 @@ export function RequestDetailDecisionView({
 
         {/* Cross-Domain Navigation Banners (Part 5 Requirements) */}
         {detail.linkedAmendment && (
-          <div className="p-4 rounded-xl bg-indigo-500/[0.08] dark:bg-indigo-950/40 border border-indigo-500/25 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs">
+          <div className="p-4 rounded-lg bg-indigo-500/[0.08] dark:bg-indigo-950/40 border border-indigo-500/25 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs">
             <div className="flex items-center gap-2.5">
               <FileText className="size-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
               <span className="text-indigo-950 dark:text-indigo-200">
@@ -185,7 +185,7 @@ export function RequestDetailDecisionView({
         )}
 
         {detail.linkedClarification && (
-          <div className="p-4 rounded-xl bg-amber-500/[0.08] dark:bg-amber-950/40 border border-amber-500/25 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs">
+          <div className="p-4 rounded-lg bg-amber-500/[0.08] dark:bg-amber-950/40 border border-amber-500/25 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs">
             <div className="flex items-center gap-2.5">
               <HelpCircle className="size-4 text-amber-600 dark:text-amber-400 shrink-0" />
               <span className="text-amber-950 dark:text-amber-200">
@@ -226,7 +226,7 @@ export function RequestDetailDecisionView({
         </div>
 
         {/* Requirement 1 & 2: Route Stepper below header for everyone in scope */}
-        <div className="rounded-xl border border-border bg-card p-6 shadow-xs w-full">
+        <div className="rounded-lg border border-border bg-card p-6 shadow-xs w-full">
           <div className="flex items-center justify-between pb-3 border-b border-border mb-1">
             <span className="text-xs font-bold uppercase tracking-wider text-foreground/80">Approval Route Pipeline</span>
             <span className="text-[11px] font-semibold text-muted-foreground bg-muted/60 px-2.5 py-0.5 rounded-md border border-border/50">
@@ -252,10 +252,10 @@ export function RequestDetailDecisionView({
             {/* Tab 1: Request Details */}
             {activeTab === "details" && (
               <div className="space-y-6 animate-in fade-in-50 duration-200">
-                <div className="p-6 sm:p-7 rounded-xl border border-border bg-card shadow-xs">
+                <div className="p-6 sm:p-7 rounded-lg border border-border bg-card shadow-xs">
                   <ApprovalSubjectDetail subject={subject as RequisitionSubject} />
                 </div>
-                <div className="p-6 sm:p-7 rounded-xl border border-border bg-card shadow-xs">
+                <div className="p-6 sm:p-7 rounded-lg border border-border bg-card shadow-xs">
                   <ApprovalHistory history={history} />
                 </div>
               </div>
@@ -263,7 +263,7 @@ export function RequestDetailDecisionView({
 
             {/* Tab 2: Documents & Evidence */}
             {activeTab === "documents" && (
-              <div className="p-6 sm:p-7 rounded-xl border border-border bg-card shadow-xs space-y-6 animate-in fade-in-50 duration-200">
+              <div className="p-6 sm:p-7 rounded-lg border border-border bg-card shadow-xs space-y-6 animate-in fade-in-50 duration-200">
                 <div>
                   <h3 className="text-sm font-bold text-foreground uppercase tracking-wide">Attached Documents</h3>
                   <p className="text-xs font-medium text-muted-foreground mt-1">
@@ -317,7 +317,7 @@ export function RequestDetailDecisionView({
 
             {/* Tab 3: Timeline */}
             {activeTab === "timeline" && (
-              <div className="p-6 sm:p-7 rounded-xl border border-border bg-card shadow-xs animate-in fade-in-50 duration-200">
+              <div className="p-6 sm:p-7 rounded-lg border border-border bg-card shadow-xs animate-in fade-in-50 duration-200">
                 <ApprovalHistory history={history} />
               </div>
             )}

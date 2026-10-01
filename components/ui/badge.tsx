@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 import { cn } from "./utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center justify-center rounded-full border px-3 py-1 text-xs font-semibold w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1.5 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/20 focus-visible:ring-[4px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow,background-color] duration-300 ease-out overflow-hidden",
+  "inline-flex items-center justify-center rounded-sm border px-2.5 py-0.5 text-xs font-semibold w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1.5 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/20 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow,background-color] duration-200 ease-out overflow-hidden",
   {
     variants: {
       // v3 spec: tone-based variants
@@ -81,7 +81,7 @@ function Badge({
             e.stopPropagation();
             onRemove?.();
           }}
-          className="ml-0.5 -mr-1 size-4 rounded-full inline-flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity"
+          className="ml-0.5 -mr-1 size-4 rounded-sm inline-flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity"
           aria-label="Remove"
         >
           <X className="size-2.5" />

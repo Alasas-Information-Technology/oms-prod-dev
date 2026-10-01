@@ -450,7 +450,7 @@ export function CreateRequisitionWorkspace() {
             {/* Left Column - Details Form */}
             <div className="space-y-6 lg:col-span-7 xl:col-span-8">
               {/* Position Requirements Section */}
-              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-5">
+              <div className="rounded-lg border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-5">
                 <div className="flex items-center justify-between border-b border-border/40 pb-3">
                   <div className="flex items-center gap-2">
                     <Briefcase className="size-4 text-primary" />
@@ -571,7 +571,7 @@ export function CreateRequisitionWorkspace() {
               </div>
 
               {/* Business Justification Section */}
-              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
+              <div className="rounded-lg border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
                 <div className="flex items-center justify-between border-b border-border/40 pb-3">
                   <div className="flex items-center gap-2">
                     <FileText className="size-4 text-primary" />
@@ -636,7 +636,7 @@ export function CreateRequisitionWorkspace() {
             {/* Right Column - Operating Model & Readiness */}
             <div className="space-y-6 lg:col-span-5 xl:col-span-4">
               {/* Operating Model Section */}
-              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
+              <div className="rounded-lg border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
                 <div className="flex items-center justify-between border-b border-border/40 pb-3">
                   <h2 className="text-sm font-bold text-foreground">
                     Operating Model
@@ -750,7 +750,7 @@ export function CreateRequisitionWorkspace() {
               </div>
 
               {/* Candidate Route Section */}
-              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
+              <div className="rounded-lg border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
                 <div className="flex items-center justify-between border-b border-border/40 pb-3">
                   <h2 className="text-sm font-bold text-foreground">
                     Candidate Route
@@ -814,7 +814,7 @@ export function CreateRequisitionWorkspace() {
               </div>
 
               {/* Request Readiness Section */}
-              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
+              <div className="rounded-lg border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
                 <div className="flex items-center justify-between border-b border-border/40 pb-3">
                   <h2 className="text-sm font-bold text-foreground">
                     Request Readiness
@@ -879,7 +879,7 @@ export function CreateRequisitionWorkspace() {
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
             {/* Left Column - Assigned Roles */}
             <div className="space-y-6 lg:col-span-5 xl:col-span-5">
-              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-5">
+              <div className="rounded-lg border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-5">
                 <div className="border-b border-border/40 pb-3">
                   <h2 className="text-sm font-bold text-foreground">
                     Assigned Governance Roles
@@ -1173,7 +1173,7 @@ export function CreateRequisitionWorkspace() {
             {/* Right Column - Funding Route & Budget Lines */}
             <div className="space-y-6 lg:col-span-7 xl:col-span-7">
               {/* Funding Route Section */}
-              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
+              <div className="rounded-lg border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
                 <div className="flex items-center justify-between border-b border-border/40 pb-3">
                   <h2 className="text-sm font-bold text-foreground">
                     Funding Route
@@ -1229,7 +1229,7 @@ export function CreateRequisitionWorkspace() {
               </div>
 
               {/* Budget Lines Section */}
-              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
+              <div className="rounded-lg border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
                 <div className="flex items-center justify-between border-b border-border/40 pb-3">
                   <h2 className="text-sm font-bold text-foreground">
                     {fundingRoute === "budgeted" && "Budget Lines"}
@@ -1305,7 +1305,7 @@ export function CreateRequisitionWorkspace() {
               </div>
 
               {/* Allocation Summary */}
-              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
+              <div className="rounded-lg border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
                 <div className="flex items-center justify-between border-b border-border/40 pb-3">
                   <h2 className="text-sm font-bold text-foreground">
                     Allocation Summary
@@ -1383,7 +1383,7 @@ export function CreateRequisitionWorkspace() {
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
             {/* Left Column: Required Document Category Cards & Dropzone */}
             <div className="space-y-6 lg:col-span-7 xl:col-span-8">
-              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-5">
+              <div className="rounded-lg border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-5">
                 <div className="border-b border-border/40 pb-3">
                   <h2 className="text-sm font-bold text-foreground">
                     Required & Supporting Attachments
@@ -1552,7 +1552,7 @@ export function CreateRequisitionWorkspace() {
             {/* Right Column: Uploaded Files List & Compliance Check */}
             <div className="space-y-6 lg:col-span-5 xl:col-span-4">
               {/* Uploaded Files List */}
-              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
+              <div className="rounded-lg border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
                 <div className="flex items-center justify-between border-b border-border/40 pb-3">
                   <h2 className="text-sm font-bold text-foreground">
                     Attached Documents ({attachedFiles.length})
@@ -1614,7 +1614,7 @@ export function CreateRequisitionWorkspace() {
               </div>
 
               {/* Compliance Checklist Box */}
-              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
+              <div className="rounded-lg border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4">
                 <div className="flex items-center justify-between border-b border-border/40 pb-3">
                   <h2 className="text-sm font-bold text-foreground">
                     Document Verification
@@ -1676,7 +1676,7 @@ export function CreateRequisitionWorkspace() {
         {currentStep === 4 && (
           <div className="space-y-6">
             {/* Top Banner Card */}
-            <div className="rounded-xl border border-primary/20 bg-primary/5 p-5 md:p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-5 md:p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-start gap-4">
                 <div className="size-11 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-xs">
                   <CheckCircle2 className="size-5" />
@@ -1707,7 +1707,7 @@ export function CreateRequisitionWorkspace() {
             {/* 4 Review Cards Grid */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {/* Card 1: Position Requirements */}
-              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4 flex flex-col justify-between">
+              <div className="rounded-lg border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4 flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-border/40 pb-3">
                     <div className="flex items-center gap-2">
@@ -1777,7 +1777,7 @@ export function CreateRequisitionWorkspace() {
               </div>
 
               {/* Card 2: Assigned Governance & Approval Workflow */}
-              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4 flex flex-col justify-between">
+              <div className="rounded-lg border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4 flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-border/40 pb-3">
                     <div className="flex items-center gap-2">
@@ -1834,7 +1834,7 @@ export function CreateRequisitionWorkspace() {
               </div>
 
               {/* Card 3: Financial & Budget Allocation */}
-              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4 flex flex-col justify-between">
+              <div className="rounded-lg border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4 flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-border/40 pb-3">
                     <div className="flex items-center gap-2">
@@ -1888,7 +1888,7 @@ export function CreateRequisitionWorkspace() {
               </div>
 
               {/* Card 4: Attachments & Compliance */}
-              <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4 flex flex-col justify-between">
+              <div className="rounded-lg border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-4 flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-border/40 pb-3">
                     <div className="flex items-center gap-2">
@@ -1930,7 +1930,7 @@ export function CreateRequisitionWorkspace() {
             </div>
 
             {/* Compliance & Legal Declaration Box */}
-            <div className="rounded-xl border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-3">
+            <div className="rounded-lg border border-border/60 bg-card p-5 md:p-6 shadow-xs space-y-3">
               <div className="flex items-center gap-2.5 text-foreground font-semibold text-xs">
                 <ShieldCheck className="size-4 text-primary" />
                 <span>Submitter Compliance Declaration</span>

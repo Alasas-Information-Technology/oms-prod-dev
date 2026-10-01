@@ -166,12 +166,12 @@ export function SecuritySettingsDashboard() {
         </PageBarActions>
 
         {/* ── Executive Hero Banner ── */}
-        <div className="rounded-2xl border border-primary/10 bg-linear-to-r from-primary/10 via-primary/5 to-background p-6 relative overflow-hidden shadow-sm">
+        <div className="rounded-lg border border-primary/10 bg-linear-to-r from-primary/10 via-primary/5 to-background p-6 relative overflow-hidden shadow-sm">
           <div className="absolute top-0 right-0 w-1/3 h-full bg-linear-to-l from-primary/10 to-transparent pointer-events-none" />
           
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-start gap-4">
-              <div className="size-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-md">
+              <div className="size-12 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-md">
                 <ShieldCheck className="size-6" />
               </div>
               <div className="space-y-1.5">
@@ -206,10 +206,10 @@ export function SecuritySettingsDashboard() {
 
         {/* ── Tabbed Navigation ── */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="w-full justify-start rounded-full border border-foreground/15 bg-muted p-1 overflow-x-auto overflow-y-hidden flex-nowrap shadow-2xs">
+          <TabsList className="w-full justify-start overflow-x-auto overflow-y-hidden flex-nowrap">
             <TabsTrigger
               value="authentication"
-              className="flex items-center gap-2 h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-lg transition-all cursor-pointer"
+              className="flex items-center gap-2"
             >
               <KeyRound className="size-3.5 text-primary" />
               <span>Authentication & Tokens</span>
@@ -217,7 +217,7 @@ export function SecuritySettingsDashboard() {
 
             <TabsTrigger
               value="sessions"
-              className="flex items-center gap-2 h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-lg transition-all cursor-pointer"
+              className="flex items-center gap-2"
             >
               <Laptop className="size-3.5 text-blue-500" />
               <span>Session Controls</span>
@@ -225,7 +225,7 @@ export function SecuritySettingsDashboard() {
 
             <TabsTrigger
               value="protection"
-              className="flex items-center gap-2 h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-lg transition-all cursor-pointer"
+              className="flex items-center gap-2"
             >
               <ShieldAlert className="size-3.5 text-red-500" />
               <span>Threat Defense & Rate Limits</span>
@@ -233,7 +233,7 @@ export function SecuritySettingsDashboard() {
 
             <TabsTrigger
               value="audit"
-              className="flex items-center gap-2 h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-lg transition-all cursor-pointer"
+              className="flex items-center gap-2"
             >
               <History className="size-3.5 text-purple-500" />
               <span>Audit & Retention</span>
@@ -241,7 +241,7 @@ export function SecuritySettingsDashboard() {
 
             <TabsTrigger
               value="monitoring"
-              className="flex items-center gap-2 h-9 px-4 text-xs font-semibold rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-lg transition-all cursor-pointer"
+              className="flex items-center gap-2"
             >
               <Activity className="size-3.5 text-emerald-500" />
               <span>System Health & Danger Vault</span>

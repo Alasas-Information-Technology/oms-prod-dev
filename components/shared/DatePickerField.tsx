@@ -43,13 +43,12 @@ export function DatePickerField({
             type="button"
             disabled={disabled}
             className={cn(
-              "flex h-9 w-full items-center justify-between rounded border px-3 text-xs text-left transition-colors",
-              "bg-input-background border-border text-foreground",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:border-ring",
-              open && "ring-2 ring-ring/50 border-ring",
-              !value && "text-muted-foreground",
-              error && "border-destructive ring-destructive/20",
-              disabled && "opacity-50 cursor-not-allowed"
+              "flex h-9 w-full min-w-0 items-center justify-between rounded-sm border border-input bg-background dark:bg-card/30 px-3 py-1.5 text-sm text-left transition-[color,box-shadow,border-color] duration-200 ease-out outline-none hover:border-ring/50",
+              "focus:outline-none focus-visible:border-ring focus-visible:ring-ring/20 focus-visible:ring-[3px]",
+              open && "border-ring ring-[3px] ring-ring/20",
+              !value ? "text-muted-foreground" : "text-foreground",
+              error && "border-destructive ring-destructive/20 focus-visible:ring-destructive/20 focus-visible:border-destructive",
+              disabled && "opacity-50 cursor-not-allowed pointer-events-none"
             )}
           >
             <div className="flex items-center gap-2 min-w-0">
@@ -71,7 +70,7 @@ export function DatePickerField({
             )}
           </button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0 bg-card border border-border shadow-xl z-50" align="start">
+        <PopoverContent className="w-auto p-0" align="start">
           <Calendar
             mode="single"
             selected={value}

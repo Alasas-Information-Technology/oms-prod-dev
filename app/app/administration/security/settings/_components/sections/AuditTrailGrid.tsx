@@ -136,7 +136,7 @@ export function AuditTrailGrid() {
   };
 
   return (
-    <Card className="rounded-xl border border-foreground/15 bg-card shadow-sm overflow-hidden">
+    <Card className="rounded-lg border border-foreground/15 bg-card shadow-sm overflow-hidden">
       <CardHeader className="pb-4 border-b border-border/50">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">

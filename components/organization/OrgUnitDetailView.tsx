@@ -1,37 +1,32 @@
 "use client";
 
-import * as React from "react";
+import {
+  Archive,
+  ArrowRightLeft,
+  Edit2,
+  FileQuestion,
+  Loader2,
+  MoreHorizontal,
+  Plus,
+  RefreshCw,
+  Trash2,
+  User
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import * as React from "react";
 import { toast } from "sonner";
-import {
-  ChevronRight,
-  Edit2,
-  ArrowRightLeft,
-  Trash2,
-  Archive,
-  Plus,
-  Loader2,
-  FileQuestion,
-  RefreshCw,
-  MoreHorizontal,
-  User,
-  Crown,
-  Users,
-  Mail,
-} from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { OrgBreadcrumbItem, OrgTypeIcon } from "@/components/organization";
+import { AddOrgUnitWizard } from "@/components/organization/AddOrgUnitWizard";
+import { ArchiveUnitDialog } from "@/components/organization/ArchiveUnitDialog";
+import { DeleteUnitDialog } from "@/components/organization/DeleteUnitDialog";
+import { ManagerAssignmentPanel } from "@/components/organization/ManagerAssignmentPanel";
+import { MoveUnitDialog } from "@/components/organization/MoveUnitDialog";
+import { OrgUnitForm } from "@/components/organization/OrgUnitForm";
+import { ColumnDef, DataTable } from "@/components/shared/DataTable";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -39,38 +34,37 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { DataTable, ColumnDef } from "@/components/shared/DataTable";
-import { OrgTypeIcon, OrgBreadcrumbItem } from "@/components/organization";
-import { OrgUnitForm } from "@/components/organization/OrgUnitForm";
-import { AddOrgUnitWizard } from "@/components/organization/AddOrgUnitWizard";
-import { MoveUnitDialog } from "@/components/organization/MoveUnitDialog";
-import { ArchiveUnitDialog } from "@/components/organization/ArchiveUnitDialog";
-import { DeleteUnitDialog } from "@/components/organization/DeleteUnitDialog";
-import { ManagerAssignmentPanel } from "@/components/organization/ManagerAssignmentPanel";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import {
+  useActivateOrgUnit,
+  useApprovalChain,
+  useAssignManager,
+  useBudgetOwner,
+  useCreateOrgUnit,
+  useDeactivateOrgUnit,
   useOrgUnit,
-  useOrgUnitChildren,
   useOrgUnitAncestors,
   useOrgUnitChangeLog,
+  useOrgUnitChildren,
   useOrgUnitCurrentHead,
   useOrgUnitMembers,
-  useApprovalChain,
-  useBudgetOwner,
   useUpdateOrgUnit,
-  useCreateOrgUnit,
-  useActivateOrgUnit,
-  useDeactivateOrgUnit,
-  useAssignManager,
 } from "@/hooks/useOrganization";
 import { usePermission } from "@/hooks/usePermission";
 import {
-  OrgUnitSummaryDto,
-  OrgUnitMemberDto,
-  OrgUnitChangeLogDto,
-  UpdateOrgUnitDto,
   CreateOrgUnitDto,
   ORG_PERMISSIONS,
+  OrgUnitSummaryDto,
+  UpdateOrgUnitDto
 } from "@/lib/types/organization.types";
 import { cn } from "@/lib/utils";
 
@@ -177,15 +171,7 @@ function getInitials(name?: string | null): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-/**
- * OrgUnitDetailView — Slide-Over Detail Panel for Organization Units.
- *
- * Implements:
- * - Part 1: Clean surface rules (white card, neutral borders, mono codes).
- * - Part 2: Vocabulary compliance (Part of, What's inside, Who's in charge, Archive/Remove).
- * - Part 3.4: Slide-over anatomy (code chip, panel label, ⋯ menu, dynamic child tab, definition list).
- * - Part 6.5: Genuine 404 error page, indented skeletons, inviting empty states.
- */
+
 export function OrgUnitDetailView({
   unitId,
   onNavigateUnit,
@@ -459,7 +445,7 @@ export function OrgUnitDetailView({
         <div className="px-6 sm:px-8 pt-8 pb-4">
           <div className="flex items-start justify-between gap-6">
             <div className="flex items-start gap-4 min-w-0">
-              <div className="size-16 rounded-2xl bg-[#0a2540] text-blue-400 flex items-center justify-center shrink-0 shadow-sm border border-black/10 dark:border-white/10 relative overflow-hidden">
+              <div className="size-16 rounded-lg bg-[#0a2540] text-blue-400 flex items-center justify-center shrink-0 shadow-sm border border-black/10 dark:border-white/10 relative overflow-hidden">
                 <div className="absolute inset-0 bg-linear-to-b from-white/10 to-transparent pointer-events-none" />
                 <OrgTypeIcon type={typeCode || "DEPARTMENT"} size="detail" className="size-8" />
               </div>
@@ -472,7 +458,7 @@ export function OrgUnitDetailView({
                     {unit.code}
                   </span>
                 </div>
-                
+
                 <div className="text-sm font-medium text-slate-500 dark:text-slate-400 flex flex-col gap-0.5 pt-0.5">
                   {unit.nameAr && (
                     <p dir="rtl" lang="ar" className="font-arabic truncate">
@@ -514,7 +500,7 @@ export function OrgUnitDetailView({
                   Edit
                 </Button>
               )}
-              
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -525,7 +511,7 @@ export function OrgUnitDetailView({
                     <MoreHorizontal className="size-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48 p-1 rounded-xl">
+                <DropdownMenuContent align="end" className="w-48 p-1 rounded-lg">
                   {can(ORG_PERMISSIONS.MOVE) && (
                     <DropdownMenuItem
                       onClick={() => setIsMoveOpen(true)}
@@ -565,7 +551,7 @@ export function OrgUnitDetailView({
         {/* ── SEGMENTED CONTROL TABS ── */}
         <div className="px-6 sm:px-8 pb-4">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="h-10 p-1 bg-transparent flex justify-start gap-1">
+            <TabsList>
               {["overview", "children", "people", "history"].map((tab) => {
                 const labels: Record<string, string> = {
                   overview: "Overview",
@@ -578,17 +564,11 @@ export function OrgUnitDetailView({
                   people: (unit as any).peopleCount ?? (unit as any).assignedUserCount,
                   history: changeLogsData?.total,
                 };
-                
+
                 return (
                   <TabsTrigger
                     key={tab}
                     value={tab}
-                    className={cn(
-                      "h-8 px-4 rounded-full text-[13px] font-semibold transition-all duration-200",
-                      activeTab === tab 
-                        ? "bg-white text-foreground shadow-sm dark:bg-slate-800" 
-                        : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-300"
-                    )}
                   >
                     {labels[tab]}
                     {counts[tab] ? (
@@ -603,256 +583,256 @@ export function OrgUnitDetailView({
           </Tabs>
         </div>
       </div>
-      
+
       {/* ── TAB CONTENT ── */}
       <div className="flex-1 overflow-y-auto p-6 sm:p-8">
         <Tabs value={activeTab} className="h-full">
-           
-           {/* OVERVIEW */}
-           <TabsContent value="overview" className="m-0 focus-visible:outline-none space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                 
-                 {/* Properties */}
-                 <div className="p-6 rounded-3xl bg-card border border-border/40 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] space-y-4">
-                    <h3 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
-                      Properties
-                    </h3>
-                    <div className="space-y-1">
-                       <div className="flex justify-between items-center py-3 border-b border-slate-100 dark:border-slate-800/50 last:border-0">
-                         <span className="text-[13px] text-slate-500">Status</span>
-                         <Badge variant="outline" className={cn("text-[11px] font-semibold px-2.5 py-0.5 rounded-full border-none", unit.isActive ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-slate-100 text-slate-600")}>
-                            {unit.isActive ? "Active" : "Archived"}
-                         </Badge>
-                       </div>
-                       <div className="flex justify-between items-center py-3 border-b border-slate-100 dark:border-slate-800/50 last:border-0">
-                         <span className="text-[13px] text-slate-500">Cost Centre</span>
-                         <span className="text-[13px] font-medium text-foreground">{unit.costCenterCode || "None"}</span>
-                       </div>
-                       <div className="flex justify-between items-center py-3 border-b border-slate-100 dark:border-slate-800/50 last:border-0">
-                         <span className="text-[13px] text-slate-500">Sub-units</span>
-                         <span className="text-[13px] font-medium text-foreground">{countSentence}</span>
-                       </div>
-                    </div>
-                 </div>
 
-                 {/* Leadership */}
-                 <div className="p-6 rounded-3xl bg-card border border-border/40 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
-                        Leadership
-                      </h3>
-                      {can(ORG_PERMISSIONS.MANAGE_MANAGERS) && !isHeadAssigned && (
-                        <button type="button" onClick={() => setActiveTab("people")} className="text-[13px] font-medium text-blue-600 hover:underline">
-                          Assign
+          {/* OVERVIEW */}
+          <TabsContent value="overview" className="m-0 focus-visible:outline-none space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+
+              {/* Properties */}
+              <div className="p-6 rounded-lg bg-card border border-border/40 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] space-y-4">
+                <h3 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
+                  Properties
+                </h3>
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center py-3 border-b border-slate-100 dark:border-slate-800/50 last:border-0">
+                    <span className="text-[13px] text-slate-500">Status</span>
+                    <Badge variant="outline" className={cn("text-[11px] font-semibold px-2.5 py-0.5 rounded-full border-none", unit.isActive ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-slate-100 text-slate-600")}>
+                      {unit.isActive ? "Active" : "Archived"}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between items-center py-3 border-b border-slate-100 dark:border-slate-800/50 last:border-0">
+                    <span className="text-[13px] text-slate-500">Cost Centre</span>
+                    <span className="text-[13px] font-medium text-foreground">{unit.costCenterCode || "None"}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-3 border-b border-slate-100 dark:border-slate-800/50 last:border-0">
+                    <span className="text-[13px] text-slate-500">Sub-units</span>
+                    <span className="text-[13px] font-medium text-foreground">{countSentence}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Leadership */}
+              <div className="p-6 rounded-lg bg-card border border-border/40 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
+                    Leadership
+                  </h3>
+                  {can(ORG_PERMISSIONS.MANAGE_MANAGERS) && !isHeadAssigned && (
+                    <button type="button" onClick={() => setActiveTab("people")} className="text-[13px] font-medium text-blue-600 hover:underline">
+                      Assign
+                    </button>
+                  )}
+                </div>
+                <div className="flex items-center gap-4 pt-1">
+                  <div className="size-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0 text-slate-600 dark:text-slate-300 font-medium text-[15px]">
+                    {isHeadAssigned ? getInitials(headName) : <User className="size-5 opacity-50" />}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[15px] font-medium text-foreground truncate">{isHeadAssigned ? headName : "Unassigned"}</p>
+                    <p className="text-[13px] text-slate-500 mt-0.5 truncate">{isHeadAssigned ? `Head · Since ${formatDisplayDate(effectiveHeadSince)}` : "No active leader"}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Budget */}
+              <div className="p-6 rounded-lg bg-card border border-border/40 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] space-y-4">
+                <h3 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
+                  Budget Owner
+                </h3>
+                <div className="pt-1">
+                  {isLoadingBudget ? (
+                    <div className="flex items-center gap-2 text-[13px] text-slate-500">
+                      <Loader2 className="size-4 animate-spin" />
+                      <span>Checking...</span>
+                    </div>
+                  ) : budgetOwner ? (
+                    <div>
+                      <p className="text-[15px] font-medium text-foreground">{budgetOwner.name}</p>
+                      <p className="text-[13px] text-slate-500 mt-0.5">{budgetOwner.code}</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5">
+                      <p className="text-[13px] text-slate-500">Not assigned</p>
+                      {can(ORG_PERMISSIONS.UPDATE) && (
+                        <button type="button" onClick={() => setIsEditOpen(true)} className="text-[13px] font-medium text-blue-600 hover:underline block">
+                          Set budget owner
                         </button>
                       )}
                     </div>
-                    <div className="flex items-center gap-4 pt-1">
-                       <div className="size-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0 text-slate-600 dark:text-slate-300 font-medium text-[15px]">
-                         {isHeadAssigned ? getInitials(headName) : <User className="size-5 opacity-50" />}
-                       </div>
-                       <div className="min-w-0">
-                         <p className="text-[15px] font-medium text-foreground truncate">{isHeadAssigned ? headName : "Unassigned"}</p>
-                         <p className="text-[13px] text-slate-500 mt-0.5 truncate">{isHeadAssigned ? `Head · Since ${formatDisplayDate(effectiveHeadSince)}` : "No active leader"}</p>
-                       </div>
-                    </div>
-                 </div>
+                  )}
+                </div>
+              </div>
 
-                 {/* Budget */}
-                 <div className="p-6 rounded-3xl bg-card border border-border/40 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] space-y-4">
-                    <h3 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
-                      Budget Owner
-                    </h3>
-                    <div className="pt-1">
-                      {isLoadingBudget ? (
-                        <div className="flex items-center gap-2 text-[13px] text-slate-500">
-                          <Loader2 className="size-4 animate-spin" />
-                          <span>Checking...</span>
-                        </div>
-                      ) : budgetOwner ? (
-                        <div>
-                          <p className="text-[15px] font-medium text-foreground">{budgetOwner.name}</p>
-                          <p className="text-[13px] text-slate-500 mt-0.5">{budgetOwner.code}</p>
-                        </div>
-                      ) : (
-                        <div className="space-y-1.5">
-                          <p className="text-[13px] text-slate-500">Not assigned</p>
-                          {can(ORG_PERMISSIONS.UPDATE) && (
-                            <button type="button" onClick={() => setIsEditOpen(true)} className="text-[13px] font-medium text-blue-600 hover:underline block">
-                              Set budget owner
-                            </button>
+              {/* Signoff Chain */}
+              <div className="p-6 rounded-lg bg-card border border-border/40 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] space-y-4">
+                <h3 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
+                  Approval Route
+                </h3>
+                <div className="pt-1">
+                  {isLoadingChain ? (
+                    <div className="flex items-center gap-2 text-[13px] text-slate-500">
+                      <Loader2 className="size-4 animate-spin" />
+                      <span>Loading path...</span>
+                    </div>
+                  ) : approvalChain && approvalChain.length > 0 ? (
+                    <div className="relative pl-1">
+                      {approvalChain.map((node, idx) => {
+                        const isLast = idx === approvalChain.length - 1;
+                        const headPerson = node.head?.displayName;
+                        const hasHead = Boolean(headPerson && headPerson !== "Assigned Head");
+
+                        return (
+                          <div key={node.orgUnitId || idx} className="relative flex items-start gap-4 pb-6 last:pb-0">
+                            {!isLast && (
+                              <div className="absolute left-[7px] top-[22px] bottom-0 w-[2px] bg-slate-100 dark:bg-slate-800" />
+                            )}
+                            <div className="relative z-10 size-4 rounded-full bg-background border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0 mt-1">
+                              <div className={cn("size-1.5 rounded-full", hasHead ? "bg-slate-400 dark:bg-slate-500" : "bg-transparent")} />
+                            </div>
+                            <div className="min-w-0 flex-1 -mt-0.5">
+                              <p className="text-[14px] font-medium text-foreground leading-snug truncate">
+                                {node.name}
+                              </p>
+                              <p className="text-[13px] text-slate-500 mt-0.5 leading-snug truncate">
+                                {hasHead ? headPerson : "No one in charge"}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-[13px] text-slate-500">No sign-off route required.</p>
+                  )}
+                </div>
+              </div>
+
+            </div>
+          </TabsContent>
+
+          {/* CHILDREN */}
+          <TabsContent value="children" className="m-0 focus-visible:outline-none h-full">
+            <div className="rounded-lg border border-border/40 bg-card shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col h-full min-h-[400px]">
+              <div className="p-6 pb-4 flex items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-base font-semibold text-foreground">{childMeta.tabLabel}</h3>
+                  <p className="text-[13px] text-slate-500 mt-0.5">
+                    Teams and divisions inside {unit.name}.
+                  </p>
+                </div>
+                {can(ORG_PERMISSIONS.CREATE) && (
+                  <Button size="sm" onClick={() => setIsAddChildOpen(true)} className="gap-2 text-[13px] font-medium rounded-full bg-[#1c2c4b] hover:bg-[#15213a] text-white">
+                    <Plus className="size-4" />
+                    Add {childMeta.singularLabel}
+                  </Button>
+                )}
+              </div>
+              <div className="p-0 flex-1 [&_.border-b]:border-slate-100 dark:[&_.border-b]:border-slate-800/50">
+                <DataTable
+                  columns={childrenColumns}
+                  data={childrenList || []}
+                  keyField="orgUnitId"
+                  loading={isLoadingChildren}
+                  onRowClick={(row) => onNavigateUnit?.(row.orgUnitId)}
+                  emptyMessage={`No ${childMeta.tabLabel.toLowerCase()} added under ${unit.name} yet.`}
+                />
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* PEOPLE */}
+          <TabsContent value="people" className="m-0 focus-visible:outline-none">
+            <div className="rounded-lg border border-border/40 bg-card shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] overflow-hidden">
+              <ManagerAssignmentPanel orgUnitId={unit.orgUnitId} unitName={unit.name} />
+            </div>
+          </TabsContent>
+
+          {/* HISTORY */}
+          <TabsContent value="history" className="m-0 focus-visible:outline-none">
+            <div className="rounded-lg border border-border/40 bg-card shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] overflow-hidden">
+              <div className="p-6 border-b border-slate-100 dark:border-slate-800/50">
+                <h3 className="text-base font-semibold text-foreground">Change Log</h3>
+                <p className="text-[13px] text-slate-500 mt-0.5">
+                  Plain-language record of reporting changes, appointments, and structure updates.
+                </p>
+              </div>
+              <div className="p-6">
+                {isLoadingLogs ? (
+                  <div className="py-8 text-center flex flex-col items-center justify-center space-y-2 text-[13px] text-slate-500">
+                    <Loader2 className="size-5 animate-spin text-slate-400" />
+                    <span>Loading history records...</span>
+                  </div>
+                ) : changeLogsData?.data && changeLogsData.data.length > 0 ? (
+                  <div className="space-y-5 divide-y divide-slate-100 dark:divide-slate-800/50">
+                    {changeLogsData.data.map((log) => {
+                      const isMove = log.changeType === "MOVED" || log.changeType === "REPARENT";
+                      const oldParent = log.oldValues?.parentName || log.oldValues?.parentOrgUnitId || "DIEZ";
+                      const newParent = log.newValues?.parentName || log.newValues?.parentOrgUnitId || "DIEZ";
+                      const operator = log.performedByDisplayName || log.performedBy || "Administrator";
+                      const formattedDate = log.performedAt
+                        ? new Date(log.performedAt).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })
+                        : "Recently";
+
+                      let sentence = `${unit.name} updated — ${operator}, ${formattedDate}`;
+                      if (isMove) {
+                        sentence = `Moved from ${oldParent} to ${newParent} — ${operator}, ${formattedDate}`;
+                      } else if (log.changeType === "MANAGER_ASSIGNED") {
+                        sentence = `Assigned leader — ${operator}, ${formattedDate}`;
+                      } else if (log.changeType === "CREATED") {
+                        sentence = `Created under ${newParent} — ${operator}, ${formattedDate}`;
+                      } else if (log.changeType === "DEACTIVATED") {
+                        sentence = `Archived — ${operator}, ${formattedDate}`;
+                      } else if (log.changeType === "ACTIVATED") {
+                        sentence = `Restored — ${operator}, ${formattedDate}`;
+                      }
+
+                      const friendlyTag =
+                        isMove ? "Move" :
+                          log.changeType === "CREATED" ? "Created" :
+                            log.changeType === "DEACTIVATED" ? "Archived" :
+                              log.changeType === "ACTIVATED" ? "Restored" :
+                                log.changeType === "MANAGER_ASSIGNED" ? "Leadership" : "Update";
+
+                      return (
+                        <div key={log.changeLogId} className="pt-5 first:pt-0 flex flex-col gap-1.5">
+                          <div className="flex items-center justify-between gap-3">
+                            <p className="text-[14px] font-medium text-foreground leading-snug">
+                              {sentence}
+                            </p>
+                            <Badge variant="secondary" className="text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border-none shadow-none">
+                              {friendlyTag}
+                            </Badge>
+                          </div>
+                          {isMove && log.affectedNodeCount !== undefined && log.affectedNodeCount > 0 && (
+                            <p className="text-[13px] text-slate-500">
+                              {log.affectedNodeCount} teams inside moved with it.
+                            </p>
+                          )}
+                          {log.reason && (
+                            <p className="text-[13px] text-slate-500">
+                              Reason: {log.reason}
+                            </p>
                           )}
                         </div>
-                      )}
-                    </div>
-                 </div>
-
-                 {/* Signoff Chain */}
-                 <div className="p-6 rounded-3xl bg-card border border-border/40 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] space-y-4">
-                    <h3 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
-                      Approval Route
-                    </h3>
-                    <div className="pt-1">
-                      {isLoadingChain ? (
-                        <div className="flex items-center gap-2 text-[13px] text-slate-500">
-                          <Loader2 className="size-4 animate-spin" />
-                          <span>Loading path...</span>
-                        </div>
-                      ) : approvalChain && approvalChain.length > 0 ? (
-                        <div className="relative pl-1">
-                          {approvalChain.map((node, idx) => {
-                            const isLast = idx === approvalChain.length - 1;
-                            const headPerson = node.head?.displayName;
-                            const hasHead = Boolean(headPerson && headPerson !== "Assigned Head");
-
-                            return (
-                              <div key={node.orgUnitId || idx} className="relative flex items-start gap-4 pb-6 last:pb-0">
-                                {!isLast && (
-                                  <div className="absolute left-[7px] top-[22px] bottom-0 w-[2px] bg-slate-100 dark:bg-slate-800" />
-                                )}
-                                <div className="relative z-10 size-4 rounded-full bg-background border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0 mt-1">
-                                  <div className={cn("size-1.5 rounded-full", hasHead ? "bg-slate-400 dark:bg-slate-500" : "bg-transparent")} />
-                                </div>
-                                <div className="min-w-0 flex-1 -mt-0.5">
-                                  <p className="text-[14px] font-medium text-foreground leading-snug truncate">
-                                    {node.name}
-                                  </p>
-                                  <p className="text-[13px] text-slate-500 mt-0.5 leading-snug truncate">
-                                    {hasHead ? headPerson : "No one in charge"}
-                                  </p>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      ) : (
-                        <p className="text-[13px] text-slate-500">No sign-off route required.</p>
-                      )}
-                    </div>
-                 </div>
-
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="py-8 text-center text-[13px] text-slate-500">
+                    No history records logged for this {typeName.toLowerCase()} yet.
+                  </div>
+                )}
               </div>
-           </TabsContent>
-
-           {/* CHILDREN */}
-           <TabsContent value="children" className="m-0 focus-visible:outline-none h-full">
-             <div className="rounded-3xl border border-border/40 bg-card shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col h-full min-h-[400px]">
-               <div className="p-6 pb-4 flex items-center justify-between gap-4">
-                 <div>
-                   <h3 className="text-base font-semibold text-foreground">{childMeta.tabLabel}</h3>
-                   <p className="text-[13px] text-slate-500 mt-0.5">
-                     Teams and divisions inside {unit.name}.
-                   </p>
-                 </div>
-                 {can(ORG_PERMISSIONS.CREATE) && (
-                   <Button size="sm" onClick={() => setIsAddChildOpen(true)} className="gap-2 text-[13px] font-medium rounded-full bg-[#1c2c4b] hover:bg-[#15213a] text-white">
-                     <Plus className="size-4" />
-                     Add {childMeta.singularLabel}
-                   </Button>
-                 )}
-               </div>
-               <div className="p-0 flex-1 [&_.border-b]:border-slate-100 dark:[&_.border-b]:border-slate-800/50">
-                 <DataTable
-                   columns={childrenColumns}
-                   data={childrenList || []}
-                   keyField="orgUnitId"
-                   loading={isLoadingChildren}
-                   onRowClick={(row) => onNavigateUnit?.(row.orgUnitId)}
-                   emptyMessage={`No ${childMeta.tabLabel.toLowerCase()} added under ${unit.name} yet.`}
-                 />
-               </div>
-             </div>
-           </TabsContent>
-
-           {/* PEOPLE */}
-           <TabsContent value="people" className="m-0 focus-visible:outline-none">
-             <div className="rounded-3xl border border-border/40 bg-card shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] overflow-hidden">
-               <ManagerAssignmentPanel orgUnitId={unit.orgUnitId} unitName={unit.name} />
-             </div>
-           </TabsContent>
-
-           {/* HISTORY */}
-           <TabsContent value="history" className="m-0 focus-visible:outline-none">
-             <div className="rounded-3xl border border-border/40 bg-card shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] overflow-hidden">
-               <div className="p-6 border-b border-slate-100 dark:border-slate-800/50">
-                 <h3 className="text-base font-semibold text-foreground">Change Log</h3>
-                 <p className="text-[13px] text-slate-500 mt-0.5">
-                   Plain-language record of reporting changes, appointments, and structure updates.
-                 </p>
-               </div>
-               <div className="p-6">
-                 {isLoadingLogs ? (
-                   <div className="py-8 text-center flex flex-col items-center justify-center space-y-2 text-[13px] text-slate-500">
-                     <Loader2 className="size-5 animate-spin text-slate-400" />
-                     <span>Loading history records...</span>
-                   </div>
-                 ) : changeLogsData?.data && changeLogsData.data.length > 0 ? (
-                   <div className="space-y-5 divide-y divide-slate-100 dark:divide-slate-800/50">
-                     {changeLogsData.data.map((log) => {
-                       const isMove = log.changeType === "MOVED" || log.changeType === "REPARENT";
-                       const oldParent = log.oldValues?.parentName || log.oldValues?.parentOrgUnitId || "DIEZ";
-                       const newParent = log.newValues?.parentName || log.newValues?.parentOrgUnitId || "DIEZ";
-                       const operator = log.performedByDisplayName || log.performedBy || "Administrator";
-                       const formattedDate = log.performedAt
-                         ? new Date(log.performedAt).toLocaleDateString("en-GB", {
-                             day: "numeric",
-                             month: "long",
-                             year: "numeric",
-                           })
-                         : "Recently";
-
-                       let sentence = `${unit.name} updated — ${operator}, ${formattedDate}`;
-                       if (isMove) {
-                         sentence = `Moved from ${oldParent} to ${newParent} — ${operator}, ${formattedDate}`;
-                       } else if (log.changeType === "MANAGER_ASSIGNED") {
-                         sentence = `Assigned leader — ${operator}, ${formattedDate}`;
-                       } else if (log.changeType === "CREATED") {
-                         sentence = `Created under ${newParent} — ${operator}, ${formattedDate}`;
-                       } else if (log.changeType === "DEACTIVATED") {
-                         sentence = `Archived — ${operator}, ${formattedDate}`;
-                       } else if (log.changeType === "ACTIVATED") {
-                         sentence = `Restored — ${operator}, ${formattedDate}`;
-                       }
-
-                       const friendlyTag =
-                         isMove ? "Move" :
-                         log.changeType === "CREATED" ? "Created" :
-                         log.changeType === "DEACTIVATED" ? "Archived" :
-                         log.changeType === "ACTIVATED" ? "Restored" :
-                         log.changeType === "MANAGER_ASSIGNED" ? "Leadership" : "Update";
-
-                       return (
-                         <div key={log.changeLogId} className="pt-5 first:pt-0 flex flex-col gap-1.5">
-                           <div className="flex items-center justify-between gap-3">
-                             <p className="text-[14px] font-medium text-foreground leading-snug">
-                               {sentence}
-                             </p>
-                             <Badge variant="secondary" className="text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border-none shadow-none">
-                               {friendlyTag}
-                             </Badge>
-                           </div>
-                           {isMove && log.affectedNodeCount !== undefined && log.affectedNodeCount > 0 && (
-                             <p className="text-[13px] text-slate-500">
-                               {log.affectedNodeCount} teams inside moved with it.
-                             </p>
-                           )}
-                           {log.reason && (
-                             <p className="text-[13px] text-slate-500">
-                               Reason: {log.reason}
-                             </p>
-                           )}
-                         </div>
-                       );
-                     })}
-                   </div>
-                 ) : (
-                   <div className="py-8 text-center text-[13px] text-slate-500">
-                     No history records logged for this {typeName.toLowerCase()} yet.
-                   </div>
-                 )}
-               </div>
-             </div>
-           </TabsContent>
+            </div>
+          </TabsContent>
 
         </Tabs>
       </div>
@@ -861,7 +841,7 @@ export function OrgUnitDetailView({
       {/* Dialogs: Edit, Add, Move, Remove                                         */}
       {/* ========================================================================= */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-3xl shadow-2xl">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-lg shadow-2xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">Edit {typeName}</DialogTitle>
             <DialogDescription className="text-sm">
@@ -878,7 +858,7 @@ export function OrgUnitDetailView({
       </Dialog>
 
       <Dialog open={isAddChildOpen} onOpenChange={setIsAddChildOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-3xl shadow-2xl">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-lg shadow-2xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">Add {childMeta.singularLabel}</DialogTitle>
             <DialogDescription className="text-sm">

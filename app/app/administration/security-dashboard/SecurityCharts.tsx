@@ -184,7 +184,7 @@ export function SocPanel({
   }, [socEvents, filter]);
 
   return (
-    <Card className="flex flex-col h-full shadow-none border border-border/70 bg-card rounded-xl overflow-hidden w-full select-none">
+    <Card className="flex flex-col h-full shadow-none border border-border/70 bg-card rounded-lg overflow-hidden w-full select-none">
       {/* Top Header */}
       <CardHeader className="p-4 pb-3 border-b border-border/50 shrink-0 space-y-3">
         <div className="flex items-center justify-between">

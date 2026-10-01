@@ -119,11 +119,11 @@ export function SuggestionList({
     return (
       <div
         className={cn(
-          "rounded-2xl border border-border bg-card p-8 text-center space-y-4 max-w-xl mx-auto my-6 shadow-xs",
+          "rounded-lg border border-border bg-card p-8 text-center space-y-4 max-w-xl mx-auto my-6 shadow-xs",
           className
         )}
       >
-        <div className="size-12 rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 mx-auto flex items-center justify-center border border-amber-200 dark:border-amber-800/60">
+        <div className="size-12 rounded-lg bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 mx-auto flex items-center justify-center border border-amber-200 dark:border-amber-800/60">
           <CalendarOff className="size-6" />
         </div>
         <div className="space-y-1.5">
@@ -156,11 +156,11 @@ export function SuggestionList({
     return (
       <div
         className={cn(
-          "rounded-2xl border border-border bg-card p-8 text-center space-y-4 max-w-xl mx-auto my-6 shadow-xs",
+          "rounded-lg border border-border bg-card p-8 text-center space-y-4 max-w-xl mx-auto my-6 shadow-xs",
           className
         )}
       >
-        <div className="size-12 rounded-2xl bg-muted/60 text-muted-foreground mx-auto flex items-center justify-center border border-border">
+        <div className="size-12 rounded-lg bg-muted/60 text-muted-foreground mx-auto flex items-center justify-center border border-border">
           <CalendarX2 className="size-6" />
         </div>
         <div className="space-y-1.5">

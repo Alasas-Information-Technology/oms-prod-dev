@@ -56,7 +56,7 @@ export function FlexisIntro() {
           >
             <div 
               className={cn(
-                "w-16 h-16 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center shadow-xs border transition-all duration-300 group-hover:scale-105 group-hover:shadow-md",
+                "w-16 h-16 sm:w-20 sm:h-20 rounded-lg flex items-center justify-center shadow-xs border transition-all duration-300 group-hover:scale-105 group-hover:shadow-md",
                 index % 2 === 0
                   ? "bg-primary/10 border-primary/20 text-primary"
                   : "bg-secondary border-border/60 text-heading"

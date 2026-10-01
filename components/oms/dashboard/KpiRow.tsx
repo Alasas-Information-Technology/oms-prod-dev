@@ -47,7 +47,7 @@ export function KpiRow({ metrics, className }: KpiRowProps) {
   return (
     <div
       className={cn(
-        "w-full rounded-xl border border-border/60 bg-card p-5 select-none transition-colors",
+        "w-full rounded-lg border border-border/60 bg-card p-5 select-none transition-colors",
         className
       )}
     >
