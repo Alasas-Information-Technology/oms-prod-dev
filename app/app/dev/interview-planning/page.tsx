@@ -420,7 +420,7 @@ export default function InterviewPlanningDevPage() {
       </div>
 
       {/* Test Controls Bar */}
-      <div className="p-4 rounded-xl border border-border bg-card shadow-xs flex flex-wrap items-center justify-between gap-4">
+      <div className="p-4 rounded-lg border border-border bg-card shadow-xs flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20 mr-1">
             DEV WORKBENCH
@@ -497,7 +497,7 @@ export default function InterviewPlanningDevPage() {
       </div>
 
       {/* Candidate Quick Switcher Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl border border-border bg-card/60 shadow-2xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-lg border border-border bg-card/60 shadow-2xs">
         <div className="flex items-center gap-2 overflow-x-auto" role="tablist" aria-label="Select active candidate">
           <span className="text-muted-foreground text-xs font-medium mr-1">Active candidate:</span>
           {candidates.map((cand, idx) => {
@@ -708,7 +708,7 @@ export default function InterviewPlanningDevPage() {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="p-4 rounded-xl border border-border bg-card space-y-1.5 shadow-2xs">
+          <div className="p-4 rounded-lg border border-border bg-card space-y-1.5 shadow-2xs">
             <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
               <CheckCircle2 className="size-4 text-emerald-600" />
               Task 1 — Underline Tabs
@@ -718,7 +718,7 @@ export default function InterviewPlanningDevPage() {
             </p>
           </div>
 
-          <div className="p-4 rounded-xl border border-border bg-card space-y-1.5 shadow-2xs">
+          <div className="p-4 rounded-lg border border-border bg-card space-y-1.5 shadow-2xs">
             <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
               <CheckCircle2 className="size-4 text-emerald-600" />
               Task 2 — Calendar &amp; Identity Colours
@@ -728,7 +728,7 @@ export default function InterviewPlanningDevPage() {
             </p>
           </div>
 
-          <div className="p-4 rounded-xl border border-border bg-card space-y-1.5 shadow-2xs">
+          <div className="p-4 rounded-lg border border-border bg-card space-y-1.5 shadow-2xs">
             <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
               <CheckCircle2 className="size-4 text-emerald-600" />
               Task 3 — Keyboard Engine
@@ -738,7 +738,7 @@ export default function InterviewPlanningDevPage() {
             </p>
           </div>
 
-          <div className="p-4 rounded-xl border border-border bg-card space-y-1.5 shadow-2xs">
+          <div className="p-4 rounded-lg border border-border bg-card space-y-1.5 shadow-2xs">
             <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
               <CheckCircle2 className="size-4 text-emerald-600" />
               Task 4 — 20-Step Undo History
@@ -748,7 +748,7 @@ export default function InterviewPlanningDevPage() {
             </p>
           </div>
 
-          <div className="p-4 rounded-xl border border-border bg-card space-y-1.5 shadow-2xs">
+          <div className="p-4 rounded-lg border border-border bg-card space-y-1.5 shadow-2xs">
             <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
               <CheckCircle2 className="size-4 text-emerald-600" />
               Task 5 — Discoverability
@@ -758,7 +758,7 @@ export default function InterviewPlanningDevPage() {
             </p>
           </div>
 
-          <div className="p-4 rounded-xl border border-border bg-card space-y-1.5 shadow-2xs">
+          <div className="p-4 rounded-lg border border-border bg-card space-y-1.5 shadow-2xs">
             <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
               <CheckCircle2 className="size-4 text-emerald-600" />
               Inertness Guard

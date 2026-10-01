@@ -212,11 +212,11 @@ export function PostHrDocumentPack({ requestId }: PostHrDocumentPackProps) {
             </h2>
 
             {/* Document Card 1: HR Approval Certificate */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3.5">
                   <div className="relative shrink-0">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center border border-primary/20">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center border border-primary/20">
                       <FileText className="w-5 h-5" />
                     </div>
                     <span className="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-primary text-primary-foreground text-[11px] font-bold flex items-center justify-center shadow">
@@ -271,11 +271,11 @@ export function PostHrDocumentPack({ requestId }: PostHrDocumentPackProps) {
             </div>
 
             {/* Document Card 2: OEMS Hiring Request Document */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3.5">
                   <div className="relative shrink-0">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center border border-primary/20">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center border border-primary/20">
                       <FileCheck2 className="w-5 h-5" />
                     </div>
                     <span className="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-primary text-primary-foreground text-[11px] font-bold flex items-center justify-center shadow">
@@ -407,7 +407,7 @@ export function PostHrDocumentPack({ requestId }: PostHrDocumentPackProps) {
             </div>
 
             {/* Next Step Callout Box */}
-            <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 flex items-start gap-3.5 mt-2">
+            <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 flex items-start gap-3.5 mt-2">
               <div className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary text-primary-foreground font-semibold text-xs shadow-xs">
                 <ArrowRight className="w-3.5 h-3.5" />
                 Next step
@@ -422,7 +422,7 @@ export function PostHrDocumentPack({ requestId }: PostHrDocumentPackProps) {
           {/* Right Column: Readiness + Snapshot + Audit (Cols 8-12) */}
           <div className="lg:col-span-5 flex flex-col gap-5">
             {/* Card 1: Oracle PR Readiness */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-5 shadow-sm">
               <h2 className="text-base font-bold text-slate-900 dark:text-white mb-4">
                 Oracle PR Readiness
               </h2>
@@ -510,7 +510,7 @@ export function PostHrDocumentPack({ requestId }: PostHrDocumentPackProps) {
             </div>
 
             {/* Card 2: Request Snapshot */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-5 shadow-sm">
               <h2 className="text-base font-bold text-slate-900 dark:text-white mb-4">
                 Request Snapshot
               </h2>
@@ -556,7 +556,7 @@ export function PostHrDocumentPack({ requestId }: PostHrDocumentPackProps) {
             </div>
 
             {/* Card 3: Version & Audit */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-5 shadow-sm">
               <h2 className="text-base font-bold text-slate-900 dark:text-white mb-4">
                 Version & Audit
               </h2>

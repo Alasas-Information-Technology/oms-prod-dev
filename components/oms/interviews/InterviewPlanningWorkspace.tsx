@@ -1006,7 +1006,7 @@ export function InterviewPlanningWorkspace({
 
       {/* 6. Service Health Blocking Banner (Task 2: ONLY shown when relay is down) */}
       {data.blindBoundary && !data.blindBoundary.relayActive && (
-        <div className="mx-6 mt-4 p-3.5 rounded-xl border border-destructive/40 bg-destructive/10 text-destructive flex items-center gap-3 text-xs font-medium">
+        <div className="mx-6 mt-4 p-3.5 rounded-lg border border-destructive/40 bg-destructive/10 text-destructive flex items-center gap-3 text-xs font-medium">
           <AlertCircle className="size-4.5 shrink-0 text-destructive" />
           <div className="space-y-0.5">
             <p className="font-semibold text-foreground">
@@ -1021,7 +1021,7 @@ export function InterviewPlanningWorkspace({
 
       {/* 7. Read-only Banner (Task 6): Shown when isMainInterviewer is false */}
       {!data.isMainInterviewer && (
-        <div className="mx-6 mt-4 p-3.5 rounded-xl border border-border bg-card shadow-2xs flex items-start gap-3 text-xs">
+        <div className="mx-6 mt-4 p-3.5 rounded-lg border border-border bg-card shadow-2xs flex items-start gap-3 text-xs">
           <ShieldAlert className="size-4.5 text-amber-500 mt-0.5 shrink-0" />
           <div className="space-y-0.5">
             <p className="font-semibold text-foreground">Read-only view</p>
@@ -1045,7 +1045,7 @@ export function InterviewPlanningWorkspace({
           <div className="min-w-0 flex flex-col">
             {/* Reschedule Banner (Task 5 & Fixture D) */}
             {activeCandidate?.status === "RESCHEDULING" && activeCandidate.withdrawnSlot && (
-              <div className="mb-4 rounded-xl border border-amber-300 dark:border-amber-800/80 bg-amber-50/90 dark:bg-amber-950/40 p-4 text-xs text-amber-900 dark:text-amber-200 shadow-2xs">
+              <div className="mb-4 rounded-lg border border-amber-300 dark:border-amber-800/80 bg-amber-50/90 dark:bg-amber-950/40 p-4 text-xs text-amber-900 dark:text-amber-200 shadow-2xs">
                 <div className="flex items-start gap-2.5">
                   <RotateCcw className="size-4.5 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
                   <div className="space-y-1.5 flex-1">
@@ -1086,7 +1086,7 @@ export function InterviewPlanningWorkspace({
 
             {/* Next Candidate Post-Send Prompt (Task 7) */}
             {otherNotSentCandidate && justSentCandidateRef === activeCandidate?.candidateRef && (
-              <div className="mb-4 p-3.5 rounded-xl border border-emerald-300 dark:border-emerald-800 bg-emerald-50/90 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 text-xs flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+              <div className="mb-4 p-3.5 rounded-lg border border-emerald-300 dark:border-emerald-800 bg-emerald-50/90 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 text-xs flex flex-wrap items-center justify-between gap-3 shadow-2xs">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span>

@@ -199,7 +199,7 @@ export function InterviewSettingsPanel({
     45;
 
   return (
-    <div className="w-full xl:w-[320px] shrink-0 flex flex-col rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+    <div className="w-full xl:w-[320px] shrink-0 flex flex-col rounded-lg border border-border bg-card shadow-xs overflow-hidden">
       {/* 1. Header */}
       <div className="px-4 py-3.5 border-b border-border bg-muted/30 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">

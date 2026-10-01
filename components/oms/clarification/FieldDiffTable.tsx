@@ -47,7 +47,7 @@ export function FieldDiffTable({
   return (
     <div
       className={cn(
-        "rounded-xl border border-border/80 bg-card shadow-xs overflow-hidden transition-opacity duration-200",
+        "rounded-lg border border-border/80 bg-card shadow-xs overflow-hidden transition-opacity duration-200",
         isLive && isLoading && "opacity-70",
         className
       )}

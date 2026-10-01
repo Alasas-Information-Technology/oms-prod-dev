@@ -169,7 +169,7 @@ export function VendorComplianceDocumentsWorkspace({
 
       {/* 90-Day Expiry Alert Notice (Consistent 90-day threshold with candidate documents) */}
       {expiringSoonDocs.length > 0 && (
-        <div className="p-4 rounded-xl border border-warning-border bg-warning-surface text-xs text-foreground/90 backdrop-blur-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+        <div className="p-4 rounded-lg border border-warning-border bg-warning-surface text-xs text-foreground/90 backdrop-blur-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
           <div className="flex items-start gap-3">
             <div className="p-2 rounded-lg bg-warning-surface text-warning-text border border-warning-border shrink-0 mt-0.5 sm:mt-0">
               <AlertTriangle className="w-4 h-4" />
@@ -202,7 +202,7 @@ export function VendorComplianceDocumentsWorkspace({
 
       {/* KPI Metrics Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-        <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
+        <Card className="p-4 rounded-lg border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">Total Documents</span>
             <p className="text-2xl font-bold text-foreground">{documents.length}</p>
@@ -212,7 +212,7 @@ export function VendorComplianceDocumentsWorkspace({
           </div>
         </Card>
 
-        <Card className="p-4 rounded-xl border border-success-border/40 bg-success-surface flex items-center justify-between">
+        <Card className="p-4 rounded-lg border border-success-border/40 bg-success-surface flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-success-text">
               Active Compliant
@@ -226,7 +226,7 @@ export function VendorComplianceDocumentsWorkspace({
           </div>
         </Card>
 
-        <Card className="p-4 rounded-xl border border-warning-border/40 bg-warning-surface flex items-center justify-between">
+        <Card className="p-4 rounded-lg border border-warning-border/40 bg-warning-surface flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-warning-text">
               Expiring Soon (&le;90d)
@@ -240,7 +240,7 @@ export function VendorComplianceDocumentsWorkspace({
           </div>
         </Card>
 
-        <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
+        <Card className="p-4 rounded-lg border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">Audit Health</span>
             <p className="text-2xl font-bold text-foreground">98%</p>
@@ -261,7 +261,7 @@ export function VendorComplianceDocumentsWorkspace({
             <Card
               key={doc.id}
               className={cn(
-                "p-5 sm:p-6 rounded-xl border transition-all duration-200 bg-card space-y-4 flex flex-col justify-between",
+                "p-5 sm:p-6 rounded-lg border transition-all duration-200 bg-card space-y-4 flex flex-col justify-between",
                 isExpiringSoon
                   ? "border-warning-border/50 bg-warning-surface/30"
                   : "border-border/70 dark:border-white/[0.08] hover:border-brand-teal/40"
@@ -368,7 +368,7 @@ export function VendorComplianceDocumentsWorkspace({
               </DialogHeader>
 
               <div className="space-y-3 py-2 text-xs">
-                <div className="p-3.5 rounded-xl bg-muted/20 border border-border/60 space-y-2">
+                <div className="p-3.5 rounded-lg bg-muted/20 border border-border/60 space-y-2">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Issuing Authority:</span>
                     <span className="font-semibold text-foreground">{selectedDoc.issuingAuthority}</span>
@@ -396,7 +396,7 @@ export function VendorComplianceDocumentsWorkspace({
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-teal-500/5 border border-teal-500/20 space-y-1.5">
+                <div className="p-3.5 rounded-lg bg-teal-500/5 border border-teal-500/20 space-y-1.5">
                   <span className="font-semibold text-foreground">File Repository Item</span>
                   <p className="text-muted-foreground">{selectedDoc.file.name}</p>
                   <p className="text-[11px] text-muted-foreground">
@@ -492,7 +492,7 @@ export function VendorComplianceDocumentsWorkspace({
 
       {/* Toast */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 p-4 rounded-xl bg-card border border-teal-500/40 shadow-xl text-xs flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2">
+        <div className="fixed bottom-6 right-6 z-50 p-4 rounded-lg bg-card border border-teal-500/40 shadow-xl text-xs flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2">
           <div className="p-2 rounded-lg bg-teal-500/20 text-teal-600 dark:text-teal-400">
             <FileCheck className="w-4 h-4" />
           </div>

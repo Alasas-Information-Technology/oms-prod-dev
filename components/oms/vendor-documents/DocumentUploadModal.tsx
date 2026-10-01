@@ -239,7 +239,7 @@ export function DocumentUploadModalContent({
               }
             }}
             onClick={() => fileInputRef.current?.click()}
-            className="p-6 rounded-xl border-2 border-dashed border-border hover:border-primary/50 hover:bg-muted/20 bg-muted/10 transition-all flex flex-col items-center justify-center gap-2.5 cursor-pointer text-center"
+            className="p-6 rounded-lg border-2 border-dashed border-border hover:border-primary/50 hover:bg-muted/20 bg-muted/10 transition-all flex flex-col items-center justify-center gap-2.5 cursor-pointer text-center"
           >
             <input
               ref={fileInputRef}

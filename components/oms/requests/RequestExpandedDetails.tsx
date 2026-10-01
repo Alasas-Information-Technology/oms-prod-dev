@@ -80,7 +80,7 @@ export function RequestExpandedDetails({
     <div className="w-full max-w-full overflow-hidden whitespace-normal bg-card/60 dark:bg-card/40 px-4 py-5 md:px-6 space-y-5">
       {/* HR Clarification Action Banner */}
       {request.actionType === "CLARIFY" && (
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-500/5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3.5 rounded-lg border border-amber-500/30 bg-amber-500/10 dark:bg-amber-500/5">
           <div className="flex items-center gap-3">
             <div className="size-8 rounded-lg bg-amber-500/20 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0">
               <HelpCircle className="size-4.5" />

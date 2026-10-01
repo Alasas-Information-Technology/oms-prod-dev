@@ -108,7 +108,7 @@ export function EvaluationCommentsAndTags({
     <section
       aria-labelledby="comments-heading"
       className={cn(
-        "bg-card border border-border rounded-xl p-5 sm:p-6 space-y-6 shadow-2xs transition-colors",
+        "bg-card border border-border rounded-lg p-5 sm:p-6 space-y-6 shadow-2xs transition-colors",
         className
       )}
     >

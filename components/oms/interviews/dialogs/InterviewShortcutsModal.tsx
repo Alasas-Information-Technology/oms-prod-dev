@@ -104,11 +104,11 @@ export function InterviewShortcutsModal({
 }: InterviewShortcutsModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-lg p-0 overflow-hidden sm:rounded-2xl border-border bg-card shadow-lg">
+      <DialogContent className="max-w-lg p-0 overflow-hidden sm:rounded-lg border-border bg-card shadow-lg">
         {/* Header */}
         <DialogHeader className="p-6 pb-4 border-b border-border bg-muted/20">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center border border-primary/20">
+            <div className="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center border border-primary/20">
               <Keyboard className="size-5" />
             </div>
             <div>
@@ -133,7 +133,7 @@ export function InterviewShortcutsModal({
                   <span>{category.title}</span>
                 </div>
 
-                <div className="rounded-xl border border-border bg-background divide-y divide-border/60 overflow-hidden">
+                <div className="rounded-lg border border-border bg-background divide-y divide-border/60 overflow-hidden">
                   {category.shortcuts.map((shortcut, idx) => (
                     <div
                       key={idx}
@@ -166,7 +166,7 @@ export function InterviewShortcutsModal({
           })}
 
           {/* Invariant Footer Note */}
-          <div className="p-3 rounded-xl bg-muted/40 border border-border/60 flex items-start gap-2.5 text-[11px] text-muted-foreground">
+          <div className="p-3 rounded-lg bg-muted/40 border border-border/60 flex items-start gap-2.5 text-[11px] text-muted-foreground">
             <Info className="size-4 shrink-0 text-muted-foreground/80 mt-0.5" />
             <span>
               All shortcuts are inert while typing in search boxes or forms, and when a dialog or dropdown is open.

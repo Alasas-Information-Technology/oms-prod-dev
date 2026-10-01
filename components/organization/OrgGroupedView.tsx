@@ -276,17 +276,17 @@ export function OrgGroupedView({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-md bg-card border border-border shadow-2xs">
         {/* Type Category Tabs */}
         <Tabs value={activeTypeTab} onValueChange={setActiveTypeTab} className="w-full sm:w-auto">
-          <TabsList className="h-9 p-1 bg-muted/60">
-            <TabsTrigger value="all" className="text-xs font-semibold px-3">
+          <TabsList>
+            <TabsTrigger value="all">
               All Units
             </TabsTrigger>
-            <TabsTrigger value="2" className="text-xs font-semibold px-3">
+            <TabsTrigger value="2">
               Business Units
             </TabsTrigger>
-            <TabsTrigger value="3" className="text-xs font-semibold px-3">
+            <TabsTrigger value="3">
               Departments
             </TabsTrigger>
-            <TabsTrigger value="4" className="text-xs font-semibold px-3">
+            <TabsTrigger value="4">
               Sections
             </TabsTrigger>
           </TabsList>

@@ -43,7 +43,7 @@ export function VendorRequisitionDetailWorkspace({
 
   if (!requisition) {
     return (
-      <div className="p-8 max-w-2xl mx-auto my-12 bg-destructive/10 border border-destructive/30 rounded-xl text-center space-y-4">
+      <div className="p-8 max-w-2xl mx-auto my-12 bg-destructive/10 border border-destructive/30 rounded-lg text-center space-y-4">
         <Lock className="size-10 text-destructive mx-auto" />
         <h2 className="text-lg font-bold text-foreground">
           Requirement Not Found
@@ -176,7 +176,7 @@ export function VendorRequisitionDetailWorkspace({
         {/* 2. Submission Window Severity Banner */}
         <div
           className={cn(
-            "p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3",
+            "p-4 rounded-lg border flex flex-col sm:flex-row sm:items-center justify-between gap-3",
             severity.bannerClass
           )}
         >
@@ -214,7 +214,7 @@ export function VendorRequisitionDetailWorkspace({
           {/* Left Column: Role Details, Description, Responsibilities, Skills */}
           <div className="lg:col-span-8 space-y-6">
             {/* Position Overview Card */}
-            <Card className="rounded-xl border border-border/70 dark:border-white/[0.08] bg-card p-6 space-y-4">
+            <Card className="rounded-lg border border-border/70 dark:border-white/[0.08] bg-card p-6 space-y-4">
               <div className="flex items-center gap-2 pb-2 border-b border-border/50">
                 <FileText className="size-4 text-teal-600 dark:text-teal-400" />
                 <h2 className="text-sm font-semibold text-foreground tracking-tight">
@@ -238,7 +238,7 @@ export function VendorRequisitionDetailWorkspace({
 
             {/* Key Responsibilities */}
             {requisition.responsibilities && requisition.responsibilities.length > 0 && (
-              <Card className="rounded-xl border border-border/70 dark:border-white/[0.08] bg-card p-6 space-y-4">
+              <Card className="rounded-lg border border-border/70 dark:border-white/[0.08] bg-card p-6 space-y-4">
                 <div className="flex items-center gap-2 pb-2 border-b border-border/50">
                   <Briefcase className="size-4 text-teal-600 dark:text-teal-400" />
                   <h2 className="text-sm font-semibold text-foreground tracking-tight">
@@ -258,7 +258,7 @@ export function VendorRequisitionDetailWorkspace({
             )}
 
             {/* Required Skills & Competencies */}
-            <Card className="rounded-xl border border-border/70 dark:border-white/[0.08] bg-card p-6 space-y-4">
+            <Card className="rounded-lg border border-border/70 dark:border-white/[0.08] bg-card p-6 space-y-4">
               <div className="flex items-center gap-2 pb-2 border-b border-border/50">
                 <ShieldCheck className="size-4 text-teal-600 dark:text-teal-400" />
                 <h2 className="text-sm font-semibold text-foreground tracking-tight">
@@ -294,7 +294,7 @@ export function VendorRequisitionDetailWorkspace({
           {/* Right Column: Parameters, Batch Counter, and Blind Review Notice */}
           <div className="lg:col-span-4 space-y-6">
             {/* Engagement Parameters Summary */}
-            <Card className="rounded-xl border border-border/70 dark:border-white/[0.08] bg-card p-5 space-y-4">
+            <Card className="rounded-lg border border-border/70 dark:border-white/[0.08] bg-card p-5 space-y-4">
               <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground pb-1 border-b border-border/50">
                 Engagement Parameters
               </h2>
@@ -328,7 +328,7 @@ export function VendorRequisitionDetailWorkspace({
             </Card>
 
             {/* Falcon Tech Submission Batch Tracker */}
-            <Card className="rounded-xl border border-border/70 dark:border-white/[0.08] bg-card p-5 space-y-3">
+            <Card className="rounded-lg border border-border/70 dark:border-white/[0.08] bg-card p-5 space-y-3">
               <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground pb-1 border-b border-border/50">
                 Falcon Tech Batch Limit
               </h2>
@@ -380,7 +380,7 @@ export function VendorRequisitionDetailWorkspace({
             </Card>
 
             {/* Blind Review Assurance Notice */}
-            <Card className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-2 text-xs">
+            <Card className="rounded-lg border border-border/60 bg-muted/20 p-4 space-y-2 text-xs">
               <div className="flex items-center gap-1.5 text-foreground font-semibold">
                 <ShieldCheck className="size-4 text-teal-600 dark:text-teal-400" />
                 <span>Vendor Isolation & Blind Review</span>

@@ -68,14 +68,14 @@ export function ModuleUnderDevelopment({
   return (
     <div className={cn("p-6 sm:p-8 md:p-10 max-w-5xl mx-auto space-y-8 animate-in fade-in-50 duration-300", className)}>
       {/* Top Banner Card */}
-      <div className="relative rounded-2xl border border-border/80 bg-card p-6 sm:p-8 md:p-10 shadow-sm overflow-hidden">
+      <div className="relative rounded-lg border border-border/80 bg-card p-6 sm:p-8 md:p-10 shadow-sm overflow-hidden">
         {/* Background Gradients */}
         <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/3" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none translate-y-1/3 -translate-x-1/3" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-6">
           <div className="flex items-start gap-4 sm:gap-5">
-            <div className="size-14 sm:size-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 shadow-2xs">
+            <div className="size-14 sm:size-16 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 shadow-2xs">
               <Icon className="size-7 sm:size-8" />
             </div>
 
@@ -102,7 +102,7 @@ export function ModuleUnderDevelopment({
           </div>
 
           <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 shrink-0">
-            <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-muted/40 border border-border/60 text-xs font-medium text-muted-foreground">
+            <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-muted/40 border border-border/60 text-xs font-medium text-muted-foreground">
               <Calendar className="size-4 text-primary" />
               <span>{targetRelease}</span>
             </div>
@@ -112,7 +112,7 @@ export function ModuleUnderDevelopment({
               size="sm"
               onClick={handleNotify}
               disabled={subscribed}
-              className="gap-2 h-9 text-xs rounded-xl shadow-xs"
+              className="gap-2 h-9 text-xs rounded-lg shadow-xs"
             >
               {subscribed ? (
                 <>
@@ -143,7 +143,7 @@ export function ModuleUnderDevelopment({
           {features.map((feat, i) => (
             <div
               key={i}
-              className="p-5 rounded-xl border border-border/70 bg-card/80 hover:bg-card hover:border-primary/30 transition-all duration-200 shadow-2xs space-y-2 flex flex-col justify-between"
+              className="p-5 rounded-lg border border-border/70 bg-card/80 hover:bg-card hover:border-primary/30 transition-all duration-200 shadow-2xs space-y-2 flex flex-col justify-between"
             >
               <div className="space-y-1.5">
                 <div className="size-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
@@ -167,7 +167,7 @@ export function ModuleUnderDevelopment({
       </div>
 
       {/* Quick Access Redirect Strip */}
-      <div className="p-6 rounded-2xl border border-border/70 bg-muted/25 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="p-6 rounded-lg border border-border/70 bg-muted/25 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="space-y-0.5 text-center sm:text-left">
           <p className="text-sm font-bold text-foreground">
             Looking for active operational workspaces?
@@ -182,7 +182,7 @@ export function ModuleUnderDevelopment({
             variant="outline"
             size="sm"
             onClick={() => router.back()}
-            className="h-9 px-3.5 text-xs rounded-xl shadow-2xs gap-1.5 cursor-pointer"
+            className="h-9 px-3.5 text-xs rounded-lg shadow-2xs gap-1.5 cursor-pointer"
           >
             <ArrowLeft className="size-3.5" />
             <span>Go Back</span>
@@ -192,7 +192,7 @@ export function ModuleUnderDevelopment({
             asChild
             variant="outline"
             size="sm"
-            className="h-9 px-3.5 text-xs rounded-xl shadow-2xs gap-1.5"
+            className="h-9 px-3.5 text-xs rounded-lg shadow-2xs gap-1.5"
           >
             <Link href="/app/requests">
               <FileText className="size-3.5" />
@@ -203,7 +203,7 @@ export function ModuleUnderDevelopment({
           <Button
             asChild
             size="sm"
-            className="h-9 px-4 text-xs rounded-xl shadow-xs gap-1.5 font-semibold"
+            className="h-9 px-4 text-xs rounded-lg shadow-xs gap-1.5 font-semibold"
           >
             <Link href="/app">
               <LayoutDashboard className="size-3.5" />

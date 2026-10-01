@@ -410,7 +410,7 @@ export function InterviewEvaluationWorkspace({
 
   if (error || !data) {
     return (
-      <div className="p-8 text-center max-w-md mx-auto my-12 bg-card border border-border rounded-xl">
+      <div className="p-8 text-center max-w-md mx-auto my-12 bg-card border border-border rounded-lg">
         <p className="text-sm font-semibold text-destructive">
           Failed to load interview evaluation workspace.
         </p>

@@ -92,7 +92,7 @@ export function OrgTreePicker({
           </Button>
         </PopoverTrigger>
         <PopoverContent 
-          className="w-[350px] p-0 overflow-hidden rounded-xl border-border shadow-lg" 
+          className="w-[350px] p-0 overflow-hidden rounded-lg border-border shadow-lg" 
           align="start"
         >
           <div className="flex items-center px-3 py-2 border-b border-border/50 bg-muted/20">

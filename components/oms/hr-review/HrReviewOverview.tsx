@@ -29,7 +29,7 @@ export function HrReviewOverview({
     <div className="space-y-6">
       {/* TASK 3: Returned clarification banner with rich sky/blue styling */}
       {cCtx?.hadClarification && (
-        <div className="relative overflow-hidden rounded-xl border border-sky-500/30 bg-gradient-to-r from-sky-500/[0.08] via-sky-500/[0.03] to-card p-5 shadow-xs">
+        <div className="relative overflow-hidden rounded-lg border border-sky-500/30 bg-gradient-to-r from-sky-500/[0.08] via-sky-500/[0.03] to-card p-5 shadow-xs">
           <div className="absolute left-0 inset-y-0 w-1 bg-sky-500" />
           <div className="flex gap-3.5">
             <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sky-500/15 text-sky-600 dark:text-sky-400 mt-0.5">
@@ -70,7 +70,7 @@ export function HrReviewOverview({
       <div className="grid gap-6 xl:grid-cols-2">
         <div className="space-y-6">
           {/* TASK 4: Business need Card */}
-          <div className="rounded-xl border border-border/80 bg-card p-5 shadow-xs space-y-3 transition-colors hover:border-border">
+          <div className="rounded-lg border border-border/80 bg-card p-5 shadow-xs space-y-3 transition-colors hover:border-border">
             <div className="flex items-center gap-2">
               <div className="flex size-7 items-center justify-center rounded-md bg-brand-teal/10 text-brand-teal">
                 <FileText className="size-4" />
@@ -90,7 +90,7 @@ export function HrReviewOverview({
 
         <div className="space-y-6">
           {/* Budget Summary Card with Emerald Theme */}
-          <div className="rounded-xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/[0.07] via-card to-card p-5 shadow-xs space-y-3 relative overflow-hidden">
+          <div className="rounded-lg border border-emerald-500/30 bg-gradient-to-br from-emerald-500/[0.07] via-card to-card p-5 shadow-xs space-y-3 relative overflow-hidden">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="flex size-7 items-center justify-center rounded-md bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
@@ -121,7 +121,7 @@ export function HrReviewOverview({
           </div>
 
           {/* Approval Trail Summary Card */}
-          <div className="rounded-xl border border-border/80 bg-card p-5 shadow-xs space-y-4">
+          <div className="rounded-lg border border-border/80 bg-card p-5 shadow-xs space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="flex size-7 items-center justify-center rounded-md bg-purple-500/10 text-purple-600 dark:text-purple-400">

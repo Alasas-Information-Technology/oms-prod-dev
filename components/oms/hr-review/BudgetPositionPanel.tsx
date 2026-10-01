@@ -25,7 +25,7 @@ function BudgetMetric({
   value: number;
 }) {
   return (
-    <div className="min-w-0 rounded-xl border border-border bg-muted/30 p-3">
+    <div className="min-w-0 rounded-lg border border-border bg-muted/30 p-3">
       <p className="text-[12px] font-normal text-muted-foreground">
         {label}
       </p>
@@ -42,10 +42,10 @@ export function BudgetPositionPanel({
   detailed = false,
 }: BudgetPositionPanelProps) {
   return (
-    <Card className="gap-4 rounded-xl bg-card p-5 shadow-xs hover:translate-y-0 border border-border">
+    <Card className="gap-4 rounded-lg bg-card p-5 shadow-xs hover:translate-y-0 border border-border">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex items-start gap-3">
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
             <WalletCards className="size-4" />
           </span>
 
@@ -91,7 +91,7 @@ export function BudgetPositionPanel({
         />
       </div>
 
-      <div className="grid gap-3 rounded-xl border border-border/70 p-4">
+      <div className="grid gap-3 rounded-lg border border-border/70 p-4">
         <div>
           <p className="text-[12px] font-normal text-muted-foreground">
             Funding route
@@ -116,7 +116,7 @@ export function BudgetPositionPanel({
               </p>
             </div>
 
-            <div className="overflow-hidden rounded-xl border border-border">
+            <div className="overflow-hidden rounded-lg border border-border">
               {budget.lines.map((line, index) => (
                 <div
                   key={line.code}

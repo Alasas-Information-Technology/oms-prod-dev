@@ -72,11 +72,11 @@ export default function DashboardDemoPage() {
       <section className="flex flex-col gap-6">
         <h2 className="text-xl font-semibold border-b pb-2">DistributionRing (M1)</h2>
         <div className="grid grid-cols-2 gap-8">
-          <div className="p-6 border rounded-xl bg-card">
+          <div className="p-6 border rounded-lg bg-card">
             <h3 className="text-sm font-medium mb-4">Valid (4 segments)</h3>
             <DistributionRing segments={mockSegmentsRing} totalLabel="Requests" />
           </div>
-          <div className="p-6 border rounded-xl bg-card">
+          <div className="p-6 border rounded-lg bg-card">
             <h3 className="text-sm font-medium mb-4">Invalid (2 segments) -{">"} Falls back to Bar</h3>
             <DistributionRing segments={mockSegmentsFails} totalLabel="Requests" />
           </div>
@@ -86,7 +86,7 @@ export default function DashboardDemoPage() {
       <section className="flex flex-col gap-6">
         <h2 className="text-xl font-semibold border-b pb-2">Heatmap (M2)</h2>
         <div className="grid grid-cols-2 gap-8">
-          <div className="p-6 border rounded-xl bg-card">
+          <div className="p-6 border rounded-lg bg-card">
             <h3 className="text-sm font-medium mb-4">Default (Single Hue)</h3>
             <Heatmap 
               rows={mockHeatmapRows} 
@@ -97,7 +97,7 @@ export default function DashboardDemoPage() {
               }}
             />
           </div>
-          <div className="p-6 border rounded-xl bg-card">
+          <div className="p-6 border rounded-lg bg-card">
             <h3 className="text-sm font-medium mb-4">Diverging (Danger/Success)</h3>
             <Heatmap 
               rows={mockHeatmapRows} 
@@ -115,13 +115,13 @@ export default function DashboardDemoPage() {
       <section className="flex flex-col gap-6">
         <h2 className="text-xl font-semibold border-b pb-2">Gauge (M6)</h2>
         <div className="grid grid-cols-3 gap-8">
-          <div className="p-6 border rounded-xl bg-card flex justify-center">
+          <div className="p-6 border rounded-lg bg-card flex justify-center">
             <Gauge value={45} max={100} threshold={80} label="Usage" />
           </div>
-          <div className="p-6 border rounded-xl bg-card flex justify-center">
+          <div className="p-6 border rounded-lg bg-card flex justify-center">
             <Gauge value={85} max={100} threshold={80} thresholdCrossed thresholdSemantic="danger" label="Danger" />
           </div>
-          <div className="p-6 border rounded-xl bg-card flex justify-center">
+          <div className="p-6 border rounded-lg bg-card flex justify-center">
             <Gauge value={95} max={100} threshold={90} thresholdCrossed thresholdSemantic="success" label="Success" />
           </div>
         </div>
@@ -130,10 +130,10 @@ export default function DashboardDemoPage() {
       <section className="flex flex-col gap-6">
         <h2 className="text-xl font-semibold border-b pb-2">Waffle (M7)</h2>
         <div className="grid grid-cols-2 gap-8">
-          <div className="p-6 border rounded-xl bg-card flex justify-center">
+          <div className="p-6 border rounded-lg bg-card flex justify-center">
             <Waffle percent={14.1} label="Compliance" />
           </div>
-          <div className="p-6 border rounded-xl bg-card flex justify-center">
+          <div className="p-6 border rounded-lg bg-card flex justify-center">
             <Waffle percent={87} label="Quota Fill" />
           </div>
         </div>
@@ -141,7 +141,7 @@ export default function DashboardDemoPage() {
 
       <section className="flex flex-col gap-6">
         <h2 className="text-xl font-semibold border-b pb-2">Column Chart (M4)</h2>
-        <div className="p-6 border rounded-xl bg-card h-[300px]">
+        <div className="p-6 border rounded-lg bg-card h-[300px]">
           <ColumnChart
             data={mockColumnData}
             xAxisKey="category"

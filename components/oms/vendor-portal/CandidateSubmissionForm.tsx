@@ -296,7 +296,7 @@ export function CandidateSubmissionForm({
   if (receipt) {
     return (
       <div className={cn("w-full max-w-3xl mx-auto px-4 py-8 space-y-6 select-none", className)}>
-        <Card className="rounded-xl border border-teal-500/30 bg-card p-6 sm:p-8 space-y-6 shadow-sm">
+        <Card className="rounded-lg border border-teal-500/30 bg-card p-6 sm:p-8 space-y-6 shadow-sm">
           <div className="text-center space-y-2">
             <div className="size-14 rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20 flex items-center justify-center mx-auto">
               <CheckCircle2 className="size-8" />
@@ -414,7 +414,7 @@ export function CandidateSubmissionForm({
 
       <div className="px-4 sm:px-6 max-w-4xl mx-auto w-full space-y-6">
         {formError && (
-          <div className="p-4 rounded-xl border border-destructive/30 bg-destructive/10 text-destructive text-xs flex items-start gap-2.5">
+          <div className="p-4 rounded-lg border border-destructive/30 bg-destructive/10 text-destructive text-xs flex items-start gap-2.5">
             <AlertCircle className="size-4 shrink-0 mt-0.5" />
             <p className="leading-relaxed font-medium">{formError}</p>
           </div>
@@ -422,7 +422,7 @@ export function CandidateSubmissionForm({
 
         <form onSubmit={handleOpenReview} className="space-y-6">
           {/* Section 1: Target Requisition Selection */}
-          <Card className="rounded-xl border border-border/70 dark:border-white/[0.08] bg-card p-5 sm:p-6 space-y-4">
+          <Card className="rounded-lg border border-border/70 dark:border-white/[0.08] bg-card p-5 sm:p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-border/50 pb-3">
               <div className="flex items-center gap-2">
                 <Briefcase className="size-4 text-teal-600 dark:text-teal-400" />
@@ -521,7 +521,7 @@ export function CandidateSubmissionForm({
           </Card>
 
           {/* Section 2: Candidate Information */}
-          <Card className="rounded-xl border border-border/70 dark:border-white/[0.08] bg-card p-5 sm:p-6 space-y-4">
+          <Card className="rounded-lg border border-border/70 dark:border-white/[0.08] bg-card p-5 sm:p-6 space-y-4">
             <div className="flex items-center gap-2 border-b border-border/50 pb-3">
               <UserPlus className="size-4 text-teal-600 dark:text-teal-400" />
               <h2 className="text-sm font-semibold text-foreground tracking-tight">
@@ -635,7 +635,7 @@ export function CandidateSubmissionForm({
           </Card>
 
           {/* Section 3: CV Upload via AttachmentList */}
-          <Card className="rounded-xl border border-border/70 dark:border-white/[0.08] bg-card p-5 sm:p-6 space-y-4">
+          <Card className="rounded-lg border border-border/70 dark:border-white/[0.08] bg-card p-5 sm:p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-border/50 pb-3">
               <div className="flex items-center gap-2">
                 <Upload className="size-4 text-teal-600 dark:text-teal-400" />
@@ -670,7 +670,7 @@ export function CandidateSubmissionForm({
           </Card>
 
           {/* Section 4: Commercial Terms & RFP Cost Entry Modes */}
-          <Card className="rounded-xl border border-border/70 dark:border-white/[0.08] bg-card p-5 sm:p-6 space-y-5">
+          <Card className="rounded-lg border border-border/70 dark:border-white/[0.08] bg-card p-5 sm:p-6 space-y-5">
             <div className="flex items-center justify-between border-b border-border/50 pb-3">
               <div className="flex items-center gap-2">
                 <Coins className="size-4 text-teal-600 dark:text-teal-400" />

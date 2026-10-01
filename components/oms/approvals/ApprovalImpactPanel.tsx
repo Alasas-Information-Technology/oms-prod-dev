@@ -23,7 +23,7 @@ export function ApprovalImpactPanel({ impact }: ApprovalImpactPanelProps) {
   return (
     <div className="flex flex-col gap-6">
       {/* 1. Budget Authorization & Validation */}
-      <div className="rounded-xl border border-border bg-card p-6 shadow-xs flex flex-col gap-5">
+      <div className="rounded-lg border border-border bg-card p-6 shadow-xs flex flex-col gap-5">
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-start gap-2.5">
             <div className="flex size-7 shrink-0 items-center justify-center rounded bg-primary/10 text-primary mt-0.5">
@@ -117,7 +117,7 @@ export function ApprovalImpactPanel({ impact }: ApprovalImpactPanelProps) {
       </div>
 
       {/* 2. Budget Allocation */}
-      <div className="rounded-xl border border-border bg-card p-6 shadow-xs flex flex-col gap-4">
+      <div className="rounded-lg border border-border bg-card p-6 shadow-xs flex flex-col gap-4">
         <div className="flex items-center justify-between pb-3 border-b border-border">
           <div className="flex items-center gap-2">
             <Coins className="size-4 text-primary" />

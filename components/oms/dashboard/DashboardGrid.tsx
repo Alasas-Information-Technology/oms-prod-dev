@@ -161,7 +161,7 @@ export function DashboardGrid({
 
   if (activeBands.length === 0) {
     return (
-      <div className="p-8 text-center bg-card border border-border/60 rounded-xl">
+      <div className="p-8 text-center bg-card border border-border/60 rounded-lg">
         <p className="text-sm font-medium text-foreground">
           No dashboard widgets configured.
         </p>
@@ -239,7 +239,7 @@ export function DashboardGrid({
                     key={placement.id}
                     className={cn(spanClasses, "h-full flex flex-col")}
                   >
-                    <div className="p-4 rounded-xl border border-destructive/30 bg-destructive/5 text-destructive text-xs">
+                    <div className="p-4 rounded-lg border border-destructive/30 bg-destructive/5 text-destructive text-xs">
                       Unregistered widget: {placement.id}
                     </div>
                   </div>

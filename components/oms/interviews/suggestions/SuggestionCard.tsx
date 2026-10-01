@@ -121,7 +121,7 @@ export function SuggestionCard({
   return (
     <div
       className={cn(
-        "group relative rounded-xl border border-border bg-card p-4 sm:p-5 shadow-xs transition-all duration-180 ease-[cubic-bezier(0.2,0,0,1)] hover:shadow-sm hover:border-slate-300 dark:hover:border-slate-700",
+        "group relative rounded-lg border border-border bg-card p-4 sm:p-5 shadow-xs transition-all duration-180 ease-[cubic-bezier(0.2,0,0,1)] hover:shadow-sm hover:border-slate-300 dark:hover:border-slate-700",
         hasBusy && "opacity-85 hover:opacity-100",
         isFocused && "ring-2 ring-primary ring-offset-2 dark:ring-offset-background border-primary/60 shadow-sm",
         isDismissing && "translate-x-12 opacity-0 pointer-events-none"

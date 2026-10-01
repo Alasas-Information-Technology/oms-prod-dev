@@ -85,7 +85,7 @@ export function InterviewConfirmationBranch({
 
   return (
     <div className={cn("max-w-2xl mx-auto py-10 px-4", className)}>
-      <div className="bg-card border border-border rounded-xl shadow-xs p-6 sm:p-8 space-y-6">
+      <div className="bg-card border border-border rounded-lg shadow-xs p-6 sm:p-8 space-y-6">
         {/* Header */}
         <div className="space-y-1.5 text-center sm:text-left">
           <h2 className="text-lg sm:text-xl font-semibold text-foreground tracking-tight">

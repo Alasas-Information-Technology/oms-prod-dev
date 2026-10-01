@@ -18,10 +18,10 @@ export function HrReviewAttachments({
   attachments,
 }: HrReviewAttachmentsProps) {
   return (
-    <Card className="gap-4 rounded-xl bg-card p-5 shadow-xs hover:translate-y-0">
+    <Card className="gap-4 rounded-lg bg-card p-5 shadow-xs hover:translate-y-0">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex items-start gap-3">
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
             <Paperclip className="size-4" />
           </span>
 
@@ -45,7 +45,7 @@ export function HrReviewAttachments({
         </Badge>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-border">
+      <div className="overflow-hidden rounded-lg border border-border">
         {attachments.length === 0 ? (
           <div className="flex min-h-40 flex-col items-center justify-center text-center">
             <Paperclip className="size-8 text-muted-foreground/50" />

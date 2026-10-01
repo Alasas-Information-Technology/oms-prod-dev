@@ -35,7 +35,7 @@ export function ClarificationMessagePanel({
   return (
     <div
       className={cn(
-        "rounded-xl border border-border/80 bg-card shadow-xs overflow-hidden",
+        "rounded-lg border border-border/80 bg-card shadow-xs overflow-hidden",
         className
       )}
     >

@@ -136,14 +136,14 @@ export function WorkforceWorkspace() {
 
         {/* ── KPI Metrics Strip ── */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-1">
+          <div className="p-3.5 rounded-lg border border-border/60 bg-card shadow-2xs space-y-1">
             <span className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wider">
               Total Roster
             </span>
             <div className="text-xl font-bold text-foreground">{stats.total}</div>
           </div>
 
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-1">
+          <div className="p-3.5 rounded-lg border border-border/60 bg-card shadow-2xs space-y-1">
             <span className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wider">
               Active (Normal Runway)
             </span>
@@ -152,7 +152,7 @@ export function WorkforceWorkspace() {
             </div>
           </div>
 
-          <div className="p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/5 shadow-2xs space-y-1">
+          <div className="p-3.5 rounded-lg border border-amber-500/30 bg-amber-500/5 shadow-2xs space-y-1">
             <span className="text-[11px] font-semibold uppercase text-amber-700 dark:text-amber-300 tracking-wider flex items-center gap-1">
               <AlertTriangle className="size-3 text-amber-600" />
               Ending Soon (&le; 30d)
@@ -162,7 +162,7 @@ export function WorkforceWorkspace() {
             </div>
           </div>
 
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-1">
+          <div className="p-3.5 rounded-lg border border-border/60 bg-card shadow-2xs space-y-1">
             <span className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wider">
               Terminated / Replaced
             </span>
@@ -171,7 +171,7 @@ export function WorkforceWorkspace() {
             </div>
           </div>
 
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-1">
+          <div className="p-3.5 rounded-lg border border-border/60 bg-card shadow-2xs space-y-1">
             <span className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wider">
               Annual Active Run-Rate
             </span>
@@ -182,7 +182,7 @@ export function WorkforceWorkspace() {
         </div>
 
         {/* ── Filter Toolbar ── */}
-        <div className="p-3.5 rounded-xl border border-border/60 bg-card/60 backdrop-blur-xs flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+        <div className="p-3.5 rounded-lg border border-border/60 bg-card/60 backdrop-blur-xs flex flex-wrap items-center justify-between gap-3 shadow-2xs">
           <div className="flex flex-wrap items-center gap-3 flex-1 min-w-[280px]">
             {/* Search Input */}
             <div className="relative flex-1 min-w-[200px] max-w-sm">
@@ -247,7 +247,7 @@ export function WorkforceWorkspace() {
               <div
                 key={member.id}
                 className={cn(
-                  "p-5 rounded-xl border bg-card shadow-2xs transition-all flex flex-col lg:flex-row lg:items-center justify-between gap-5",
+                  "p-5 rounded-lg border bg-card shadow-2xs transition-all flex flex-col lg:flex-row lg:items-center justify-between gap-5",
                   isEndingSoon
                     ? "border-amber-500/40 bg-amber-500/5 hover:border-amber-500/60"
                     : isTerminated

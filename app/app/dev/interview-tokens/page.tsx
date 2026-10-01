@@ -58,7 +58,7 @@ export default function InterviewTokensDemoPage() {
           {/* Light Theme Column */}
           {/* ─────────────────────────────────────────────────────────── */}
           <div
-            className="p-6 rounded-2xl border border-slate-200 space-y-6 shadow-sm"
+            className="p-6 rounded-lg border border-slate-200 space-y-6 shadow-sm"
             style={{ backgroundColor: SURFACE_LIGHT_BASE, color: "#0F1419" }}
           >
             <div className="flex items-center justify-between border-b border-slate-200 pb-3">
@@ -79,7 +79,7 @@ export default function InterviewTokensDemoPage() {
 
               {/* Accent */}
               <div
-                className="p-3.5 rounded-xl border flex items-start justify-between gap-3 text-xs"
+                className="p-3.5 rounded-lg border flex items-start justify-between gap-3 text-xs"
                 style={{
                   backgroundColor: "#EEF2FF",
                   borderColor: "#4F46E5",
@@ -100,7 +100,7 @@ export default function InterviewTokensDemoPage() {
 
               {/* Success */}
               <div
-                className="p-3.5 rounded-xl border flex items-start justify-between gap-3 text-xs"
+                className="p-3.5 rounded-lg border flex items-start justify-between gap-3 text-xs"
                 style={{
                   backgroundColor: "#ECFDF5",
                   borderColor: "#059669",
@@ -121,7 +121,7 @@ export default function InterviewTokensDemoPage() {
 
               {/* Warning */}
               <div
-                className="p-3.5 rounded-xl border flex items-start justify-between gap-3 text-xs"
+                className="p-3.5 rounded-lg border flex items-start justify-between gap-3 text-xs"
                 style={{
                   backgroundColor: "#FFFBEB",
                   borderColor: "#B45309",
@@ -142,7 +142,7 @@ export default function InterviewTokensDemoPage() {
 
               {/* Danger */}
               <div
-                className="p-3.5 rounded-xl border flex items-start justify-between gap-3 text-xs"
+                className="p-3.5 rounded-lg border flex items-start justify-between gap-3 text-xs"
                 style={{
                   backgroundColor: "#FFF1F2",
                   borderColor: "#E11D48",
@@ -163,7 +163,7 @@ export default function InterviewTokensDemoPage() {
 
               {/* Info */}
               <div
-                className="p-3.5 rounded-xl border flex items-start justify-between gap-3 text-xs"
+                className="p-3.5 rounded-lg border flex items-start justify-between gap-3 text-xs"
                 style={{
                   backgroundColor: "var(--info-surface)",
                   borderColor: "var(--info-border)",
@@ -249,7 +249,7 @@ export default function InterviewTokensDemoPage() {
           {/* Dark Theme Column (Redesign at Lower Luminance) */}
           {/* ─────────────────────────────────────────────────────────── */}
           <div
-            className="p-6 rounded-2xl border border-slate-800 space-y-6 shadow-sm"
+            className="p-6 rounded-lg border border-slate-800 space-y-6 shadow-sm"
             style={{ backgroundColor: SURFACE_DARK_BASE, color: "#F9FAFB" }}
           >
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -270,7 +270,7 @@ export default function InterviewTokensDemoPage() {
 
               {/* Accent */}
               <div
-                className="p-3.5 rounded-xl border flex items-start justify-between gap-3 text-xs"
+                className="p-3.5 rounded-lg border flex items-start justify-between gap-3 text-xs"
                 style={{
                   backgroundColor: "var(--accent-surface)",
                   borderColor: "var(--accent-border)",
@@ -291,7 +291,7 @@ export default function InterviewTokensDemoPage() {
 
               {/* Success */}
               <div
-                className="p-3.5 rounded-xl border flex items-start justify-between gap-3 text-xs"
+                className="p-3.5 rounded-lg border flex items-start justify-between gap-3 text-xs"
                 style={{
                   backgroundColor: "#142924",
                   borderColor: "#34D399",
@@ -312,7 +312,7 @@ export default function InterviewTokensDemoPage() {
 
               {/* Warning */}
               <div
-                className="p-3.5 rounded-xl border flex items-start justify-between gap-3 text-xs"
+                className="p-3.5 rounded-lg border flex items-start justify-between gap-3 text-xs"
                 style={{
                   backgroundColor: "#2E2416",
                   borderColor: "#FBBF24",
@@ -333,7 +333,7 @@ export default function InterviewTokensDemoPage() {
 
               {/* Danger */}
               <div
-                className="p-3.5 rounded-xl border flex items-start justify-between gap-3 text-xs"
+                className="p-3.5 rounded-lg border flex items-start justify-between gap-3 text-xs"
                 style={{
                   backgroundColor: "#2E1B22",
                   borderColor: "#FB7185",
@@ -354,7 +354,7 @@ export default function InterviewTokensDemoPage() {
 
               {/* Info */}
               <div
-                className="p-3.5 rounded-xl border flex items-start justify-between gap-3 text-xs"
+                className="p-3.5 rounded-lg border flex items-start justify-between gap-3 text-xs"
                 style={{
                   backgroundColor: "var(--info-surface)",
                   borderColor: "var(--info-border)",
@@ -469,7 +469,7 @@ export default function InterviewTokensDemoPage() {
           </Badge>
         </div>
 
-        <div className="border border-border rounded-xl overflow-hidden bg-card shadow-xs">
+        <div className="border border-border rounded-lg overflow-hidden bg-card shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
               <thead className="bg-muted/50 border-b border-border text-muted-foreground font-semibold">

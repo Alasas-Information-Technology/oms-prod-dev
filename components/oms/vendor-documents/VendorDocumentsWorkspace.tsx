@@ -170,7 +170,7 @@ export function VendorDocumentsWorkspace({
 
   if (error || !workspace) {
     return (
-      <div className="p-8 max-w-2xl mx-auto my-12 bg-destructive/10 border border-destructive/30 rounded-xl text-center space-y-3">
+      <div className="p-8 max-w-2xl mx-auto my-12 bg-destructive/10 border border-destructive/30 rounded-lg text-center space-y-3">
         <ShieldAlert className="size-8 text-destructive mx-auto" />
         <h2 className="text-lg font-semibold text-foreground">
           Unable to load onboarding documents
@@ -334,7 +334,7 @@ export function VendorDocumentsWorkspace({
 
         {/* Read-only Banner when user cannot edit (§5 Task 4) */}
         {!effectiveCanEdit && !submissionSuccess && !workspace.receiptIssued && (
-          <div className="p-3.5 rounded-xl bg-muted/40 border border-border/70 text-xs text-muted-foreground flex items-center gap-2.5">
+          <div className="p-3.5 rounded-lg bg-muted/40 border border-border/70 text-xs text-muted-foreground flex items-center gap-2.5">
             <Lock className="size-4 text-muted-foreground shrink-0" />
             <span>
               <strong>Read-only mode:</strong>{" "}

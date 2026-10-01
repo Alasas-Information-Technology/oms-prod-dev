@@ -120,7 +120,7 @@ export function VendorOnboardingIndexWorkspace({
 
       {/* KPI Metrics Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-        <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
+        <Card className="p-4 rounded-lg border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">Active Cases</span>
             <p className="text-2xl font-bold text-foreground">{cases.length}</p>
@@ -130,7 +130,7 @@ export function VendorOnboardingIndexWorkspace({
           </div>
         </Card>
 
-        <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
+        <Card className="p-4 rounded-lg border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">UAE Onshore</span>
             <p className="text-2xl font-bold text-foreground">{onshoreCount}</p>
@@ -140,7 +140,7 @@ export function VendorOnboardingIndexWorkspace({
           </div>
         </Card>
 
-        <Card className="p-4 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
+        <Card className="p-4 rounded-lg border border-border/70 dark:border-white/[0.08] bg-card flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-muted-foreground">International Offshore</span>
             <p className="text-2xl font-bold text-foreground">{offshoreCount}</p>
@@ -150,7 +150,7 @@ export function VendorOnboardingIndexWorkspace({
           </div>
         </Card>
 
-        <Card className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 dark:bg-amber-500/10 flex items-center justify-between">
+        <Card className="p-4 rounded-lg border border-amber-500/30 bg-amber-500/5 dark:bg-amber-500/10 flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[11px] font-medium text-amber-700 dark:text-amber-300">
               Awaiting E-Signature
@@ -228,7 +228,7 @@ export function VendorOnboardingIndexWorkspace({
       {/* Cases Table / Rows */}
       <div className="space-y-3">
         {filteredCases.length === 0 ? (
-          <Card className="p-8 rounded-xl border border-dashed text-center space-y-2">
+          <Card className="p-8 rounded-lg border border-dashed text-center space-y-2">
             <p className="text-sm font-semibold text-foreground">No onboarding cases found</p>
             <p className="text-xs text-muted-foreground">
               No active onboarding workflows matched your search filters.
@@ -247,7 +247,7 @@ export function VendorOnboardingIndexWorkspace({
             return (
               <Card
                 key={onb.id}
-                className="p-5 sm:p-6 rounded-xl border border-border/70 dark:border-white/[0.08] hover:border-teal-500/40 transition-all duration-200 bg-card space-y-4"
+                className="p-5 sm:p-6 rounded-lg border border-border/70 dark:border-white/[0.08] hover:border-teal-500/40 transition-all duration-200 bg-card space-y-4"
               >
                 {/* Top Row: Case ID, Resident Badge, Req Link */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/40 pb-3.5">

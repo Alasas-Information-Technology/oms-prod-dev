@@ -29,12 +29,12 @@ function Card({
       data-slot="card"
       data-surface={surface}
       className={cn(
-        // Base — exact spec: 20px padding (p-5), 16px gap (gap-4), 20px radius
-        "flex flex-col gap-4 p-5 rounded-[20px] border-0 transition-all duration-300 ease-out",
-        // Light-mode shadow: exact spec
-        "[box-shadow:0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.06)]",
+        // Base — clean corporate: tight radius, subtle border, minimal shadow
+        "flex flex-col gap-4 p-5 rounded-lg border border-border/60 transition-all duration-200 ease-out",
+        // Light-mode shadow: subtle corporate
+        "shadow-sm",
         // Dark mode: no shadow, elevated surface contrast only
-        "dark:[box-shadow:none]",
+        "dark:shadow-none dark:border-border",
         // Solid surface
         surface === "solid" && "bg-card text-card-foreground dark:bg-[var(--card)]",
         // Glass surface
@@ -74,7 +74,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <h4
       data-slot="card-title"
-      className={cn("leading-tight font-semibold text-2xl text-heading", className)}
+      className={cn("leading-tight font-semibold text-lg text-heading", className)}
       {...props}
     />
   );
@@ -84,7 +84,7 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <p
       data-slot="card-description"
-      className={cn("text-muted-foreground text-base", className)}
+      className={cn("text-muted-foreground text-sm", className)}
       {...props}
     />
   );

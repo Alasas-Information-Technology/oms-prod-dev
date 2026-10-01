@@ -109,7 +109,7 @@ export function ManagePeriodDialog({
   if (view === "confirm-close") {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-md rounded-xl p-0 overflow-hidden [&>button.absolute]:hidden">
+        <DialogContent className="sm:max-w-md rounded-lg p-0 overflow-hidden [&>button.absolute]:hidden">
           <div className="p-6 space-y-5">
             <div className="flex items-start gap-4">
               <div className="size-10 rounded-lg bg-rose-500/10 flex items-center justify-center shrink-0">
@@ -178,7 +178,7 @@ export function ManagePeriodDialog({
   if (view === "confirm-reopen") {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-md rounded-xl p-0 overflow-hidden [&>button.absolute]:hidden">
+        <DialogContent className="sm:max-w-md rounded-lg p-0 overflow-hidden [&>button.absolute]:hidden">
           <div className="p-6 space-y-5">
             <div className="flex items-start gap-4">
               <div className="size-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -246,7 +246,7 @@ export function ManagePeriodDialog({
   // ── Main View ───────────────────────────────────────────────────────────────
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl rounded-xl p-0 overflow-hidden max-h-[90vh] flex flex-col [&>button.absolute]:hidden">
+      <DialogContent className="sm:max-w-xl rounded-lg p-0 overflow-hidden max-h-[90vh] flex flex-col [&>button.absolute]:hidden">
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-border/40 shrink-0">
           <div className="flex items-center justify-between mb-3">

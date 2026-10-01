@@ -83,7 +83,7 @@ export function VendorProfileWorkspace({
       {/* Main Grid: Company Details + Primary Contact */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Left 2 Cols: Corporate Registration & Details */}
-        <Card className="lg:col-span-2 p-5 sm:p-6 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card space-y-5">
+        <Card className="lg:col-span-2 p-5 sm:p-6 rounded-lg border border-border/70 dark:border-white/[0.08] bg-card space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/40 pb-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
@@ -166,7 +166,7 @@ export function VendorProfileWorkspace({
         </Card>
 
         {/* Right Col: Primary Authorized Representative */}
-        <Card className="p-5 sm:p-6 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card space-y-4 flex flex-col justify-between">
+        <Card className="p-5 sm:p-6 rounded-lg border border-border/70 dark:border-white/[0.08] bg-card space-y-4 flex flex-col justify-between">
           <div className="space-y-3">
             <div className="flex items-center justify-between border-b border-border/40 pb-3">
               <span className="text-xs font-bold text-foreground uppercase tracking-wide flex items-center gap-1.5">
@@ -215,7 +215,7 @@ export function VendorProfileWorkspace({
       </div>
 
       {/* Coordinators Directory & Domain 3 Rule V8 Governance Section */}
-      <Card className="p-5 sm:p-6 rounded-xl border border-border/70 dark:border-white/[0.08] bg-card space-y-4">
+      <Card className="p-5 sm:p-6 rounded-lg border border-border/70 dark:border-white/[0.08] bg-card space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/40 pb-4">
           <div>
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
@@ -234,7 +234,7 @@ export function VendorProfileWorkspace({
         </div>
 
         {/* Domain 3 Rule V8 Governance Notice (Crucial requirement from 4.10) */}
-        <div className="p-4 rounded-xl border border-teal-500/30 bg-teal-500/5 text-xs text-foreground/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="p-4 rounded-lg border border-teal-500/30 bg-teal-500/5 text-xs text-foreground/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-start gap-3">
             <div className="p-2 rounded-lg bg-teal-500/20 text-teal-700 dark:text-teal-300 shrink-0 mt-0.5 sm:mt-0">
               <Lock className="w-4 h-4" />

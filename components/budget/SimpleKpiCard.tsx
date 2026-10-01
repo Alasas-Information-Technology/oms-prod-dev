@@ -239,7 +239,7 @@ export function SimpleKpiCard({
     <Card
       aria-busy={isLoading}
       className={cn(
-        "relative rounded-[20px] p-5 flex flex-col justify-between overflow-hidden select-none",
+        "relative rounded-lg p-5 flex flex-col justify-between overflow-hidden select-none",
         "bg-card/60 dark:bg-card/40 backdrop-blur-md shadow-sm border border-[var(--glass-border-light)] dark:border-[var(--glass-border-dark)]",
         isWhite
           ? "border-white/15 shadow-md before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent"
@@ -254,7 +254,7 @@ export function SimpleKpiCard({
         <div className="flex flex-col justify-between h-full w-full">
           <div className="flex items-start justify-between">
             <Shimmer className={cn("h-3.5 w-24 mt-1", isWhite && "bg-white/20")} />
-            {showIcon && <Shimmer className={cn("size-8 rounded-xl", isWhite && "bg-white/20")} />}
+            {showIcon && <Shimmer className={cn("size-8 rounded-lg", isWhite && "bg-white/20")} />}
           </div>
           <Shimmer className={cn("h-8 w-28 my-auto", isWhite && "bg-white/20")} />
           <Shimmer className={cn("h-3 w-32 mb-1", isWhite && "bg-white/20")} />
@@ -441,7 +441,7 @@ export function SimpleKpiCard({
 
   if (href) {
     return (
-      <Link href={href} className="block h-full group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl">
+      <Link href={href} className="block h-full group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg">
         {content}
       </Link>
     );

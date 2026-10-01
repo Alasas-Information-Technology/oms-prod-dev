@@ -56,7 +56,7 @@ export default function NotFound() {
             onClick={() => router.back()}
             variant="outline"
             size="lg"
-            className="w-full sm:w-auto h-11 px-6 text-sm rounded-xl border-border/80 shadow-2xs gap-2 cursor-pointer"
+            className="w-full sm:w-auto h-11 px-6 text-sm rounded-lg border-border/80 shadow-2xs gap-2 cursor-pointer"
           >
             <ArrowLeft className="size-4" />
             <span>Go Back</span>
@@ -65,7 +65,7 @@ export default function NotFound() {
           <Button
             asChild
             size="lg"
-            className="w-full sm:w-auto h-11 px-6 text-sm rounded-xl shadow-md gap-2 font-semibold"
+            className="w-full sm:w-auto h-11 px-6 text-sm rounded-lg shadow-md gap-2 font-semibold"
           >
             <Link href="/app">
               <LayoutDashboard className="size-4" />
@@ -77,7 +77,7 @@ export default function NotFound() {
             asChild
             variant="outline"
             size="lg"
-            className="w-full sm:w-auto h-11 px-6 text-sm rounded-xl border-border/80 shadow-2xs gap-2"
+            className="w-full sm:w-auto h-11 px-6 text-sm rounded-lg border-border/80 shadow-2xs gap-2"
           >
             <Link href="/app/requests">
               <FileText className="size-4" />
@@ -95,9 +95,9 @@ export default function NotFound() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Link
               href="/app"
-              className="p-4 rounded-xl border border-border/70 bg-card/80 hover:bg-card hover:border-primary/40 hover:shadow-xs transition-all duration-200 flex items-center gap-3.5 group"
+              className="p-4 rounded-lg border border-border/70 bg-card/80 hover:bg-card hover:border-primary/40 hover:shadow-xs transition-all duration-200 flex items-center gap-3.5 group"
             >
-              <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <div className="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                 <LayoutDashboard className="size-5" />
               </div>
               <div className="min-w-0">
@@ -112,9 +112,9 @@ export default function NotFound() {
 
             <Link
               href="/app/requests"
-              className="p-4 rounded-xl border border-border/70 bg-card/80 hover:bg-card hover:border-primary/40 hover:shadow-xs transition-all duration-200 flex items-center gap-3.5 group"
+              className="p-4 rounded-lg border border-border/70 bg-card/80 hover:bg-card hover:border-primary/40 hover:shadow-xs transition-all duration-200 flex items-center gap-3.5 group"
             >
-              <div className="size-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <div className="size-10 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                 <FileText className="size-5" />
               </div>
               <div className="min-w-0">
@@ -129,9 +129,9 @@ export default function NotFound() {
 
             <Link
               href="/app/budget"
-              className="p-4 rounded-xl border border-border/70 bg-card/80 hover:bg-card hover:border-primary/40 hover:shadow-xs transition-all duration-200 flex items-center gap-3.5 group"
+              className="p-4 rounded-lg border border-border/70 bg-card/80 hover:bg-card hover:border-primary/40 hover:shadow-xs transition-all duration-200 flex items-center gap-3.5 group"
             >
-              <div className="size-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <div className="size-10 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                 <Wallet className="size-5" />
               </div>
               <div className="min-w-0">
@@ -146,9 +146,9 @@ export default function NotFound() {
 
             <Link
               href="/app/administration/security-dashboard"
-              className="p-4 rounded-xl border border-border/70 bg-card/80 hover:bg-card hover:border-primary/40 hover:shadow-xs transition-all duration-200 flex items-center gap-3.5 group"
+              className="p-4 rounded-lg border border-border/70 bg-card/80 hover:bg-card hover:border-primary/40 hover:shadow-xs transition-all duration-200 flex items-center gap-3.5 group"
             >
-              <div className="size-10 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <div className="size-10 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                 <ShieldCheck className="size-5" />
               </div>
               <div className="min-w-0">

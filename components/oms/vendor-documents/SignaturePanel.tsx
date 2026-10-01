@@ -110,7 +110,7 @@ export function SignaturePanel({
   return (
     <div
       className={cn(
-        "bg-card border border-border/70 rounded-xl p-5 shadow-xs space-y-4",
+        "bg-card border border-border/70 rounded-lg p-5 shadow-xs space-y-4",
         className
       )}
     >

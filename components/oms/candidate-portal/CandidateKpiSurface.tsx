@@ -47,7 +47,7 @@ export function CandidateKpiSurface({
       id="candidate-kpi-surface"
       aria-label="Candidate Joining Key Performance Indicators"
       className={cn(
-        "w-full rounded-xl border border-border/60 bg-card select-none transition-colors shadow-2xs overflow-hidden",
+        "w-full rounded-lg border border-border/60 bg-card select-none transition-colors shadow-2xs overflow-hidden",
         className
       )}
     >

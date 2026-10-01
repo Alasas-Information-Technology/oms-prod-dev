@@ -1,29 +1,22 @@
 "use client";
 
-import * as React from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { toast } from "sonner";
 import {
   Building2,
-  Plus,
-  Download,
-  Loader2,
   ChevronsUpDown,
+  Download,
   LayoutGrid,
   ListTree,
+  Loader2,
   Network,
+  Plus,
   X,
 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import * as React from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@/components/ui/sheet";
 import {
   Dialog,
   DialogContent,
@@ -31,30 +24,37 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 
-import { OrgChartCanvas } from "@/components/organization/OrgChartCanvas";
-import { OrgTree } from "@/components/organization/OrgTree";
-import { OrgGroupedView } from "@/components/organization/OrgGroupedView";
-import { OrgUnitDetailView } from "@/components/organization/OrgUnitDetailView";
 import { AddOrgUnitWizard } from "@/components/organization/AddOrgUnitWizard";
-import { MoveUnitDialog } from "@/components/organization/MoveUnitDialog";
 import { ArchiveUnitDialog } from "@/components/organization/ArchiveUnitDialog";
 import { DeleteUnitDialog } from "@/components/organization/DeleteUnitDialog";
+import { MoveUnitDialog } from "@/components/organization/MoveUnitDialog";
+import { OrgChartCanvas } from "@/components/organization/OrgChartCanvas";
+import { OrgGroupedView } from "@/components/organization/OrgGroupedView";
+import { OrgTree } from "@/components/organization/OrgTree";
+import { OrgUnitDetailView } from "@/components/organization/OrgUnitDetailView";
 import { PageBarActions } from "@/components/ui/layouts/page-bar-context";
 
 import {
-  useOrgUnits,
-  useCreateOrgUnit,
   useAssignManager,
+  useCreateOrgUnit,
+  useOrgUnits,
 } from "@/hooks/useOrganization";
 import { usePermission } from "@/hooks/usePermission";
 import { orgUnitsApi } from "@/lib/api/organization";
 import {
-  OrgUnitSummaryDto,
-  OrgUnitDetailDto,
-  OrgUnitEntity,
   CreateOrgUnitDto,
   ORG_PERMISSIONS,
+  OrgUnitDetailDto,
+  OrgUnitEntity,
+  OrgUnitSummaryDto,
 } from "@/lib/types/organization.types";
 
 const STORAGE_KEY_VIEW_MODE = "oms_org_view_mode_v2";
@@ -271,9 +271,7 @@ function OrganizationPageContent() {
 
   return (
     <>
-      {/* ========================================================================= */}
-      {/* Sticky Page Bar Actions (View Switcher · Export · Add) (Part 4)           */}
-      {/* ========================================================================= */}
+
       <PageBarActions>
         <div className="flex items-center gap-2">
           {/* Segmented 3-View Control: [ Chart | List | Grouped ] (36px tall, Part 4) */}
@@ -352,9 +350,7 @@ function OrganizationPageContent() {
         </div>
       </PageBarActions>
 
-      {/* ========================================================================= */}
-      {/* View 1: Chart View (0 padding — Full Bleed Canvas, Part 7 & 8)            */}
-      {/* ========================================================================= */}
+
       {viewMode === "chart" && (
         <div className="h-[calc(100vh-108px)] w-full overflow-hidden relative">
           <OrgChartCanvas
@@ -401,112 +397,112 @@ function OrganizationPageContent() {
             </div>
           )}
 
-      {/* ========================================================================= */}
-      {/* View 2: List View (Indented Tree + Split Pane Details) (Part 3.5)          */}
-      {/* ========================================================================= */}
-      {viewMode === "list" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          <div className="lg:col-span-5 space-y-3">
-            <Card className="border border-border shadow-2xs">
-              <CardHeader className="pb-3 border-b border-border/50">
-                <div className="flex items-center justify-between gap-3">
-                  <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                    <ListTree className="h-4 w-4 text-primary" />
-                    Organization List
-                  </CardTitle>
+          {/* ========================================================================= */}
+          {/* View 2: List View (Indented Tree + Split Pane Details) (Part 3.5)          */}
+          {/* ========================================================================= */}
+          {viewMode === "list" && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              <div className="lg:col-span-5 space-y-3">
+                <Card className="border border-border shadow-2xs">
+                  <CardHeader className="pb-3 border-b border-border/50">
+                    <div className="flex items-center justify-between gap-3">
+                      <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                        <ListTree className="h-4 w-4 text-primary" />
+                        Organization List
+                      </CardTitle>
 
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-7 text-xs px-2 gap-1 rounded-lg"
-                    onClick={() => setTreeExpandAll((prev) => (prev === true ? false : true))}
-                  >
-                    <ChevronsUpDown className="h-3 w-3 text-muted-foreground" />
-                    {treeExpandAll ? "Collapse All" : "Expand All"}
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="p-2">
-                <div className="h-[680px]">
-                  <OrgTree
-                    selectedId={selectedUnitId}
-                    forceExpandAll={treeExpandAll}
-                    onSelectUnit={(unit) => {
-                      setSelectedUnitId(unit.orgUnitId);
-                      setDetailPanelUnitId(unit.orgUnitId);
-                    }}
-                    onAddChild={(parent) => {
-                      setCreateParentUnit(parent);
-                      setIsCreateOpen(true);
-                    }}
-                    onMoveUnit={(unit) => {
-                      setMoveTargetUnit(unit as OrgUnitDetailDto);
-                      setIsMoveOpen(true);
-                    }}
-                    onDeleteUnit={(unit) => {
-                      setDeleteTargetUnit(unit as OrgUnitDetailDto);
-                      setIsDeleteOpen(true);
-                    }}
-                    className="h-full border-none rounded-none shadow-none"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 text-xs px-2 gap-1 rounded-lg"
+                        onClick={() => setTreeExpandAll((prev) => (prev === true ? false : true))}
+                      >
+                        <ChevronsUpDown className="h-3 w-3 text-muted-foreground" />
+                        {treeExpandAll ? "Collapse All" : "Expand All"}
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-2">
+                    <div className="h-[680px]">
+                      <OrgTree
+                        selectedId={selectedUnitId}
+                        forceExpandAll={treeExpandAll}
+                        onSelectUnit={(unit) => {
+                          setSelectedUnitId(unit.orgUnitId);
+                          setDetailPanelUnitId(unit.orgUnitId);
+                        }}
+                        onAddChild={(parent) => {
+                          setCreateParentUnit(parent);
+                          setIsCreateOpen(true);
+                        }}
+                        onMoveUnit={(unit) => {
+                          setMoveTargetUnit(unit as OrgUnitDetailDto);
+                          setIsMoveOpen(true);
+                        }}
+                        onDeleteUnit={(unit) => {
+                          setDeleteTargetUnit(unit as OrgUnitDetailDto);
+                          setIsDeleteOpen(true);
+                        }}
+                        className="h-full border-none rounded-none shadow-none"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
 
-          <div className="lg:col-span-7">
-            {selectedUnitId ? (
-              <Card className="border border-border shadow-2xs p-0 min-h-[740px]">
-                <OrgUnitDetailView
-                  unitId={selectedUnitId}
-                  onNavigateUnit={(targetId) => setSelectedUnitId(targetId || null)}
-                />
-              </Card>
-            ) : (
-              <Card className="border border-border shadow-2xs p-12 text-center flex flex-col items-center justify-center min-h-[600px] space-y-3">
-                <Building2 className="h-12 w-12 text-muted-foreground/30" />
-                <div>
-                  <h3 className="text-base font-bold text-foreground">Select a Department or Team</h3>
-                  <p className="text-xs text-muted-foreground mt-1 max-w-sm">
-                    Click any node in the list to inspect structured metadata, direct teams, leadership timeline, and change history.
-                  </p>
-                </div>
-              </Card>
-            )}
-          </div>
+              <div className="lg:col-span-7">
+                {selectedUnitId ? (
+                  <Card className="border border-border shadow-2xs p-0 min-h-[740px]">
+                    <OrgUnitDetailView
+                      unitId={selectedUnitId}
+                      onNavigateUnit={(targetId) => setSelectedUnitId(targetId || null)}
+                    />
+                  </Card>
+                ) : (
+                  <Card className="border border-border shadow-2xs p-12 text-center flex flex-col items-center justify-center min-h-[600px] space-y-3">
+                    <Building2 className="h-12 w-12 text-muted-foreground/30" />
+                    <div>
+                      <h3 className="text-base font-bold text-foreground">Select a Department or Team</h3>
+                      <p className="text-xs text-muted-foreground mt-1 max-w-sm">
+                        Click any node in the list to inspect structured metadata, direct teams, leadership timeline, and change history.
+                      </p>
+                    </div>
+                  </Card>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* View 3: Grouped View (Flat Categorized Directory with Full Paths) (Part 3.6) */}
+          {/* ========================================================================= */}
+          {viewMode === "grouped" && (
+            <OrgGroupedView
+              selectedUnitId={selectedUnitId}
+              onSelectUnit={(unit) => setSelectedUnitId(unit.orgUnitId)}
+              onOpenDetails={handleOpenDetails}
+              onMoveUnit={(unit) => {
+                setMoveTargetUnit(unit as OrgUnitDetailDto);
+                setIsMoveOpen(true);
+              }}
+              onArchiveUnit={(unit) => {
+                setArchiveTargetUnit(unit as OrgUnitDetailDto);
+                setIsArchiveOpen(true);
+              }}
+              onDeleteUnit={(unit) => {
+                setDeleteTargetUnit(unit as OrgUnitDetailDto);
+                setIsDeleteOpen(true);
+              }}
+              onAddUnit={() => {
+                setCreateParentUnit(null);
+                setIsCreateOpen(true);
+              }}
+              initialTypeFilter={urlType}
+              searchQuery={globalSearch}
+            />
+          )}
         </div>
       )}
-
-      {/* ========================================================================= */}
-      {/* View 3: Grouped View (Flat Categorized Directory with Full Paths) (Part 3.6) */}
-      {/* ========================================================================= */}
-      {viewMode === "grouped" && (
-        <OrgGroupedView
-          selectedUnitId={selectedUnitId}
-          onSelectUnit={(unit) => setSelectedUnitId(unit.orgUnitId)}
-          onOpenDetails={handleOpenDetails}
-          onMoveUnit={(unit) => {
-            setMoveTargetUnit(unit as OrgUnitDetailDto);
-            setIsMoveOpen(true);
-          }}
-          onArchiveUnit={(unit) => {
-            setArchiveTargetUnit(unit as OrgUnitDetailDto);
-            setIsArchiveOpen(true);
-          }}
-          onDeleteUnit={(unit) => {
-            setDeleteTargetUnit(unit as OrgUnitDetailDto);
-            setIsDeleteOpen(true);
-          }}
-          onAddUnit={() => {
-            setCreateParentUnit(null);
-            setIsCreateOpen(true);
-          }}
-          initialTypeFilter={urlType}
-          searchQuery={globalSearch}
-        />
-      )}
-    </div>
-  )}
 
       {/* ========================================================================= */}
       {/* Slide-Over Drawer for Details (Mounted on Chart / Grouped views) (Part 3.4) */}
@@ -514,14 +510,10 @@ function OrganizationPageContent() {
       <Sheet open={isDetailOpen} onOpenChange={setIsDetailOpen}>
         <SheetContent
           side="right"
-          className="w-full sm:max-w-2xl p-0 flex flex-col border-l-0 bg-background shadow-2xl sm:rounded-l-3xl overflow-hidden"
+          className="w-full sm:max-w-2xl p-1 flex flex-col border-l-0 bg-transparent! overflow-hidden"
         >
-          <SheetHeader className="sr-only">
-            <SheetTitle>Organization Unit Details</SheetTitle>
-            <SheetDescription>Detailed breakdown of reporting lines, teams, and staff.</SheetDescription>
-          </SheetHeader>
           {detailPanelUnitId && (
-            <div className="flex-1 min-h-0">
+            <div className="flex-1 min-h-0 rounded-sm overflow-hidden shadow-2xl">
               <OrgUnitDetailView
                 unitId={detailPanelUnitId}
                 onNavigateUnit={(targetId) => {

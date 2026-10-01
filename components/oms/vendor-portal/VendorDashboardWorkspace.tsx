@@ -262,7 +262,7 @@ export function VendorDashboardWorkspace({
 
         {/* 3. "Needs My Action" Action Table Scoped to Vendor */}
         <section aria-labelledby="needs-action-heading" className="space-y-3">
-          <Card className="rounded-xl border border-border/70 dark:border-white/[0.08] bg-card shadow-2xs overflow-hidden">
+          <Card className="rounded-lg border border-border/70 dark:border-white/[0.08] bg-card shadow-2xs overflow-hidden">
             {/* Header & Filter Row */}
             <div className="px-5 py-4 border-b border-border/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-muted/20">
               <div className="flex items-center gap-3">
@@ -429,7 +429,7 @@ export function VendorDashboardWorkspace({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left: Active Sourcing Windows (Zero Budget Concealment Enforced) */}
           <section className="lg:col-span-7 space-y-3">
-            <Card className="rounded-xl border border-border/70 dark:border-white/[0.08] bg-card shadow-2xs overflow-hidden flex flex-col h-full">
+            <Card className="rounded-lg border border-border/70 dark:border-white/[0.08] bg-card shadow-2xs overflow-hidden flex flex-col h-full">
               <div className="px-5 py-4 border-b border-border/60 flex items-center justify-between bg-muted/20">
                 <div className="flex items-center gap-2.5">
                   <Briefcase className="size-4 text-teal-600 dark:text-teal-400" />
@@ -506,7 +506,7 @@ export function VendorDashboardWorkspace({
           {/* Right: Published Rates & Compliance Health */}
           <section className="lg:col-span-5 space-y-4">
             {/* Rate Cards Card */}
-            <Card className="rounded-xl border border-border/70 dark:border-white/[0.08] bg-card shadow-2xs overflow-hidden">
+            <Card className="rounded-lg border border-border/70 dark:border-white/[0.08] bg-card shadow-2xs overflow-hidden">
               <div className="px-5 py-4 border-b border-border/60 flex items-center justify-between bg-muted/20">
                 <div className="flex items-center gap-2.5">
                   <Coins className="size-4 text-teal-600 dark:text-teal-400" />
@@ -554,7 +554,7 @@ export function VendorDashboardWorkspace({
             </Card>
 
             {/* Compliance Documents Card */}
-            <Card className="rounded-xl border border-border/70 dark:border-white/[0.08] bg-card shadow-2xs overflow-hidden">
+            <Card className="rounded-lg border border-border/70 dark:border-white/[0.08] bg-card shadow-2xs overflow-hidden">
               <div className="px-5 py-4 border-b border-border/60 flex items-center justify-between bg-muted/20">
                 <div className="flex items-center gap-2.5">
                   <ShieldAlert className="size-4 text-amber-600 dark:text-amber-400" />

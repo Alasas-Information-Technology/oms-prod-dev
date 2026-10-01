@@ -248,7 +248,7 @@ export function VendorSubmissionHistoryWorkspace({
           <Card
             onClick={() => setActiveTab("ALL")}
             className={cn(
-              "p-3.5 sm:p-4 rounded-xl border bg-card hover:bg-muted/40 transition-all cursor-pointer shadow-2xs",
+              "p-3.5 sm:p-4 rounded-lg border bg-card hover:bg-muted/40 transition-all cursor-pointer shadow-2xs",
               activeTab === "ALL" && "ring-2 ring-primary border-primary/40 bg-primary/5"
             )}
           >
@@ -267,7 +267,7 @@ export function VendorSubmissionHistoryWorkspace({
           <Card
             onClick={() => setActiveTab("ACTION_REQUIRED")}
             className={cn(
-              "p-3.5 sm:p-4 rounded-xl border bg-card hover:bg-amber-500/5 transition-all cursor-pointer shadow-2xs",
+              "p-3.5 sm:p-4 rounded-lg border bg-card hover:bg-amber-500/5 transition-all cursor-pointer shadow-2xs",
               actionRequiredCount > 0
                 ? "border-amber-400/80 dark:border-amber-700/80 bg-amber-50/40 dark:bg-amber-950/20"
                 : "",
@@ -293,7 +293,7 @@ export function VendorSubmissionHistoryWorkspace({
           <Card
             onClick={() => setActiveTab("IN_REVIEW")}
             className={cn(
-              "p-3.5 sm:p-4 rounded-xl border bg-card hover:bg-muted/40 transition-all cursor-pointer shadow-2xs",
+              "p-3.5 sm:p-4 rounded-lg border bg-card hover:bg-muted/40 transition-all cursor-pointer shadow-2xs",
               activeTab === "IN_REVIEW" && "ring-2 ring-primary border-primary/40 bg-primary/5"
             )}
           >
@@ -312,7 +312,7 @@ export function VendorSubmissionHistoryWorkspace({
           <Card
             onClick={() => setActiveTab("QUALIFIED")}
             className={cn(
-              "p-3.5 sm:p-4 rounded-xl border bg-card hover:bg-muted/40 transition-all cursor-pointer shadow-2xs",
+              "p-3.5 sm:p-4 rounded-lg border bg-card hover:bg-muted/40 transition-all cursor-pointer shadow-2xs",
               activeTab === "QUALIFIED" && "ring-2 ring-primary border-primary/40 bg-primary/5"
             )}
           >
@@ -407,7 +407,7 @@ export function VendorSubmissionHistoryWorkspace({
         </div>
 
         {/* 4. Submissions Table per 4.5 */}
-        <Card className="rounded-xl border border-border/80 shadow-2xs overflow-hidden">
+        <Card className="rounded-lg border border-border/80 shadow-2xs overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>

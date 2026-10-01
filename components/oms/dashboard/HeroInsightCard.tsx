@@ -54,7 +54,7 @@ export function HeroInsightCard({
     <div
       className={cn(
         // U4: 20px radius, no border
-        "relative rounded-[20px] border-0 overflow-hidden select-none",
+        "relative rounded-lg border-0 overflow-hidden select-none",
         "flex flex-col justify-between p-5 min-h-[152px]",
         // SVG background images
         "bg-cover bg-center",

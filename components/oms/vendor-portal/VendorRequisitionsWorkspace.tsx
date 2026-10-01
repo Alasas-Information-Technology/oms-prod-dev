@@ -202,7 +202,7 @@ export function VendorRequisitionsWorkspace({
 
         {/* 3. Requisition Cards Grid / List */}
         {filteredRequisitions.length === 0 ? (
-          <div className="py-16 text-center space-y-3 bg-muted/10 border border-border/50 rounded-xl">
+          <div className="py-16 text-center space-y-3 bg-muted/10 border border-border/50 rounded-lg">
             <Briefcase className="size-10 text-muted-foreground/60 mx-auto" />
             <h3 className="text-sm font-semibold text-foreground">
               No matching requirements found
@@ -222,7 +222,7 @@ export function VendorRequisitionsWorkspace({
                 <Card
                   key={req.id}
                   className={cn(
-                    "rounded-xl border transition-all duration-200 overflow-hidden select-none group",
+                    "rounded-lg border transition-all duration-200 overflow-hidden select-none group",
                     isClosed
                       ? "border-border/50 bg-muted/15 opacity-85"
                       : "border-border/70 dark:border-white/[0.08] bg-card hover:border-teal-500/40 hover:shadow-xs"

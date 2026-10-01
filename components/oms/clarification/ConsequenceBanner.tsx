@@ -92,7 +92,7 @@ export function ConsequenceBanner({
   return (
     <div
       className={cn(
-        "rounded-xl border p-4 sm:p-5 flex items-start gap-3.5 shadow-xs transition-all",
+        "rounded-lg border p-4 sm:p-5 flex items-start gap-3.5 shadow-xs transition-all",
         containerStyles,
         className
       )}

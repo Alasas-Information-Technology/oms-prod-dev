@@ -87,14 +87,14 @@ export function VendorsWorkspace() {
 
         {/* ── KPI Strip ── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-1">
+          <div className="p-3.5 rounded-lg border border-border/60 bg-card shadow-2xs space-y-1">
             <span className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wider">
               Accredited Agencies
             </span>
             <div className="text-xl font-bold text-foreground">{allVendors.length}</div>
           </div>
 
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-1">
+          <div className="p-3.5 rounded-lg border border-border/60 bg-card shadow-2xs space-y-1">
             <span className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wider">
               Active Headcount
             </span>
@@ -103,7 +103,7 @@ export function VendorsWorkspace() {
             </div>
           </div>
 
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-1">
+          <div className="p-3.5 rounded-lg border border-border/60 bg-card shadow-2xs space-y-1">
             <span className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wider">
               Onboarding Pipeline
             </span>
@@ -112,7 +112,7 @@ export function VendorsWorkspace() {
             </div>
           </div>
 
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-1">
+          <div className="p-3.5 rounded-lg border border-border/60 bg-card shadow-2xs space-y-1">
             <span className="text-[11px] font-semibold uppercase text-muted-foreground tracking-wider">
               Rate Card Governance
             </span>
@@ -124,7 +124,7 @@ export function VendorsWorkspace() {
         </div>
 
         {/* ── Filter Bar ── */}
-        <div className="p-3.5 rounded-xl border border-border/60 bg-card/60 backdrop-blur-xs flex items-center justify-between gap-3 shadow-2xs">
+        <div className="p-3.5 rounded-lg border border-border/60 bg-card/60 backdrop-blur-xs flex items-center justify-between gap-3 shadow-2xs">
           <div className="relative flex-1 max-w-sm">
             <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -150,11 +150,11 @@ export function VendorsWorkspace() {
             return (
               <div
                 key={vendor.id}
-                className="p-5 rounded-xl border border-border/70 bg-card shadow-2xs space-y-4 hover:border-border transition-all"
+                className="p-5 rounded-lg border border-border/70 bg-card shadow-2xs space-y-4 hover:border-border transition-all"
               >
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   <div className="flex items-start gap-4">
-                    <div className="size-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-sm shrink-0 border border-primary/20">
+                    <div className="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-sm shrink-0 border border-primary/20">
                       <Store className="size-6" />
                     </div>
 

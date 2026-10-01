@@ -28,7 +28,7 @@ export function HrReviewDecisionBar({ detail, activeDialog, setActiveDialog, onS
 
   return (
     <>
-      <div className="sticky bottom-4 z-20 mt-8 flex w-full flex-wrap items-center justify-between rounded-xl border border-border/80 bg-card/95 backdrop-blur-md px-5 py-3.5 shadow-lg">
+      <div className="sticky bottom-4 z-20 mt-8 flex w-full flex-wrap items-center justify-between rounded-lg border border-border/80 bg-card/95 backdrop-blur-md px-5 py-3.5 shadow-lg">
         <div className="flex items-center gap-3">
           <Button
             onClick={() => setActiveDialog("APPROVE")}
