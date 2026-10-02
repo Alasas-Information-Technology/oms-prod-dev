@@ -380,6 +380,10 @@ export const INTERNAL_NAV_GROUPS: InternalNavGroup[] = [
             url: "/app/administration/master-data/organization",
           },
           {
+            title: "Salary & Grade",
+            url: "/app/administration/master-data/salary-grade",
+          },
+          {
             title: "Users",
             url: "/app/administration/users",
           },
@@ -391,6 +395,7 @@ export const INTERNAL_NAV_GROUPS: InternalNavGroup[] = [
             title: "Security Settings",
             url: "/app/administration/security/settings",
           },
+          
         ],
       },
     ],
