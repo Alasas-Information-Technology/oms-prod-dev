@@ -252,6 +252,8 @@ export const INTERNAL_NAV_GROUPS: InternalNavGroup[] = [
           return hasPerm && hasEligibleRole;
         },
         items: [
+          // Budget master data (Fiscal Year, Periods, Categories) — Super Admin only
+          { title: "Master", url: "/app/budget/master", requiredRole: "SUPER_ADMIN" },
           { title: "Control Center", url: "/app/budget" },
           { title: "Department Budgets", url: "/app/budget/dept-budget" },
         ],
