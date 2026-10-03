@@ -384,6 +384,10 @@ export const INTERNAL_NAV_GROUPS: InternalNavGroup[] = [
             url: "/app/administration/master-data/salary-grade",
           },
           {
+            title: "S&G Masters",
+            url: "/app/administration/master-data/sg-masters",
+          },
+          {
             title: "Users",
             url: "/app/administration/users",
           },

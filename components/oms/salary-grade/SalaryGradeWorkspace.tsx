@@ -10,7 +10,10 @@ import {
   X,
 } from "lucide-react";
 import { usePageBarDispatch } from "@/components/ui/layouts/page-bar-context";
-import { GradeDirectory } from "./GradeDirectory";
+import {
+  GradeDirectory,
+  type GradeStatusFilter,
+} from "./GradeDirectory";
 import { CreateGradeDialog } from "./CreateGradeDialog";
 import { FindGradeDialog } from "./FindGradeDialog";
 import { GradeDetailDialog } from "./GradeDetailDialog";
@@ -27,11 +30,16 @@ export function SalaryGradeWorkspace() {
   const { store, ready, storageError, create } =
     useSalaryGrades();
 
+  const [statusFilter, setStatusFilter] =
+    useState<GradeStatusFilter>("all");
+
   const [findOpen, setFindOpen] = useState(false);
+
   const [createOptions, setCreateOptions] = useState<{
     gradeId?: string;
     group?: DeploymentGroup;
   } | null>(null);
+
   const [detail, setDetail] = useState<GradeRow | null>(null);
   const [message, setMessage] =
     useState<string | null>(null);
@@ -45,19 +53,35 @@ export function SalaryGradeWorkspace() {
     return () => setCustomCrumbs(null);
   }, [setCustomCrumbs]);
 
-  const active = store.grades.filter(
+  const activeCount = store.grades.filter(
     (grade) => grade.active,
   ).length;
 
+  const inactiveCount = store.grades.length - activeCount;
   const canCreate = ready && !storageError;
 
   function addConfiguration(row: GradeRow) {
     setDetail(null);
     setFindOpen(false);
+
     setCreateOptions({
       gradeId: row.grade.id,
       group: row.group,
     });
+  }
+
+  function filterCardClass(
+    filter: GradeStatusFilter,
+    colourClass = "",
+  ) {
+    return [
+      styles.raised,
+      styles.filterCard,
+      colourClass,
+      statusFilter === filter ? styles.selectedFilter : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
   }
 
   return (
@@ -91,6 +115,7 @@ export function SalaryGradeWorkspace() {
             className="flex items-center justify-between gap-3 rounded-lg border border-emerald-500/25 bg-emerald-500/5 px-4 py-3 text-xs"
           >
             <span>{message}</span>
+
             <button
               type="button"
               onClick={() => setMessage(null)}
@@ -102,9 +127,17 @@ export function SalaryGradeWorkspace() {
         )}
 
         <div className={styles.cards}>
-          <div className={styles.raised}>
+          <button
+            type="button"
+            className={filterCardClass("all")}
+            aria-pressed={statusFilter === "all"}
+            aria-label="Show active and inactive grades"
+            disabled={!ready}
+            onClick={() => setStatusFilter("all")}
+          >
             <div className="flex items-start gap-3">
               <Layers className="mt-1 size-7 shrink-0 text-primary" />
+
               <div>
                 <p className="text-xs font-medium">
                   Total Grades
@@ -113,51 +146,67 @@ export function SalaryGradeWorkspace() {
                   {ready ? store.grades.length : "—"}
                 </p>
                 <p className="mt-2 text-[11px] text-muted-foreground">
-                  Across all staff categories
+                  Show all grade statuses
                 </p>
               </div>
             </div>
-          </div>
+          </button>
 
-          <div
-            className={`${styles.raised} ${styles.activeCard}`}
+          <button
+            type="button"
+            className={filterCardClass(
+              "active",
+              styles.activeCard,
+            )}
+            aria-pressed={statusFilter === "active"}
+            aria-label="Show active grades"
+            disabled={!ready}
+            onClick={() => setStatusFilter("active")}
           >
             <div className="flex items-start gap-3">
               <CircleCheck className="mt-1 size-7 shrink-0 text-emerald-600" />
+
               <div>
                 <p className="text-xs font-medium">
                   Active Grades
                 </p>
                 <p className="mt-2 text-3xl font-bold tabular-nums">
-                  {ready ? active : "—"}
+                  {ready ? activeCount : "—"}
                 </p>
                 <p className="mt-2 text-[11px] text-muted-foreground">
-                  Available for use
+                  Show active grades
                 </p>
               </div>
             </div>
-          </div>
+          </button>
 
-          <div
-            className={`${styles.raised} ${styles.inactiveCard}`}
+          <button
+            type="button"
+            className={filterCardClass(
+              "inactive",
+              styles.inactiveCard,
+            )}
+            aria-pressed={statusFilter === "inactive"}
+            aria-label="Show inactive grades"
+            disabled={!ready}
+            onClick={() => setStatusFilter("inactive")}
           >
             <div className="flex items-start gap-3">
               <CircleMinus className="mt-1 size-7 shrink-0 text-amber-600" />
+
               <div>
                 <p className="text-xs font-medium">
                   Inactive Grades
                 </p>
                 <p className="mt-2 text-3xl font-bold tabular-nums">
-                  {ready
-                    ? store.grades.length - active
-                    : "—"}
+                  {ready ? inactiveCount : "—"}
                 </p>
                 <p className="mt-2 text-[11px] text-muted-foreground">
-                  Currently disabled
+                  Show inactive grades
                 </p>
               </div>
             </div>
-          </div>
+          </button>
 
           <button
             type="button"
@@ -174,6 +223,7 @@ export function SalaryGradeWorkspace() {
               </span>
               <ArrowRight className="size-5" />
             </div>
+
             <p className="mt-3 text-sm font-semibold">
               Add New Grade
             </p>
@@ -187,6 +237,7 @@ export function SalaryGradeWorkspace() {
           store={store}
           ready={ready}
           canCreate={Boolean(canCreate)}
+          statusFilter={statusFilter}
           onFind={() => setFindOpen(true)}
           onView={setDetail}
           onAdd={addConfiguration}
@@ -212,6 +263,7 @@ export function SalaryGradeWorkspace() {
             onSave={create}
             onSaved={(result) => {
               setCreateOptions(null);
+
               setMessage(
                 `Saved ${result.added} new configuration${
                   result.added === 1 ? "" : "s"
